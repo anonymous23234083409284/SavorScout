@@ -94,7 +94,7 @@ function App() {
 
     if (authMode === "signup") {
       try {
-        const checkResponse = await fetch("http://localhost:5000/auth/check-email", {
+        const checkResponse = await fetch("https://savorscout.onrender.com/search", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: email.trim() }),

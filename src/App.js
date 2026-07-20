@@ -375,14 +375,14 @@ function App() {
             {authMode === "signup" ? (
               <>
                 Already have an account?{" "}
-                <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("signin"); setAuthError(""); setResetSent(false); }}>
+                <a href="/" onClick={(e) => { e.preventDefault(); setAuthMode("signin"); setAuthError(""); setResetSent(false); }}>
                   Sign in
                 </a>
               </>
             ) : (
               <>
                 Need an account?{" "}
-                <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("signup"); setAuthError(""); setResetSent(false); }}>
+                <a href="/" onClick={(e) => { e.preventDefault(); setAuthMode("signup"); setAuthError(""); setResetSent(false); }}>
                   Sign up
                 </a>
               </>

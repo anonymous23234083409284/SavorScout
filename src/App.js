@@ -80,7 +80,7 @@ function App() {
         setNeedsOnboarding(!data);
         setOnboardingChecked(true);
       });
-  }, [user?.id]);
+  }, [user]);
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
@@ -359,7 +359,7 @@ function App() {
 
           {authMode === "signin" && (
             <p style={{ marginTop: "0.75rem" }}>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleForgotPassword(); }} style={{ fontFamily: "'Pacifico', cursive", fontSize: "20px", color: "#e0a3ff", textDecoration: "none" }}>
+              <a href="/" onClick={(e) => { e.preventDefault(); handleForgotPassword(); }} style={{ fontFamily: "'Pacifico', cursive", fontSize: "20px", color: "#e0a3ff", textDecoration: "none" }}>
                 Forgot password?
               </a>
             </p>

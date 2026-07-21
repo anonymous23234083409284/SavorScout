@@ -2,21 +2,31 @@ require("dotenv").config();
 
 const express = require("express");
 const axios = require("axios");
-const cors = require("cors");
+
 const OpenAI = require("openai");
 const { createClient } = require("@supabase/supabase-js");
+
+ //  handles preflight requests
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const cors = require("cors");
+
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://your-actual-frontend-url.vercel.app", // replace with your real deployed URL
+  "https://savor-scout-ugbv-two.vercel.app",
 ];
 
 app.use(cors({
   origin: allowedOrigins,
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
 }));
+
+// 👇 THIS LINE IS CRITICAL
+app.options("*", cors());
+
 app.use(express.json());
 
 const openai = new OpenAI({

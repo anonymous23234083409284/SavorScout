@@ -9,6 +9,8 @@ function App() {
   const [errorMsg, setErrorMsg] = useState("");
   const [coords, setCoords] = useState(null);
   const [locStatus, setLocStatus] = useState("requesting"); // requesting | granted | denied
+  const [manualLocation, setManualLocation] = useState("");
+  const [resolvingLocation, setResolvingLocation] = useState(false);
 
   // --- Auth state ---
   const [user, setUser] = useState(null);
@@ -134,7 +136,18 @@ function App() {
   };
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
+    setAuthError("");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        // Without this, Supabase falls back to the "Site URL" configured in
+        // the dashboard, which errors out if that value is stale (e.g. still
+        // set to localhost) or doesn't match wherever this app is actually
+        // hosted. Sending the browser's own origin keeps it correct in every
+        // environment (local dev, staging, production) automatically.
+        redirectTo: window.location.origin,
+      },
+    });
     if (error) setAuthError(error.message);
   };
 
@@ -194,6 +207,73 @@ function App() {
     setOnboardingSaving(false);
   };
 
+  // --- Location fallback chain: GPS -> typed location -> IP address ---
+
+  // Turns free-text like "Hicksville, NY" or "11801" into coordinates.
+  // Uses OpenStreetMap's free Nominatim geocoder (no API key required).
+  const geocodeManualLocation = async (text) => {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(text)}`
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) return null;
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
+      return { lat, lng };
+    } catch (err) {
+      console.error("Geocoding failed:", err);
+      return null;
+    }
+  };
+
+  // Last-resort estimate from the visitor's IP address (city-level accuracy).
+  // Uses ipapi.co's free tier (no API key required).
+  const getIpBasedLocation = async () => {
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (typeof data.latitude !== "number" || typeof data.longitude !== "number") return null;
+      return { lat: data.latitude, lng: data.longitude };
+    } catch (err) {
+      console.error("IP location lookup failed:", err);
+      return null;
+    }
+  };
+
+  // Resolves coordinates in priority order: GPS already granted -> typed
+  // location -> IP address. Returns null only if every option fails.
+  const resolveCoords = async () => {
+    if (coords) return coords;
+
+    setResolvingLocation(true);
+    try {
+      if (manualLocation.trim()) {
+        const geocoded = await geocodeManualLocation(manualLocation.trim());
+        if (geocoded) {
+          setCoords(geocoded);
+          setLocStatus("granted");
+          return geocoded;
+        }
+        // Typed location didn't resolve to anywhere real — fall through to IP.
+      }
+
+      const ipCoords = await getIpBasedLocation();
+      if (ipCoords) {
+        setCoords(ipCoords);
+        setLocStatus("granted");
+        return ipCoords;
+      }
+
+      return null;
+    } finally {
+      setResolvingLocation(false);
+    }
+  };
+
 
   const handleSearch = async () => {
     if (loading) return;
@@ -201,13 +281,15 @@ function App() {
     if (!user) return;
 
     setErrorMsg("");
+    setLoading(true);
 
-    if (!coords) {
-      setErrorMsg("We need your location to search nearby — please allow location access.");
+    const resolved = await resolveCoords();
+
+    if (!resolved) {
+      setErrorMsg("We couldn't figure out a location — try entering a city or ZIP code above.");
+      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -225,7 +307,7 @@ function App() {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${token}`,
   },
-  body: JSON.stringify({ query, lat: coords.lat, lng: coords.lng }),
+  body: JSON.stringify({ query, lat: resolved.lat, lng: resolved.lng }),
 });
       const data = await response.json();
 
@@ -501,7 +583,7 @@ function App() {
             onKeyDown={handleKeyDown}
           />
           <button onClick={handleSearch} disabled={loading}>
-            {loading ? "Searching…" : "Find my two"}
+            {loading ? (resolvingLocation ? "Finding you…" : "Searching…") : "Find my two"}
           </button>
         </div>
 
@@ -512,7 +594,18 @@ function App() {
         )}
 
         {locStatus === "denied" && (
-          <p className="loc-warning">Location is off — turn it on to search nearby restaurants.</p>
+          <div className="manual-location">
+            <label htmlFor="manual-loc">📍 Location access is off — enter a city, ZIP, or neighborhood:</label>
+            <input
+              id="manual-loc"
+              type="text"
+              placeholder="e.g. Hicksville, NY or 11801"
+              value={manualLocation}
+              onChange={(e) => setManualLocation(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <span className="loc-hint">Leave this blank and we'll estimate your location from your connection instead.</span>
+          </div>
         )}
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
       </section>

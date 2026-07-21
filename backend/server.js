@@ -7,13 +7,16 @@ const OpenAI = require("openai");
 const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://your-actual-frontend-url.vercel.app", // replace with your real deployed URL
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+}));
 app.use(express.json());
 
 const openai = new OpenAI({
@@ -35,7 +38,6 @@ if (!process.env.GOOGLE_PLACES_API_KEY) {
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
   console.warn("⚠️  SUPABASE_SERVICE_ROLE_KEY is missing from .env");
 }
-
 const MILES_TO_METERS = 1609.34;
 const SEARCH_RADIUS_MILES = 30;
 const CANDIDATE_POOL_SIZE = 20;

@@ -18,14 +18,18 @@ const allowedOrigins = [
   "https://savor-scout-ugbv-two.vercel.app",
 ];
 
+
+
+//  allow EVERYTHING (temporary, for debugging)
 app.use(cors({
-  origin: allowedOrigins,
+  origin: "*",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
 }));
 
-// 👇 THIS LINE IS CRITICAL
-app.options("*", cors());
+app.options("/*", cors()); // ✅ ADD THIS
+
+console.log("CORS CONFIG LOADED");
 
 app.use(express.json());
 
@@ -174,6 +178,7 @@ async function requireAuthAndLimit(req, res, next) {
 }
 
 app.post("/search", requireAuthAndLimit, async (req, res) => {
+  app.options("/search", cors());
   const userRequest = req.body.query;
   const userLat = req.body.lat;
   const userLng = req.body.lng;

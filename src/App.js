@@ -214,7 +214,12 @@ function App() {
   const geocodeManualLocation = async (text) => {
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(text)}`
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(text)}`,
+        {
+          headers: {
+            "User-Agent": "SavorScout/1.0 (your-email@example.com)",
+          },
+        }
       );
       if (!res.ok) return null;
       const data = await res.json();
@@ -245,12 +250,15 @@ function App() {
   };
 
   // Resolves coordinates in priority order: GPS already granted -> typed
-  // location -> IP address. Returns null only if every option fails.
+  // location -> IP address. If the user typed a location and it fails to
+  // geocode, we stop there and return null instead of silently falling back
+  // to IP — they gave us an explicit signal and we shouldn't override it.
   const resolveCoords = async () => {
     if (coords) return coords;
 
     setResolvingLocation(true);
     try {
+      // Priority 1: user explicitly typed a location.
       if (manualLocation.trim()) {
         const geocoded = await geocodeManualLocation(manualLocation.trim());
         if (geocoded) {
@@ -258,9 +266,12 @@ function App() {
           setLocStatus("granted");
           return geocoded;
         }
-        // Typed location didn't resolve to anywhere real — fall through to IP.
+        // Typed something, but it didn't resolve — do NOT fall back to IP.
+        return null;
       }
 
+      // Priority 2: IP-based fallback — only reached if no manual location
+      // was typed (GPS was already handled by the `coords` check above).
       const ipCoords = await getIpBasedLocation();
       if (ipCoords) {
         setCoords(ipCoords);
@@ -286,7 +297,11 @@ function App() {
     const resolved = await resolveCoords();
 
     if (!resolved) {
-      setErrorMsg("We couldn't figure out a location — try entering a city or ZIP code above.");
+      if (manualLocation.trim()) {
+        setErrorMsg(`Couldn't find "${manualLocation}" — try a city name like "Plainview, NY" instead.`);
+      } else {
+        setErrorMsg("We couldn't figure out your location — try entering a city or ZIP code above.");
+      }
       setLoading(false);
       return;
     }

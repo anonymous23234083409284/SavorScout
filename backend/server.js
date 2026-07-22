@@ -5,29 +5,36 @@ const axios = require("axios");
 
 const OpenAI = require("openai");
 const { createClient } = require("@supabase/supabase-js");
-
- //  handles preflight requests
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:3000",
   "https://savor-scout-ugbv-two.vercel.app",
 ];
 
-
-
-//  allow EVERYTHING (temporary, for debugging)
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-}));
-
-app.options("/*", cors()); // ✅ ADD THIS
+// CORS must come before any routes. The `cors` package automatically
+// handles OPTIONS preflight requests for you — you do NOT need a manual
+// app.options(...) handler. (That was the actual bug: `app.options("/*", cors())`
+// throws at startup on newer Express/path-to-regexp versions, which was
+// crashing the server before it could even start listening — hence
+// "Couldn't reach the server" on the frontend.)
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow requests with no origin (like curl, Postman, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 console.log("CORS CONFIG LOADED");
 
@@ -52,6 +59,10 @@ if (!process.env.GOOGLE_PLACES_API_KEY) {
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
   console.warn("⚠️  SUPABASE_SERVICE_ROLE_KEY is missing from .env");
 }
+if (!process.env.SUPABASE_URL) {
+  console.warn("⚠️  SUPABASE_URL is missing from .env");
+}
+
 const MILES_TO_METERS = 1609.34;
 const SEARCH_RADIUS_MILES = 30;
 const CANDIDATE_POOL_SIZE = 20;
@@ -178,7 +189,6 @@ async function requireAuthAndLimit(req, res, next) {
 }
 
 app.post("/search", requireAuthAndLimit, async (req, res) => {
-  app.options("/search", cors());
   const userRequest = req.body.query;
   const userLat = req.body.lat;
   const userLng = req.body.lng;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
 
@@ -11,6 +11,10 @@ function App() {
   const [locStatus, setLocStatus] = useState("requesting"); // requesting | granted | denied
   const [manualLocation, setManualLocation] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
+  // Tracks whichever manualLocation string we last successfully geocoded, so
+  // resolveCoords can tell "user typed a new/changed location" apart from
+  // "same text as before, just reuse the coords we already have."
+  const lastGeocodedTextRef = useRef("");
 
   // --- Auth state ---
   const [user, setUser] = useState(null);
@@ -260,6 +264,16 @@ function App() {
       if (!res.ok) return null;
       const data = await res.json();
       if (typeof data.latitude !== "number" || typeof data.longitude !== "number") return null;
+      // IP-based geolocation is only ever an estimate, and it can be wrong by
+      // an entire country — mobile carriers, VPNs, and some ISPs use IP
+      // blocks that are registered somewhere far from where the request
+      // actually originates. That's almost certainly how a Hicksville/11803
+      // search ended up in the Dominican Republic. SavorScout only searches
+      // the US (see countrycodes=us below), so treat anything ipapi.co
+      // reports outside the US as a failed lookup rather than silently
+      // searching the wrong country — resolveCoords will fall through to
+      // asking the person to type their city or ZIP instead.
+      if (data.country_code && data.country_code !== "US") return null;
       return { lat: data.latitude, lng: data.longitude };
     } catch (err) {
       console.error("IP location lookup failed:", err);
@@ -267,29 +281,44 @@ function App() {
     }
   };
 
-  // Resolves coordinates in priority order: GPS already granted -> typed
-  // location -> IP address. If the user typed a location and it fails to
-  // geocode, we stop there and return null instead of silently falling back
-  // to IP — they gave us an explicit signal and we shouldn't override it.
+  // Resolves coordinates in priority order: freshly-typed location -> cached
+  // coords (GPS/IP/earlier manual entry) -> IP address.
+  //
+  // Previously this started with `if (coords) return coords;`, which meant
+  // that once ANY coords were cached — including a wrong IP-based guess —
+  // every later search just reused them forever. Typing a corrected ZIP
+  // into the manual box did nothing, because this function never looked at
+  // manualLocation again once coords existed. Now a manual location that's
+  // new or has changed is always re-geocoded first, so the person always has
+  // a working way to override a bad auto-detected location.
   const resolveCoords = async () => {
-    if (coords) return coords;
+    const typedLocation = manualLocation.trim();
 
-    setResolvingLocation(true);
-    try {
-      // Priority 1: user explicitly typed a location.
-      if (manualLocation.trim()) {
-        const geocoded = await geocodeManualLocation(manualLocation.trim());
+    if (typedLocation && typedLocation !== lastGeocodedTextRef.current) {
+      setResolvingLocation(true);
+      try {
+        const geocoded = await geocodeManualLocation(typedLocation);
         if (geocoded) {
+          lastGeocodedTextRef.current = typedLocation;
           setCoords(geocoded);
           setLocStatus("granted");
           return geocoded;
         }
-        // Typed something, but it didn't resolve — do NOT fall back to IP.
+        // Typed something, but it didn't resolve — do NOT fall back to IP;
+        // that would silently override what the user explicitly told us.
         return null;
+      } finally {
+        setResolvingLocation(false);
       }
+    }
 
-      // Priority 2: IP-based fallback — only reached if no manual location
-      // was typed (GPS was already handled by the `coords` check above).
+    // No new manual location to resolve — reuse cached coords if we have them.
+    if (coords) return coords;
+
+    setResolvingLocation(true);
+    try {
+      // Reached only when there's nothing typed and no cached coords yet
+      // (i.e. GPS wasn't granted) — fall back to IP-based estimation.
       const ipCoords = await getIpBasedLocation();
       if (ipCoords) {
         setCoords(ipCoords);
@@ -626,20 +655,24 @@ function App() {
           </p>
         )}
 
-        {locStatus === "denied" && (
-          <div className="manual-location">
-            <label htmlFor="manual-loc">📍 Location access is off — enter a city, ZIP, or neighborhood:</label>
-            <input
-              id="manual-loc"
-              type="text"
-              placeholder="e.g. Hicksville, NY or 11801"
-              value={manualLocation}
-              onChange={(e) => setManualLocation(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
+        <div className="manual-location">
+          <label htmlFor="manual-loc">
+            {locStatus === "denied"
+              ? "📍 Location access is off — enter a city, ZIP, or neighborhood:"
+              : "📍 Not seeing your area? Enter a city, ZIP, or neighborhood to fix it:"}
+          </label>
+          <input
+            id="manual-loc"
+            type="text"
+            placeholder="e.g. Hicksville, NY or 11801"
+            value={manualLocation}
+            onChange={(e) => setManualLocation(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          {locStatus === "denied" && (
             <span className="loc-hint">Leave this blank and we'll estimate your location from your connection instead.</span>
-          </div>
-        )}
+          )}
+        </div>
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
       </section>
 

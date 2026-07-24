@@ -212,9 +212,15 @@ function App() {
   // Turns free-text like "Hicksville, NY" or "11801" into coordinates.
   // Uses OpenStreetMap's free Nominatim geocoder (no API key required).
   const geocodeManualLocation = async (text) => {
-    try {
+    // Nominatim is flaky with bare ZIP codes on their own — a query of just
+    // "11803" can come back with zero matches even though it's a perfectly
+    // real ZIP, because its parser has nothing telling it what country to
+    // interpret a bare number in. `countrycodes=us` narrows the search to
+    // the US; appending ", USA" as a retry gives its free-text parser the
+    // extra context it needs to actually match a lone ZIP/city name.
+    const tryQuery = async (q) => {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(text)}`,
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(q)}`,
         {
           headers: {
             "User-Agent": "SavorScout/1.0 (your-email@example.com)",
@@ -228,6 +234,18 @@ function App() {
       const lng = parseFloat(data[0].lon);
       if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
       return { lat, lng };
+    };
+
+    try {
+      const direct = await tryQuery(text);
+      if (direct) return direct;
+
+      if (!/usa|united states/i.test(text)) {
+        const withCountry = await tryQuery(`${text}, USA`);
+        if (withCountry) return withCountry;
+      }
+
+      return null;
     } catch (err) {
       console.error("Geocoding failed:", err);
       return null;
@@ -298,7 +316,7 @@ function App() {
 
     if (!resolved) {
       if (manualLocation.trim()) {
-        setErrorMsg(`Couldn't find "${manualLocation}" — try a city name like "Plainview, NY" instead.`);
+        setErrorMsg(`Couldn't find "${manualLocation}" — try the format "City, State" or a 5-digit ZIP code.`);
       } else {
         setErrorMsg("We couldn't figure out your location — try entering a city or ZIP code above.");
       }

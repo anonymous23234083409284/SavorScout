@@ -11,6 +11,8 @@
   --text-cream: #f7efe4;
   --text-dim: #a89a8c;
   --err: #ff4757;
+  --winner-pink: #ff2e88;
+  --runner-teal: #2ee6d6;
 }
 
 * {
@@ -295,7 +297,7 @@ body {
   color: var(--err);
 }
 
-/* ---------- results (unchanged — kept exactly as the version you liked) ---------- */
+/* ---------- results ---------- */
 
 .results-section {
   position: relative;
@@ -343,7 +345,7 @@ body {
 }
 
 .result-card--winner {
-  border: 1px solid #ff2e88;
+  border: 1px solid var(--winner-pink);
   box-shadow: 0 0 30px rgba(255, 46, 136, 0.25), inset 0 0 0 1px rgba(255, 46, 136, 0.1);
   position: relative;
 }
@@ -363,27 +365,65 @@ body {
   100% { background-position: 0 100%; }
 }
 
-.result-photo {
+/* -- context banner: only the winner gets this, since it's the one claim
+   that needs backing up ("top match for X"), not decoration for its own
+   sake -- */
+
+.match-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 18px;
+  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-paprika) 70%);
   position: relative;
-  height: 220px;
-  background: #0d1219;
+  z-index: 1;
 }
 
-.result-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: saturate(1.05) contrast(1.05);
+.match-banner-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0a0e14;
 }
 
-.photo-fallback {
+.match-banner-query {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: rgba(10, 14, 20, 0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* -- hero visual: no product photos come back from the search API, so the
+   "hero image" is a data-driven visual instead — a category icon plus the
+   animated match-score badge -- */
+
+.result-hero-visual {
+  position: relative;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  font-size: 48px;
-  filter: grayscale(1) opacity(0.6);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 200, 87, 0.35), transparent 55%),
+    radial-gradient(circle at 75% 75%, rgba(255, 106, 61, 0.3), transparent 55%),
+    #0d1219;
+}
+
+.result-card:not(.result-card--winner) .result-hero-visual {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(46, 230, 214, 0.18), transparent 55%),
+    radial-gradient(circle at 75% 75%, rgba(124, 45, 107, 0.25), transparent 55%),
+    #0d1219;
+}
+
+.hero-visual-icon {
+  font-size: 64px;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
 }
 
 .rank-tag {
@@ -397,18 +437,53 @@ body {
   padding: 5px 10px;
   border-radius: 3px;
   backdrop-filter: blur(4px);
-}
-
-.result-card--winner .rank-tag {
-  background: rgba(255, 46, 136, 0.9);
-  color: #0a0e14;
-  font-weight: 600;
-}
-
-.result-card:not(.result-card--winner) .rank-tag {
   background: rgba(10, 14, 20, 0.8);
-  color: #2ee6d6;
+  color: var(--runner-teal);
   border: 1px solid rgba(46, 230, 214, 0.4);
+}
+
+.score-badge {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(10, 14, 20, 0.85);
+  border: 2px solid var(--winner-pink);
+  box-shadow: 0 0 18px rgba(255, 46, 136, 0.5);
+  backdrop-filter: blur(6px);
+  animation: badge-pop 0.4s ease;
+}
+
+.result-card:not(.result-card--winner) .score-badge {
+  border-color: var(--runner-teal);
+  box-shadow: 0 0 14px rgba(46, 230, 214, 0.4);
+}
+
+.score-badge-number {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-cream);
+  line-height: 1.1;
+}
+
+.score-badge-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .result-body {
@@ -425,7 +500,7 @@ body {
 .meta-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
   color: #8a96a3;
@@ -438,8 +513,16 @@ body {
   font-weight: 600;
 }
 
-.meta-row .price {
-  color: #2ee6d6;
+.meta-row .rating--new {
+  color: #8a96a3;
+  font-weight: 500;
+}
+
+.meta-row .category::before,
+.meta-row .distance::before {
+  content: "•";
+  color: #4a5568;
+  margin-right: 6px;
 }
 
 .address {
@@ -450,30 +533,82 @@ body {
   letter-spacing: 0.02em;
 }
 
-.review {
-  margin: 0;
-  padding: 12px 14px;
-  background: rgba(46, 230, 214, 0.05);
-  border-left: 2px solid #2ee6d6;
-  border-radius: 0 4px 4px 0;
+/* -- "why this won" chips: the winner's only job is to justify itself, so
+   this is the one place we spend the extra visual weight -- */
+
+.why-section {
+  margin: 4px 0 18px;
 }
 
-.review p {
-  font-size: 14px;
-  font-style: italic;
-  color: #c8d0da;
-  margin: 0 0 6px;
-  line-height: 1.5;
-}
-
-.review footer {
+.why-label {
+  display: block;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  color: #5a6472;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--winner-pink);
+  margin-bottom: 10px;
+}
+
+.why-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #c8d0da;
+  background: rgba(255, 46, 136, 0.08);
+  border: 1px solid rgba(255, 46, 136, 0.25);
+  padding: 6px 12px;
+  border-radius: 999px;
+  line-height: 1.3;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.action-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--runner-teal);
+  border: 1px solid rgba(46, 230, 214, 0.4);
+  padding: 8px 16px;
+  border-radius: 999px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.action-btn:hover {
+  background: rgba(46, 230, 214, 0.12);
+  transform: translateY(-1px);
+}
+
+.action-btn--primary {
+  color: #0a0e14;
+  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-saffron) 80%);
+  border-color: transparent;
+}
+
+.action-btn--primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 .map-embed {
-  margin-top: 16px;
+  margin-top: 4px;
   border: 1px solid rgba(46, 230, 214, 0.2);
   border-radius: 8px;
   overflow: hidden;
@@ -565,7 +700,8 @@ footer {
 
 @media (prefers-reduced-motion: reduce) {
   .result-card--winner::after,
-  .hero::before {
+  .hero::before,
+  .score-badge {
     animation: none;
   }
   .result-card {

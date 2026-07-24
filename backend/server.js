@@ -17,10 +17,7 @@ const allowedOrigins = [
 
 // CORS must come before any routes. The `cors` package automatically
 // handles OPTIONS preflight requests for you — you do NOT need a manual
-// app.options(...) handler. (That was the actual bug: `app.options("/*", cors())`
-// throws at startup on newer Express/path-to-regexp versions, which was
-// crashing the server before it could even start listening — hence
-// "Couldn't reach the server" on the frontend.)
+// app.options(...) handler.
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -53,8 +50,8 @@ const supabaseAdmin = createClient(
 if (!process.env.OPENAI_API_KEY) {
   console.warn("⚠️  OPENAI_API_KEY is missing from .env");
 }
-if (!process.env.GOOGLE_PLACES_API_KEY) {
-  console.warn("⚠️  GOOGLE_PLACES_API_KEY is missing from .env");
+if (!process.env.SERPER_API_KEY) {
+  console.warn("⚠️  SERPER_API_KEY is missing from .env");
 }
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
   console.warn("⚠️  SUPABASE_SERVICE_ROLE_KEY is missing from .env");
@@ -63,40 +60,51 @@ if (!process.env.SUPABASE_URL) {
   console.warn("⚠️  SUPABASE_URL is missing from .env");
 }
 
-const MILES_TO_METERS = 1609.34;
-const SEARCH_RADIUS_MILES = 30;
 const CANDIDATE_POOL_SIZE = 20;
-const DETAILS_FETCH_COUNT = 3;
 const FINAL_RESULT_COUNT = 2;
 const DAILY_SEARCH_LIMIT = 5;
+const EARTH_RADIUS_MILES = 3958.8;
 
-// Turns a named place ("New Brunswick, NJ") into real coordinates, so we
-// can explicitly bias toward it. Without this, Google's Text Search API
-// can fall back to biasing on the server's own IP address even when a
-// location is named in the query text — which was the actual bug.
-async function geocodeLocation(locationText) {
+// --- Serper.dev integration ---------------------------------------------
+//
+// Serper's Places endpoint (https://google.serper.dev/places) takes a
+// free-text `location` (a city/neighborhood name), not raw coordinates —
+// so when the user hasn't named a specific place, we reverse-geocode their
+// lat/lng into a location string first. This reuses the same free
+// Nominatim service the frontend already uses for forward-geocoding, so no
+// extra API key is needed.
+async function reverseGeocodeToLocationName(lat, lng) {
   try {
-    const response = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
-      params: {
-        address: locationText,
-        key: process.env.GOOGLE_PLACES_API_KEY,
-      },
+    const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+      params: { format: "json", lat, lon: lng, zoom: 12 },
+      headers: { "User-Agent": "SavorScout/1.0 (your-email@example.com)" },
     });
 
-    const result = response.data.results?.[0];
-    if (!result) {
-      console.warn(`Geocoding found no match for "${locationText}"`);
-      return null;
-    }
+    const address = response.data?.address;
+    if (!address) return null;
 
-    return {
-      lat: result.geometry.location.lat,
-      lng: result.geometry.location.lng,
-    };
+    const place = address.city || address.town || address.village || address.suburb || address.county;
+    if (!place) return null;
+
+    return address.state ? `${place}, ${address.state}` : place;
   } catch (err) {
-    console.error("Geocoding error:", err.response?.data || err.message);
+    console.error("Reverse geocoding error:", err.response?.data || err.message);
     return null;
   }
+}
+
+// Straight-line distance in miles between two coordinates (haversine).
+// Serper's Places results don't come back with a distance field, but they
+// do give us lat/lng per place, so we compute it ourselves — this also
+// powers the "X mi away" chip on the hero card.
+function distanceInMiles(lat1, lng1, lat2, lng2) {
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 app.get("/", (req, res) => {
@@ -232,150 +240,102 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
   }
 
   let candidates;
+  let locationName;
   try {
     const namedLocation = preferences.location?.trim();
+    locationName = namedLocation || (await reverseGeocodeToLocationName(userLat, userLng));
 
     const textQuery =
-      [preferences.dish, preferences.cuisine, namedLocation, "restaurants"]
-        .filter(Boolean)
-        .join(" ")
-        .trim() || "restaurants";
+      [preferences.dish, preferences.cuisine, "restaurants"].filter(Boolean).join(" ").trim() ||
+      "restaurants";
 
-    const requestBody = {
-      textQuery,
-      maxResultCount: CANDIDATE_POOL_SIZE,
+    const serperBody = {
+      q: textQuery,
+      gl: "us",
+      num: CANDIDATE_POOL_SIZE,
     };
+    if (locationName) serperBody.location = locationName;
 
-    if (namedLocation) {
-      // Explicitly geocode the named place and bias toward it — this
-      // overrides Google's own implicit IP-based fallback bias, which was
-      // pulling results back toward the server's actual location even when
-      // a different place was clearly named in the query.
-      const geocoded = await geocodeLocation(namedLocation);
-      if (geocoded) {
-        requestBody.locationBias = {
-          circle: {
-            center: { latitude: geocoded.lat, longitude: geocoded.lng },
-            radius: SEARCH_RADIUS_MILES * MILES_TO_METERS,
-          },
-        };
-      }
-      // If geocoding fails, we still have the location name inside
-      // textQuery itself, so the search can still work — just without our
-      // explicit override.
-    } else {
-      requestBody.locationBias = {
-        circle: {
-          center: { latitude: userLat, longitude: userLng },
-          radius: SEARCH_RADIUS_MILES * MILES_TO_METERS,
-        },
-      };
-    }
+    const serperResponse = await axios.post("https://google.serper.dev/places", serperBody, {
+      headers: {
+        "X-API-KEY": process.env.SERPER_API_KEY,
+        "Content-Type": "application/json",
+      },
+    });
 
-    const placesResponse = await axios.post(
-      "https://places.googleapis.com/v1/places:searchText",
-      requestBody,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": process.env.GOOGLE_PLACES_API_KEY,
-          "X-Goog-FieldMask":
-            "places.id,places.displayName,places.rating,places.userRatingCount,places.formattedAddress,places.priceLevel,places.location",
-        },
-      }
-    );
-
-    candidates = placesResponse.data.places || [];
-    console.log(`Got ${candidates.length} candidates from Places search`);
+    candidates = serperResponse.data.places || [];
+    console.log(`Got ${candidates.length} candidates from Serper Places search (location: ${locationName || "none"})`);
   } catch (error) {
     const detail = error.response?.data || error.message;
-    console.error("Google Places search error:", detail);
-    return res.status(500).json({ error: "Failed to search Google Places", detail });
+    console.error("Serper Places search error:", detail);
+    return res.status(500).json({ error: "Failed to search Serper Places", detail });
   }
 
   if (candidates.length === 0) {
-    return res.json({ preferences, restaurants: [], searchesRemaining: DAILY_SEARCH_LIMIT - req.currentSearchCount - 1 });
+    return res.json({
+      preferences,
+      locationName,
+      restaurants: [],
+      searchesRemaining: DAILY_SEARCH_LIMIT - req.currentSearchCount - 1,
+    });
   }
 
   const GLOBAL_AVERAGE = 4.2;
   const CONFIDENCE_WEIGHT = 10;
 
+  const dishKeyword = preferences.dish?.trim().toLowerCase();
+  const cuisineKeyword = preferences.cuisine?.trim().toLowerCase();
+
   const scored = candidates
-    .filter((p) => typeof p.rating === "number")
+    .filter((p) => typeof p.latitude === "number" && typeof p.longitude === "number")
     .map((p) => {
-      const reviewCount = p.userRatingCount || 0;
+      const rating = typeof p.rating === "number" ? p.rating : null;
+      const reviewCount = p.ratingCount || 0;
+
+      // Same Bayesian-average approach as before: a 5.0 with 2 reviews
+      // shouldn't outrank a 4.6 with 800 reviews. Places with no rating at
+      // all get a mild penalty rather than being thrown out entirely.
       const bayesianScore =
-        (CONFIDENCE_WEIGHT * GLOBAL_AVERAGE + reviewCount * p.rating) / (CONFIDENCE_WEIGHT + reviewCount);
-      return { ...p, _score: bayesianScore };
+        rating !== null
+          ? (CONFIDENCE_WEIGHT * GLOBAL_AVERAGE + reviewCount * rating) / (CONFIDENCE_WEIGHT + reviewCount)
+          : GLOBAL_AVERAGE * 0.85;
+
+      const distance = distanceInMiles(userLat, userLng, p.latitude, p.longitude);
+
+      const haystack = `${p.title} ${p.type || ""} ${(p.types || []).join(" ")} ${p.description || ""}`.toLowerCase();
+      const matchedDish = dishKeyword && haystack.includes(dishKeyword) ? preferences.dish.trim() : null;
+      const matchedCuisine =
+        !matchedDish && cuisineKeyword && haystack.includes(cuisineKeyword) ? preferences.cuisine.trim() : null;
+
+      // 0-100 "match score" that powers the hero badge: rating quality
+      // (0-55) + how well it matches what was actually asked for (0-30) +
+      // how close it is (0-15).
+      const ratingComponent = (bayesianScore / 5) * 55;
+      const keywordComponent = matchedDish ? 30 : matchedCuisine ? 18 : 0;
+      const proximityComponent = Math.max(0, 15 - distance * 2.5);
+      const matchScore = Math.round(Math.min(100, ratingComponent + keywordComponent + proximityComponent));
+
+      return {
+        id: p.placeId || p.cid,
+        name: p.title,
+        rating,
+        reviewCount,
+        address: p.address || "",
+        category: p.type || (p.types && p.types[0]) || null,
+        website: p.website || null,
+        phone: p.phoneNumber || null,
+        lat: p.latitude,
+        lng: p.longitude,
+        distanceMiles: Math.round(distance * 10) / 10,
+        matchedDish,
+        matchedCuisine,
+        matchScore,
+        _rank: bayesianScore + keywordComponent / 10,
+      };
     })
-    .sort((a, b) => b._score - a._score);
+    .sort((a, b) => b._rank - a._rank);
 
-  const topCandidates = scored.slice(0, DETAILS_FETCH_COUNT);
-
-  let detailed;
-  try {
-    detailed = await Promise.all(
-      topCandidates.map(async (place) => {
-        try {
-          const detailsResponse = await axios.get(`https://places.googleapis.com/v1/places/${place.id}`, {
-            headers: {
-              "X-Goog-Api-Key": process.env.GOOGLE_PLACES_API_KEY,
-              "X-Goog-FieldMask": "photos,reviews",
-            },
-          });
-
-          const photoName = detailsResponse.data.photos?.[0]?.name;
-          const photoUrl = photoName
-            ? `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=800&key=${process.env.GOOGLE_PLACES_API_KEY}`
-            : null;
-
-          const reviews = detailsResponse.data.reviews || [];
-          const bestReview =
-            reviews.find((r) => r.rating === 5 && r.text?.text) ||
-            reviews.sort((a, b) => (b.rating || 0) - (a.rating || 0))[0] ||
-            null;
-
-          return {
-            id: place.id,
-            name: place.displayName?.text || "Unknown",
-            rating: place.rating ?? "N/A",
-            reviewCount: place.userRatingCount || 0,
-            address: place.formattedAddress || "",
-            priceLevel: place.priceLevel || null,
-            lat: place.location?.latitude,
-            lng: place.location?.longitude,
-            photoUrl,
-            review: bestReview
-              ? {
-                  authorName: bestReview.authorAttribution?.displayName || "Anonymous",
-                  rating: bestReview.rating,
-                  text: bestReview.text?.text || "",
-                }
-              : null,
-          };
-        } catch (err) {
-          console.error(`Details fetch failed for ${place.id}:`, err.response?.data || err.message);
-          return {
-            id: place.id,
-            name: place.displayName?.text || "Unknown",
-            rating: place.rating ?? "N/A",
-            reviewCount: place.userRatingCount || 0,
-            address: place.formattedAddress || "",
-            priceLevel: place.priceLevel || null,
-            lat: place.location?.latitude,
-            lng: place.location?.longitude,
-            photoUrl: null,
-            review: null,
-          };
-        }
-      })
-    );
-  } catch (error) {
-    console.error("Details batch error:", error.message);
-    return res.status(500).json({ error: "Failed to fetch restaurant details", detail: error.message });
-  }
-
-  const topTwo = detailed.slice(0, FINAL_RESULT_COUNT);
+  const topTwo = scored.slice(0, FINAL_RESULT_COUNT).map(({ _rank, ...rest }) => rest);
 
   const newCount = req.currentSearchCount + 1;
   const { error: updateError } = await supabaseAdmin
@@ -391,6 +351,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
   return res.json({
     preferences,
+    locationName,
     restaurants: topTwo,
     searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
   });

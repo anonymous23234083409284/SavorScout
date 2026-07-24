@@ -2,6 +2,105 @@ import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
 
+// --- Hero card helpers -----------------------------------------------------
+
+// Maps a Serper "category" (or the restaurant name, as a fallback) to a
+// single representative emoji for the hero visual, since Serper's Places
+// endpoint doesn't return photos.
+const CATEGORY_ICONS = [
+  { match: /taco|mexican/i, icon: "🌮" },
+  { match: /pizza|italian/i, icon: "🍕" },
+  { match: /sushi|japanese/i, icon: "🍣" },
+  { match: /burger/i, icon: "🍔" },
+  { match: /wings|fried chicken|chicken/i, icon: "🍗" },
+  { match: /ramen|noodle|pho|thai|vietnamese/i, icon: "🍜" },
+  { match: /coffee|cafe|café/i, icon: "☕" },
+  { match: /dessert|bakery|ice cream|donut/i, icon: "🍰" },
+  { match: /indian|curry/i, icon: "🍛" },
+  { match: /bar|pub|brewery/i, icon: "🍻" },
+  { match: /seafood/i, icon: "🦐" },
+  { match: /steak|bbq|barbecue/i, icon: "🥩" },
+];
+
+function categoryEmoji(category, name) {
+  const haystack = `${category || ""} ${name || ""}`;
+  const found = CATEGORY_ICONS.find((entry) => entry.match.test(haystack));
+  return found ? found.icon : "🍽️";
+}
+
+// Builds the "Why this won" chip list from whatever real data we have —
+// rating/review volume, distance, and a matched dish or cuisine keyword.
+function buildChips(restaurant) {
+  const chips = [];
+
+  if (typeof restaurant.rating === "number") {
+    chips.push({
+      icon: "⭐",
+      text: `${restaurant.rating.toFixed(1)}★ local rating${
+        restaurant.reviewCount ? ` (${restaurant.reviewCount.toLocaleString()} reviews)` : ""
+      }`,
+    });
+  } else {
+    chips.push({ icon: "🆕", text: "Not yet widely rated" });
+  }
+
+  if (typeof restaurant.distanceMiles === "number") {
+    chips.push({ icon: "📍", text: `${restaurant.distanceMiles} mi away` });
+  }
+
+  if (restaurant.matchedDish) {
+    chips.push({ icon: "🎯", text: `Matches your craving for "${restaurant.matchedDish}"` });
+  } else if (restaurant.matchedCuisine) {
+    chips.push({ icon: "🍽", text: `${restaurant.matchedCuisine} spot` });
+  } else if (restaurant.category) {
+    chips.push({ icon: "🏷", text: restaurant.category });
+  }
+
+  return chips;
+}
+
+// Small self-contained component so the match score counts up from 0 on
+// mount instead of just appearing — respects prefers-reduced-motion.
+function AnimatedScore({ value }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (typeof value !== "number") return undefined;
+
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      setDisplayValue(value);
+      return undefined;
+    }
+
+    let frame;
+    const duration = 900;
+    const start = performance.now();
+
+    const tick = (now) => {
+      const progress = Math.min(1, (now - start) / duration);
+      setDisplayValue(Math.round(value * progress));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  if (typeof value !== "number") return null;
+
+  return (
+    <div className="score-badge">
+      <span className="score-badge-number">{displayValue}%</span>
+      <span className="score-badge-label">match</span>
+    </div>
+  );
+}
+
 function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -267,12 +366,11 @@ function App() {
       // IP-based geolocation is only ever an estimate, and it can be wrong by
       // an entire country — mobile carriers, VPNs, and some ISPs use IP
       // blocks that are registered somewhere far from where the request
-      // actually originates. That's almost certainly how a Hicksville/11803
-      // search ended up in the Dominican Republic. SavorScout only searches
-      // the US (see countrycodes=us below), so treat anything ipapi.co
-      // reports outside the US as a failed lookup rather than silently
-      // searching the wrong country — resolveCoords will fall through to
-      // asking the person to type their city or ZIP instead.
+      // actually originates. SavorScout only searches the US (see
+      // countrycodes=us above), so treat anything ipapi.co reports outside
+      // the US as a failed lookup rather than silently searching the wrong
+      // country — resolveCoords will fall through to asking the person to
+      // type their city or ZIP instead.
       if (data.country_code && data.country_code !== "US") return null;
       return { lat: data.latitude, lng: data.longitude };
     } catch (err) {
@@ -403,18 +501,6 @@ function App() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
-  };
-
-
-  const priceLabel = (level) => {
-    const map = {
-      PRICE_LEVEL_FREE: "Free",
-      PRICE_LEVEL_INEXPENSIVE: "$",
-      PRICE_LEVEL_MODERATE: "$$",
-      PRICE_LEVEL_EXPENSIVE: "$$$",
-      PRICE_LEVEL_VERY_EXPENSIVE: "$$$$",
-    };
-    return map[level] || null;
   };
 
 
@@ -680,67 +766,103 @@ function App() {
       <section className="results-section">
         {results.length > 0 ? (
           <div className="verdict">
-            {results.slice(0, 2).map((restaurant, index) => (
-              <article
-                className={index === 0 ? "result-card result-card--winner" : "result-card"}
-                key={restaurant.id || index}
-              >
-                <div className="result-photo">
-                  {restaurant.photoUrl ? (
-                    <img src={restaurant.photoUrl} alt={restaurant.name} />
-                  ) : (
-                    <div className="photo-fallback">🍽️</div>
-                  )}
-                  <span className="rank-tag">{index === 0 ? "Top pick" : "Runner-up"}</span>
-                </div>
+            {results.slice(0, 2).map((restaurant, index) => {
+              const isWinner = index === 0;
+              const chips = buildChips(restaurant);
 
-
-                <div className="result-body">
-                  <h2>{restaurant.name}</h2>
-
-
-                  <div className="meta-row">
-                    <span className="rating">
-                      ★ {typeof restaurant.rating === "number" ? restaurant.rating.toFixed(1) : restaurant.rating}
-                    </span>
-                    {restaurant.reviewCount > 0 && (
-                      <span className="review-count">({restaurant.reviewCount.toLocaleString()} reviews)</span>
-                    )}
-                    {priceLabel(restaurant.priceLevel) && (
-                      <span className="price">{priceLabel(restaurant.priceLevel)}</span>
-                    )}
-                  </div>
-
-
-                  <p className="address">{restaurant.address}</p>
-
-
-                  {restaurant.review && (
-                    <blockquote className="review">
-                      <p>"{restaurant.review.text}"</p>
-                      <footer>
-                        — {restaurant.review.authorName}, {restaurant.review.rating}★
-                      </footer>
-                    </blockquote>
-                  )}
-
-
-                  {restaurant.lat && restaurant.lng && (
-                    <div className="map-embed">
-                      <iframe
-                        title={`Map showing ${restaurant.name}`}
-                        width="100%"
-                        height="180"
-                        style={{ border: 0, borderRadius: "12px" }}
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        src={`https://www.google.com/maps?q=${restaurant.lat},${restaurant.lng}&z=15&output=embed`}
-                      />
+              return (
+                <article
+                  className={isWinner ? "result-card result-card--winner" : "result-card"}
+                  key={restaurant.id || index}
+                >
+                  {isWinner && (
+                    <div className="match-banner">
+                      <span className="match-banner-tag">Top match</span>
+                      {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
                     </div>
                   )}
-                </div>
-              </article>
-            ))}
+
+                  <div className="result-hero-visual">
+                    <span className="hero-visual-icon" aria-hidden="true">
+                      {categoryEmoji(restaurant.category, restaurant.name)}
+                    </span>
+                    {!isWinner && <span className="rank-tag">Runner-up</span>}
+                    <AnimatedScore value={restaurant.matchScore} />
+                  </div>
+
+                  <div className="result-body">
+                    <h2>{restaurant.name}</h2>
+
+                    <div className="meta-row">
+                      {typeof restaurant.rating === "number" ? (
+                        <span className="rating">★ {restaurant.rating.toFixed(1)}</span>
+                      ) : (
+                        <span className="rating rating--new">New</span>
+                      )}
+                      {restaurant.reviewCount > 0 && (
+                        <span className="review-count">({restaurant.reviewCount.toLocaleString()} reviews)</span>
+                      )}
+                      {restaurant.category && <span className="category">{restaurant.category}</span>}
+                      {typeof restaurant.distanceMiles === "number" && (
+                        <span className="distance">{restaurant.distanceMiles} mi</span>
+                      )}
+                    </div>
+
+                    {restaurant.address && <p className="address">{restaurant.address}</p>}
+
+                    {isWinner && chips.length > 0 && (
+                      <div className="why-section">
+                        <span className="why-label">Why this won</span>
+                        <div className="why-chips">
+                          {chips.map((chip, i) => (
+                            <span className="chip" key={i}>
+                              <span aria-hidden="true">{chip.icon}</span> {chip.text}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="action-row">
+                      {restaurant.phone && (
+                        <a className="action-btn" href={`tel:${restaurant.phone}`}>
+                          Call
+                        </a>
+                      )}
+                      {restaurant.website && (
+                        <a className="action-btn" href={restaurant.website} target="_blank" rel="noreferrer">
+                          Website
+                        </a>
+                      )}
+                      {restaurant.lat && restaurant.lng && (
+                        <a
+                          className="action-btn action-btn--primary"
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${restaurant.lat},${restaurant.lng}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Directions
+                        </a>
+                      )}
+                    </div>
+
+                    {restaurant.lat && restaurant.lng && (
+                      <div className="map-embed">
+                        <iframe
+                          title={`Map showing ${restaurant.name}`}
+                          width="100%"
+                          height="180"
+                          style={{ border: 0, borderRadius: "12px" }}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          src={`https://www.google.com/maps?q=${restaurant.lat},${restaurant.lng}&z=15&output=embed`}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         ) : (
           <p className="empty-state">Tell us what you're craving above, and we'll find the best two spots nearby.</p>

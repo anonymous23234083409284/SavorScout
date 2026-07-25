@@ -60,10 +60,16 @@ if (!process.env.SUPABASE_URL) {
   console.warn("⚠️  SUPABASE_URL is missing from .env");
 }
 
-const CANDIDATE_POOL_SIZE = 20;
-const FINAL_RESULT_COUNT = 2;
+// Aim for a pool this big before ranking. Google's local pack won't always
+// have this many legitimate results in a given area — see fetchCandidatePool
+// below — but a bigger honest pool means the ranking algorithm has more to
+// actually choose between.
+const CANDIDATE_POOL_SIZE = 35;
+const MAX_PAGES = 2; // cap extra API calls spent chasing the pool size
+const FINAL_RESULT_COUNT = 1;
 const DAILY_SEARCH_LIMIT = 5;
 const EARTH_RADIUS_MILES = 3958.8;
+const PROXIMITY_DECAY_MILES = 4; // distance at which the proximity score has decayed to ~37%
 
 // --- Serper.dev integration ---------------------------------------------
 //
@@ -95,8 +101,7 @@ async function reverseGeocodeToLocationName(lat, lng) {
 
 // Straight-line distance in miles between two coordinates (haversine).
 // Serper's Places results don't come back with a distance field, but they
-// do give us lat/lng per place, so we compute it ourselves — this also
-// powers the "X mi away" chip on the hero card.
+// do give us lat/lng per place, so we compute it ourselves.
 function distanceInMiles(lat1, lng1, lat2, lng2) {
   const toRad = (deg) => (deg * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
@@ -105,6 +110,84 @@ function distanceInMiles(lat1, lng1, lat2, lng2) {
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Pulls up to CANDIDATE_POOL_SIZE unique places from Serper, paging for more
+// if the first page looks like it might not be the whole story. Stops early
+// once a page comes back thin — that's a signal the area is just out of
+// results, and a second page would burn an API credit for nothing.
+async function fetchCandidatePool({ textQuery, locationName }) {
+  const fetchPage = async (page) => {
+    const body = {
+      q: textQuery,
+      gl: "us",
+      num: CANDIDATE_POOL_SIZE,
+    };
+    if (locationName) body.location = locationName;
+    if (page > 1) body.page = page;
+
+    const response = await axios.post("https://google.serper.dev/places", body, {
+      headers: {
+        "X-API-KEY": process.env.SERPER_API_KEY,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.places || [];
+  };
+
+  const seen = new Map();
+  let page = 1;
+  let lastBatchSize = 0;
+
+  while (page <= MAX_PAGES && seen.size < CANDIDATE_POOL_SIZE) {
+    const batch = await fetchPage(page);
+    lastBatchSize = batch.length;
+    if (batch.length === 0) break;
+
+    for (const place of batch) {
+      const key = place.placeId || place.cid || `${place.title}-${place.latitude}-${place.longitude}`;
+      if (!seen.has(key)) seen.set(key, place);
+    }
+
+    if (batch.length < 10) break; // thin page — more paging won't help
+    page += 1;
+  }
+
+  return { places: Array.from(seen.values()), pagesFetched: page > MAX_PAGES ? MAX_PAGES : page, lastBatchSize };
+}
+
+// Normalizes a list of raw numeric feature values to 0-1 via min-max scaling,
+// so each signal is judged relative to the actual pool pulled for THIS
+// search, not against an arbitrary fixed scale.
+function minMaxNormalize(values) {
+  const finite = values.filter((v) => typeof v === "number" && Number.isFinite(v));
+  if (finite.length === 0) return values.map(() => 0);
+  const min = Math.min(...finite);
+  const max = Math.max(...finite);
+  if (max === min) return values.map(() => 1); // everyone's tied — don't penalize anyone
+  return values.map((v) => (typeof v === "number" && Number.isFinite(v) ? (v - min) / (max - min) : 0));
+}
+
+// How well a candidate matches what the user actually asked for, on a 0-1
+// scale. This is the gate — see the ranking pipeline below — so a mediocre
+// place that serves the right dish should still be able to beat a great
+// place that doesn't serve it at all.
+function computeRelevance(place, dishKeyword, cuisineKeyword) {
+  if (!dishKeyword && !cuisineKeyword) return 0.5; // no specific ask — neutral, let quality/proximity decide
+
+  const haystack = `${place.title || ""} ${place.type || ""} ${(place.types || []).join(" ")} ${place.description || ""}`.toLowerCase();
+
+  if (dishKeyword) {
+    if (haystack.includes(dishKeyword)) return 1;
+    // Multi-word dish ("pork belly tacos") — partial credit for hitting any
+    // one significant word ("tacos") even without the exact full phrase.
+    const dishWords = dishKeyword.split(/\s+/).filter((w) => w.length > 3);
+    if (dishWords.some((w) => haystack.includes(w))) return 0.6;
+  }
+
+  if (cuisineKeyword && haystack.includes(cuisineKeyword)) return 0.5;
+
+  return 0;
 }
 
 app.get("/", (req, res) => {
@@ -249,22 +332,13 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       [preferences.dish, preferences.cuisine, "restaurants"].filter(Boolean).join(" ").trim() ||
       "restaurants";
 
-    const serperBody = {
-      q: textQuery,
-      gl: "us",
-      num: CANDIDATE_POOL_SIZE,
-    };
-    if (locationName) serperBody.location = locationName;
+    const { places, pagesFetched, lastBatchSize } = await fetchCandidatePool({ textQuery, locationName });
+    candidates = places;
 
-    const serperResponse = await axios.post("https://google.serper.dev/places", serperBody, {
-      headers: {
-        "X-API-KEY": process.env.SERPER_API_KEY,
-        "Content-Type": "application/json",
-      },
-    });
-
-    candidates = serperResponse.data.places || [];
-    console.log(`Got ${candidates.length} candidates from Serper Places search (location: ${locationName || "none"})`);
+    console.log(
+      `Got ${candidates.length} unique candidates from Serper Places ` +
+        `(location: ${locationName || "none"}, pages fetched: ${pagesFetched}, last page size: ${lastBatchSize})`
+    );
   } catch (error) {
     const detail = error.response?.data || error.message;
     console.error("Serper Places search error:", detail);
@@ -286,56 +360,91 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
   const dishKeyword = preferences.dish?.trim().toLowerCase();
   const cuisineKeyword = preferences.cuisine?.trim().toLowerCase();
 
-  const scored = candidates
+  // --- Stage 1: raw per-candidate features -------------------------------
+  const withFeatures = candidates
     .filter((p) => typeof p.latitude === "number" && typeof p.longitude === "number")
     .map((p) => {
       const rating = typeof p.rating === "number" ? p.rating : null;
       const reviewCount = p.ratingCount || 0;
 
-      // Same Bayesian-average approach as before: a 5.0 with 2 reviews
-      // shouldn't outrank a 4.6 with 800 reviews. Places with no rating at
-      // all get a mild penalty rather than being thrown out entirely.
-      const bayesianScore =
+      // Bayesian average: a 5.0 with 2 reviews shouldn't outrank a 4.6 with
+      // 800 reviews. Unrated places get a mild penalty instead of being
+      // thrown out entirely — being new isn't the same as being bad.
+      const bayesianRating =
         rating !== null
           ? (CONFIDENCE_WEIGHT * GLOBAL_AVERAGE + reviewCount * rating) / (CONFIDENCE_WEIGHT + reviewCount)
           : GLOBAL_AVERAGE * 0.85;
 
       const distance = distanceInMiles(userLat, userLng, p.latitude, p.longitude);
+      const proximity = Math.exp(-distance / PROXIMITY_DECAY_MILES); // smooth 0-1 decay, no hard cliff
+
+      const relevance = computeRelevance(p, dishKeyword, cuisineKeyword);
+      const dataTrust = (p.website ? 0.5 : 0) + (p.phoneNumber ? 0.5 : 0); // a findable, contactable business
 
       const haystack = `${p.title} ${p.type || ""} ${(p.types || []).join(" ")} ${p.description || ""}`.toLowerCase();
       const matchedDish = dishKeyword && haystack.includes(dishKeyword) ? preferences.dish.trim() : null;
       const matchedCuisine =
         !matchedDish && cuisineKeyword && haystack.includes(cuisineKeyword) ? preferences.cuisine.trim() : null;
 
-      // 0-100 "match score" that powers the hero badge: rating quality
-      // (0-55) + how well it matches what was actually asked for (0-30) +
-      // how close it is (0-15).
-      const ratingComponent = (bayesianScore / 5) * 55;
-      const keywordComponent = matchedDish ? 30 : matchedCuisine ? 18 : 0;
-      const proximityComponent = Math.max(0, 15 - distance * 2.5);
-      const matchScore = Math.round(Math.min(100, ratingComponent + keywordComponent + proximityComponent));
+      return { place: p, rating, reviewCount, bayesianRating, distance, proximity, relevance, dataTrust, matchedDish, matchedCuisine };
+    });
 
-      return {
-        id: p.placeId || p.cid,
-        name: p.title,
-        rating,
-        reviewCount,
-        address: p.address || "",
-        category: p.type || (p.types && p.types[0]) || null,
-        website: p.website || null,
-        phone: p.phoneNumber || null,
-        lat: p.latitude,
-        lng: p.longitude,
-        distanceMiles: Math.round(distance * 10) / 10,
-        matchedDish,
-        matchedCuisine,
-        matchScore,
-        _rank: bayesianScore + keywordComponent / 10,
-      };
-    })
-    .sort((a, b) => b._rank - a._rank);
+  // --- Stage 2: relevance gate --------------------------------------------
+  // If the user asked for something specific, only candidates that actually
+  // match it are allowed to compete for the win. Falls back to the full
+  // pool if that gate would leave fewer than 2 places to compare (better to
+  // show an imperfect match than nothing).
+  const wantsSomethingSpecific = Boolean(dishKeyword || cuisineKeyword);
+  const relevantOnly = withFeatures.filter((c) => c.relevance > 0);
+  const pool = wantsSomethingSpecific && relevantOnly.length >= 2 ? relevantOnly : withFeatures;
 
-  const topTwo = scored.slice(0, FINAL_RESULT_COUNT).map(({ _rank, ...rest }) => rest);
+  // --- Stage 3: normalize each feature across this pool, then combine ----
+  // Normalizing per-search (not against a fixed 0-5 or 0-100 scale) is what
+  // makes this comparative: a score reflects how a place stacks up against
+  // everything else actually found for this exact search.
+  const ratingNorm = minMaxNormalize(pool.map((c) => c.bayesianRating));
+  const relevanceNorm = minMaxNormalize(pool.map((c) => c.relevance));
+  const proximityNorm = minMaxNormalize(pool.map((c) => c.proximity));
+  const trustNorm = minMaxNormalize(pool.map((c) => c.dataTrust));
+
+  const WEIGHTS = { rating: 0.4, relevance: 0.35, proximity: 0.18, trust: 0.07 };
+
+  const ranked = pool
+    .map((c, i) => ({
+      ...c,
+      composite:
+        WEIGHTS.rating * ratingNorm[i] +
+        WEIGHTS.relevance * relevanceNorm[i] +
+        WEIGHTS.proximity * proximityNorm[i] +
+        WEIGHTS.trust * trustNorm[i],
+    }))
+    .sort((a, b) => b.composite - a.composite);
+
+  const compositeNorm = minMaxNormalize(ranked.map((c) => c.composite));
+
+  // --- Stage 4: the winner is whichever candidate has the best composite --
+  const winner = ranked[0];
+  const finalPicks = [winner].filter(Boolean).slice(0, FINAL_RESULT_COUNT);
+
+  const topPicks = finalPicks.map((c) => {
+    const i = ranked.indexOf(c);
+    return {
+      id: c.place.placeId || c.place.cid,
+      name: c.place.title,
+      rating: c.rating,
+      reviewCount: c.reviewCount,
+      address: c.place.address || "",
+      category: c.place.type || (c.place.types && c.place.types[0]) || null,
+      website: c.place.website || null,
+      phone: c.place.phoneNumber || null,
+      lat: c.place.latitude,
+      lng: c.place.longitude,
+      distanceMiles: Math.round(c.distance * 10) / 10,
+      matchedDish: c.matchedDish,
+      matchedCuisine: c.matchedCuisine,
+      matchScore: Math.round(compositeNorm[i] * 100),
+    };
+  });
 
   const newCount = req.currentSearchCount + 1;
   const { error: updateError } = await supabaseAdmin
@@ -347,12 +456,16 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     console.error("Failed to update search count:", updateError);
   }
 
-  console.log("FINAL RETURN:", topTwo.length, topTwo.map((r) => r.name));
+  console.log(
+    `FINAL RETURN: ranked ${ranked.length} of ${candidates.length} candidates ` +
+      `(gate applied: ${pool !== withFeatures}), returning`,
+    topPicks.map((r) => `${r.name} (${r.matchScore}%)`)
+  );
 
   return res.json({
     preferences,
     locationName,
-    restaurants: topTwo,
+    restaurants: topPicks,
     searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
   });
 });

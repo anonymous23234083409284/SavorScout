@@ -482,11 +482,11 @@ function App() {
         setErrorMsg(data.error || "Something went wrong.");
         setResults([]);
       } else if (!data.restaurants || data.restaurants.length === 0) {
-        setErrorMsg("No matches found nearby — try a different craving.");
+        setErrorMsg("No match found nearby — try a different craving.");
         setResults([]);
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       } else {
-        setResults(data.restaurants.slice(0, 2));
+        setResults(data.restaurants.slice(0, 1));
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       }
     } catch (error) {
@@ -523,11 +523,11 @@ function App() {
         </header>
 
         <section className="hero">
-          <p className="eyebrow">Sign in to find your two</p>
+          <p className="eyebrow">Sign in to find your one</p>
           <h1>
             <span className="hero-script">Skip The Scroll.</span>
             <br />
-            <span className="hero-accent">Get The Two.</span>
+            <span className="hero-accent">Get The One.</span>
           </h1>
 
           <form onSubmit={handleAuthSubmit} className="search-box" style={{ flexDirection: "column", gap: "0.75rem" }}>
@@ -694,6 +694,9 @@ function App() {
     );
   }
 
+  const winner = results[0];
+  const winnerChips = winner ? buildChips(winner) : [];
+
   return (
     <div className="app">
       <header className="header">
@@ -718,7 +721,7 @@ function App() {
         <h1>
           <span className="hero-script">Skip The Scroll.</span>
           <br />
-          <span className="hero-accent">Get The Two.</span>
+          <span className="hero-accent">Get The One.</span>
         </h1>
 
 
@@ -731,7 +734,7 @@ function App() {
             onKeyDown={handleKeyDown}
           />
           <button onClick={handleSearch} disabled={loading}>
-            {loading ? (resolvingLocation ? "Finding you…" : "Searching…") : "Find my two"}
+            {loading ? (resolvingLocation ? "Finding you…" : "Searching…") : "Find my one"}
           </button>
         </div>
 
@@ -764,108 +767,95 @@ function App() {
 
 
       <section className="results-section">
-        {results.length > 0 ? (
+        {winner ? (
           <div className="verdict">
-            {results.slice(0, 2).map((restaurant, index) => {
-              const isWinner = index === 0;
-              const chips = buildChips(restaurant);
+            <article className="result-card result-card--winner">
+              <div className="match-banner">
+                <span className="match-banner-tag">Top match</span>
+                {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
+              </div>
 
-              return (
-                <article
-                  className={isWinner ? "result-card result-card--winner" : "result-card"}
-                  key={restaurant.id || index}
-                >
-                  {isWinner && (
-                    <div className="match-banner">
-                      <span className="match-banner-tag">Top match</span>
-                      {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
-                    </div>
+              <div className="result-hero-visual">
+                <span className="hero-visual-icon" aria-hidden="true">
+                  {categoryEmoji(winner.category, winner.name)}
+                </span>
+                <AnimatedScore value={winner.matchScore} />
+              </div>
+
+              <div className="result-body">
+                <h2>{winner.name}</h2>
+
+                <div className="meta-row">
+                  {typeof winner.rating === "number" ? (
+                    <span className="rating">★ {winner.rating.toFixed(1)}</span>
+                  ) : (
+                    <span className="rating rating--new">New</span>
                   )}
+                  {winner.reviewCount > 0 && (
+                    <span className="review-count">({winner.reviewCount.toLocaleString()} reviews)</span>
+                  )}
+                  {winner.category && <span className="category">{winner.category}</span>}
+                  {typeof winner.distanceMiles === "number" && (
+                    <span className="distance">{winner.distanceMiles} mi</span>
+                  )}
+                </div>
 
-                  <div className="result-hero-visual">
-                    <span className="hero-visual-icon" aria-hidden="true">
-                      {categoryEmoji(restaurant.category, restaurant.name)}
-                    </span>
-                    {!isWinner && <span className="rank-tag">Runner-up</span>}
-                    <AnimatedScore value={restaurant.matchScore} />
-                  </div>
+                {winner.address && <p className="address">{winner.address}</p>}
 
-                  <div className="result-body">
-                    <h2>{restaurant.name}</h2>
-
-                    <div className="meta-row">
-                      {typeof restaurant.rating === "number" ? (
-                        <span className="rating">★ {restaurant.rating.toFixed(1)}</span>
-                      ) : (
-                        <span className="rating rating--new">New</span>
-                      )}
-                      {restaurant.reviewCount > 0 && (
-                        <span className="review-count">({restaurant.reviewCount.toLocaleString()} reviews)</span>
-                      )}
-                      {restaurant.category && <span className="category">{restaurant.category}</span>}
-                      {typeof restaurant.distanceMiles === "number" && (
-                        <span className="distance">{restaurant.distanceMiles} mi</span>
-                      )}
+                {winnerChips.length > 0 && (
+                  <div className="why-section">
+                    <span className="why-label">Why this won</span>
+                    <div className="why-chips">
+                      {winnerChips.map((chip, i) => (
+                        <span className="chip" key={i}>
+                          <span aria-hidden="true">{chip.icon}</span> {chip.text}
+                        </span>
+                      ))}
                     </div>
-
-                    {restaurant.address && <p className="address">{restaurant.address}</p>}
-
-                    {isWinner && chips.length > 0 && (
-                      <div className="why-section">
-                        <span className="why-label">Why this won</span>
-                        <div className="why-chips">
-                          {chips.map((chip, i) => (
-                            <span className="chip" key={i}>
-                              <span aria-hidden="true">{chip.icon}</span> {chip.text}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="action-row">
-                      {restaurant.phone && (
-                        <a className="action-btn" href={`tel:${restaurant.phone}`}>
-                          Call
-                        </a>
-                      )}
-                      {restaurant.website && (
-                        <a className="action-btn" href={restaurant.website} target="_blank" rel="noreferrer">
-                          Website
-                        </a>
-                      )}
-                      {restaurant.lat && restaurant.lng && (
-                        <a
-                          className="action-btn action-btn--primary"
-                          href={`https://www.google.com/maps/dir/?api=1&destination=${restaurant.lat},${restaurant.lng}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Directions
-                        </a>
-                      )}
-                    </div>
-
-                    {restaurant.lat && restaurant.lng && (
-                      <div className="map-embed">
-                        <iframe
-                          title={`Map showing ${restaurant.name}`}
-                          width="100%"
-                          height="180"
-                          style={{ border: 0, borderRadius: "12px" }}
-                          loading="lazy"
-                          referrerPolicy="no-referrer-when-downgrade"
-                          src={`https://www.google.com/maps?q=${restaurant.lat},${restaurant.lng}&z=15&output=embed`}
-                        />
-                      </div>
-                    )}
                   </div>
-                </article>
-              );
-            })}
+                )}
+
+                <div className="action-row">
+                  {winner.phone && (
+                    <a className="action-btn" href={`tel:${winner.phone}`}>
+                      Call
+                    </a>
+                  )}
+                  {winner.website && (
+                    <a className="action-btn" href={winner.website} target="_blank" rel="noreferrer">
+                      Website
+                    </a>
+                  )}
+                  {winner.lat && winner.lng && (
+                    <a
+                      className="action-btn action-btn--primary"
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${winner.lat},${winner.lng}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Directions
+                    </a>
+                  )}
+                </div>
+
+                {winner.lat && winner.lng && (
+                  <div className="map-embed">
+                    <iframe
+                      title={`Map showing ${winner.name}`}
+                      width="100%"
+                      height="180"
+                      style={{ border: 0, borderRadius: "12px" }}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={`https://www.google.com/maps?q=${winner.lat},${winner.lng}&z=15&output=embed`}
+                    />
+                  </div>
+                )}
+              </div>
+            </article>
           </div>
         ) : (
-          <p className="empty-state">Tell us what you're craving above, and we'll find the best two spots nearby.</p>
+          <p className="empty-state">Tell us what you're craving above, and we'll find the best spot nearby.</p>
         )}
       </section>
 
@@ -879,18 +869,18 @@ function App() {
           </div>
           <div>
             <span className="step-label">Rank</span>
-            <p>We weigh rating against review volume across everything nearby.</p>
+            <p>We weigh rating, relevance, and distance across everything nearby.</p>
           </div>
           <div>
             <span className="step-label">Decide</span>
-            <p>You get the top two — not a list to scroll through.</p>
+            <p>You get the one — not a list to scroll through.</p>
           </div>
         </div>
       </section>
 
 
       <section id="about" className="about">
-        <h2>Why just two?</h2>
+        <h2>Why just one?</h2>
         <p>Choosing where to eat shouldn't require endless scrolling. We do the comparing so you don't have to.</p>
       </section>
 

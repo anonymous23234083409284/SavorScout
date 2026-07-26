@@ -864,3 +864,122 @@ input:focus-visible {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.beat-line {
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 10px 18px 0;
+  margin: 0;
+}
+.beat-line strong { color: var(--winner-pink); }
+
+.score-core {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 22px 8px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 200, 87, 0.15), transparent 55%),
+    radial-gradient(circle at 75% 75%, rgba(255, 106, 61, 0.12), transparent 55%),
+    #0d1219;
+}
+
+.score-core-center { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.score-core-center .score-badge { position: static; width: 96px; height: 96px; }
+.score-core-center .score-badge-number { font-size: 22px; }
+.score-core-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.score-core-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px 20px;
+  width: 100%;
+}
+
+.mini-metric { display: grid; grid-template-columns: 18px 1fr 34px; align-items: center; gap: 6px; }
+.mini-metric-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.mini-metric-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
+  transition: width 0.6s ease;
+}
+.mini-metric-value { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); }
+.mini-metric-label {
+  grid-column: 2 / span 2;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: #5a6472;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* -- evidence: the one section directly grounded in Exa's research, so it
+   gets a visually distinct "verified" treatment rather than blending into
+   the generic chip row -- */
+
+.evidence-section {
+  margin: 4px 0 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(46, 230, 214, 0.06);
+  border: 1px solid rgba(46, 230, 214, 0.25);
+}
+
+.evidence-label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--runner-teal);
+  margin-bottom: 8px;
+}
+
+.evidence-quote {
+  margin: 0 0 8px;
+  padding: 0;
+  border: none;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #c8d0da;
+  font-style: italic;
+}
+
+.evidence-source-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--runner-teal);
+  text-decoration: none;
+}
+.evidence-source-link:hover { text-decoration: underline; }
+
+.dietary-note {
+  margin: 10px 0 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--bloom-saffron);
+  line-height: 1.5;
+}
+
+.comparison-tease { margin: 4px 0 16px; }
+.comparison-toggle {
+  background: none;
+  border: 1px solid rgba(46, 230, 214, 0.3);
+  color: var(--runner-teal);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.comparison-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.comparison-list li { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8a96a3; }

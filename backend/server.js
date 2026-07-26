@@ -15,17 +15,11 @@ const allowedOrigins = [
   "https://savor-scout-ugbv-two.vercel.app",
 ];
 
-// CORS must come before any routes. The `cors` package automatically
-// handles OPTIONS preflight requests for you — you do NOT need a manual
-// app.options(...) handler.
 app.use(
   cors({
     origin: function (origin, callback) {
-      // allow requests with no origin (like curl, Postman, server-to-server)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+      if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
     methods: ["GET", "POST", "OPTIONS"],
@@ -37,61 +31,45 @@ console.log("CORS CONFIG LOADED");
 
 app.use(express.json());
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Service role client — server-side only, NEVER expose this key to the frontend.
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-if (!process.env.OPENAI_API_KEY) {
-  console.warn("⚠️  OPENAI_API_KEY is missing from .env");
-}
-if (!process.env.SERPER_API_KEY) {
-  console.warn("⚠️  SERPER_API_KEY is missing from .env");
-}
-if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  console.warn("⚠️  SUPABASE_SERVICE_ROLE_KEY is missing from .env");
-}
-if (!process.env.SUPABASE_URL) {
-  console.warn("⚠️  SUPABASE_URL is missing from .env");
+if (!process.env.OPENAI_API_KEY) console.warn("⚠️  OPENAI_API_KEY is missing from .env");
+if (!process.env.SERPER_API_KEY) console.warn("⚠️  SERPER_API_KEY is missing from .env");
+if (!process.env.SUPABASE_SERVICE_ROLE_KEY) console.warn("⚠️  SUPABASE_SERVICE_ROLE_KEY is missing from .env");
+if (!process.env.SUPABASE_URL) console.warn("⚠️  SUPABASE_URL is missing from .env");
+if (!process.env.EXA_API_KEY) {
+  console.warn("⚠️  EXA_API_KEY is missing from .env — deep restaurant research will be skipped, ranking falls back to Serper-only signals");
 }
 
-// Aim for a pool this big before ranking. Google's local pack won't always
-// have this many legitimate results in a given area — see fetchCandidatePool
-// below — but a bigger honest pool means the ranking algorithm has more to
-// actually choose between.
 const CANDIDATE_POOL_SIZE = 35;
-const MAX_PAGES = 2; // cap extra API calls spent chasing the pool size
+const MAX_PAGES = 2;
 const FINAL_RESULT_COUNT = 1;
 const DAILY_SEARCH_LIMIT = 5;
 const EARTH_RADIUS_MILES = 3958.8;
-const PROXIMITY_DECAY_MILES = 4; // distance at which the proximity score has decayed to ~37%
+const PROXIMITY_DECAY_MILES = 4;
 
-// --- Serper.dev integration ---------------------------------------------
-//
-// Serper's Places endpoint (https://google.serper.dev/places) takes a
-// free-text `location` (a city/neighborhood name), not raw coordinates —
-// so when the user hasn't named a specific place, we reverse-geocode their
-// lat/lng into a location string first. This reuses the same free
-// Nominatim service the frontend already uses for forward-geocoding, so no
-// extra API key is needed.
+const EXA_API_KEY = process.env.EXA_API_KEY;
+const EXA_RESEARCH_COUNT = 8;       // only deep-research the strongest preliminary candidates
+const EXA_TIMEOUT_MS = 9000;
+const EXA_CACHE_TTL_DAYS = 14;      // menus/descriptions don't change often — reuse research for 2 weeks
+
+// --- Geocoding helpers (unchanged) ---------------------------------------
+
 async function reverseGeocodeToLocationName(lat, lng) {
   try {
     const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
       params: { format: "json", lat, lon: lng, zoom: 12 },
       headers: { "User-Agent": "SavorScout/1.0 (your-email@example.com)" },
     });
-
     const address = response.data?.address;
     if (!address) return null;
-
     const place = address.city || address.town || address.village || address.suburb || address.county;
     if (!place) return null;
-
     return address.state ? `${place}, ${address.state}` : place;
   } catch (err) {
     console.error("Reverse geocoding error:", err.response?.data || err.message);
@@ -99,9 +77,6 @@ async function reverseGeocodeToLocationName(lat, lng) {
   }
 }
 
-// Straight-line distance in miles between two coordinates (haversine).
-// Serper's Places results don't come back with a distance field, but they
-// do give us lat/lng per place, so we compute it ourselves.
 function distanceInMiles(lat1, lng1, lat2, lng2) {
   const toRad = (deg) => (deg * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
@@ -112,25 +87,14 @@ function distanceInMiles(lat1, lng1, lat2, lng2) {
   return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Pulls up to CANDIDATE_POOL_SIZE unique places from Serper, paging for more
-// if the first page looks like it might not be the whole story. Stops early
-// once a page comes back thin — that's a signal the area is just out of
-// results, and a second page would burn an API credit for nothing.
 async function fetchCandidatePool({ textQuery, locationName }) {
   const fetchPage = async (page) => {
-    const body = {
-      q: textQuery,
-      gl: "us",
-      num: CANDIDATE_POOL_SIZE,
-    };
+    const body = { q: textQuery, gl: "us", num: CANDIDATE_POOL_SIZE };
     if (locationName) body.location = locationName;
     if (page > 1) body.page = page;
 
     const response = await axios.post("https://google.serper.dev/places", body, {
-      headers: {
-        "X-API-KEY": process.env.SERPER_API_KEY,
-        "Content-Type": "application/json",
-      },
+      headers: { "X-API-KEY": process.env.SERPER_API_KEY, "Content-Type": "application/json" },
     });
     return response.data.places || [];
   };
@@ -149,38 +113,29 @@ async function fetchCandidatePool({ textQuery, locationName }) {
       if (!seen.has(key)) seen.set(key, place);
     }
 
-    if (batch.length < 10) break; // thin page — more paging won't help
+    if (batch.length < 10) break;
     page += 1;
   }
 
   return { places: Array.from(seen.values()), pagesFetched: page > MAX_PAGES ? MAX_PAGES : page, lastBatchSize };
 }
 
-// Normalizes a list of raw numeric feature values to 0-1 via min-max scaling,
-// so each signal is judged relative to the actual pool pulled for THIS
-// search, not against an arbitrary fixed scale.
 function minMaxNormalize(values) {
   const finite = values.filter((v) => typeof v === "number" && Number.isFinite(v));
   if (finite.length === 0) return values.map(() => 0);
   const min = Math.min(...finite);
   const max = Math.max(...finite);
-  if (max === min) return values.map(() => 1); // everyone's tied — don't penalize anyone
+  if (max === min) return values.map(() => 1);
   return values.map((v) => (typeof v === "number" && Number.isFinite(v) ? (v - min) / (max - min) : 0));
 }
 
-// How well a candidate matches what the user actually asked for, on a 0-1
-// scale. This is the gate — see the ranking pipeline below — so a mediocre
-// place that serves the right dish should still be able to beat a great
-// place that doesn't serve it at all.
 function computeRelevance(place, dishKeyword, cuisineKeyword) {
-  if (!dishKeyword && !cuisineKeyword) return 0.5; // no specific ask — neutral, let quality/proximity decide
+  if (!dishKeyword && !cuisineKeyword) return 0.5;
 
   const haystack = `${place.title || ""} ${place.type || ""} ${(place.types || []).join(" ")} ${place.description || ""}`.toLowerCase();
 
   if (dishKeyword) {
     if (haystack.includes(dishKeyword)) return 1;
-    // Multi-word dish ("pork belly tacos") — partial credit for hitting any
-    // one significant word ("tacos") even without the exact full phrase.
     const dishWords = dishKeyword.split(/\s+/).filter((w) => w.length > 3);
     if (dishWords.some((w) => haystack.includes(w))) return 0.6;
   }
@@ -190,30 +145,131 @@ function computeRelevance(place, dishKeyword, cuisineKeyword) {
   return 0;
 }
 
+// --- Exa research + cache ------------------------------------------------
+
+async function fetchCachedResearch(cacheKey) {
+  const { data, error } = await supabaseAdmin
+    .from("restaurant_research")
+    .select("*")
+    .eq("cache_key", cacheKey)
+    .maybeSingle();
+
+  if (error) {
+    console.error("restaurant_research read error:", error);
+    return null;
+  }
+  if (!data) return null;
+
+  const ageMs = Date.now() - new Date(data.fetched_at).getTime();
+  if (ageMs > EXA_CACHE_TTL_DAYS * 24 * 60 * 60 * 1000) return null; // stale — re-research
+
+  return { sourceType: data.source_type, sourceUrl: data.source_url, highlights: data.highlights || [] };
+}
+
+async function storeResearch(cacheKey, placeId, record) {
+  const { error } = await supabaseAdmin.from("restaurant_research").upsert(
+    {
+      cache_key: cacheKey,
+      place_id: placeId || null,
+      source_type: record.sourceType,
+      source_url: record.sourceUrl,
+      highlights: record.highlights,
+      fetched_at: new Date().toISOString(),
+    },
+    { onConflict: "cache_key" }
+  );
+  if (error) console.error("restaurant_research write error:", error);
+}
+
+// Fetches real evidence for one finalist: official website first, a
+// secondary web search if there's no website or the site fails to crawl.
+// Returns null (never fabricated content) on any failure.
+async function researchCandidate(candidate, evidenceQuery) {
+  const website = candidate.place.website;
+  const cacheKey = website || `place:${candidate.place.placeId || candidate.place.cid}`;
+
+  const cached = await fetchCachedResearch(cacheKey);
+  if (cached) return cached;
+
+  if (!EXA_API_KEY) return null;
+
+  try {
+    if (website) {
+      const response = await axios.post(
+        "https://api.exa.ai/contents",
+        {
+          urls: [website],
+          highlights: { query: evidenceQuery, maxCharacters: 300 },
+          subpageTarget: ["menu", "food"],
+        },
+        { headers: { "x-api-key": EXA_API_KEY, "Content-Type": "application/json" }, timeout: EXA_TIMEOUT_MS }
+      );
+
+      const status = response.data?.statuses?.[0];
+      const result = response.data?.results?.[0];
+
+      if (status?.status === "success" && result) {
+        const record = { sourceType: "official_site", sourceUrl: result.url, highlights: result.highlights || [] };
+        await storeResearch(cacheKey, candidate.place.placeId, record);
+        return record;
+      }
+      // official site failed to crawl (timeout, 404, etc.) — fall through to secondary search
+    }
+
+    const searchQuery = `${candidate.place.title} ${candidate.place.address || ""} menu`.trim();
+    const searchResponse = await axios.post(
+      "https://api.exa.ai/search",
+      {
+        query: searchQuery,
+        type: "auto",
+        numResults: 1,
+        contents: { highlights: { query: evidenceQuery, maxCharacters: 300 } },
+      },
+      { headers: { "x-api-key": EXA_API_KEY, "Content-Type": "application/json" }, timeout: EXA_TIMEOUT_MS }
+    );
+
+    const hit = searchResponse.data?.results?.[0];
+    if (!hit) return null;
+
+    const record = { sourceType: "secondary", sourceUrl: hit.url, highlights: hit.highlights || [] };
+    await storeResearch(cacheKey, candidate.place.placeId, record);
+    return record;
+  } catch (err) {
+    console.error(`Exa research failed for ${candidate.place.title}:`, err.response?.data || err.message);
+    return null;
+  }
+}
+
+// 0-1 evidence strength — never guessed, purely a function of what came back.
+function computeEvidenceScore(research) {
+  if (!research) return 0;
+  const hasHighlights = Array.isArray(research.highlights) && research.highlights.length > 0;
+  if (research.sourceType === "official_site" && hasHighlights) return 1;
+  if (research.sourceType === "official_site") return 0.5; // site found & crawled, nothing matched the query
+  if (research.sourceType === "secondary" && hasHighlights) return 0.6;
+  if (research.sourceType === "secondary") return 0.3;
+  return 0;
+}
+
 app.get("/", (req, res) => {
   res.send("Restaurant AI Backend is alive!");
 });
 
-// --- Check if an email already has an account (used before signup) ---
 app.post("/auth/check-email", async (req, res) => {
   const email = req.body.email;
-
   if (!email || typeof email !== "string" || !email.trim()) {
     return res.status(400).json({ error: "Missing email" });
   }
-
   try {
     const { data, error } = await supabaseAdmin
       .from("profiles")
       .select("id")
       .ilike("email", email.trim())
       .maybeSingle();
-
     if (error) {
       console.error("check-email error:", error);
       return res.status(500).json({ error: "Failed to check email" });
     }
-
     return res.json({ exists: !!data });
   } catch (err) {
     console.error("check-email error:", err.message);
@@ -221,7 +277,6 @@ app.post("/auth/check-email", async (req, res) => {
   }
 });
 
-// --- Auth + rate limit middleware ---
 async function requireAuthAndLimit(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -293,6 +348,15 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
   console.log("User said:", userRequest, "at", userLat, userLng);
 
+  // Onboarding dietary info was being collected but never actually used —
+  // pull it in parallel with the OpenAI call so it can feed both intent
+  // parsing and the Exa evidence query below.
+  const onboardingPromise = supabaseAdmin
+    .from("user_preferences")
+    .select("allergies, dietary_preferences")
+    .eq("user_id", req.userId)
+    .maybeSingle();
+
   let preferences;
   try {
     const aiResponse = await openai.chat.completions.create({
@@ -301,13 +365,15 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         {
           role: "system",
           content:
-            "Extract restaurant search terms from the user's request. " +
-            "Return a JSON object with keys: dish, cuisine, budget, location. " +
+            "Extract structured restaurant search intent from the user's request. " +
+            "Return a JSON object with keys: dish, cuisine, budget, location, dietaryRestrictions, importantFactors. " +
             "'location' is any specific place the user names to search in or near " +
             "(a city, neighborhood, landmark, or address — e.g. 'New Brunswick, NJ'). " +
             "Leave it as an empty string if the user did not name a specific place, " +
             "since in that case we should search near their current location instead. " +
-            "Use empty strings for anything not mentioned. Do not include any other keys.",
+            "'dietaryRestrictions' is an array of dietary needs mentioned (e.g. 'vegetarian', 'gluten-free', 'nut-free'). " +
+            "'importantFactors' is an array of qualities the user cares about (e.g. 'crispy', 'quiet', 'good for groups'). " +
+            "Use empty strings/arrays for anything not mentioned. Do not include any other keys.",
         },
         { role: "user", content: userRequest },
       ],
@@ -322,6 +388,14 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     return res.status(500).json({ error: "Failed to parse your request with OpenAI", detail });
   }
 
+  const { data: onboarding } = await onboardingPromise.catch(() => ({ data: null }));
+  const onboardingDietaryTerms = onboarding?.dietary_preferences
+    ? onboarding.dietary_preferences.split(",").map((s) => s.trim()).filter(Boolean)
+    : [];
+  const dietaryTerms = Array.from(
+    new Set([...(Array.isArray(preferences.dietaryRestrictions) ? preferences.dietaryRestrictions : []), ...onboardingDietaryTerms])
+  );
+
   let candidates;
   let locationName;
   try {
@@ -329,8 +403,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     locationName = namedLocation || (await reverseGeocodeToLocationName(userLat, userLng));
 
     const textQuery =
-      [preferences.dish, preferences.cuisine, "restaurants"].filter(Boolean).join(" ").trim() ||
-      "restaurants";
+      [preferences.dish, preferences.cuisine, "restaurants"].filter(Boolean).join(" ").trim() || "restaurants";
 
     const { places, pagesFetched, lastBatchSize } = await fetchCandidatePool({ textQuery, locationName });
     candidates = places;
@@ -360,26 +433,23 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
   const dishKeyword = preferences.dish?.trim().toLowerCase();
   const cuisineKeyword = preferences.cuisine?.trim().toLowerCase();
 
-  // --- Stage 1: raw per-candidate features -------------------------------
+  // --- Stage 1: raw per-candidate features across the full pool ----------
   const withFeatures = candidates
     .filter((p) => typeof p.latitude === "number" && typeof p.longitude === "number")
     .map((p) => {
       const rating = typeof p.rating === "number" ? p.rating : null;
       const reviewCount = p.ratingCount || 0;
 
-      // Bayesian average: a 5.0 with 2 reviews shouldn't outrank a 4.6 with
-      // 800 reviews. Unrated places get a mild penalty instead of being
-      // thrown out entirely — being new isn't the same as being bad.
       const bayesianRating =
         rating !== null
           ? (CONFIDENCE_WEIGHT * GLOBAL_AVERAGE + reviewCount * rating) / (CONFIDENCE_WEIGHT + reviewCount)
           : GLOBAL_AVERAGE * 0.85;
 
       const distance = distanceInMiles(userLat, userLng, p.latitude, p.longitude);
-      const proximity = Math.exp(-distance / PROXIMITY_DECAY_MILES); // smooth 0-1 decay, no hard cliff
+      const proximity = Math.exp(-distance / PROXIMITY_DECAY_MILES);
 
       const relevance = computeRelevance(p, dishKeyword, cuisineKeyword);
-      const dataTrust = (p.website ? 0.5 : 0) + (p.phoneNumber ? 0.5 : 0); // a findable, contactable business
+      const dataTrust = (p.website ? 0.5 : 0) + (p.phoneNumber ? 0.5 : 0);
 
       const haystack = `${p.title} ${p.type || ""} ${(p.types || []).join(" ")} ${p.description || ""}`.toLowerCase();
       const matchedDish = dishKeyword && haystack.includes(dishKeyword) ? preferences.dish.trim() : null;
@@ -389,42 +459,88 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       return { place: p, rating, reviewCount, bayesianRating, distance, proximity, relevance, dataTrust, matchedDish, matchedCuisine };
     });
 
-  // --- Stage 2: relevance gate --------------------------------------------
-  // If the user asked for something specific, only candidates that actually
-  // match it are allowed to compete for the win. Falls back to the full
-  // pool if that gate would leave fewer than 2 places to compare (better to
-  // show an imperfect match than nothing).
   const wantsSomethingSpecific = Boolean(dishKeyword || cuisineKeyword);
   const relevantOnly = withFeatures.filter((c) => c.relevance > 0);
   const pool = wantsSomethingSpecific && relevantOnly.length >= 2 ? relevantOnly : withFeatures;
 
-  // --- Stage 3: normalize each feature across this pool, then combine ----
-  // Normalizing per-search (not against a fixed 0-5 or 0-100 scale) is what
-  // makes this comparative: a score reflects how a place stacks up against
-  // everything else actually found for this exact search.
-  const ratingNorm = minMaxNormalize(pool.map((c) => c.bayesianRating));
-  const relevanceNorm = minMaxNormalize(pool.map((c) => c.relevance));
-  const proximityNorm = minMaxNormalize(pool.map((c) => c.proximity));
-  const trustNorm = minMaxNormalize(pool.map((c) => c.dataTrust));
+  const prelimRatingNorm = minMaxNormalize(pool.map((c) => c.bayesianRating));
+  const prelimRelevanceNorm = minMaxNormalize(pool.map((c) => c.relevance));
+  const prelimProximityNorm = minMaxNormalize(pool.map((c) => c.proximity));
+  const prelimTrustNorm = minMaxNormalize(pool.map((c) => c.dataTrust));
 
-  const WEIGHTS = { rating: 0.4, relevance: 0.35, proximity: 0.18, trust: 0.07 };
+  const PRELIM_WEIGHTS = { rating: 0.4, relevance: 0.35, proximity: 0.18, trust: 0.07 };
 
-  const ranked = pool
+  const prelimRanked = pool
     .map((c, i) => ({
       ...c,
+      prelimComposite:
+        PRELIM_WEIGHTS.rating * prelimRatingNorm[i] +
+        PRELIM_WEIGHTS.relevance * prelimRelevanceNorm[i] +
+        PRELIM_WEIGHTS.proximity * prelimProximityNorm[i] +
+        PRELIM_WEIGHTS.trust * prelimTrustNorm[i],
+    }))
+    .sort((a, b) => b.prelimComposite - a.prelimComposite);
+
+  // --- Stage 2: deep-research only the strongest finalists ----------------
+  const finalists = prelimRanked.slice(0, EXA_RESEARCH_COUNT);
+
+  const evidenceQueryParts = [preferences.dish, preferences.cuisine, ...dietaryTerms].filter(Boolean);
+  const evidenceQuery =
+    evidenceQueryParts.length > 0 ? `${evidenceQueryParts.join(" ")} menu specialties price` : "menu specialties price";
+
+  const researchResults = await Promise.allSettled(
+    finalists.map((c) => researchCandidate(c, evidenceQuery))
+  );
+
+  const finalistsWithResearch = finalists.map((c, i) => {
+    const research = researchResults[i].status === "fulfilled" ? researchResults[i].value : null;
+    const evidenceScore = computeEvidenceScore(research);
+
+    const highlightText = (research?.highlights || []).join(" ").toLowerCase();
+    const matchedDietaryTerms = dietaryTerms.filter((term) => highlightText.includes(term.toLowerCase()));
+
+    return { ...c, research, evidenceScore, matchedDietaryTerms };
+  });
+
+  // --- Stage 3: re-normalize across finalists only, blend in evidence -----
+  const ratingNorm = minMaxNormalize(finalistsWithResearch.map((c) => c.bayesianRating));
+  const relevanceNorm = minMaxNormalize(finalistsWithResearch.map((c) => c.relevance));
+  const proximityNorm = minMaxNormalize(finalistsWithResearch.map((c) => c.proximity));
+  const trustNorm = minMaxNormalize(finalistsWithResearch.map((c) => c.dataTrust));
+  const evidenceNorm = minMaxNormalize(finalistsWithResearch.map((c) => c.evidenceScore));
+
+  const FINAL_WEIGHTS = { rating: 0.3, relevance: 0.28, proximity: 0.12, trust: 0.05, evidence: 0.25 };
+
+  const ranked = finalistsWithResearch
+    .map((c, i) => ({
+      ...c,
+      scoreBreakdown: {
+        quality: ratingNorm[i],
+        relevance: relevanceNorm[i],
+        proximity: proximityNorm[i],
+        trust: trustNorm[i],
+        evidence: evidenceNorm[i],
+      },
       composite:
-        WEIGHTS.rating * ratingNorm[i] +
-        WEIGHTS.relevance * relevanceNorm[i] +
-        WEIGHTS.proximity * proximityNorm[i] +
-        WEIGHTS.trust * trustNorm[i],
+        FINAL_WEIGHTS.rating * ratingNorm[i] +
+        FINAL_WEIGHTS.relevance * relevanceNorm[i] +
+        FINAL_WEIGHTS.proximity * proximityNorm[i] +
+        FINAL_WEIGHTS.trust * trustNorm[i] +
+        FINAL_WEIGHTS.evidence * evidenceNorm[i],
     }))
     .sort((a, b) => b.composite - a.composite);
 
   const compositeNorm = minMaxNormalize(ranked.map((c) => c.composite));
 
-  // --- Stage 4: the winner is whichever candidate has the best composite --
   const winner = ranked[0];
   const finalPicks = [winner].filter(Boolean).slice(0, FINAL_RESULT_COUNT);
+
+  // Real comparison data only — names and scores of the other researched
+  // finalists, nothing invented about them.
+  const runnerUps = ranked.slice(1, 4).map((c, i) => ({
+    name: c.place.title,
+    matchScore: Math.round(compositeNorm[i + 1] * 100),
+  }));
 
   const topPicks = finalPicks.map((c) => {
     const i = ranked.indexOf(c);
@@ -443,6 +559,24 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       matchedDish: c.matchedDish,
       matchedCuisine: c.matchedCuisine,
       matchScore: Math.round(compositeNorm[i] * 100),
+      scoreBreakdown: {
+        quality: Math.round(c.scoreBreakdown.quality * 100),
+        relevance: Math.round(c.scoreBreakdown.relevance * 100),
+        proximity: Math.round(c.scoreBreakdown.proximity * 100),
+        trust: Math.round(c.scoreBreakdown.trust * 100),
+        evidence: Math.round(c.scoreBreakdown.evidence * 100),
+      },
+      evidence: c.research
+        ? {
+            sourceType: c.research.sourceType, // 'official_site' | 'secondary'
+            sourceUrl: c.research.sourceUrl,
+            highlights: c.research.highlights,
+          }
+        : null,
+      matchedDietaryTerms: c.matchedDietaryTerms.length > 0 ? c.matchedDietaryTerms : null,
+      beatCount: pool.length - 1,
+      poolSize: candidates.length,
+      runnerUps,
     };
   });
 
@@ -452,13 +586,11 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     .update({ count: newCount, search_date: req.searchDate })
     .eq("user_id", req.userId);
 
-  if (updateError) {
-    console.error("Failed to update search count:", updateError);
-  }
+  if (updateError) console.error("Failed to update search count:", updateError);
 
   console.log(
-    `FINAL RETURN: ranked ${ranked.length} of ${candidates.length} candidates ` +
-      `(gate applied: ${pool !== withFeatures}), returning`,
+    `FINAL RETURN: researched ${finalists.length} finalists of ${pool.length} eligible ` +
+      `(of ${candidates.length} total candidates), returning`,
     topPicks.map((r) => `${r.name} (${r.matchScore}%)`)
   );
 

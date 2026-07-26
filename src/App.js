@@ -2,6 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
 
+// Backend base URL — override with REACT_APP_API_URL (e.g. for local dev
+// against a backend running on localhost, or a staging deploy) without
+// touching code. Falls back to production so behavior is unchanged for
+// anyone who doesn't set it.
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
+
 // --- Hero card helpers -----------------------------------------------------
 
 // Maps a Serper "category" (or the restaurant name, as a fallback) to a
@@ -59,6 +65,65 @@ function buildChips(restaurant) {
   return chips;
 }
 
+function MiniMetric({ label, icon, value }) {
+  if (typeof value !== "number") return null;
+  return (
+    <div className="mini-metric">
+      <span className="mini-metric-icon" aria-hidden="true">{icon}</span>
+      <div className="mini-metric-bar">
+        <div className="mini-metric-fill" style={{ width: `${value}%` }} />
+      </div>
+      <span className="mini-metric-value">{value}%</span>
+      <span className="mini-metric-label">{label}</span>
+    </div>
+  );
+}
+
+function ComparisonTease({ runnerUps }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="comparison-tease">
+      <button className="comparison-toggle" onClick={() => setOpen((o) => !o)}>
+        {open ? "Hide comparisons" : `View top ${runnerUps.length} comparisons →`}
+      </button>
+      {open && (
+        <ul className="comparison-list">
+          {runnerUps.map((r, i) => (
+            <li key={i}>
+              <span className="comparison-name">{r.name}</span>
+              <span className="comparison-score">{r.matchScore}% match</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// Only renders when Exa actually returned something — a restaurant with no
+// evidence gets no evidence section, rather than a filled-in placeholder.
+function EvidenceSection({ evidence, matchedDietaryTerms }) {
+  if (!evidence || !evidence.highlights || evidence.highlights.length === 0) return null;
+
+  const sourceLabel = evidence.sourceType === "official_site" ? "Verified via official website" : "Verified via web research";
+
+  return (
+    <div className="evidence-section">
+      <span className="evidence-label">{sourceLabel}</span>
+      <blockquote className="evidence-quote">"{evidence.highlights[0]}"</blockquote>
+      {evidence.sourceUrl && (
+        <a className="evidence-source-link" href={evidence.sourceUrl} target="_blank" rel="noreferrer">
+          View source →
+        </a>
+      )}
+      {matchedDietaryTerms && matchedDietaryTerms.length > 0 && (
+        <p className="dietary-note">
+          Mentions {matchedDietaryTerms.join(", ")} — always confirm allergy details directly with the restaurant.
+        </p>
+      )}
+    </div>
+  );
+}
 // Small self-contained component so the match score counts up from 0 on
 // mount instead of just appearing — respects prefers-reduced-motion.
 function AnimatedScore({ value }) {
@@ -97,6 +162,33 @@ function AnimatedScore({ value }) {
     <div className="score-badge">
       <span className="score-badge-number">{displayValue}%</span>
       <span className="score-badge-label">match</span>
+    </div>
+  );
+}
+
+// Renders the real sub-scores behind the composite match score — the same
+// per-candidate numbers the backend already normalizes and weights to pick
+// the winner (relevance/quality/distance/confidence), just surfaced instead
+// of collapsed into one number. Nothing here is computed client-side.
+function ScoreBreakdown({ restaurant }) {
+  const metrics = [
+    { key: "relevanceScore", icon: "🎯", label: "Relevance" },
+    { key: "qualityScore", icon: "⭐", label: "Quality" },
+    { key: "distanceScore", icon: "📍", label: "Distance" },
+    { key: "confidenceScore", icon: "🔍", label: "Confidence" },
+  ].filter((m) => typeof restaurant[m.key] === "number");
+
+  if (metrics.length === 0) return null;
+
+  return (
+    <div className="score-breakdown">
+      {metrics.map((m) => (
+        <div className="score-breakdown-item" key={m.key}>
+          <span className="score-breakdown-icon" aria-hidden="true">{m.icon}</span>
+          <span className="score-breakdown-value">{restaurant[m.key]}%</span>
+          <span className="score-breakdown-label">{m.label}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -199,7 +291,7 @@ function App() {
 
     if (authMode === "signup") {
       try {
-        const checkResponse = await fetch("https://savorscout.onrender.com/auth/check-email", {
+        const checkResponse = await fetch(`${API_BASE_URL}/auth/check-email`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: email.trim() }),
@@ -461,7 +553,7 @@ function App() {
         return;
       }
 
-      const response = await fetch("https://savorscout.onrender.com/search", {
+      const response = await fetch(`${API_BASE_URL}/search`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -588,7 +680,7 @@ function App() {
 
           {authMode === "signin" && (
             <p style={{ marginTop: "0.75rem" }}>
-              <a href="/" onClick={(e) => { e.preventDefault(); handleForgotPassword(); }} style={{ fontFamily: "'Pacifico', cursive", fontSize: "20px", color: "#e0a3ff", textDecoration: "none" }}>
+              <a href="/" onClick={(e) => { e.preventDefault(); handleForgotPassword(); }} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "13px", color: "#e0a3ff", textDecoration: "underline" }}>
                 Forgot password?
               </a>
             </p>
@@ -775,15 +867,52 @@ function App() {
                 {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
               </div>
 
-              <div className="result-hero-visual">
-                <span className="hero-visual-icon" aria-hidden="true">
-                  {categoryEmoji(winner.category, winner.name)}
-                </span>
-                <AnimatedScore value={winner.matchScore} />
-              </div>
+              {typeof winner.outperformedCount === "number" && winner.outperformedCount > 0 && (
+                <p className="dominance-stat">
+                  {winner.thinMarket
+                    ? `Best match among ${winner.outperformedCount + 1} nearby options`
+                    : `Outperformed ${winner.outperformedCount} other nearby spots`}
+                </p>
+              )}
+
+              <div className="match-banner">
+  <span className="match-banner-tag">Top match</span>
+  {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
+</div>
+
+{typeof winner.beatCount === "number" && winner.beatCount > 0 && (
+  <p className="beat-line">
+    Outperformed <strong>{winner.beatCount}</strong> other nearby option{winner.beatCount === 1 ? "" : "s"}
+  </p>
+)}
+
+<div className="score-core">
+  <div className="score-core-center">
+    <AnimatedScore value={winner.matchScore} />
+    <span className="score-core-label">Savor Match Score</span>
+  </div>
+
+  {winner.scoreBreakdown && (
+    <div className="score-core-metrics">
+      <MiniMetric label="Relevance" icon="🎯" value={winner.scoreBreakdown.relevance} />
+      <MiniMetric label="Quality" icon="⭐" value={winner.scoreBreakdown.quality} />
+      <MiniMetric label="Proximity" icon="📍" value={winner.scoreBreakdown.proximity} />
+      <MiniMetric label="Evidence" icon="🔎" value={winner.scoreBreakdown.evidence} />
+      <MiniMetric label="Trust" icon="🛡️" value={winner.scoreBreakdown.trust} />
+    </div>
+  )}
+</div>
+
+              <ScoreBreakdown restaurant={winner} />
 
               <div className="result-body">
                 <h2>{winner.name}</h2>
+
+                <EvidenceSection evidence={winner.evidence} matchedDietaryTerms={winner.matchedDietaryTerms} />
+
+{winner.runnerUps && winner.runnerUps.length > 0 && (
+  <ComparisonTease runnerUps={winner.runnerUps} />
+)}
 
                 <div className="meta-row">
                   {typeof winner.rating === "number" ? (
@@ -797,6 +926,9 @@ function App() {
                   {winner.category && <span className="category">{winner.category}</span>}
                   {typeof winner.distanceMiles === "number" && (
                     <span className="distance">{winner.distanceMiles} mi</span>
+                  )}
+                  {typeof winner.responseTimeMs === "number" && (
+                    <span className="response-time">⚡ matched in {winner.responseTimeMs}ms</span>
                   )}
                 </div>
 

@@ -630,6 +630,35 @@ body {
   margin: 4px 0 0;
 }
 
+/* The verdict now leads the card instead of a grid of percentages. It has
+   to read as a statement, not a stat — hence the larger, non-mono type. */
+.verdict-line {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-cream);
+  margin: 0;
+  padding: 4px 0 2px;
+}
+
+/* Score breakdown + comparisons, side by side at the foot of the card. */
+.detail-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 16px;
+}
+
+.detail-row .comparison-tease,
+.detail-row .score-detail {
+  margin: 0;
+}
+
+.score-detail .score-core-metrics {
+  padding: 14px 0 0;
+}
+
 /* -- score core metrics: the sub-scores behind the composite.
    auto-fit accommodates the seventh "vibe match" bar, which only renders
    when the search actually asked for a quality. -- */

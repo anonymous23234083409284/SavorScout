@@ -24,23 +24,19 @@ function buildChips(restaurant) {
     chips.push(`${restaurant.matchedCuisine} done well`);
   }
 
-  if (typeof restaurant.rating === "number" && sb.quality >= 65) {
-    chips.push(
-      restaurant.reviewCount
-        ? `${restaurant.rating.toFixed(1)}★ across ${restaurant.reviewCount.toLocaleString()} reviews`
-        : `${restaurant.rating.toFixed(1)}★ rated`
-    );
+  if (typeof restaurant.rating === "number" && sb.quality >= 65 && restaurant.reviewCount >= 50) {
+    chips.push(`Well reviewed — ${restaurant.reviewCount.toLocaleString()} ratings`);
   }
 
   if (sb.proximity >= 65 && typeof restaurant.distanceMiles === "number") {
-    chips.push(`Only ${restaurant.distanceMiles} mi away`);
+    chips.push(`Close by — ${restaurant.distanceMiles} mi`);
   }
 
   if (sb.evidence >= 60) {
     chips.push(
       restaurant.evidence?.sourceType === "official_site"
-        ? "Confirmed on their own menu"
-        : "Confirmed by web research"
+        ? "Serves it — confirmed on their menu"
+        : "Menu confirmed online"
     );
   }
 
@@ -53,7 +49,7 @@ function buildChips(restaurant) {
   }
 
   if (typeof sb.budget === "number" && sb.budget >= 70) chips.push("Fits your budget");
-  if (sb.trust >= 100) chips.push("Website and phone on file");
+  
 
   if (chips.length === 0 && restaurant.category) chips.push(restaurant.category);
 
@@ -129,24 +125,25 @@ function ComparisonTease({ runnerUps }) {
 }
 
 function EvidenceSection({ evidence, reception, matchedDietaryTerms, matchedAllergyTerms }) {
-  const hasHighlight = Boolean(evidence?.highlights?.length);
-  const hasReception = Boolean(reception?.highlights?.length);
+  // The backend now sends a single vetted `quote` per channel, or null. It
+  // rejects anything that looks like scraped markup rather than a sentence,
+  // so there is no longer a "###### $17.00 ... $17" case to defend against.
+  const hasMenu = Boolean(evidence?.quote);
+  const hasReception = Boolean(reception?.quote);
   const hasAllergy = Boolean(matchedAllergyTerms?.length);
   const hasDietary = Boolean(matchedDietaryTerms?.length);
 
-  // FIX: the original checked `!matchedDietaryTerms` — truthy for an empty
-  // array — so an empty section could render with nothing inside it.
-  if (!hasHighlight && !hasReception && !hasAllergy && !hasDietary) return null;
+  if (!hasMenu && !hasReception && !hasAllergy && !hasDietary) return null;
 
-  const sourceLabel =
-    evidence?.sourceType === "official_site" ? "Verified via official website" : "Verified via web research";
+  const menuLabel =
+    evidence?.sourceType === "official_site" ? "From their own menu" : "From web research";
 
   return (
     <div className="evidence-section">
-      {hasHighlight && (
+      {hasMenu && (
         <>
-          <span className="evidence-label">{sourceLabel}</span>
-          <blockquote className="evidence-quote">{evidence.highlights[0]}</blockquote>
+          <span className="evidence-label">{menuLabel}</span>
+          <blockquote className="evidence-quote">{evidence.quote}</blockquote>
           {evidence.sourceUrl && (
             <a className="evidence-source-link" href={evidence.sourceUrl} target="_blank" rel="noreferrer">
               View source →
@@ -156,9 +153,9 @@ function EvidenceSection({ evidence, reception, matchedDietaryTerms, matchedAlle
       )}
 
       {hasReception && (
-        <div className="reception-block">
+        <div className={hasMenu ? "reception-block" : undefined}>
           <span className="evidence-label">What people say</span>
-          <blockquote className="evidence-quote">{reception.highlights[0]}</blockquote>
+          <blockquote className="evidence-quote">{reception.quote}</blockquote>
           {reception.sourceUrl && (
             <a className="evidence-source-link" href={reception.sourceUrl} target="_blank" rel="noreferrer">
               View source →
@@ -177,6 +174,63 @@ function EvidenceSection({ evidence, reception, matchedDietaryTerms, matchedAlle
       {hasDietary && <p className="dietary-note">Confirmed: {matchedDietaryTerms.join(", ")}</p>}
     </div>
   );
+}
+
+// The six-bar grid used to sit permanently on the card, zeros and all. A
+// row reading "DISTANCE 0%" undercuts the verdict it is supposed to
+// support, so the numbers move behind a toggle for people who want them,
+// and only metrics that carry real information are listed.
+const METRIC_LABELS = {
+  relevance: "Dish match",
+  vibe: "Vibe match",
+  quality: "Ratings",
+  proximity: "Distance",
+  evidence: "Evidence",
+  budget: "Price fit",
+  trust: "Listing quality",
+};
+
+function ScoreDetail({ breakdown }) {
+  const [open, setOpen] = useState(false);
+  if (!breakdown) return null;
+
+  const rows = Object.entries(METRIC_LABELS)
+    .map(([key, label]) => [label, breakdown[key]])
+    .filter(([, value]) => typeof value === "number");
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="score-detail">
+      <button className="comparison-toggle" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+        {open ? "Hide the numbers" : "How we scored this →"}
+      </button>
+      {open && (
+        <div className="score-core-metrics">
+          {rows.map(([label, value]) => (
+            <MiniMetric key={label} label={label} value={value} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// One plain sentence stating how decisive the win was. This is the piece
+// that was missing: the card showed arithmetic but never said "and that
+// means this is the one".
+function verdictLine(winner) {
+  const beat = winner.beatCount || 0;
+  const lead = winner.dominancePercent;
+
+  if (beat === 0) return "The only place nearby that fits what you asked for.";
+  if (typeof lead === "number" && lead >= 25) {
+    return `Clear winner — well ahead of the other ${beat} nearby.`;
+  }
+  if (typeof lead === "number" && lead >= 8) {
+    return `Best of the ${beat} nearby places we compared.`;
+  }
+  return `Edged out ${beat} other${beat === 1 ? "" : "s"} nearby — it was close.`;
 }
 
 function AnimatedScore({ value }) {
@@ -663,7 +717,15 @@ function App() {
       const response = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ query: trimmed, lat: resolved.lat, lng: resolved.lng }),
+        // FIX: send what the user actually typed. The backend was reverse-
+        // geocoding these coordinates back into a place name to hand Serper,
+        // which was both slow and lossy — "11803" is already the answer.
+        body: JSON.stringify({
+          query: trimmed,
+          lat: resolved.lat,
+          lng: resolved.lng,
+          locationHint: manualLocation.trim() || undefined,
+        }),
         signal: controller.signal,
       });
 
@@ -1002,31 +1064,9 @@ function App() {
                 matchScore={winner.matchScore}
               />
 
-              {(winner.beatCount > 0 || winner.dominancePercent > 0) && (
-                <div className="dominance-block">
-                  {winner.beatCount > 0 && (
-                    <p className="beat-line">
-                      Beat <strong>{winner.beatCount}</strong> nearby{" "}
-                      {winner.beatCount === 1 ? "restaurant" : "restaurants"}
-                    </p>
-                  )}
-                  {winner.dominancePercent > 0 && (
-                    <p className="dominance-stat">+{winner.dominancePercent}% vs. the average runner-up</p>
-                  )}
-                </div>
-              )}
-
-              {winner.scoreBreakdown && (
-                <div className="score-core-metrics">
-                  <MiniMetric label="Relevance" value={winner.scoreBreakdown.relevance} />
-                  <MiniMetric label="Vibe match" value={winner.scoreBreakdown.vibe} />
-                  <MiniMetric label="Quality" value={winner.scoreBreakdown.quality} />
-                  <MiniMetric label="Distance" value={winner.scoreBreakdown.proximity} />
-                  <MiniMetric label="Evidence" value={winner.scoreBreakdown.evidence} />
-                  <MiniMetric label="Price fit" value={winner.scoreBreakdown.budget} />
-                  <MiniMetric label="Trust" value={winner.scoreBreakdown.trust} />
-                </div>
-              )}
+              <div className="dominance-block">
+                <p className="verdict-line">{verdictLine(winner)}</p>
+              </div>
 
               <div className="result-body">
                 <h2>{winner.name}</h2>
@@ -1066,7 +1106,10 @@ function App() {
                   matchedAllergyTerms={winner.matchedAllergyTerms}
                 />
 
-                <ComparisonTease runnerUps={winner.runnerUps} />
+                <div className="detail-row">
+                  <ScoreDetail breakdown={winner.scoreBreakdown} />
+                  <ComparisonTease runnerUps={winner.runnerUps} />
+                </div>
 
                 <div className="action-row">
                   <a className="action-btn action-btn--primary" href={mapsUrl(winner)} target="_blank" rel="noreferrer">

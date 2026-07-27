@@ -52,6 +52,11 @@ if (!process.env.EXA_API_KEY) {
 
 // --- Tunables --------------------------------------------------------------
 
+// Nothing beyond this is a plausible answer to "where should I eat".
+// A backstop, so a location failure degrades into "no match nearby" rather
+// than confidently recommending a restaurant 1,000 miles away.
+const MAX_RESULT_RADIUS_MILES = 45;
+
 const CANDIDATE_POOL_SIZE = 15;
 const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
 const STAGE1_FINALIST_COUNT = 3; // was 5 — fewer parallel Exa calls means a shorter tail
@@ -504,6 +509,43 @@ function settleWithin(promises, ms) {
   );
 }
 
+// Exa highlights from a menu page come back as scraped markup: markdown
+// hashes, bullet glyphs, and long runs of prices. That reads as broken to a
+// user and destroys trust in the whole card. A highlight has to look like a
+// SENTENCE to be shown — otherwise we show nothing, which is honest and
+// looks far better than "###### $17.00 ... $17 ... $17".
+function cleanHighlight(raw) {
+  if (typeof raw !== "string") return null;
+
+  const text = raw
+    .replace(/[#*_`>|]+/g, " ")
+    .replace(/\s*[·•]\s*/g, ", ")
+    .replace(/\.{2,}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (text.length < 45) return null;
+
+  const words = text.split(/\s+/);
+  const realWords = words.filter((w) => /^[A-Za-z][A-Za-z'-]{2,}$/.test(w));
+  if (realWords.length < 9) return null; // not prose
+
+  const numericish = words.filter((w) => /^[$#]?[\d.,]+$/.test(w)).length;
+  if (numericish / words.length > 0.2) return null; // a price list
+
+  if (!/[a-z]{3,}\s+[a-z]{3,}\s+[a-z]{3,}/i.test(text)) return null; // no phrase
+
+  return text.length > 240 ? `${text.slice(0, 237).trimEnd()}…` : text;
+}
+
+function pickQuote(research) {
+  for (const h of research?.highlights || []) {
+    const cleaned = cleanHighlight(h);
+    if (cleaned) return cleaned;
+  }
+  return null;
+}
+
 function computeEvidenceScore(menuResearch, receptionResearch, wantsVibe) {
   const menu = scoreOneChannel(menuResearch);
   if (!wantsVibe) return menu;
@@ -686,9 +728,15 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // Previously this waited on OpenAI, making the two calls serial (~1.2s
     // combined). They are independent: Serper needs free text, which we
     // already have. Now they overlap and cost max(~350ms, ~700ms).
+    // FIX: this used to race the reverse geocode against a 250ms timer.
+    // Nominatim runs 300-1000ms, so it lost nearly every time, the location
+    // param went out as null, and Serper searched the whole country — which
+    // is how a Hicksville search returned Boca Raton. Correctness beats the
+    // 300ms: prefer what the user literally typed, then the fast parse, and
+    // only then fall back to the (now cached) reverse geocode, fully awaited.
     const fastParsed = fastParseQuery(userRequest);
-    const speculativeLocation =
-      fastParsed.location || (await Promise.race([deviceLocationPromise, delay(250).then(() => null)]));
+    const typedHint = typeof req.body.locationHint === "string" ? req.body.locationHint.trim() : "";
+    const speculativeLocation = typedHint || fastParsed.location || (await deviceLocationPromise);
 
     const candidatePromise = fetchCandidatePool({
       textQuery: userRequest.trim(),
@@ -698,8 +746,9 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // If the fast parser already spotted a place, resolve its coordinates
     // concurrently too, so the distance anchor is ready the moment OpenAI
     // confirms it rather than costing another serial Nominatim round-trip.
-    const speculativeAnchorPromise = fastParsed.location
-      ? geocodeLocationName(fastParsed.location).catch(() => null)
+    const anchorHint = fastParsed.location || typedHint;
+    const speculativeAnchorPromise = anchorHint
+      ? geocodeLocationName(anchorHint).catch(() => null)
       : Promise.resolve(null);
 
     let preferences;
@@ -762,7 +811,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       // Reuse the in-flight lookup when OpenAI agrees with the fast parser
       // (the common case); otherwise fall back to a fresh, cached lookup.
       const geocoded =
-        fastParsed.location && fastParsed.location.toLowerCase() === namedLocation.toLowerCase()
+        anchorHint && anchorHint.toLowerCase() === namedLocation.toLowerCase()
           ? await speculativeAnchorPromise
           : await geocodeLocationName(namedLocation);
       if (geocoded) {
@@ -857,10 +906,28 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       });
     }
 
-    // Layer 2: hard relevance gate.
+    // Layer 2a: distance sanity gate.
+    const withinRadius = withFeatures.filter((c) => c.distance <= MAX_RESULT_RADIUS_MILES);
+    if (withinRadius.length === 0) {
+      console.warn(
+        `All ${withFeatures.length} candidates were beyond ${MAX_RESULT_RADIUS_MILES}mi of the anchor ` +
+          `(nearest ${Math.round(Math.min(...withFeatures.map((c) => c.distance)))}mi) — ` +
+          `location resolution likely failed for "${speculativeLocation || "none"}".`
+      );
+      const { newCount } = emptyResult();
+      recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
+      return res.json({
+        preferences,
+        locationName,
+        restaurants: [],
+        searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
+      });
+    }
+
+    // Layer 2b: hard relevance gate.
     const wantsSomethingSpecific = Boolean(dishKeyword || cuisineKeyword);
-    const relevantOnly = withFeatures.filter((c) => c.relevance > 0);
-    const pool = wantsSomethingSpecific && relevantOnly.length >= 2 ? relevantOnly : withFeatures;
+    const relevantOnly = withinRadius.filter((c) => c.relevance > 0);
+    const pool = wantsSomethingSpecific && relevantOnly.length >= 2 ? relevantOnly : withinRadius;
 
     // Layer 3: normalize each feature across the gated pool.
     // FIX: normalized values are attached to each candidate object rather than
@@ -1067,16 +1134,16 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
           evidence: Math.round(winner.absolute.evidence * 100),
           budget: userBudgetLevel != null ? Math.round(winner.absolute.budget * 100) : null,
         },
-        evidence: winner.research
-          ? {
-              sourceType: winner.research.sourceType,
-              sourceUrl: winner.research.sourceUrl,
-              highlights: winner.research.highlights,
-            }
-          : null,
-        reception: winner.reception
-          ? { sourceUrl: winner.reception.sourceUrl, highlights: winner.reception.highlights }
-          : null,
+        evidence: (() => {
+          const quote = pickQuote(winner.research);
+          return quote
+            ? { sourceType: winner.research.sourceType, sourceUrl: winner.research.sourceUrl, quote }
+            : null;
+        })(),
+        reception: (() => {
+          const quote = pickQuote(winner.reception);
+          return quote ? { sourceUrl: winner.reception.sourceUrl, quote } : null;
+        })(),
         requestedFactors: wantsVibe ? vibeTerms : null,
         matchedFactors: winner.matchedFactors.length > 0 ? winner.matchedFactors : null,
         matchedDietaryTerms: winner.matchedDietaryTerms.length > 0 ? winner.matchedDietaryTerms : null,

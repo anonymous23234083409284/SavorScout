@@ -1,8 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Pacifico&display=swap');
-.hero-script {
-  font-family: 'Pacifico', cursive;
-  font-weight: 400;
-}
+
+/* ===========================================================================
+   SavorScout — complete stylesheet.
+
+   This replaces App.css wholesale. The version you pasted had the additions
+   block appended twice (.link-btn, .notice-msg, .searches-left,
+   .comparison-name, .comparison-score, .results-section and the
+   reduced-motion query each appeared two times). Duplicates are resolved
+   here, and .google-btn / .reception-block are folded in properly.
+   =========================================================================== */
+
 :root {
   --bg-deep: #140f1b;
   --bloom-saffron: #ffc857;
@@ -24,6 +31,11 @@ body {
   background: var(--bg-deep);
   color: var(--text-cream);
   font-family: 'Space Grotesk', sans-serif;
+}
+
+.hero-script {
+  font-family: 'Pacifico', cursive;
+  font-weight: 400;
 }
 
 .app {
@@ -111,6 +123,56 @@ body {
 .header nav a:focus-visible {
   color: var(--bloom-saffron);
   border-bottom-color: var(--bloom-saffron);
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 20px;
+  padding: 6px 8px 6px 16px;
+  background: rgba(255, 200, 87, 0.08);
+  border: 1px solid rgba(255, 200, 87, 0.25);
+  border-radius: 999px;
+}
+
+.user-email {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(100deg, var(--bloom-saffron), var(--bloom-paprika) 70%);
+  color: var(--bg-deep);
+  border: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.signout-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(255, 106, 61, 0.45);
+}
+
+.signout-btn:active {
+  transform: translateY(0);
 }
 
 /* ---------- hero ---------- */
@@ -237,14 +299,61 @@ body {
   cursor: not-allowed;
 }
 
+/* ---------- auth screen ---------- */
+
+/* The Google button is currently styled inline in App.js. These rules match
+   it exactly — delete that inline `style` object whenever you like. */
+.google-btn {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 56px;
+  background-color: #1f1f1f;
+  color: #fff;
+  border: 1px solid #1f1f1f;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.google-btn:hover {
+  background-color: #3c3c3c;
+}
+
+/* Inline text buttons that read as links: forgot password, sign in / sign up.
+   These are real <button>s — they perform actions rather than navigating, and
+   one of them was the malformed <a> that stopped the app compiling. */
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #e0a3ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.link-btn:hover {
+  color: var(--bloom-saffron);
+}
+
+/* ---------- manual location fallback ---------- */
+
 .loc-warning {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
   margin-top: 18px;
   color: var(--bloom-saffron);
 }
-
-/* ---------- manual location fallback ---------- */
 
 .manual-location {
   max-width: 640px;
@@ -290,6 +399,8 @@ body {
   opacity: 0.85;
 }
 
+/* ---------- status messages ---------- */
+
 .error-msg {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
@@ -297,12 +408,30 @@ body {
   color: var(--err);
 }
 
+/* Non-error status: "check your email", "reset link sent". These were
+   previously routed through .error-msg and rendered in alarming red. */
+.notice-msg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  margin-top: 14px;
+  color: var(--runner-teal);
+  line-height: 1.5;
+}
+
+.searches-left {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 14px;
+  letter-spacing: 0.03em;
+}
+
 /* ---------- results ---------- */
 
 .results-section {
   position: relative;
   z-index: 2;
-  padding: 20px 40px 100px;
+  padding: 8px 40px 100px;
 }
 
 .empty-state {
@@ -390,9 +519,9 @@ body {
   white-space: nowrap;
 }
 
-/* -- hero visual: a real photo (via Serper Images) with the animated match
-   score overlaid, and a plain monogram fallback when no photo is found or
-   it fails to load — never an emoji, never a guessed stock image -- */
+/* -- hero visual: a real photo (Serper thumbnail or image search) with the
+   animated match score overlaid, and a plain monogram fallback when no photo
+   is found or it fails to load — never an emoji, never a guessed stock image */
 
 .result-hero-visual {
   position: relative;
@@ -476,7 +605,7 @@ body {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* -- dominance stats: the real "beat N others" / "+X% vs average" numbers -- */
+/* -- dominance stats: the "beat N others" / "+X% vs average" numbers -- */
 
 .dominance-block {
   text-align: center;
@@ -489,7 +618,10 @@ body {
   color: var(--text-dim);
   margin: 0;
 }
-.beat-line strong { color: var(--winner-pink); }
+
+.beat-line strong {
+  color: var(--winner-pink);
+}
 
 .dominance-stat {
   font-family: 'IBM Plex Mono', monospace;
@@ -498,7 +630,9 @@ body {
   margin: 4px 0 0;
 }
 
-/* -- score core metrics: the real sub-scores behind the composite -- */
+/* -- score core metrics: the sub-scores behind the composite.
+   auto-fit accommodates the seventh "vibe match" bar, which only renders
+   when the search actually asked for a quality. -- */
 
 .score-core-metrics {
   display: grid;
@@ -513,13 +647,27 @@ body {
   align-items: center;
   gap: 6px;
 }
-.mini-metric-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+
+.mini-metric-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
 .mini-metric-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
   transition: width 0.6s ease;
 }
-.mini-metric-value { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); text-align: right; }
+
+.mini-metric-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  text-align: right;
+}
+
 .mini-metric-label {
   grid-column: 1 / span 2;
   font-family: 'IBM Plex Mono', monospace;
@@ -576,7 +724,8 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* -- evidence: the section grounded in Exa's real research -- */
+/* -- evidence: grounded in Exa research, split into two channels.
+   The menu quote sits on top; "what people say" sits below a hairline. -- */
 
 .evidence-section {
   margin: 4px 0 18px;
@@ -612,7 +761,21 @@ body {
   color: var(--runner-teal);
   text-decoration: none;
 }
-.evidence-source-link:hover { text-decoration: underline; }
+
+.evidence-source-link:hover {
+  text-decoration: underline;
+}
+
+.reception-block {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(46, 230, 214, 0.18);
+}
+
+/* Saffron rather than teal, so the two channels read as distinct sources. */
+.reception-block .evidence-label {
+  color: var(--bloom-saffron);
+}
 
 .allergy-note {
   margin: 10px 0 0;
@@ -668,7 +831,10 @@ body {
 
 /* -- comparison tease -- */
 
-.comparison-tease { margin: 4px 0 16px; }
+.comparison-tease {
+  margin: 4px 0 16px;
+}
+
 .comparison-toggle {
   background: none;
   border: 1px solid rgba(46, 230, 214, 0.3);
@@ -679,8 +845,37 @@ body {
   border-radius: 999px;
   cursor: pointer;
 }
-.comparison-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.comparison-list li { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8a96a3; }
+
+.comparison-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.comparison-list li {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: #8a96a3;
+}
+
+.comparison-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 12px;
+}
+
+.comparison-score {
+  color: var(--runner-teal);
+  white-space: nowrap;
+}
+
+/* -- actions + map -- */
 
 .action-row {
   display: flex;
@@ -765,12 +960,6 @@ body {
   gap: 32px;
 }
 
-@media (max-width: 720px) {
-  .steps {
-    grid-template-columns: 1fr;
-  }
-}
-
 .steps .step-label {
   display: block;
   font-family: 'IBM Plex Mono', monospace;
@@ -806,76 +995,6 @@ footer {
   font-size: 12px;
   color: #4a3f38;
   border-top: 1px solid rgba(255, 200, 87, 0.08);
-}
-
-/* ---------- accessibility ---------- */
-
-@media (prefers-reduced-motion: reduce) {
-  .result-card--winner::after,
-  .hero::before,
-  .score-badge {
-    animation: none;
-  }
-  .result-card {
-    transition: none;
-  }
-}
-
-a:focus-visible,
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid var(--bloom-saffron);
-  outline-offset: 2px;
-}
-
-.user-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 20px;
-  padding: 6px 8px 6px 16px;
-  background: rgba(255, 200, 87, 0.08);
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  border-radius: 999px;
-}
-
-.user-email {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  letter-spacing: 0.02em;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.signout-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(100deg, var(--bloom-saffron), var(--bloom-paprika) 70%);
-  color: var(--bg-deep);
-  border: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 8px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  white-space: nowrap;
-}
-
-.signout-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(255, 106, 61, 0.45);
-}
-
-.signout-btn:active {
-  transform: translateY(0);
 }
 
 /* ---------- onboarding (allergies / dietary preferences) ---------- */
@@ -1010,62 +1129,73 @@ input:focus-visible {
   cursor: not-allowed;
 }
 
-.link-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  color: #e0a3ff;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  transition: color 0.15s ease;
-}
-
-.link-btn:hover {
-  color: var(--bloom-saffron);
-}
-
-/* Non-error status messages — "check your email", "reset link sent".
-   These were previously routed through .error-msg and rendered in red. */
-.notice-msg {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  margin-top: 14px;
-  color: var(--runner-teal);
+/* The onboarding error can now carry a real schema/policy message, which
+   runs longer than the old one-liner. Give it room to wrap. */
+.onboarding-card .error-msg {
+  margin-top: 0;
   line-height: 1.5;
+  text-align: center;
 }
 
-.searches-left {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-top: 14px;
-  letter-spacing: 0.03em;
+/* ---------- responsive ---------- */
+
+@media (max-width: 720px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero {
+    padding: 72px 20px 56px;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .results-section {
+    padding: 8px 20px 72px;
+  }
+
+  .info,
+  .about {
+    padding: 80px 20px 56px;
+  }
+
+  .user-badge {
+    margin-left: 0;
+  }
 }
 
-.comparison-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-right: 12px;
-}
-
-.comparison-score {
-  color: var(--runner-teal);
-  white-space: nowrap;
-}
-
-/* The verdict card sits directly under the hero; the hero's own bloom
-   already provides separation, so pull the results block up slightly. */
-.results-section {
-  padding-top: 8px;
-}
+/* ---------- accessibility ---------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .result-card--winner::after,
+  .hero::before,
+  .onboarding-hero::before,
+  .score-badge {
+    animation: none;
+  }
+
+  .result-card,
   .link-btn,
-  .comparison-toggle {
+  .comparison-toggle,
+  .mini-metric-fill,
+  .action-btn,
+  .signout-btn {
     transition: none;
   }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--bloom-saffron);
+  outline-offset: 2px;
 }

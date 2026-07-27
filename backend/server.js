@@ -6,6 +6,13 @@ const axios = require("axios");
 const OpenAI = require("openai");
 const { createClient } = require("@supabase/supabase-js");
 const cors = require("cors");
+const https = require("https");
+
+// Every outbound call previously opened a fresh TLS connection. With 4-6
+// calls per search that is 200-500ms of pure handshake. One pooled agent,
+// reused across requests, removes it.
+const keepAliveAgent = new https.Agent({ keepAlive: true, maxSockets: 64, keepAliveMsecs: 30000 });
+const http = axios.create({ httpsAgent: keepAliveAgent, timeout: 8000 });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -46,19 +53,26 @@ if (!process.env.EXA_API_KEY) {
 // --- Tunables --------------------------------------------------------------
 
 const CANDIDATE_POOL_SIZE = 15;
-const MAX_PAGES = 2;
-const STAGE1_FINALIST_COUNT = 5;
+const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
+const STAGE1_FINALIST_COUNT = 3; // was 5 — fewer parallel Exa calls means a shorter tail
 const DAILY_SEARCH_LIMIT = 5;
 const EARTH_RADIUS_MILES = 3958.8;
 const PROXIMITY_DECAY_MILES = 4;
 const MAX_QUERY_CHARS = 300;
 
 const EXA_API_KEY = process.env.EXA_API_KEY;
-const EXA_TIMEOUT_MS = 9000;
+const EXA_TIMEOUT_MS = 4000;     // per-call ceiling; the deadline below is the real budget
 const EXA_CACHE_TTL_DAYS = 14;
 
-const SERPER_TIMEOUT_MS = 8000;
-const NOMINATIM_TIMEOUT_MS = 6000;
+// The hard latency guarantee. Whatever evidence lands inside this window is
+// used; anything slower keeps running in the background purely to warm the
+// cache, so the NEXT search for that restaurant gets it for free. Ranking
+// degrades gracefully because evidence is one signal among six.
+const EXA_DEADLINE_MS = 700;
+
+const SERPER_TIMEOUT_MS = 4000;
+const NOMINATIM_TIMEOUT_MS = 2500;
+const GEOCODE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const NOMINATIM_UA = "SavorScout/1.0 (your-email@example.com)";
 
 // Competitive weights — decide WHO WINS. Operate on min-max normalized
@@ -69,15 +83,43 @@ const STAGE2_WEIGHTS = { base: 0.45, evidence: 0.25, conceptual: 0.3 };
 // Display weights — decide WHAT NUMBER THE USER SEES. Operate on absolute
 // 0-1 signals, so a mediocre winner in a weak pool reads as a mediocre
 // match instead of a guaranteed 100%.
+// `vibe` is null whenever the user didn't ask for one; weightedAbsolute
+// renormalizes over whatever is present, so its 0.10 redistributes instead
+// of scoring zero.
 const DISPLAY_WEIGHTS = {
-  quality: 0.3, relevance: 0.25, proximity: 0.15, evidence: 0.15, budget: 0.08, trust: 0.07,
+  quality: 0.3, relevance: 0.2, proximity: 0.15, evidence: 0.1, budget: 0.08, trust: 0.07, vibe: 0.1,
 };
 
 // --- Geocoding -------------------------------------------------------------
 
+// Nominatim runs 300-1000ms and rate-limits hard. Both directions are cached
+// in-process: forward by normalized place name (cities repeat across every
+// user), reverse by coordinates rounded to ~1km (people search from the same
+// place over and over). A hit costs nothing.
+const geoCache = new Map();
+
+function geoCacheGet(key) {
+  const hit = geoCache.get(key);
+  if (!hit) return undefined;
+  if (Date.now() - hit.at > GEOCODE_CACHE_TTL_MS) {
+    geoCache.delete(key);
+    return undefined;
+  }
+  return hit.value;
+}
+
+function geoCacheSet(key, value) {
+  if (geoCache.size > 5000) geoCache.clear();
+  geoCache.set(key, { value, at: Date.now() });
+}
+
 async function reverseGeocodeToLocationName(lat, lng) {
+  const key = `rev:${lat.toFixed(2)},${lng.toFixed(2)}`;
+  const cached = geoCacheGet(key);
+  if (cached !== undefined) return cached;
+
   try {
-    const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+    const response = await http.get("https://nominatim.openstreetmap.org/reverse", {
       params: { format: "json", lat, lon: lng, zoom: 12 },
       headers: { "User-Agent": NOMINATIM_UA },
       timeout: NOMINATIM_TIMEOUT_MS,
@@ -86,7 +128,9 @@ async function reverseGeocodeToLocationName(lat, lng) {
     if (!address) return null;
     const place = address.city || address.town || address.village || address.suburb || address.county;
     if (!place) return null;
-    return address.state ? `${place}, ${address.state}` : place;
+    const name = address.state ? `${place}, ${address.state}` : place;
+    geoCacheSet(key, name);
+    return name;
   } catch (err) {
     console.error("Reverse geocoding error:", err.response?.data || err.message);
     return null;
@@ -97,8 +141,12 @@ async function reverseGeocodeToLocationName(lat, lng) {
 // — not the device's GPS fix — has to become the distance anchor. Otherwise
 // every candidate scores ~0 on proximity and the card reports a 38-mile walk.
 async function geocodeLocationName(name) {
+  const key = `fwd:${name.toLowerCase().trim()}`;
+  const cached = geoCacheGet(key);
+  if (cached !== undefined) return cached;
+
   try {
-    const response = await axios.get("https://nominatim.openstreetmap.org/search", {
+    const response = await http.get("https://nominatim.openstreetmap.org/search", {
       params: { format: "json", limit: 1, countrycodes: "us", q: name },
       headers: { "User-Agent": NOMINATIM_UA },
       timeout: NOMINATIM_TIMEOUT_MS,
@@ -107,7 +155,9 @@ async function geocodeLocationName(name) {
     if (!hit) return null;
     const lat = parseFloat(hit.lat);
     const lng = parseFloat(hit.lon);
-    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+    const coords = Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+    if (coords) geoCacheSet(key, coords);
+    return coords;
   } catch (err) {
     console.error("Forward geocoding error:", err.response?.data || err.message);
     return null;
@@ -124,6 +174,33 @@ function distanceInMiles(lat1, lng1, lat2, lng2) {
   return EARTH_RADIUS_MILES * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+// Serper's `q` takes free text — the raw craving works as a places query on
+// its own. So we no longer need OpenAI's structured output before searching;
+// this pulls out just enough (a named location) to set the `location` param,
+// in zero milliseconds. OpenAI still runs, concurrently, and its richer
+// output drives scoring. That takes ~700ms off the critical path.
+const LOCATION_PATTERN = /\b(?:in|near|around|by)\s+([A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*){0,3}(?:,\s*[A-Za-z]{2})?)\s*$/i;
+const ZIP_PATTERN = /\b(\d{5})\b/;
+
+const STOP_AFTER_PREPOSITION = new Set([
+  "me", "here", "there", "now", "town", "downtown", "the", "my", "us", "you",
+]);
+
+function fastParseQuery(raw) {
+  const text = raw.trim();
+  const zip = text.match(ZIP_PATTERN);
+  if (zip) return { location: zip[1] };
+
+  const m = text.match(LOCATION_PATTERN);
+  if (!m) return { location: null };
+
+  const candidate = m[1].trim();
+  const firstWord = candidate.split(/\s+/)[0].toLowerCase();
+  if (STOP_AFTER_PREPOSITION.has(firstWord)) return { location: null };
+
+  return { location: candidate };
+}
+
 // --- Candidate discovery ---------------------------------------------------
 
 async function fetchCandidatePool({ textQuery, locationName }) {
@@ -132,7 +209,7 @@ async function fetchCandidatePool({ textQuery, locationName }) {
     if (locationName) body.location = locationName;
     if (page > 1) body.page = page;
 
-    const response = await axios.post("https://google.serper.dev/places", body, {
+    const response = await http.post("https://google.serper.dev/places", body, {
       headers: { "X-API-KEY": process.env.SERPER_API_KEY, "Content-Type": "application/json" },
       timeout: SERPER_TIMEOUT_MS,
     });
@@ -167,6 +244,8 @@ async function fetchCandidatePool({ textQuery, locationName }) {
 }
 
 // --- Scoring primitives ----------------------------------------------------
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function clamp01(v) {
   return Math.min(1, Math.max(0, v));
@@ -238,8 +317,14 @@ function confidenceMultiplier(reviewCount, dataTrust) {
 
 // --- Exa research + cache --------------------------------------------------
 
-function cacheKeyFor(place) {
-  return place.website || `place:${place.placeId || place.cid}`;
+// Two evidence channels are cached independently: the menu channel (what the
+// restaurant serves) and the reception channel (how people describe it).
+// Prefixing keeps them from overwriting each other under one cache_key.
+// Existing unprefixed rows simply stop matching and age out via the TTL —
+// no migration needed.
+function cacheKeyFor(place, channel) {
+  const base = place.website || `place:${place.placeId || place.cid}`;
+  return `${channel}:${base}`;
 }
 
 // FIX (perf): one query for all finalists instead of five sequential
@@ -285,22 +370,27 @@ async function storeResearch(cacheKey, placeId, record) {
   if (error) console.error("restaurant_research write error:", error);
 }
 
-async function researchCandidate(candidate, evidenceQuery, cachedRecord) {
+// CHANNEL 1 — menu evidence. Prefers the restaurant's own site (highest
+// signal for "do they actually serve this"), falls back to a web search.
+async function researchMenu(candidate, evidenceQuery, cachedRecord) {
   if (cachedRecord) return cachedRecord;
   if (!EXA_API_KEY) return null;
 
   const website = candidate.place.website;
-  const cacheKey = cacheKeyFor(candidate.place);
+  const cacheKey = cacheKeyFor(candidate.place, "menu");
 
   try {
     if (website) {
-      const response = await axios.post(
+      const response = await http.post(
         "https://api.exa.ai/contents",
         {
           urls: [website],
           highlights: { query: evidenceQuery, maxCharacters: 300 },
-          subpages: 2,
-          subpageTarget: ["menu", "food"],
+          // Subpage crawling was the single biggest latency source here —
+          // Exa's own docs call it out as significantly slower. Dropped.
+          // maxAgeHours keeps us on cached content instead of triggering a
+          // live crawl (maxAgeHours: 0 would force one).
+          maxAgeHours: 720,
         },
         {
           headers: { "x-api-key": EXA_API_KEY, "Content-Type": "application/json" },
@@ -323,11 +413,11 @@ async function researchCandidate(candidate, evidenceQuery, cachedRecord) {
     }
 
     const searchQuery = `${candidate.place.title} ${candidate.place.address || ""} menu`.trim();
-    const searchResponse = await axios.post(
+    const searchResponse = await http.post(
       "https://api.exa.ai/search",
       {
         query: searchQuery,
-        type: "auto",
+        type: "fast", // ~450ms p50 vs ~1s for "auto"
         numResults: 1,
         contents: { highlights: { query: evidenceQuery, maxCharacters: 300 } },
       },
@@ -349,12 +439,90 @@ async function researchCandidate(candidate, evidenceQuery, cachedRecord) {
   }
 }
 
-function computeEvidenceScore(research) {
+// CHANNEL 2 — reception evidence. Menus never contain the words "quiet",
+// "cozy", or "good for groups"; reviews and write-ups do. This channel only
+// runs when the user actually asked for a quality like that, so a plain
+// "cheap sushi" search costs exactly what it did before.
+async function researchReception(candidate, vibeQuery, cachedRecord) {
+  if (cachedRecord) return cachedRecord;
+  if (!EXA_API_KEY) return null;
+
+  const cacheKey = cacheKeyFor(candidate.place, "reception");
+  const searchQuery = `${candidate.place.title} ${candidate.place.address || ""} reviews atmosphere`.trim();
+
+  try {
+    const response = await http.post(
+      "https://api.exa.ai/search",
+      {
+        query: searchQuery,
+        type: "fast",
+        numResults: 2,
+        contents: { highlights: { query: vibeQuery, maxCharacters: 300 } },
+      },
+      {
+        headers: { "x-api-key": EXA_API_KEY, "Content-Type": "application/json" },
+        timeout: EXA_TIMEOUT_MS,
+      }
+    );
+
+    const hits = response.data?.results || [];
+    if (hits.length === 0) return null;
+
+    const highlights = hits.flatMap((h) => h.highlights || []).filter(Boolean);
+    if (highlights.length === 0) return null;
+
+    const record = { sourceType: "reception", sourceUrl: hits[0].url, highlights };
+    await storeResearch(cacheKey, candidate.place.placeId, record);
+    return record;
+  } catch (err) {
+    console.error(`Exa reception lookup failed for ${candidate.place.title}:`, err.response?.data || err.message);
+    return null;
+  }
+}
+
+function scoreOneChannel(research) {
   if (!research) return 0;
   const hasHighlights = Array.isArray(research.highlights) && research.highlights.length > 0;
   if (research.sourceType === "official_site") return hasHighlights ? 1 : 0.5;
+  if (research.sourceType === "reception") return hasHighlights ? 0.8 : 0.3;
   if (research.sourceType === "secondary") return hasHighlights ? 0.6 : 0.3;
   return 0;
+}
+
+// When the user asked for a vibe, reception evidence is worth real weight.
+// When they didn't, the reception channel never ran and menu evidence alone
+// carries the score — no phantom penalty for a lookup we chose not to make.
+// Resolves with whatever each promise produced inside `ms`, and null for
+// the ones still in flight. Stragglers are NOT cancelled — they finish in
+// the background and write to the cache, so the next request gets a hit.
+function settleWithin(promises, ms) {
+  const timeout = new Promise((resolve) => setTimeout(() => resolve(Symbol.for("deadline")), ms));
+  return Promise.all(
+    promises.map((p) =>
+      Promise.race([p.catch(() => null), timeout]).then((v) => (v === Symbol.for("deadline") ? null : v))
+    )
+  );
+}
+
+function computeEvidenceScore(menuResearch, receptionResearch, wantsVibe) {
+  const menu = scoreOneChannel(menuResearch);
+  if (!wantsVibe) return menu;
+  return 0.6 * menu + 0.4 * scoreOneChannel(receptionResearch);
+}
+
+// Averages the absolute signals that actually exist, renormalizing over the
+// weights present. A null signal (e.g. no vibe requested) is skipped rather
+// than scored as zero, which would silently punish simple queries.
+function weightedAbsolute(absolute, weights) {
+  let sum = 0;
+  let total = 0;
+  for (const [key, weight] of Object.entries(weights)) {
+    const value = absolute[key];
+    if (typeof value !== "number" || !Number.isFinite(value)) continue;
+    sum += weight * value;
+    total += weight;
+  }
+  return total > 0 ? sum / total : 0;
 }
 
 // How much of what the user asked for shows up in the REAL text we have.
@@ -370,7 +538,7 @@ function computeConceptualRelevance(combinedText, terms) {
 
 async function fetchWinnerImage(name, address) {
   try {
-    const response = await axios.post(
+    const response = await http.post(
       "https://google.serper.dev/images",
       { q: `${name} ${address || ""} restaurant`.trim(), gl: "us", num: 3 },
       {
@@ -514,9 +682,30 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
     const deviceLocationPromise = reverseGeocodeToLocationName(userLat, userLng);
 
+    // --- Speculative Serper, fired now -----------------------------------
+    // Previously this waited on OpenAI, making the two calls serial (~1.2s
+    // combined). They are independent: Serper needs free text, which we
+    // already have. Now they overlap and cost max(~350ms, ~700ms).
+    const fastParsed = fastParseQuery(userRequest);
+    const speculativeLocation =
+      fastParsed.location || (await Promise.race([deviceLocationPromise, delay(250).then(() => null)]));
+
+    const candidatePromise = fetchCandidatePool({
+      textQuery: userRequest.trim(),
+      locationName: speculativeLocation,
+    }).catch((error) => ({ error }));
+
+    // If the fast parser already spotted a place, resolve its coordinates
+    // concurrently too, so the distance anchor is ready the moment OpenAI
+    // confirms it rather than costing another serial Nominatim round-trip.
+    const speculativeAnchorPromise = fastParsed.location
+      ? geocodeLocationName(fastParsed.location).catch(() => null)
+      : Promise.resolve(null);
+
     let preferences;
     try {
       const aiResponse = await openai.chat.completions.create({
+        max_tokens: 200,
         model: "gpt-4o-mini",
         messages: [
           {
@@ -570,7 +759,12 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
     if (namedLocation) {
       locationName = namedLocation;
-      const geocoded = await geocodeLocationName(namedLocation);
+      // Reuse the in-flight lookup when OpenAI agrees with the fast parser
+      // (the common case); otherwise fall back to a fresh, cached lookup.
+      const geocoded =
+        fastParsed.location && fastParsed.location.toLowerCase() === namedLocation.toLowerCase()
+          ? await speculativeAnchorPromise
+          : await geocodeLocationName(namedLocation);
       if (geocoded) {
         anchor = geocoded;
         anchorSource = "named";
@@ -581,21 +775,18 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     }
 
     let candidates;
-    try {
-      const textQuery =
-        [preferences.dish, preferences.cuisine, "restaurants"].filter(Boolean).join(" ").trim() || "restaurants";
-
-      const { places, pagesFetched, lastBatchSize } = await fetchCandidatePool({ textQuery, locationName });
-      candidates = places;
-
+    {
+      const pool = await candidatePromise;
+      if (pool.error) {
+        const detail = pool.error.response?.data || pool.error.message;
+        console.error("Serper Places search error:", detail);
+        return res.status(500).json({ error: "Failed to search Serper Places", detail });
+      }
+      candidates = pool.places;
       console.log(
-        `Got ${candidates.length} unique candidates from Serper Places ` +
-          `(location: ${locationName || "none"}, anchor: ${anchorSource}, pages: ${pagesFetched}, last page: ${lastBatchSize})`
+        `Got ${candidates.length} candidates from Serper Places ` +
+          `(spec. location: ${speculativeLocation || "none"}, anchor: ${anchorSource}, pages: ${pool.pagesFetched})`
       );
-    } catch (error) {
-      const detail = error.response?.data || error.message;
-      console.error("Serper Places search error:", detail);
-      return res.status(500).json({ error: "Failed to search Serper Places", detail });
     }
 
     const emptyResult = () => {
@@ -706,41 +897,86 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // ============================ STAGE 2 ==================================
     const finalists = stage1Ranked.slice(0, STAGE1_FINALIST_COUNT);
 
-    const evidenceQueryParts = [preferences.dish, preferences.cuisine, ...allDietaryTerms].filter(Boolean);
-    const evidenceQuery =
-      evidenceQueryParts.length > 0
-        ? `${evidenceQueryParts.join(" ")} menu specialties price`
+    // --- Two evidence channels ------------------------------------------
+    // Menu channel: what they serve. Reception channel: how it's described.
+    // Previously everything was scored against menu text, so a request for
+    // "quiet" or "good for groups" could never match — those words don't
+    // appear on menus — and the miss silently dragged down conceptualScore,
+    // which is 0.30 of the stage-2 composite.
+    const vibeTerms = (Array.isArray(preferences.importantFactors) ? preferences.importantFactors : [])
+      .filter(Boolean)
+      .map((t) => String(t).trim())
+      .filter(Boolean);
+    const wantsVibe = vibeTerms.length > 0;
+
+    const menuQueryParts = [preferences.dish, preferences.cuisine, ...allDietaryTerms].filter(Boolean);
+    const menuQuery =
+      menuQueryParts.length > 0
+        ? `${menuQueryParts.join(" ")} menu specialties price`
         : "menu specialties price";
+    const vibeQuery = wantsVibe ? `${vibeTerms.join(" ")} atmosphere service experience` : null;
 
-    const cacheMap = await fetchCachedResearchBatch(finalists.map((c) => cacheKeyFor(c.place)));
-
-    const researchResults = await Promise.allSettled(
-      finalists.map((c) => researchCandidate(c, evidenceQuery, cacheMap.get(cacheKeyFor(c.place))))
+    // One round-trip covers both channels — the keys are prefixed, so they
+    // come back from a single .in() query.
+    const wantedKeys = finalists.flatMap((c) =>
+      wantsVibe
+        ? [cacheKeyFor(c.place, "menu"), cacheKeyFor(c.place, "reception")]
+        : [cacheKeyFor(c.place, "menu")]
     );
+    const cacheMap = await fetchCachedResearchBatch(wantedKeys);
 
-    const conceptualTerms = [
-      preferences.dish,
-      preferences.cuisine,
-      ...(Array.isArray(preferences.importantFactors) ? preferences.importantFactors : []),
-    ].filter(Boolean);
+    // Cache hits resolve synchronously and always make the deadline. Misses
+    // race a ${EXA_DEADLINE_MS}ms clock; losers keep running to warm the cache.
+    const menuPromises = finalists.map((c) =>
+      researchMenu(c, menuQuery, cacheMap.get(cacheKeyFor(c.place, "menu")))
+    );
+    const receptionPromises = wantsVibe
+      ? finalists.map((c) => researchReception(c, vibeQuery, cacheMap.get(cacheKeyFor(c.place, "reception"))))
+      : finalists.map(() => Promise.resolve(null));
+
+    const [menuResults, receptionResults] = await Promise.all([
+      settleWithin(menuPromises, EXA_DEADLINE_MS),
+      settleWithin(receptionPromises, EXA_DEADLINE_MS),
+    ]);
+
+    const settled = (results, i) => results[i] ?? null;
+
+    const dishTerms = [preferences.dish, preferences.cuisine].filter(Boolean);
 
     const finalistsWithResearch = finalists.map((c, i) => {
-      const research = researchResults[i].status === "fulfilled" ? researchResults[i].value : null;
-      const evidenceScore = computeEvidenceScore(research);
+      const research = settled(menuResults, i);
+      const reception = settled(receptionResults, i);
+      const evidenceScore = computeEvidenceScore(research, reception, wantsVibe);
 
-      const combinedText =
-        `${c.place.title} ${c.place.type || ""} ${(c.place.types || []).join(" ")} ` +
-        `${c.place.description || ""} ${(research?.highlights || []).join(" ")}`;
+      const serperText =
+        `${c.place.title} ${c.place.type || ""} ${(c.place.types || []).join(" ")} ${c.place.description || ""}`;
 
-      const conceptual = computeConceptualRelevance(combinedText, conceptualTerms);
-      const dietaryMatch = computeConceptualRelevance(combinedText, dietaryPreferenceTerms);
-      const allergyMatch = computeConceptualRelevance(combinedText, allergyTerms);
+      // Dish/cuisine are checked against menu text; vibe words against
+      // reception text. Each term is now scored against the source that
+      // could plausibly contain it.
+      const menuText = `${serperText} ${(research?.highlights || []).join(" ")}`;
+      const receptionText = `${serperText} ${(reception?.highlights || []).join(" ")}`;
+
+      const dishMatch = computeConceptualRelevance(menuText, dishTerms);
+      const vibeMatch = wantsVibe ? computeConceptualRelevance(receptionText, vibeTerms) : null;
+
+      // Dietary and allergy terms can surface in either channel — a menu
+      // listing "gluten-free crust" or a review mentioning it both count.
+      const bothText = `${menuText} ${reception?.highlights?.join(" ") || ""}`;
+      const dietaryMatch = computeConceptualRelevance(bothText, dietaryPreferenceTerms);
+      const allergyMatch = computeConceptualRelevance(bothText, allergyTerms);
+
+      const conceptualScore = wantsVibe ? 0.65 * dishMatch.score + 0.35 * vibeMatch.score : dishMatch.score;
 
       return {
         ...c,
         research,
+        reception,
         evidenceScore,
-        conceptualScore: conceptual.score,
+        conceptualScore,
+        dishScore: dishMatch.score,
+        vibeScore: vibeMatch ? vibeMatch.score : null,
+        matchedFactors: vibeMatch ? vibeMatch.matched : [],
         matchedDietaryTerms: dietaryPreferenceTerms.length > 0 ? dietaryMatch.matched : [],
         matchedAllergyTerms: allergyTerms.length > 0 ? allergyMatch.matched : [],
       };
@@ -757,20 +993,15 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         // These are what the user sees.
         const absolute = {
           quality: clamp01((c.bayesianRating - 3) / 2), // 3.0★ → 0, 5.0★ → 1
-          relevance: c.conceptualScore,
+          relevance: c.dishScore, // dish/cuisine vs menu text
+          vibe: c.vibeScore, // requested qualities vs reception text (null if none asked)
           proximity: c.proximity,
           trust: c.dataTrust,
           budget: c.budgetMatch,
           evidence: c.evidenceScore,
         };
 
-        const displayScore =
-          DISPLAY_WEIGHTS.quality * absolute.quality +
-          DISPLAY_WEIGHTS.relevance * absolute.relevance +
-          DISPLAY_WEIGHTS.proximity * absolute.proximity +
-          DISPLAY_WEIGHTS.trust * absolute.trust +
-          DISPLAY_WEIGHTS.budget * absolute.budget +
-          DISPLAY_WEIGHTS.evidence * absolute.evidence;
+        const displayScore = weightedAbsolute(absolute, DISPLAY_WEIGHTS);
 
         return {
           ...c,
@@ -802,7 +1033,13 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       matchScore: c.matchScore,
     }));
 
-    const winnerImage = await fetchWinnerImage(winner.place.title, winner.place.address);
+    // Serper Places often already includes a thumbnail. When it does, the
+    // extra image search — a serial 300-600ms call at the very end of the
+    // request — is skipped entirely.
+    const existingThumb = winner.place.thumbnailUrl || winner.place.thumbnail || null;
+    const winnerImage = existingThumb
+      ? { imageUrl: existingThumb, imageSourceUrl: null }
+      : await fetchWinnerImage(winner.place.title, winner.place.address);
 
     const finalPicks = [
       {
@@ -824,6 +1061,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         scoreBreakdown: {
           quality: Math.round(winner.absolute.quality * 100),
           relevance: Math.round(winner.absolute.relevance * 100),
+          vibe: winner.absolute.vibe != null ? Math.round(winner.absolute.vibe * 100) : null,
           proximity: Math.round(winner.absolute.proximity * 100),
           trust: Math.round(winner.absolute.trust * 100),
           evidence: Math.round(winner.absolute.evidence * 100),
@@ -836,6 +1074,11 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
               highlights: winner.research.highlights,
             }
           : null,
+        reception: winner.reception
+          ? { sourceUrl: winner.reception.sourceUrl, highlights: winner.reception.highlights }
+          : null,
+        requestedFactors: wantsVibe ? vibeTerms : null,
+        matchedFactors: winner.matchedFactors.length > 0 ? winner.matchedFactors : null,
         matchedDietaryTerms: winner.matchedDietaryTerms.length > 0 ? winner.matchedDietaryTerms : null,
         matchedAllergyTerms: winner.matchedAllergyTerms.length > 0 ? winner.matchedAllergyTerms : null,
         beatCount: Math.max(0, pool.length - 1),
@@ -848,10 +1091,12 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     ];
 
     const newCount = req.currentSearchCount + 1;
-    await recordSearch(req.userId, req.searchDate, newCount);
+    // Not awaited: the user's answer should not wait on a bookkeeping write.
+    recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
 
     console.log(
-      `FINAL: stage1 pool ${pool.length}, researched ${finalists.length}, winner "${winner.place.title}" ` +
+      `FINAL: stage1 pool ${pool.length}, researched ${finalists.length} ` +
+        `(channels: menu${wantsVibe ? " + reception" : ""}), winner "${winner.place.title}" ` +
         `(${winner.matchScore}%, dominance ${dominancePercent}%)`
     );
 

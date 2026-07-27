@@ -44,6 +44,14 @@ function buildChips(restaurant) {
     );
   }
 
+  // Only the qualities the user actually asked for AND that showed up in
+  // reception text — never the ones we looked for and didn't find.
+  if (restaurant.matchedFactors?.length) {
+    for (const factor of restaurant.matchedFactors.slice(0, 3)) {
+      chips.push(`Reviews mention "${factor}"`);
+    }
+  }
+
   if (typeof sb.budget === "number" && sb.budget >= 70) chips.push("Fits your budget");
   if (sb.trust >= 100) chips.push("Website and phone on file");
 
@@ -120,14 +128,15 @@ function ComparisonTease({ runnerUps }) {
   );
 }
 
-function EvidenceSection({ evidence, matchedDietaryTerms, matchedAllergyTerms }) {
+function EvidenceSection({ evidence, reception, matchedDietaryTerms, matchedAllergyTerms }) {
   const hasHighlight = Boolean(evidence?.highlights?.length);
+  const hasReception = Boolean(reception?.highlights?.length);
   const hasAllergy = Boolean(matchedAllergyTerms?.length);
   const hasDietary = Boolean(matchedDietaryTerms?.length);
 
   // FIX: the original checked `!matchedDietaryTerms` — truthy for an empty
   // array — so an empty section could render with nothing inside it.
-  if (!hasHighlight && !hasAllergy && !hasDietary) return null;
+  if (!hasHighlight && !hasReception && !hasAllergy && !hasDietary) return null;
 
   const sourceLabel =
     evidence?.sourceType === "official_site" ? "Verified via official website" : "Verified via web research";
@@ -144,6 +153,18 @@ function EvidenceSection({ evidence, matchedDietaryTerms, matchedAllergyTerms })
             </a>
           )}
         </>
+      )}
+
+      {hasReception && (
+        <div className="reception-block">
+          <span className="evidence-label">What people say</span>
+          <blockquote className="evidence-quote">{reception.highlights[0]}</blockquote>
+          {reception.sourceUrl && (
+            <a className="evidence-source-link" href={reception.sourceUrl} target="_blank" rel="noreferrer">
+              View source →
+            </a>
+          )}
+        </div>
       )}
 
       {hasAllergy && (
@@ -237,6 +258,27 @@ function RestaurantImage({ imageUrl, imageSourceUrl, name, matchScore }) {
 // Nominatim asks for <=1 req/sec and no heavy browser traffic. Memoizing
 // repeats within a session keeps a user who searches "11801" five times from
 // hitting them five times.
+// A blank "please try again" makes a schema or policy problem look like a
+// network blip. These are the failures this upsert actually produces.
+function explainSaveError(error) {
+  const code = error?.code;
+  const msg = error?.message || "";
+
+  if (code === "42501" || /row-level security/i.test(msg)) {
+    return "Couldn't save — your account isn't allowed to write to profiles. That's a missing RLS policy, not something you did wrong.";
+  }
+  if (code === "PGRST204" || code === "42703") {
+    return `Couldn't save — the profiles table is missing a column (${msg}).`;
+  }
+  if (code === "23505") {
+    return "Couldn't save — that conflicts with an existing profile row.";
+  }
+  if (code === "23502") {
+    return `Couldn't save — a required column has no value (${msg}).`;
+  }
+  return `Couldn't save — ${msg || "please try again."}`;
+}
+
 const geocodeCache = new Map();
 
 function App() {
@@ -467,22 +509,29 @@ function App() {
     setOnboardingSaving(true);
     setOnboardingError("");
 
-    // NOTE: also writes `email`, so /auth/check-email has something to match
-    // on. Drop this key if a DB trigger already backfills profiles.email.
-    const { error } = await supabase.from("profiles").upsert(
-      {
-        id: user.id,
-        email: user.email ?? null,
-        allergies: allergies.trim(),
-        dietary_preferences: dietaryPreferences.trim(),
-        onboarding_completed: true,
-      },
-      { onConflict: "id" }
-    );
+    const base = {
+      id: user.id,
+      allergies: allergies.trim(),
+      dietary_preferences: dietaryPreferences.trim(),
+      onboarding_completed: true,
+    };
+
+    // Writing `email` is only useful if profiles actually has that column
+    // (it feeds /auth/check-email). If it doesn't, PostgREST rejects the
+    // ENTIRE upsert with PGRST204 rather than ignoring the unknown key — so
+    // try with it, then fall back to the columns we know exist.
+    let { error } = await supabase
+      .from("profiles")
+      .upsert({ ...base, email: user.email ?? null }, { onConflict: "id" });
+
+    if (error && (error.code === "PGRST204" || /email/i.test(error.message || ""))) {
+      console.warn("profiles has no `email` column — saving without it.", error.message);
+      ({ error } = await supabase.from("profiles").upsert(base, { onConflict: "id" }));
+    }
 
     if (error) {
       console.error("Failed to save preferences:", error);
-      setOnboardingError("Couldn't save — please try again.");
+      setOnboardingError(explainSaveError(error));
     } else {
       setNeedsOnboarding(false);
     }
@@ -970,6 +1019,7 @@ function App() {
               {winner.scoreBreakdown && (
                 <div className="score-core-metrics">
                   <MiniMetric label="Relevance" value={winner.scoreBreakdown.relevance} />
+                  <MiniMetric label="Vibe match" value={winner.scoreBreakdown.vibe} />
                   <MiniMetric label="Quality" value={winner.scoreBreakdown.quality} />
                   <MiniMetric label="Distance" value={winner.scoreBreakdown.proximity} />
                   <MiniMetric label="Evidence" value={winner.scoreBreakdown.evidence} />
@@ -1011,6 +1061,7 @@ function App() {
 
                 <EvidenceSection
                   evidence={winner.evidence}
+                  reception={winner.reception}
                   matchedDietaryTerms={winner.matchedDietaryTerms}
                   matchedAllergyTerms={winner.matchedAllergyTerms}
                 />

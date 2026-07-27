@@ -602,10 +602,16 @@ function App() {
     // Nominatim. Removed rather than left as dead code. Better still, proxy
     // this through your own backend (it already has geocodeLocationName)
     // so you can send a real UA and cache across users.
+    // A bare 5-digit ZIP through the free-text `q` param is ambiguous —
+    // Nominatim can read it as a house number and hand back an unrelated
+    // address. The structured `postalcode` param resolves it properly.
+    const zipOnly = /^\d{5}$/.test(key);
+
     const tryQuery = async (q) => {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(q)}`
-      );
+      const url = zipOnly
+        ? `https://nominatim.openstreetmap.org/search?format=json&limit=1&country=us&postalcode=${encodeURIComponent(key)}`
+        : `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(q)}`;
+      const res = await fetch(url);
       if (!res.ok) return null;
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) return null;
@@ -750,7 +756,15 @@ function App() {
         setErrorMsg(data.error || `Something went wrong (${response.status}).`);
         setResults([]);
       } else if (!data.restaurants || data.restaurants.length === 0) {
-        setErrorMsg("No match found nearby — try a different craving.");
+        // outOfRange means we found places but none were plausibly near the
+        // location — a location problem, not a craving problem. Saying "try
+        // a different craving" sent you chasing the wrong thing.
+        const where = manualLocation.trim() || data.locationName || "your area";
+        setErrorMsg(
+          data.outOfRange
+            ? `Nothing within range of ${where} — the closest was about ${data.nearestMiles} mi out. Try a nearby town or a more specific location.`
+            : `No match found near ${where} — try a different craving.`
+        );
         setResults([]);
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       } else {

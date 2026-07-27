@@ -55,7 +55,9 @@ if (!process.env.EXA_API_KEY) {
 // Nothing beyond this is a plausible answer to "where should I eat".
 // A backstop, so a location failure degrades into "no match nearby" rather
 // than confidently recommending a restaurant 1,000 miles away.
-const MAX_RESULT_RADIUS_MILES = 45;
+// Tried in order; the first tier with any candidate in it wins. Only a real
+// location failure gets past the last one.
+const RADIUS_TIERS = [30, 60, 120];
 
 const CANDIDATE_POOL_SIZE = 15;
 const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
@@ -208,10 +210,30 @@ function fastParseQuery(raw) {
 
 // --- Candidate discovery ---------------------------------------------------
 
-async function fetchCandidatePool({ textQuery, locationName }) {
+// A bare ZIP is not a canonical location name, so Serper's `location` param
+// silently ignores it and the search goes national. Embedding the place in
+// `q` is the documented, provider-agnostic way to constrain a places search,
+// so that is now the primary mechanism; `location` and `ll` are belt-and-
+// braces on top of it.
+function isPlaceName(value) {
+  return typeof value === "string" && /[a-z]/i.test(value);
+}
+
+async function fetchCandidatePool({ textQuery, locationName, anchor }) {
+  const scopedQuery = locationName ? `${textQuery} near ${locationName}` : textQuery;
+
   const fetchPage = async (page) => {
-    const body = { q: textQuery, gl: "us", num: CANDIDATE_POOL_SIZE };
-    if (locationName) body.location = locationName;
+    const body = { q: scopedQuery, gl: "us", num: CANDIDATE_POOL_SIZE };
+
+    // Only a real place name goes in `location`; a ZIP would be dropped.
+    if (isPlaceName(locationName)) body.location = locationName;
+
+    // Coordinates when we have them. Ignored by providers that don't
+    // support it, decisive for the ones that do.
+    if (anchor && Number.isFinite(anchor.lat) && Number.isFinite(anchor.lng)) {
+      body.ll = `@${anchor.lat},${anchor.lng},13z`;
+    }
+
     if (page > 1) body.page = page;
 
     const response = await http.post("https://google.serper.dev/places", body, {
@@ -245,6 +267,7 @@ async function fetchCandidatePool({ textQuery, locationName }) {
     places: Array.from(seen.values()).slice(0, CANDIDATE_POOL_SIZE),
     pagesFetched,
     lastBatchSize,
+    scopedQuery,
   };
 }
 
@@ -741,6 +764,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     const candidatePromise = fetchCandidatePool({
       textQuery: userRequest.trim(),
       locationName: speculativeLocation,
+      anchor: { lat: userLat, lng: userLng },
     }).catch((error) => ({ error }));
 
     // If the fast parser already spotted a place, resolve its coordinates
@@ -834,7 +858,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       candidates = pool.places;
       console.log(
         `Got ${candidates.length} candidates from Serper Places ` +
-          `(spec. location: ${speculativeLocation || "none"}, anchor: ${anchorSource}, pages: ${pool.pagesFetched})`
+          `(query: "${pool.scopedQuery}", anchor: ${anchorSource}, pages: ${pool.pagesFetched})`
       );
     }
 
@@ -906,13 +930,23 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       });
     }
 
-    // Layer 2a: distance sanity gate.
-    const withinRadius = withFeatures.filter((c) => c.distance <= MAX_RESULT_RADIUS_MILES);
+    // Layer 2a: distance sanity gate, widened in steps rather than as a
+    // single cliff. A rural search legitimately has its nearest option 50mi
+    // out; only a genuine location failure lands everything 500mi away.
+    const nearest = Math.min(...withFeatures.map((c) => c.distance));
+    let withinRadius = [];
+    let radiusUsed = 0;
+    for (const radius of RADIUS_TIERS) {
+      withinRadius = withFeatures.filter((c) => c.distance <= radius);
+      radiusUsed = radius;
+      if (withinRadius.length > 0) break;
+    }
+
     if (withinRadius.length === 0) {
       console.warn(
-        `All ${withFeatures.length} candidates were beyond ${MAX_RESULT_RADIUS_MILES}mi of the anchor ` +
-          `(nearest ${Math.round(Math.min(...withFeatures.map((c) => c.distance)))}mi) — ` +
-          `location resolution likely failed for "${speculativeLocation || "none"}".`
+        `Location resolution failed: all ${withFeatures.length} candidates were beyond ` +
+          `${RADIUS_TIERS[RADIUS_TIERS.length - 1]}mi (nearest ${Math.round(nearest)}mi) ` +
+          `for query "${speculativeLocation || "none"}".`
       );
       const { newCount } = emptyResult();
       recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
@@ -920,8 +954,14 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         preferences,
         locationName,
         restaurants: [],
+        outOfRange: true,
+        nearestMiles: Math.round(nearest),
         searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
       });
+    }
+
+    if (radiusUsed > RADIUS_TIERS[0]) {
+      console.log(`Widened search radius to ${radiusUsed}mi (nearest was ${Math.round(nearest)}mi).`);
     }
 
     // Layer 2b: hard relevance gate.

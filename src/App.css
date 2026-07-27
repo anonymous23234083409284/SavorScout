@@ -1009,3 +1009,63 @@ input:focus-visible {
   color: #7a8290;
   cursor: not-allowed;
 }
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #e0a3ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.link-btn:hover {
+  color: var(--bloom-saffron);
+}
+
+/* Non-error status messages — "check your email", "reset link sent".
+   These were previously routed through .error-msg and rendered in red. */
+.notice-msg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  margin-top: 14px;
+  color: var(--runner-teal);
+  line-height: 1.5;
+}
+
+.searches-left {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 14px;
+  letter-spacing: 0.03em;
+}
+
+.comparison-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 12px;
+}
+
+.comparison-score {
+  color: var(--runner-teal);
+  white-space: nowrap;
+}
+
+/* The verdict card sits directly under the hero; the hero's own bloom
+   already provides separation, so pull the results block up slightly. */
+.results-section {
+  padding-top: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-btn,
+  .comparison-toggle {
+    transition: none;
+  }
+}

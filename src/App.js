@@ -8,35 +8,57 @@ const GEO_OPTIONS = { enableHighAccuracy: false, timeout: 8000, maximumAge: 5 * 
 
 // --- Hero card helpers -----------------------------------------------------
 
+// Feeds the `.why-chips` block, which the stylesheet labels "why this won".
+// Rewritten to emit actual reasons rather than restating the `.meta-row` —
+// rating, category and distance already render there, so the original
+// version duplicated them a few pixels apart. Each chip is gated on the
+// backend's absolute sub-score, so a weak winner shows fewer chips instead
+// of the same three every time.
 function buildChips(restaurant) {
   const chips = [];
-
-  if (typeof restaurant.rating === "number") {
-    chips.push(
-      `${restaurant.rating.toFixed(1)}★ rating${restaurant.reviewCount ? ` (${restaurant.reviewCount.toLocaleString()} reviews)` : ""}`
-    );
-  } else {
-    chips.push("Not yet widely rated");
-  }
-
-  if (typeof restaurant.distanceMiles === "number") {
-    // distanceFrom comes from the backend: "you" when the anchor is the
-    // user's own position, or the named place when they searched elsewhere.
-    const from = restaurant.distanceFrom && restaurant.distanceFrom !== "you"
-      ? `from ${restaurant.distanceFrom}`
-      : "away";
-    chips.push(`${restaurant.distanceMiles} mi ${from}`);
-  }
+  const sb = restaurant.scoreBreakdown || {};
 
   if (restaurant.matchedDish) {
     chips.push(`Matches your craving for "${restaurant.matchedDish}"`);
   } else if (restaurant.matchedCuisine) {
-    chips.push(`${restaurant.matchedCuisine} spot`);
-  } else if (restaurant.category) {
-    chips.push(restaurant.category);
+    chips.push(`${restaurant.matchedCuisine} done well`);
   }
 
+  if (typeof restaurant.rating === "number" && sb.quality >= 65) {
+    chips.push(
+      restaurant.reviewCount
+        ? `${restaurant.rating.toFixed(1)}★ across ${restaurant.reviewCount.toLocaleString()} reviews`
+        : `${restaurant.rating.toFixed(1)}★ rated`
+    );
+  }
+
+  if (sb.proximity >= 65 && typeof restaurant.distanceMiles === "number") {
+    chips.push(`Only ${restaurant.distanceMiles} mi away`);
+  }
+
+  if (sb.evidence >= 60) {
+    chips.push(
+      restaurant.evidence?.sourceType === "official_site"
+        ? "Confirmed on their own menu"
+        : "Confirmed by web research"
+    );
+  }
+
+  if (typeof sb.budget === "number" && sb.budget >= 70) chips.push("Fits your budget");
+  if (sb.trust >= 100) chips.push("Website and phone on file");
+
+  if (chips.length === 0 && restaurant.category) chips.push(restaurant.category);
+
   return chips;
+}
+
+// distanceFrom comes from the backend: "you" when the anchor is the user's
+// own position, or the named place when they searched somewhere else.
+function distanceLabel(restaurant) {
+  if (typeof restaurant.distanceMiles !== "number") return null;
+  const from =
+    restaurant.distanceFrom && restaurant.distanceFrom !== "you" ? `from ${restaurant.distanceFrom}` : "away";
+  return `${restaurant.distanceMiles} mi ${from}`;
 }
 
 function mapsUrl(restaurant) {
@@ -45,6 +67,14 @@ function mapsUrl(restaurant) {
   }
   const q = encodeURIComponent(`${restaurant.name} ${restaurant.address || ""}`.trim());
   return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+
+// Keyless embed for `.map-embed`. Google's Embed API needs a billing-enabled
+// key; OpenStreetMap does not. Swap the src if you already have one.
+function osmEmbedUrl(lat, lng) {
+  const d = 0.006;
+  const bbox = `${lng - d},${lat - d},${lng + d},${lat + d}`;
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
 }
 
 function MiniMetric({ label, value }) {
@@ -211,6 +241,7 @@ const geocodeCache = new Map();
 
 function App() {
   const [query, setQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState(""); // echoed in .match-banner-query
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -418,6 +449,7 @@ function App() {
     await supabase.auth.signOut();
     setResults([]);
     setQuery("");
+    setSubmittedQuery("");
     setErrorMsg("");
     setSearchesRemaining(null);
     setOnboardingChecked(false);
@@ -578,10 +610,11 @@ function App() {
       const controller = new AbortController();
       searchAbortRef.current = controller;
 
+      const trimmed = query.trim();
       const response = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ query: query.trim(), lat: resolved.lat, lng: resolved.lng }),
+        body: JSON.stringify({ query: trimmed, lat: resolved.lat, lng: resolved.lng }),
         signal: controller.signal,
       });
 
@@ -611,6 +644,7 @@ function App() {
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       } else {
         setResults(data.restaurants.slice(0, 1));
+        setSubmittedQuery(trimmed);
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       }
     } catch (error) {
@@ -733,44 +767,28 @@ function App() {
               navigation to the homepage. */}
           {authMode === "signin" && (
             <p style={{ marginTop: "0.75rem" }}>
-              <button
-                type="button"
-                className="link-button"
-                onClick={handleForgotPassword}
-                style={{
-                  background: "none",
-                  border: "none",
-                  padding: 0,
-                  cursor: "pointer",
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: "13px",
-                  color: "#e0a3ff",
-                  textDecoration: "underline",
-                }}
-              >
+              <button type="button" className="link-btn" onClick={handleForgotPassword}>
                 Forgot password?
               </button>
             </p>
           )}
 
           {resetSent && (
-            <p style={{ marginTop: "0.5rem", opacity: 0.85 }}>
-              If an account exists for that email, a reset link has been sent.
-            </p>
+            <p className="notice-msg">If an account exists for that email, a reset link has been sent.</p>
           )}
 
           <p style={{ marginTop: "1rem" }}>
             {authMode === "signup" ? (
               <>
                 Already have an account?{" "}
-                <button type="button" className="link-button" onClick={() => switchAuthMode("signin")}>
+                <button type="button" className="link-btn" onClick={() => switchAuthMode("signin")}>
                   Sign in
                 </button>
               </>
             ) : (
               <>
                 Need an account?{" "}
-                <button type="button" className="link-button" onClick={() => switchAuthMode("signup")}>
+                <button type="button" className="link-btn" onClick={() => switchAuthMode("signup")}>
                   Sign up
                 </button>
               </>
@@ -919,44 +937,38 @@ function App() {
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
       </section>
 
-      {/* ==================================================================
-          RECONSTRUCTED from here down — your upload was cut off mid-element,
-          so this section is rebuilt from the component signatures above and
-          the backend response shape. Diff it against your real file.
-          ================================================================== */}
+      <section className="results-section" id="result" aria-live="polite">
+        {winner ? (
+          <div className="verdict">
+            <article className="result-card result-card--winner">
+              <div className="match-banner">
+                <span className="match-banner-tag">Your one</span>
+                {submittedQuery && <span className="match-banner-query">"{submittedQuery}"</span>}
+              </div>
 
-      {winner && (
-        <section className="result" id="result" aria-live="polite">
-          {typeof winner.dominancePercent === "number" && winner.dominancePercent > 0 && (
-            <div className="dominance-banner">
-              Beat {winner.beatCount} nearby {winner.beatCount === 1 ? "spot" : "spots"} by {winner.dominancePercent}%
-            </div>
-          )}
+              <RestaurantImage
+                imageUrl={winner.imageUrl}
+                imageSourceUrl={winner.imageSourceUrl}
+                name={winner.name}
+                matchScore={winner.matchScore}
+              />
 
-          <article className="result-hero">
-            <RestaurantImage
-              imageUrl={winner.imageUrl}
-              imageSourceUrl={winner.imageSourceUrl}
-              name={winner.name}
-              matchScore={winner.matchScore}
-            />
-
-            <div className="result-hero-body">
-              <h2 className="result-name">{winner.name}</h2>
-              {winner.address && <p className="result-address">{winner.address}</p>}
-
-              {winnerChips.length > 0 && (
-                <ul className="chip-row">
-                  {winnerChips.map((chip, i) => (
-                    <li className="chip" key={i}>
-                      {chip}
-                    </li>
-                  ))}
-                </ul>
+              {(winner.beatCount > 0 || winner.dominancePercent > 0) && (
+                <div className="dominance-block">
+                  {winner.beatCount > 0 && (
+                    <p className="beat-line">
+                      Beat <strong>{winner.beatCount}</strong> nearby{" "}
+                      {winner.beatCount === 1 ? "restaurant" : "restaurants"}
+                    </p>
+                  )}
+                  {winner.dominancePercent > 0 && (
+                    <p className="dominance-stat">+{winner.dominancePercent}% vs. the average runner-up</p>
+                  )}
+                </div>
               )}
 
               {winner.scoreBreakdown && (
-                <div className="mini-metrics">
+                <div className="score-core-metrics">
                   <MiniMetric label="Relevance" value={winner.scoreBreakdown.relevance} />
                   <MiniMetric label="Quality" value={winner.scoreBreakdown.quality} />
                   <MiniMetric label="Distance" value={winner.scoreBreakdown.proximity} />
@@ -966,49 +978,111 @@ function App() {
                 </div>
               )}
 
-              <EvidenceSection
-                evidence={winner.evidence}
-                matchedDietaryTerms={winner.matchedDietaryTerms}
-                matchedAllergyTerms={winner.matchedAllergyTerms}
-              />
+              <div className="result-body">
+                <h2>{winner.name}</h2>
 
-              <div className="result-actions">
-                <a className="result-action" href={mapsUrl(winner)} target="_blank" rel="noreferrer">
-                  Directions →
-                </a>
-                {winner.website && (
-                  <a className="result-action" href={winner.website} target="_blank" rel="noreferrer">
-                    Visit site →
-                  </a>
+                <div className="meta-row">
+                  {typeof winner.rating === "number" ? (
+                    <span className="rating">
+                      {winner.rating.toFixed(1)}★
+                      {winner.reviewCount ? ` (${winner.reviewCount.toLocaleString()})` : ""}
+                    </span>
+                  ) : (
+                    <span className="rating rating--new">Not yet widely rated</span>
+                  )}
+                  {winner.category && <span className="category">{winner.category}</span>}
+                  {distanceLabel(winner) && <span className="distance">{distanceLabel(winner)}</span>}
+                </div>
+
+                {winner.address && <p className="address">{winner.address}</p>}
+
+                {winnerChips.length > 0 && (
+                  <div className="why-section">
+                    <span className="why-label">Why this won</span>
+                    <div className="why-chips">
+                      {winnerChips.map((chip, i) => (
+                        <span className="chip" key={i}>
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 )}
-                {winner.phone && (
-                  <a className="result-action" href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}>
-                    {winner.phone}
+
+                <EvidenceSection
+                  evidence={winner.evidence}
+                  matchedDietaryTerms={winner.matchedDietaryTerms}
+                  matchedAllergyTerms={winner.matchedAllergyTerms}
+                />
+
+                <ComparisonTease runnerUps={winner.runnerUps} />
+
+                <div className="action-row">
+                  <a className="action-btn action-btn--primary" href={mapsUrl(winner)} target="_blank" rel="noreferrer">
+                    Directions
                   </a>
+                  {winner.website && (
+                    <a className="action-btn" href={winner.website} target="_blank" rel="noreferrer">
+                      Menu / Site
+                    </a>
+                  )}
+                  {winner.phone && (
+                    <a className="action-btn" href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}>
+                      Call
+                    </a>
+                  )}
+                </div>
+
+                {typeof winner.lat === "number" && typeof winner.lng === "number" && (
+                  <div className="map-embed">
+                    <iframe
+                      title={`Map showing ${winner.name}`}
+                      src={osmEmbedUrl(winner.lat, winner.lng)}
+                      width="100%"
+                      height="200"
+                      style={{ border: 0, display: "block" }}
+                      loading="lazy"
+                    />
+                  </div>
                 )}
               </div>
-
-              <ComparisonTease runnerUps={winner.runnerUps} />
-            </div>
-          </article>
-        </section>
-      )}
-
-      <section className="info-section" id="how">
-        <h2>How it works</h2>
-        <ol className="how-steps">
-          <li>Say what you're craving in plain language — we parse the dish, cuisine, budget, and area.</li>
-          <li>We pull a pool of nearby candidates and score them on quality, relevance, distance, and price fit.</li>
-          <li>The top finalists get researched against their menus and the open web for real evidence.</li>
-          <li>You get one verdict, with the reasoning shown.</li>
-        </ol>
+            </article>
+          </div>
+        ) : (
+          !errorMsg && (
+            <p className="empty-state">
+              One craving in, one verdict out. Tell us what you're in the mood for and we'll do the comparing.
+            </p>
+          )
+        )}
       </section>
 
-      <section className="info-section" id="about">
+      <section className="info" id="how">
+        <h2>How it works</h2>
+        <div className="steps">
+          <div>
+            <span className="step-label">Read the craving</span>
+            <p>Say it in plain language. We pull out the dish, cuisine, budget, and area you actually meant.</p>
+          </div>
+          <div>
+            <span className="step-label">Score the field</span>
+            <p>
+              A pool of nearby candidates gets ranked on quality, relevance, distance and price fit — then the top
+              few get researched against their real menus.
+            </p>
+          </div>
+          <div>
+            <span className="step-label">Commit to one</span>
+            <p>You get a single verdict with the evidence behind it, not twenty tabs to compare yourself.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="about" id="about">
         <h2>About</h2>
         <p>
-          SavorScout is a decision engine, not a search engine. Instead of handing you twenty tabs to compare, it
-          commits to one answer and shows its work.
+          SavorScout is a decision engine, not a search engine. Every other app hands you a list and makes the
+          choice your problem. This one picks, and shows its work so you can disagree with it.
         </p>
       </section>
 

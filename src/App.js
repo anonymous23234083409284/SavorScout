@@ -190,6 +190,31 @@ const METRIC_LABELS = {
   trust: "Listing quality",
 };
 
+// The map was ~200px of always-on height that most people never look at.
+// Collapsed by default, it stops the card from running past the fold.
+function MapPeek({ lat, lng, name }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="map-peek">
+      <button className="comparison-toggle" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+        {open ? "Hide map" : "Show map →"}
+      </button>
+      {open && (
+        <div className="map-embed">
+          <iframe
+            title={`Map showing ${name}`}
+            src={osmEmbedUrl(lat, lng)}
+            width="100%"
+            height="180"
+            style={{ border: 0, display: "block" }}
+            loading="lazy"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ScoreDetail({ breakdown }) {
   const [open, setOpen] = useState(false);
   if (!breakdown) return null;
@@ -1071,88 +1096,83 @@ function App() {
                 {submittedQuery && <span className="match-banner-query">"{submittedQuery}"</span>}
               </div>
 
-              <RestaurantImage
-                imageUrl={winner.imageUrl}
-                imageSourceUrl={winner.imageSourceUrl}
-                name={winner.name}
-                matchScore={winner.matchScore}
-              />
+              <div className="result-split">
+                <div className="result-pane result-pane--visual">
+                  <RestaurantImage
+                    imageUrl={winner.imageUrl}
+                    imageSourceUrl={winner.imageSourceUrl}
+                    name={winner.name}
+                    matchScore={winner.matchScore}
+                  />
 
-              <div className="dominance-block">
-                <p className="verdict-line">{verdictLine(winner)}</p>
-              </div>
+                  <div className="dominance-block">
+                    <p className="verdict-line">{verdictLine(winner)}</p>
+                  </div>
 
-              <div className="result-body">
-                <h2>{winner.name}</h2>
+                  <div className="action-row">
+                    <a className="action-btn action-btn--primary" href={mapsUrl(winner)} target="_blank" rel="noreferrer">
+                      Directions
+                    </a>
+                    {winner.website && (
+                      <a className="action-btn" href={winner.website} target="_blank" rel="noreferrer">
+                        Menu / Site
+                      </a>
+                    )}
+                    {winner.phone && (
+                      <a className="action-btn" href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}>
+                        Call
+                      </a>
+                    )}
+                  </div>
 
-                <div className="meta-row">
-                  {typeof winner.rating === "number" ? (
-                    <span className="rating">
-                      {winner.rating.toFixed(1)}★
-                      {winner.reviewCount ? ` (${winner.reviewCount.toLocaleString()})` : ""}
-                    </span>
-                  ) : (
-                    <span className="rating rating--new">Not yet widely rated</span>
+                  {typeof winner.lat === "number" && typeof winner.lng === "number" && (
+                    <MapPeek lat={winner.lat} lng={winner.lng} name={winner.name} />
                   )}
-                  {winner.category && <span className="category">{winner.category}</span>}
-                  {distanceLabel(winner) && <span className="distance">{distanceLabel(winner)}</span>}
                 </div>
 
-                {winner.address && <p className="address">{winner.address}</p>}
+                <div className="result-pane result-pane--detail">
+                  <h2>{winner.name}</h2>
 
-                {winnerChips.length > 0 && (
-                  <div className="why-section">
-                    <span className="why-label">Why this won</span>
-                    <div className="why-chips">
-                      {winnerChips.map((chip, i) => (
-                        <span className="chip" key={i}>
-                          {chip}
-                        </span>
-                      ))}
+                  <div className="meta-row">
+                    {typeof winner.rating === "number" ? (
+                      <span className="rating">
+                        {winner.rating.toFixed(1)}★
+                        {winner.reviewCount ? ` (${winner.reviewCount.toLocaleString()})` : ""}
+                      </span>
+                    ) : (
+                      <span className="rating rating--new">Not yet widely rated</span>
+                    )}
+                    {winner.category && <span className="category">{winner.category}</span>}
+                    {distanceLabel(winner) && <span className="distance">{distanceLabel(winner)}</span>}
+                  </div>
+
+                  {winner.address && <p className="address">{winner.address}</p>}
+
+                  {winnerChips.length > 0 && (
+                    <div className="why-section">
+                      <span className="why-label">Why this won</span>
+                      <div className="why-chips">
+                        {winnerChips.map((chip, i) => (
+                          <span className="chip" key={i}>
+                            {chip}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                <EvidenceSection
-                  evidence={winner.evidence}
-                  reception={winner.reception}
-                  matchedDietaryTerms={winner.matchedDietaryTerms}
-                  matchedAllergyTerms={winner.matchedAllergyTerms}
-                />
-
-                <div className="detail-row">
-                  <ScoreDetail breakdown={winner.scoreBreakdown} />
-                  <ComparisonTease runnerUps={winner.runnerUps} />
-                </div>
-
-                <div className="action-row">
-                  <a className="action-btn action-btn--primary" href={mapsUrl(winner)} target="_blank" rel="noreferrer">
-                    Directions
-                  </a>
-                  {winner.website && (
-                    <a className="action-btn" href={winner.website} target="_blank" rel="noreferrer">
-                      Menu / Site
-                    </a>
                   )}
-                  {winner.phone && (
-                    <a className="action-btn" href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}>
-                      Call
-                    </a>
-                  )}
-                </div>
 
-                {typeof winner.lat === "number" && typeof winner.lng === "number" && (
-                  <div className="map-embed">
-                    <iframe
-                      title={`Map showing ${winner.name}`}
-                      src={osmEmbedUrl(winner.lat, winner.lng)}
-                      width="100%"
-                      height="200"
-                      style={{ border: 0, display: "block" }}
-                      loading="lazy"
-                    />
+                  <EvidenceSection
+                    evidence={winner.evidence}
+                    reception={winner.reception}
+                    matchedDietaryTerms={winner.matchedDietaryTerms}
+                    matchedAllergyTerms={winner.matchedAllergyTerms}
+                  />
+
+                  <div className="detail-row">
+                    <ScoreDetail breakdown={winner.scoreBreakdown} />
+                    <ComparisonTease runnerUps={winner.runnerUps} />
                   </div>
-                )}
+                </div>
               </div>
             </article>
           </div>

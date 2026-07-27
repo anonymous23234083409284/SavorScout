@@ -447,8 +447,59 @@ body {
 .verdict {
   display: flex;
   justify-content: center;
-  max-width: 560px;
+  max-width: 940px;
   margin: 0 auto;
+}
+
+/* Two panes on desktop: the visual and the decision on the left, the detail
+   you read on the right. Halves the card's height so the whole verdict is
+   legible without scrolling. Collapses to one column below 860px. */
+.result-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: start;
+}
+
+.result-pane {
+  min-width: 0;
+}
+
+.result-pane--visual {
+  border-right: 1px solid rgba(46, 230, 214, 0.15);
+  padding-bottom: 18px;
+}
+
+.result-pane--detail {
+  padding: 22px;
+}
+
+.result-pane--visual .dominance-block {
+  padding: 14px 20px 4px;
+  text-align: left;
+}
+
+.result-pane--visual .action-row {
+  padding: 12px 20px 0;
+  margin-bottom: 0;
+}
+
+.map-peek {
+  padding: 14px 20px 0;
+}
+
+.map-peek .map-embed {
+  margin-top: 12px;
+}
+
+@media (max-width: 860px) {
+  .result-split {
+    grid-template-columns: 1fr;
+  }
+
+  .result-pane--visual {
+    border-right: none;
+    border-bottom: 1px solid rgba(46, 230, 214, 0.15);
+  }
 }
 
 .verdict .result-card {
@@ -525,7 +576,7 @@ body {
 
 .result-hero-visual {
   position: relative;
-  height: 220px;
+  height: 240px;
   overflow: hidden;
   background: #0d1219;
 }
@@ -710,6 +761,14 @@ body {
   padding: 20px 22px 24px;
 }
 
+.result-pane--detail h2 {
+  margin: 0 0 10px;
+  font-size: 21px;
+  font-weight: 700;
+  color: #e8ecf1;
+  line-height: 1.25;
+}
+
 .result-body h2 {
   margin: 0 0 10px;
   font-size: 20px;
@@ -778,8 +837,8 @@ body {
   margin: 0 0 8px;
   padding: 0;
   border: none;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13.5px;
+  line-height: 1.55;
   color: #c8d0da;
   font-style: italic;
 }

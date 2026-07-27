@@ -171,6 +171,10 @@ async function geocodeLocationName(name) {
   }
 }
 
+function isPlaceName(value) {
+  return typeof value === "string" && /[a-z]/i.test(value);
+}
+
 function distanceInMiles(lat1, lng1, lat2, lng2) {
   const toRad = (deg) => (deg * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
@@ -210,15 +214,9 @@ function fastParseQuery(raw) {
 
 // --- Candidate discovery ---------------------------------------------------
 
-// A bare ZIP is not a canonical location name, so Serper's `location` param
-// silently ignores it and the search goes national. Embedding the place in
-// `q` is the documented, provider-agnostic way to constrain a places search,
-// so that is now the primary mechanism; `location` and `ll` are belt-and-
-// braces on top of it.
-function isPlaceName(value) {
-  return typeof value === "string" && /[a-z]/i.test(value);
-}
-
+// Serper's `location` param takes a canonical place name. A bare ZIP is not
+// one, so anything without letters is not a usable location value.
+// `location` and `ll` back up the place name embedded in `q`.
 async function fetchCandidatePool({ textQuery, locationName, anchor }) {
   const scopedQuery = locationName ? `${textQuery} near ${locationName}` : textQuery;
 
@@ -759,7 +757,23 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // only then fall back to the (now cached) reverse geocode, fully awaited.
     const fastParsed = fastParseQuery(userRequest);
     const typedHint = typeof req.body.locationHint === "string" ? req.body.locationHint.trim() : "";
-    const speculativeLocation = typedHint || fastParsed.location || (await deviceLocationPromise);
+
+    // FIX (the actual location bug): this used to prefer `typedHint`, which
+    // for a ZIP is "11803". `isPlaceName` then rejected it, so no `location`
+    // param was sent at all and Google was left guessing from the words
+    // "near 11803" — which it does badly. The coordinates were always
+    // correct; we just never converted them into a form Google accepts.
+    //
+    // The reverse geocode of those coordinates IS the canonical name
+    // ("Plainview, New York"), it is cached, and it is what both the query
+    // and the location param want. It goes first now.
+    const resolvedPlaceName = await deviceLocationPromise;
+    const speculativeLocation =
+      resolvedPlaceName || fastParsed.location || (isPlaceName(typedHint) ? typedHint : null);
+
+    if (!resolvedPlaceName && typedHint) {
+      console.warn(`Reverse geocode failed for ${userLat},${userLng} — falling back to "${typedHint}".`);
+    }
 
     const candidatePromise = fetchCandidatePool({
       textQuery: userRequest.trim(),
@@ -848,8 +862,10 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     }
 
     let candidates;
+    let candidatePool;
     {
       const pool = await candidatePromise;
+      candidatePool = pool;
       if (pool.error) {
         const detail = pool.error.response?.data || pool.error.message;
         console.error("Serper Places search error:", detail);
@@ -946,7 +962,8 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       console.warn(
         `Location resolution failed: all ${withFeatures.length} candidates were beyond ` +
           `${RADIUS_TIERS[RADIUS_TIERS.length - 1]}mi (nearest ${Math.round(nearest)}mi) ` +
-          `for query "${speculativeLocation || "none"}".`
+          `for query "${speculativeLocation || "none"}". ` +
+          `Serper received: ${JSON.stringify({ q: candidatePool.scopedQuery, location: speculativeLocation })}`
       );
       const { newCount } = emptyResult();
       recordSearch(req.userId, req.searchDate, newCount).catch(() => {});

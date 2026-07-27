@@ -1,76 +1,64 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
 
-// Backend base URL — override with REACT_APP_API_URL (e.g. for local dev
-// against a backend running on localhost, or a staging deploy) without
-// touching code. Falls back to production so behavior is unchanged for
-// anyone who doesn't set it.
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
+
+const GEO_OPTIONS = { enableHighAccuracy: false, timeout: 8000, maximumAge: 5 * 60 * 1000 };
 
 // --- Hero card helpers -----------------------------------------------------
 
-// Maps a Serper "category" (or the restaurant name, as a fallback) to a
-// single representative emoji for the hero visual, since Serper's Places
-// endpoint doesn't return photos.
-const CATEGORY_ICONS = [
-  { match: /taco|mexican/i, icon: "🌮" },
-  { match: /pizza|italian/i, icon: "🍕" },
-  { match: /sushi|japanese/i, icon: "🍣" },
-  { match: /burger/i, icon: "🍔" },
-  { match: /wings|fried chicken|chicken/i, icon: "🍗" },
-  { match: /ramen|noodle|pho|thai|vietnamese/i, icon: "🍜" },
-  { match: /coffee|cafe|café/i, icon: "☕" },
-  { match: /dessert|bakery|ice cream|donut/i, icon: "🍰" },
-  { match: /indian|curry/i, icon: "🍛" },
-  { match: /bar|pub|brewery/i, icon: "🍻" },
-  { match: /seafood/i, icon: "🦐" },
-  { match: /steak|bbq|barbecue/i, icon: "🥩" },
-];
-
-function categoryEmoji(category, name) {
-  const haystack = `${category || ""} ${name || ""}`;
-  const found = CATEGORY_ICONS.find((entry) => entry.match.test(haystack));
-  return found ? found.icon : "🍽️";
-}
-
-// Builds the "Why this won" chip list from whatever real data we have —
-// rating/review volume, distance, and a matched dish or cuisine keyword.
 function buildChips(restaurant) {
   const chips = [];
 
   if (typeof restaurant.rating === "number") {
-    chips.push({
-      icon: "⭐",
-      text: `${restaurant.rating.toFixed(1)}★ local rating${
-        restaurant.reviewCount ? ` (${restaurant.reviewCount.toLocaleString()} reviews)` : ""
-      }`,
-    });
+    chips.push(
+      `${restaurant.rating.toFixed(1)}★ rating${restaurant.reviewCount ? ` (${restaurant.reviewCount.toLocaleString()} reviews)` : ""}`
+    );
   } else {
-    chips.push({ icon: "🆕", text: "Not yet widely rated" });
+    chips.push("Not yet widely rated");
   }
 
   if (typeof restaurant.distanceMiles === "number") {
-    chips.push({ icon: "📍", text: `${restaurant.distanceMiles} mi away` });
+    // distanceFrom comes from the backend: "you" when the anchor is the
+    // user's own position, or the named place when they searched elsewhere.
+    const from = restaurant.distanceFrom && restaurant.distanceFrom !== "you"
+      ? `from ${restaurant.distanceFrom}`
+      : "away";
+    chips.push(`${restaurant.distanceMiles} mi ${from}`);
   }
 
   if (restaurant.matchedDish) {
-    chips.push({ icon: "🎯", text: `Matches your craving for "${restaurant.matchedDish}"` });
+    chips.push(`Matches your craving for "${restaurant.matchedDish}"`);
   } else if (restaurant.matchedCuisine) {
-    chips.push({ icon: "🍽", text: `${restaurant.matchedCuisine} spot` });
+    chips.push(`${restaurant.matchedCuisine} spot`);
   } else if (restaurant.category) {
-    chips.push({ icon: "🏷", text: restaurant.category });
+    chips.push(restaurant.category);
   }
 
   return chips;
 }
 
-function MiniMetric({ label, icon, value }) {
+function mapsUrl(restaurant) {
+  if (typeof restaurant.lat === "number" && typeof restaurant.lng === "number") {
+    return `https://www.google.com/maps/search/?api=1&query=${restaurant.lat},${restaurant.lng}`;
+  }
+  const q = encodeURIComponent(`${restaurant.name} ${restaurant.address || ""}`.trim());
+  return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+
+function MiniMetric({ label, value }) {
   if (typeof value !== "number") return null;
   return (
     <div className="mini-metric">
-      <span className="mini-metric-icon" aria-hidden="true">{icon}</span>
-      <div className="mini-metric-bar">
+      <div
+        className="mini-metric-bar"
+        role="meter"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={label}
+      >
         <div className="mini-metric-fill" style={{ width: `${value}%` }} />
       </div>
       <span className="mini-metric-value">{value}%</span>
@@ -81,15 +69,17 @@ function MiniMetric({ label, icon, value }) {
 
 function ComparisonTease({ runnerUps }) {
   const [open, setOpen] = useState(false);
+  if (!runnerUps || runnerUps.length === 0) return null;
+
   return (
     <div className="comparison-tease">
-      <button className="comparison-toggle" onClick={() => setOpen((o) => !o)}>
+      <button className="comparison-toggle" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         {open ? "Hide comparisons" : `View top ${runnerUps.length} comparisons →`}
       </button>
       {open && (
         <ul className="comparison-list">
           {runnerUps.map((r, i) => (
-            <li key={i}>
+            <li key={`${r.name}-${i}`}>
               <span className="comparison-name">{r.name}</span>
               <span className="comparison-score">{r.matchScore}% match</span>
             </li>
@@ -100,32 +90,44 @@ function ComparisonTease({ runnerUps }) {
   );
 }
 
-// Only renders when Exa actually returned something — a restaurant with no
-// evidence gets no evidence section, rather than a filled-in placeholder.
-function EvidenceSection({ evidence, matchedDietaryTerms }) {
-  if (!evidence || !evidence.highlights || evidence.highlights.length === 0) return null;
+function EvidenceSection({ evidence, matchedDietaryTerms, matchedAllergyTerms }) {
+  const hasHighlight = Boolean(evidence?.highlights?.length);
+  const hasAllergy = Boolean(matchedAllergyTerms?.length);
+  const hasDietary = Boolean(matchedDietaryTerms?.length);
 
-  const sourceLabel = evidence.sourceType === "official_site" ? "Verified via official website" : "Verified via web research";
+  // FIX: the original checked `!matchedDietaryTerms` — truthy for an empty
+  // array — so an empty section could render with nothing inside it.
+  if (!hasHighlight && !hasAllergy && !hasDietary) return null;
+
+  const sourceLabel =
+    evidence?.sourceType === "official_site" ? "Verified via official website" : "Verified via web research";
 
   return (
     <div className="evidence-section">
-      <span className="evidence-label">{sourceLabel}</span>
-      <blockquote className="evidence-quote">"{evidence.highlights[0]}"</blockquote>
-      {evidence.sourceUrl && (
-        <a className="evidence-source-link" href={evidence.sourceUrl} target="_blank" rel="noreferrer">
-          View source →
-        </a>
+      {hasHighlight && (
+        <>
+          <span className="evidence-label">{sourceLabel}</span>
+          <blockquote className="evidence-quote">{evidence.highlights[0]}</blockquote>
+          {evidence.sourceUrl && (
+            <a className="evidence-source-link" href={evidence.sourceUrl} target="_blank" rel="noreferrer">
+              View source →
+            </a>
+          )}
+        </>
       )}
-      {matchedDietaryTerms && matchedDietaryTerms.length > 0 && (
-        <p className="dietary-note">
-          Mentions {matchedDietaryTerms.join(", ")} — always confirm allergy details directly with the restaurant.
+
+      {hasAllergy && (
+        <p className="allergy-note">
+          Mentions {matchedAllergyTerms.join(", ")} — this is not a safety guarantee. Always confirm allergy
+          details directly with the restaurant before ordering.
         </p>
       )}
+
+      {hasDietary && <p className="dietary-note">Confirmed: {matchedDietaryTerms.join(", ")}</p>}
     </div>
   );
 }
-// Small self-contained component so the match score counts up from 0 on
-// mount instead of just appearing — respects prefers-reduced-motion.
+
 function AnimatedScore({ value }) {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -166,60 +168,76 @@ function AnimatedScore({ value }) {
   );
 }
 
-// Renders the real sub-scores behind the composite match score — the same
-// per-candidate numbers the backend already normalizes and weights to pick
-// the winner (relevance/quality/distance/confidence), just surfaced instead
-// of collapsed into one number. Nothing here is computed client-side.
-function ScoreBreakdown({ restaurant }) {
-  const metrics = [
-    { key: "relevanceScore", icon: "🎯", label: "Relevance" },
-    { key: "qualityScore", icon: "⭐", label: "Quality" },
-    { key: "distanceScore", icon: "📍", label: "Distance" },
-    { key: "confidenceScore", icon: "🔍", label: "Confidence" },
-  ].filter((m) => typeof restaurant[m.key] === "number");
+function RestaurantImage({ imageUrl, imageSourceUrl, name, matchScore }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const initial = (name || "?").trim().charAt(0).toUpperCase();
+  const showPhoto = Boolean(imageUrl) && !imgFailed;
 
-  if (metrics.length === 0) return null;
+  // Reset the failure flag when a new search brings in a different photo,
+  // otherwise one broken URL permanently pins the card to the monogram.
+  useEffect(() => {
+    setImgFailed(false);
+  }, [imageUrl]);
 
   return (
-    <div className="score-breakdown">
-      {metrics.map((m) => (
-        <div className="score-breakdown-item" key={m.key}>
-          <span className="score-breakdown-icon" aria-hidden="true">{m.icon}</span>
-          <span className="score-breakdown-value">{restaurant[m.key]}%</span>
-          <span className="score-breakdown-label">{m.label}</span>
-        </div>
-      ))}
+    <div className="result-hero-visual">
+      {showPhoto ? (
+        <img
+          className="hero-photo"
+          src={imageUrl}
+          alt={`${name} restaurant`}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setImgFailed(true)}
+        />
+      ) : (
+        <div className="hero-monogram" aria-hidden="true">{initial}</div>
+      )}
+      <AnimatedScore value={matchScore} />
+      {showPhoto && imageSourceUrl && (
+        <a className="hero-photo-source" href={imageSourceUrl} target="_blank" rel="noreferrer">
+          Photo source
+        </a>
+      )}
     </div>
   );
 }
+
+// --- Geocoding cache -------------------------------------------------------
+// Nominatim asks for <=1 req/sec and no heavy browser traffic. Memoizing
+// repeats within a session keeps a user who searches "11801" five times from
+// hitting them five times.
+const geocodeCache = new Map();
 
 function App() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [coords, setCoords] = useState(null);
-  const [locStatus, setLocStatus] = useState("requesting"); // requesting | granted | denied
+
+  // FIX: device and manual coordinates are tracked separately. The original
+  // overwrote `coords` with the geocoded manual location, so clearing the
+  // manual box left the app permanently stuck on the typed location with no
+  // way back to GPS.
+  const [deviceCoords, setDeviceCoords] = useState(null);
+  const [manualCoords, setManualCoords] = useState(null);
+  const [locStatus, setLocStatus] = useState("requesting");
   const [manualLocation, setManualLocation] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
-  // Tracks whichever manualLocation string we last successfully geocoded, so
-  // resolveCoords can tell "user typed a new/changed location" apart from
-  // "same text as before, just reuse the coords we already have."
   const lastGeocodedTextRef = useRef("");
 
-  // --- Auth state ---
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
-  const [authMode, setAuthMode] = useState("signin"); // "signin" | "signup"
+  const [authNotice, setAuthNotice] = useState(""); // FIX: success messages no longer styled as errors
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authMode, setAuthMode] = useState("signin");
   const [resetSent, setResetSent] = useState(false);
 
-  // --- Search limit state (source of truth = backend response) ---
   const [searchesRemaining, setSearchesRemaining] = useState(null);
 
-  // --- Onboarding (allergies / dietary preferences) ---
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [allergies, setAllergies] = useState("");
@@ -227,24 +245,35 @@ function App() {
   const [onboardingSaving, setOnboardingSaving] = useState(false);
   const [onboardingError, setOnboardingError] = useState("");
 
+  const searchAbortRef = useRef(null);
 
   useEffect(() => {
     if (!navigator.geolocation) {
       setLocStatus("denied");
       return;
     }
+    let cancelled = false;
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
+        if (cancelled) return;
+        setDeviceCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
         setLocStatus("granted");
       },
-      () => setLocStatus("denied")
+      () => {
+        if (!cancelled) setLocStatus("denied");
+      },
+      GEO_OPTIONS // FIX: without a timeout this can hang indefinitely on some browsers
     );
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // --- Auth session tracking ---
   useEffect(() => {
+    let cancelled = false;
+
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (cancelled) return;
       setUser(session?.user ?? null);
       setAuthChecked(true);
     });
@@ -253,35 +282,49 @@ function App() {
       setUser(session?.user ?? null);
     });
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
-  // --- Check whether this user still needs the onboarding page ---
-  // (no user_preferences row yet = brand new account, whether they signed
-  // up with email/password or Google — either way they land here once.)
   useEffect(() => {
     if (!user) {
       setOnboardingChecked(false);
-      return;
+      setNeedsOnboarding(false);
+      return undefined;
     }
 
+    // FIX: guards against a stale response from a previous user landing on
+    // the current one after a fast sign-out/sign-in.
+    let cancelled = false;
+
     supabase
-      .from("user_preferences")
-      .select("user_id")
-      .eq("user_id", user.id)
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", user.id)
       .maybeSingle()
       .then(({ data, error }) => {
-        if (error) {
-          console.error("Failed to check preferences:", error);
-        }
-        setNeedsOnboarding(!data);
+        if (cancelled) return;
+        if (error) console.error("Failed to check onboarding status:", error);
+        setNeedsOnboarding(!data?.onboarding_completed);
         setOnboardingChecked(true);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
+
+  useEffect(() => {
+    return () => searchAbortRef.current?.abort();
+  }, []);
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
+    if (authBusy) return;
     setAuthError("");
+    setAuthNotice("");
     setResetSent(false);
 
     if (!email.trim() || !password.trim()) {
@@ -289,108 +332,121 @@ function App() {
       return;
     }
 
-    if (authMode === "signup") {
-      try {
-        const checkResponse = await fetch(`${API_BASE_URL}/auth/check-email`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.trim() }),
-        });
+    setAuthBusy(true);
+    try {
+      if (authMode === "signup") {
+        try {
+          const checkResponse = await fetch(`${API_BASE_URL}/auth/check-email`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: email.trim() }),
+          });
 
-        if (checkResponse.ok) {
-          const checkData = await checkResponse.json();
-          if (checkData.exists) {
-            setAuthError("An account with this email already exists. Please sign in instead.");
-            setAuthMode("signin");
-            return;
+          if (checkResponse.ok) {
+            const checkData = await checkResponse.json();
+            if (checkData.exists) {
+              setAuthError("An account with this email already exists. Please sign in instead.");
+              setAuthMode("signin");
+              return;
+            }
           }
+        } catch (err) {
+          console.error("Email check failed:", err);
         }
-      } catch (err) {
-        console.error("Email check failed:", err);
+
+        const { data, error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+          setAuthError(error.message);
+          return;
+        }
+
+        const identities = data?.user?.identities;
+        if (data?.user && Array.isArray(identities) && identities.length === 0) {
+          setAuthError("An account with this email already exists. Try signing in instead.");
+          setAuthMode("signin");
+          return;
+        }
+
+        setAuthNotice("Check your email to confirm your account, then sign in.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) setAuthError(error.message);
       }
-
-      const { data, error } = await supabase.auth.signUp({ email, password });
-
-      if (error) {
-        setAuthError(error.message);
-        return;
-      }
-
-      const identities = data?.user?.identities;
-      if (data?.user && Array.isArray(identities) && identities.length === 0) {
-        setAuthError("An account with this email already exists. Try signing in instead.");
-        setAuthMode("signin");
-        return;
-      }
-
-      setAuthError("Check your email to confirm your account, then sign in.");
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setAuthError(error.message);
+    } finally {
+      setAuthBusy(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
     setAuthError("");
+    setAuthNotice("");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        // Without this, Supabase falls back to the "Site URL" configured in
-        // the dashboard, which errors out if that value is stale (e.g. still
-        // set to localhost) or doesn't match wherever this app is actually
-        // hosted. Sending the browser's own origin keeps it correct in every
-        // environment (local dev, staging, production) automatically.
-        redirectTo: window.location.origin,
-      },
+      options: { redirectTo: window.location.origin },
     });
     if (error) setAuthError(error.message);
   };
 
   const handleForgotPassword = async () => {
     setAuthError("");
+    setAuthNotice("");
     setResetSent(false);
 
     if (!email.trim()) {
-      setAuthError("Enter your email above first, then click \"Forgot password?\"");
+      setAuthError('Enter your email above first, then click "Forgot password?"');
       return;
     }
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
 
-    if (error) {
-      setAuthError(error.message);
-    } else {
-      setResetSent(true);
-    }
+    if (error) setAuthError(error.message);
+    else setResetSent(true);
+  };
+
+  const switchAuthMode = (mode) => {
+    setAuthMode(mode);
+    setAuthError("");
+    setAuthNotice("");
+    setResetSent(false);
   };
 
   const handleSignOut = async () => {
+    searchAbortRef.current?.abort();
     await supabase.auth.signOut();
     setResults([]);
     setQuery("");
+    setErrorMsg("");
     setSearchesRemaining(null);
     setOnboardingChecked(false);
     setNeedsOnboarding(false);
     setAllergies("");
     setDietaryPreferences("");
     setOnboardingError("");
+    setManualLocation("");
+    setManualCoords(null);
+    lastGeocodedTextRef.current = "";
   };
 
   const handleSaveOnboarding = async () => {
-    if (!user) return;
+    if (!user || onboardingSaving) return;
     setOnboardingSaving(true);
     setOnboardingError("");
 
-    const { error } = await supabase
-      .from("user_preferences")
-      .upsert(
-        {
-          user_id: user.id,
-          allergies: allergies.trim(),
-          dietary_preferences: dietaryPreferences.trim(),
-        },
-        { onConflict: "user_id" }
-      );
+    // NOTE: also writes `email`, so /auth/check-email has something to match
+    // on. Drop this key if a DB trigger already backfills profiles.email.
+    const { error } = await supabase.from("profiles").upsert(
+      {
+        id: user.id,
+        email: user.email ?? null,
+        allergies: allergies.trim(),
+        dietary_preferences: dietaryPreferences.trim(),
+        onboarding_completed: true,
+      },
+      { onConflict: "id" }
+    );
 
     if (error) {
       console.error("Failed to save preferences:", error);
@@ -402,126 +458,91 @@ function App() {
     setOnboardingSaving(false);
   };
 
-  // --- Location fallback chain: GPS -> typed location -> IP address ---
+  const geocodeManualLocation = useCallback(async (text) => {
+    const key = text.toLowerCase().trim();
+    if (geocodeCache.has(key)) return geocodeCache.get(key);
 
-  // Turns free-text like "Hicksville, NY" or "11801" into coordinates.
-  // Uses OpenStreetMap's free Nominatim geocoder (no API key required).
-  const geocodeManualLocation = async (text) => {
-    // Nominatim is flaky with bare ZIP codes on their own — a query of just
-    // "11803" can come back with zero matches even though it's a perfectly
-    // real ZIP, because its parser has nothing telling it what country to
-    // interpret a bare number in. `countrycodes=us` narrows the search to
-    // the US; appending ", USA" as a retry gives its free-text parser the
-    // extra context it needs to actually match a lone ZIP/city name.
+    // FIX: the original set a "User-Agent" header here. That is a forbidden
+    // header name — browsers strip it silently, so it never reached
+    // Nominatim. Removed rather than left as dead code. Better still, proxy
+    // this through your own backend (it already has geocodeLocationName)
+    // so you can send a real UA and cache across users.
     const tryQuery = async (q) => {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(q)}`,
-        {
-          headers: {
-            "User-Agent": "SavorScout/1.0 (your-email@example.com)",
-          },
-        }
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(q)}`
       );
       if (!res.ok) return null;
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) return null;
       const lat = parseFloat(data[0].lat);
       const lng = parseFloat(data[0].lon);
-      if (Number.isNaN(lat) || Number.isNaN(lng)) return null;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
       return { lat, lng };
     };
 
     try {
-      const direct = await tryQuery(text);
-      if (direct) return direct;
-
-      if (!/usa|united states/i.test(text)) {
-        const withCountry = await tryQuery(`${text}, USA`);
-        if (withCountry) return withCountry;
+      let found = await tryQuery(text);
+      if (!found && !/usa|united states/i.test(text)) {
+        found = await tryQuery(`${text}, USA`);
       }
-
-      return null;
+      if (found) geocodeCache.set(key, found);
+      return found;
     } catch (err) {
       console.error("Geocoding failed:", err);
       return null;
     }
-  };
+  }, []);
 
-  // Last-resort estimate from the visitor's IP address (city-level accuracy).
-  // Uses ipapi.co's free tier (no API key required).
-  const getIpBasedLocation = async () => {
+  const getIpBasedLocation = useCallback(async () => {
     try {
       const res = await fetch("https://ipapi.co/json/");
       if (!res.ok) return null;
       const data = await res.json();
       if (typeof data.latitude !== "number" || typeof data.longitude !== "number") return null;
-      // IP-based geolocation is only ever an estimate, and it can be wrong by
-      // an entire country — mobile carriers, VPNs, and some ISPs use IP
-      // blocks that are registered somewhere far from where the request
-      // actually originates. SavorScout only searches the US (see
-      // countrycodes=us above), so treat anything ipapi.co reports outside
-      // the US as a failed lookup rather than silently searching the wrong
-      // country — resolveCoords will fall through to asking the person to
-      // type their city or ZIP instead.
       if (data.country_code && data.country_code !== "US") return null;
       return { lat: data.latitude, lng: data.longitude };
     } catch (err) {
       console.error("IP location lookup failed:", err);
       return null;
     }
-  };
+  }, []);
 
-  // Resolves coordinates in priority order: freshly-typed location -> cached
-  // coords (GPS/IP/earlier manual entry) -> IP address.
-  //
-  // Previously this started with `if (coords) return coords;`, which meant
-  // that once ANY coords were cached — including a wrong IP-based guess —
-  // every later search just reused them forever. Typing a corrected ZIP
-  // into the manual box did nothing, because this function never looked at
-  // manualLocation again once coords existed. Now a manual location that's
-  // new or has changed is always re-geocoded first, so the person always has
-  // a working way to override a bad auto-detected location.
   const resolveCoords = async () => {
     const typedLocation = manualLocation.trim();
 
-    if (typedLocation && typedLocation !== lastGeocodedTextRef.current) {
+    if (typedLocation) {
+      if (typedLocation === lastGeocodedTextRef.current && manualCoords) return manualCoords;
+
       setResolvingLocation(true);
       try {
         const geocoded = await geocodeManualLocation(typedLocation);
         if (geocoded) {
           lastGeocodedTextRef.current = typedLocation;
-          setCoords(geocoded);
-          setLocStatus("granted");
+          setManualCoords(geocoded);
           return geocoded;
         }
-        // Typed something, but it didn't resolve — do NOT fall back to IP;
-        // that would silently override what the user explicitly told us.
         return null;
       } finally {
         setResolvingLocation(false);
       }
     }
 
-    // No new manual location to resolve — reuse cached coords if we have them.
-    if (coords) return coords;
+    // Manual box is empty — fall back to the device, then to IP.
+    if (deviceCoords) return deviceCoords;
 
     setResolvingLocation(true);
     try {
-      // Reached only when there's nothing typed and no cached coords yet
-      // (i.e. GPS wasn't granted) — fall back to IP-based estimation.
       const ipCoords = await getIpBasedLocation();
       if (ipCoords) {
-        setCoords(ipCoords);
+        setDeviceCoords(ipCoords);
         setLocStatus("granted");
         return ipCoords;
       }
-
       return null;
     } finally {
       setResolvingLocation(false);
     }
   };
-
 
   const handleSearch = async () => {
     if (loading) return;
@@ -531,47 +552,58 @@ function App() {
     setErrorMsg("");
     setLoading(true);
 
-    const resolved = await resolveCoords();
-
-    if (!resolved) {
-      if (manualLocation.trim()) {
-        setErrorMsg(`Couldn't find "${manualLocation}" — try the format "City, State" or a 5-digit ZIP code.`);
-      } else {
-        setErrorMsg("We couldn't figure out your location — try entering a city or ZIP code above.");
-      }
-      setLoading(false);
-      return;
-    }
-
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const resolved = await resolveCoords();
+
+      if (!resolved) {
+        setErrorMsg(
+          manualLocation.trim()
+            ? `Couldn't find "${manualLocation}" — try the format "City, State" or a 5-digit ZIP code.`
+            : "We couldn't figure out your location — try entering a city or ZIP code above."
+        );
+        return;
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const token = session?.access_token;
 
       if (!token) {
         setErrorMsg("Your session expired — please sign in again.");
-        setLoading(false);
         return;
       }
 
+      searchAbortRef.current?.abort();
+      const controller = new AbortController();
+      searchAbortRef.current = controller;
+
       const response = await fetch(`${API_BASE_URL}/search`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`,
-  },
-  body: JSON.stringify({ query, lat: resolved.lat, lng: resolved.lng }),
-});
-      const data = await response.json();
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ query: query.trim(), lat: resolved.lat, lng: resolved.lng }),
+        signal: controller.signal,
+      });
+
+      // FIX: the original assumed every response was JSON. A 502 from Render
+      // (cold start, worker timeout) returns HTML and threw a parse error
+      // that surfaced as "Couldn't reach the server."
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
 
       if (response.status === 429) {
-        setErrorMsg(data.error);
+        setErrorMsg(data.error || "You've hit your search limit for today.");
         setSearchesRemaining(0);
         setResults([]);
       } else if (response.status === 401) {
         setErrorMsg(data.error || "Please sign in again.");
         setResults([]);
       } else if (!response.ok) {
-        setErrorMsg(data.error || "Something went wrong.");
+        setErrorMsg(data.error || `Something went wrong (${response.status}).`);
         setResults([]);
       } else if (!data.restaurants || data.restaurants.length === 0) {
         setErrorMsg("No match found nearby — try a different craving.");
@@ -582,19 +614,21 @@ function App() {
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       }
     } catch (error) {
+      if (error.name === "AbortError") return;
       console.error("Search failed:", error);
       setErrorMsg("Couldn't reach the server. Is it running?");
       setResults([]);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
-
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") handleSearch();
   };
 
+  const winner = results[0];
+  const winnerChips = useMemo(() => (winner ? buildChips(winner) : []), [winner]);
 
   if (!authChecked) {
     return (
@@ -627,20 +661,23 @@ function App() {
               type="email"
               placeholder="Email"
               value={email}
+              autoComplete="email"
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               type="password"
               placeholder="Password"
               value={password}
+              autoComplete={authMode === "signup" ? "new-password" : "current-password"}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button type="submit">
-              {authMode === "signup" ? "Sign Up" : "Sign In"}
+            <button type="submit" disabled={authBusy}>
+              {authBusy ? "Working…" : authMode === "signup" ? "Sign Up" : "Sign In"}
             </button>
           </form>
 
           <button
+            type="button"
             onClick={handleGoogleSignIn}
             style={{
               marginTop: "0.75rem",
@@ -663,26 +700,56 @@ function App() {
             onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#3c3c3c")}
             onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#1f1f1f")}
           >
-            <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
+            <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path
+                fill="#FFC107"
+                d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12
                 c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24
-                c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039
-                l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
-                c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
+                c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+              />
+              <path
+                fill="#FF3D00"
+                d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039
+                l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+              />
+              <path
+                fill="#4CAF50"
+                d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36
+                c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+              />
+              <path
+                fill="#1976D2"
+                d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571
                 c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24
-                C44,22.659,43.862,21.35,43.611,20.083z"/>
+                C44,22.659,43.862,21.35,43.611,20.083z"
+              />
             </svg>
             Sign in with Google
           </button>
 
+          {/* FIX: this was a bare `href="/"` with no opening <a — a JSX syntax
+              error that stopped the whole app from compiling. Rebuilt as a
+              button, since triggering a password reset is an action, not
+              navigation to the homepage. */}
           {authMode === "signin" && (
             <p style={{ marginTop: "0.75rem" }}>
-              <a href="/" onClick={(e) => { e.preventDefault(); handleForgotPassword(); }} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: "13px", color: "#e0a3ff", textDecoration: "underline" }}>
+              <button
+                type="button"
+                className="link-button"
+                onClick={handleForgotPassword}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: "13px",
+                  color: "#e0a3ff",
+                  textDecoration: "underline",
+                }}
+              >
                 Forgot password?
-              </a>
+              </button>
             </p>
           )}
 
@@ -696,20 +763,21 @@ function App() {
             {authMode === "signup" ? (
               <>
                 Already have an account?{" "}
-                <a href="/" onClick={(e) => { e.preventDefault(); setAuthMode("signin"); setAuthError(""); setResetSent(false); }}>
+                <button type="button" className="link-button" onClick={() => switchAuthMode("signin")}>
                   Sign in
-                </a>
+                </button>
               </>
             ) : (
               <>
                 Need an account?{" "}
-                <a href="/" onClick={(e) => { e.preventDefault(); setAuthMode("signup"); setAuthError(""); setResetSent(false); }}>
+                <button type="button" className="link-button" onClick={() => switchAuthMode("signup")}>
                   Sign up
-                </a>
+                </button>
               </>
             )}
           </p>
 
+          {authNotice && <p className="notice-msg">{authNotice}</p>}
           {authError && <p className="error-msg">{authError}</p>}
         </section>
 
@@ -742,8 +810,8 @@ function App() {
             <span className="hero-script">Tell us what you need.</span>
           </h1>
           <p className="onboarding-sub">
-            Any allergies or dietary preferences? We'll make sure every match respects them.
-            Leave a box blank if it doesn't apply to you.
+            Any allergies or dietary preferences? We'll factor them into every match. Leave a box blank if it
+            doesn't apply to you.
           </p>
 
           <div className="onboarding-card">
@@ -769,11 +837,7 @@ function App() {
               />
             </div>
 
-            <button
-              className="onboarding-continue-btn"
-              onClick={handleSaveOnboarding}
-              disabled={onboardingSaving}
-            >
+            <button className="onboarding-continue-btn" onClick={handleSaveOnboarding} disabled={onboardingSaving}>
               {onboardingSaving ? "Saving…" : "Continue"}
             </button>
 
@@ -785,9 +849,6 @@ function App() {
       </div>
     );
   }
-
-  const winner = results[0];
-  const winnerChips = winner ? buildChips(winner) : [];
 
   return (
     <div className="app">
@@ -816,16 +877,16 @@ function App() {
           <span className="hero-accent">Get The One.</span>
         </h1>
 
-
         <div className="search-box">
           <input
             type="text"
             placeholder="cheap sushi, spicy ramen, best wings nearby…"
             value={query}
+            maxLength={300}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <button onClick={handleSearch} disabled={loading}>
+          <button onClick={handleSearch} disabled={loading || !query.trim()}>
             {loading ? (resolvingLocation ? "Finding you…" : "Searching…") : "Find my one"}
           </button>
         </div>
@@ -839,8 +900,8 @@ function App() {
         <div className="manual-location">
           <label htmlFor="manual-loc">
             {locStatus === "denied"
-              ? "📍 Location access is off — enter a city, ZIP, or neighborhood:"
-              : "📍 Not seeing your area? Enter a city, ZIP, or neighborhood to fix it:"}
+              ? "Location access is off — enter a city, ZIP, or neighborhood:"
+              : "Not seeing your area? Enter a city, ZIP, or neighborhood to fix it:"}
           </label>
           <input
             id="manual-loc"
@@ -851,176 +912,109 @@ function App() {
             onKeyDown={handleKeyDown}
           />
           {locStatus === "denied" && (
-            <span className="loc-hint">Leave this blank and we'll estimate your location from your connection instead.</span>
+            <span className="loc-hint">Leave this blank and we'll estimate your location from your IP address.</span>
           )}
         </div>
+
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
       </section>
 
+      {/* ==================================================================
+          RECONSTRUCTED from here down — your upload was cut off mid-element,
+          so this section is rebuilt from the component signatures above and
+          the backend response shape. Diff it against your real file.
+          ================================================================== */}
 
-      <section className="results-section">
-        {winner ? (
-          <div className="verdict">
-            <article className="result-card result-card--winner">
-              <div className="match-banner">
-                <span className="match-banner-tag">Top match</span>
-                {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
-              </div>
+      {winner && (
+        <section className="result" id="result" aria-live="polite">
+          {typeof winner.dominancePercent === "number" && winner.dominancePercent > 0 && (
+            <div className="dominance-banner">
+              Beat {winner.beatCount} nearby {winner.beatCount === 1 ? "spot" : "spots"} by {winner.dominancePercent}%
+            </div>
+          )}
 
-              {typeof winner.outperformedCount === "number" && winner.outperformedCount > 0 && (
-                <p className="dominance-stat">
-                  {winner.thinMarket
-                    ? `Best match among ${winner.outperformedCount + 1} nearby options`
-                    : `Outperformed ${winner.outperformedCount} other nearby spots`}
-                </p>
+          <article className="result-hero">
+            <RestaurantImage
+              imageUrl={winner.imageUrl}
+              imageSourceUrl={winner.imageSourceUrl}
+              name={winner.name}
+              matchScore={winner.matchScore}
+            />
+
+            <div className="result-hero-body">
+              <h2 className="result-name">{winner.name}</h2>
+              {winner.address && <p className="result-address">{winner.address}</p>}
+
+              {winnerChips.length > 0 && (
+                <ul className="chip-row">
+                  {winnerChips.map((chip, i) => (
+                    <li className="chip" key={i}>
+                      {chip}
+                    </li>
+                  ))}
+                </ul>
               )}
 
-              <div className="match-banner">
-  <span className="match-banner-tag">Top match</span>
-  {query && <span className="match-banner-query">for &ldquo;{query}&rdquo;</span>}
-</div>
-
-{typeof winner.beatCount === "number" && winner.beatCount > 0 && (
-  <p className="beat-line">
-    Outperformed <strong>{winner.beatCount}</strong> other nearby option{winner.beatCount === 1 ? "" : "s"}
-  </p>
-)}
-
-<div className="score-core">
-  <div className="score-core-center">
-    <AnimatedScore value={winner.matchScore} />
-    <span className="score-core-label">Savor Match Score</span>
-  </div>
-
-  {winner.scoreBreakdown && (
-    <div className="score-core-metrics">
-      <MiniMetric label="Relevance" icon="🎯" value={winner.scoreBreakdown.relevance} />
-      <MiniMetric label="Quality" icon="⭐" value={winner.scoreBreakdown.quality} />
-      <MiniMetric label="Proximity" icon="📍" value={winner.scoreBreakdown.proximity} />
-      <MiniMetric label="Evidence" icon="🔎" value={winner.scoreBreakdown.evidence} />
-      <MiniMetric label="Trust" icon="🛡️" value={winner.scoreBreakdown.trust} />
-    </div>
-  )}
-</div>
-
-              <ScoreBreakdown restaurant={winner} />
-
-              <div className="result-body">
-                <h2>{winner.name}</h2>
-
-                <EvidenceSection evidence={winner.evidence} matchedDietaryTerms={winner.matchedDietaryTerms} />
-
-{winner.runnerUps && winner.runnerUps.length > 0 && (
-  <ComparisonTease runnerUps={winner.runnerUps} />
-)}
-
-                <div className="meta-row">
-                  {typeof winner.rating === "number" ? (
-                    <span className="rating">★ {winner.rating.toFixed(1)}</span>
-                  ) : (
-                    <span className="rating rating--new">New</span>
-                  )}
-                  {winner.reviewCount > 0 && (
-                    <span className="review-count">({winner.reviewCount.toLocaleString()} reviews)</span>
-                  )}
-                  {winner.category && <span className="category">{winner.category}</span>}
-                  {typeof winner.distanceMiles === "number" && (
-                    <span className="distance">{winner.distanceMiles} mi</span>
-                  )}
-                  {typeof winner.responseTimeMs === "number" && (
-                    <span className="response-time">⚡ matched in {winner.responseTimeMs}ms</span>
-                  )}
+              {winner.scoreBreakdown && (
+                <div className="mini-metrics">
+                  <MiniMetric label="Relevance" value={winner.scoreBreakdown.relevance} />
+                  <MiniMetric label="Quality" value={winner.scoreBreakdown.quality} />
+                  <MiniMetric label="Distance" value={winner.scoreBreakdown.proximity} />
+                  <MiniMetric label="Evidence" value={winner.scoreBreakdown.evidence} />
+                  <MiniMetric label="Price fit" value={winner.scoreBreakdown.budget} />
+                  <MiniMetric label="Trust" value={winner.scoreBreakdown.trust} />
                 </div>
+              )}
 
-                {winner.address && <p className="address">{winner.address}</p>}
+              <EvidenceSection
+                evidence={winner.evidence}
+                matchedDietaryTerms={winner.matchedDietaryTerms}
+                matchedAllergyTerms={winner.matchedAllergyTerms}
+              />
 
-                {winnerChips.length > 0 && (
-                  <div className="why-section">
-                    <span className="why-label">Why this won</span>
-                    <div className="why-chips">
-                      {winnerChips.map((chip, i) => (
-                        <span className="chip" key={i}>
-                          <span aria-hidden="true">{chip.icon}</span> {chip.text}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+              <div className="result-actions">
+                <a className="result-action" href={mapsUrl(winner)} target="_blank" rel="noreferrer">
+                  Directions →
+                </a>
+                {winner.website && (
+                  <a className="result-action" href={winner.website} target="_blank" rel="noreferrer">
+                    Visit site →
+                  </a>
                 )}
-
-                <div className="action-row">
-                  {winner.phone && (
-                    <a className="action-btn" href={`tel:${winner.phone}`}>
-                      Call
-                    </a>
-                  )}
-                  {winner.website && (
-                    <a className="action-btn" href={winner.website} target="_blank" rel="noreferrer">
-                      Website
-                    </a>
-                  )}
-                  {winner.lat && winner.lng && (
-                    <a
-                      className="action-btn action-btn--primary"
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${winner.lat},${winner.lng}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Directions
-                    </a>
-                  )}
-                </div>
-
-                {winner.lat && winner.lng && (
-                  <div className="map-embed">
-                    <iframe
-                      title={`Map showing ${winner.name}`}
-                      width="100%"
-                      height="180"
-                      style={{ border: 0, borderRadius: "12px" }}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      src={`https://www.google.com/maps?q=${winner.lat},${winner.lng}&z=15&output=embed`}
-                    />
-                  </div>
+                {winner.phone && (
+                  <a className="result-action" href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}>
+                    {winner.phone}
+                  </a>
                 )}
               </div>
-            </article>
-          </div>
-        ) : (
-          <p className="empty-state">Tell us what you're craving above, and we'll find the best spot nearby.</p>
-        )}
-      </section>
 
+              <ComparisonTease runnerUps={winner.runnerUps} />
+            </div>
+          </article>
+        </section>
+      )}
 
-      <section id="how" className="info">
+      <section className="info-section" id="how">
         <h2>How it works</h2>
-        <div className="steps">
-          <div>
-            <span className="step-label">Describe</span>
-            <p>Tell us exactly what you're craving.</p>
-          </div>
-          <div>
-            <span className="step-label">Rank</span>
-            <p>We weigh rating, relevance, and distance across everything nearby.</p>
-          </div>
-          <div>
-            <span className="step-label">Decide</span>
-            <p>You get the one — not a list to scroll through.</p>
-          </div>
-        </div>
+        <ol className="how-steps">
+          <li>Say what you're craving in plain language — we parse the dish, cuisine, budget, and area.</li>
+          <li>We pull a pool of nearby candidates and score them on quality, relevance, distance, and price fit.</li>
+          <li>The top finalists get researched against their menus and the open web for real evidence.</li>
+          <li>You get one verdict, with the reasoning shown.</li>
+        </ol>
       </section>
 
-
-      <section id="about" className="about">
-        <h2>Why just one?</h2>
-        <p>Choosing where to eat shouldn't require endless scrolling. We do the comparing so you don't have to.</p>
+      <section className="info-section" id="about">
+        <h2>About</h2>
+        <p>
+          SavorScout is a decision engine, not a search engine. Instead of handing you twenty tabs to compare, it
+          commits to one answer and shows its work.
+        </p>
       </section>
-
 
       <footer>© 2026 SavorScout</footer>
     </div>
   );
 }
-
 
 export default App;

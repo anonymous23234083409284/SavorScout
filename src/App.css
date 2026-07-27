@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Pacifico&display=swap');
 .hero-script {
   font-family: 'Pacifico', cursive;
-  font-weight: 400; /* Pacifico only ships as regular weight — forcing bold looks bad */
+  font-weight: 400;
 }
 :root {
   --bg-deep: #140f1b;
@@ -362,10 +362,6 @@ body {
   100% { background-position: 0 100%; }
 }
 
-/* -- context banner: only the winner gets this, since it's the one claim
-   that needs backing up ("top match for X"), not decoration for its own
-   sake -- */
-
 .match-banner {
   display: flex;
   align-items: baseline;
@@ -394,26 +390,51 @@ body {
   white-space: nowrap;
 }
 
-/* -- hero visual: no product photos come back from the search API, so the
-   "hero image" is a data-driven visual instead — a category icon plus the
-   animated match-score badge -- */
+/* -- hero visual: a real photo (via Serper Images) with the animated match
+   score overlaid, and a plain monogram fallback when no photo is found or
+   it fails to load — never an emoji, never a guessed stock image -- */
 
 .result-hero-visual {
   position: relative;
-  height: 200px;
+  height: 220px;
+  overflow: hidden;
+  background: #0d1219;
+}
+
+.hero-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) contrast(1.05);
+  display: block;
+}
+
+.hero-monogram {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 64px;
+  font-weight: 700;
+  color: rgba(255, 200, 87, 0.35);
   background:
-    radial-gradient(circle at 30% 20%, rgba(255, 200, 87, 0.35), transparent 55%),
-    radial-gradient(circle at 75% 75%, rgba(255, 106, 61, 0.3), transparent 55%),
-    #0d1219;
+    radial-gradient(circle at 30% 20%, rgba(255, 200, 87, 0.25), transparent 55%),
+    radial-gradient(circle at 75% 75%, rgba(255, 106, 61, 0.2), transparent 55%);
 }
 
-.hero-visual-icon {
-  font-size: 64px;
-  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
+.hero-photo-source {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: rgba(247, 239, 228, 0.75);
+  background: rgba(10, 14, 20, 0.55);
+  padding: 4px 8px;
+  border-radius: 999px;
+  text-decoration: none;
 }
 
 .score-badge {
@@ -453,6 +474,59 @@ body {
 @keyframes badge-pop {
   from { transform: scale(0.6); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* -- dominance stats: the real "beat N others" / "+X% vs average" numbers -- */
+
+.dominance-block {
+  text-align: center;
+  padding: 10px 18px 0;
+}
+
+.beat-line {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0;
+}
+.beat-line strong { color: var(--winner-pink); }
+
+.dominance-stat {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--bloom-saffron);
+  margin: 4px 0 0;
+}
+
+/* -- score core metrics: the real sub-scores behind the composite -- */
+
+.score-core-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px 20px;
+  padding: 18px 22px 4px;
+}
+
+.mini-metric {
+  display: grid;
+  grid-template-columns: 1fr 34px;
+  align-items: center;
+  gap: 6px;
+}
+.mini-metric-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.mini-metric-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
+  transition: width 0.6s ease;
+}
+.mini-metric-value { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); text-align: right; }
+.mini-metric-label {
+  grid-column: 1 / span 2;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: #5a6472;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .result-body {
@@ -502,8 +576,61 @@ body {
   letter-spacing: 0.02em;
 }
 
-/* -- "why this won" chips: the winner's only job is to justify itself, so
-   this is the one place we spend the extra visual weight -- */
+/* -- evidence: the section grounded in Exa's real research -- */
+
+.evidence-section {
+  margin: 4px 0 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(46, 230, 214, 0.06);
+  border: 1px solid rgba(46, 230, 214, 0.25);
+}
+
+.evidence-label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--runner-teal);
+  margin-bottom: 8px;
+}
+
+.evidence-quote {
+  margin: 0 0 8px;
+  padding: 0;
+  border: none;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #c8d0da;
+  font-style: italic;
+}
+
+.evidence-source-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--runner-teal);
+  text-decoration: none;
+}
+.evidence-source-link:hover { text-decoration: underline; }
+
+.allergy-note {
+  margin: 10px 0 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--err);
+  line-height: 1.5;
+}
+
+.dietary-note {
+  margin: 8px 0 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--bloom-saffron);
+  line-height: 1.5;
+}
+
+/* -- "why this won" chips -- */
 
 .why-section {
   margin: 4px 0 18px;
@@ -538,6 +665,22 @@ body {
   border-radius: 999px;
   line-height: 1.3;
 }
+
+/* -- comparison tease -- */
+
+.comparison-tease { margin: 4px 0 16px; }
+.comparison-toggle {
+  background: none;
+  border: 1px solid rgba(46, 230, 214, 0.3);
+  color: var(--runner-teal);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.comparison-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.comparison-list li { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8a96a3; }
 
 .action-row {
   display: flex;
@@ -734,6 +877,7 @@ input:focus-visible {
 .signout-btn:active {
   transform: translateY(0);
 }
+
 /* ---------- onboarding (allergies / dietary preferences) ---------- */
 
 .onboarding-hero {
@@ -861,125 +1005,7 @@ input:focus-visible {
 }
 
 .onboarding-continue-btn:disabled {
-  opacity: 0.6;
+  background: #3a3f4a;
+  color: #7a8290;
   cursor: not-allowed;
 }
-
-.beat-line {
-  text-align: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  padding: 10px 18px 0;
-  margin: 0;
-}
-.beat-line strong { color: var(--winner-pink); }
-
-.score-core {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 24px 22px 8px;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 200, 87, 0.15), transparent 55%),
-    radial-gradient(circle at 75% 75%, rgba(255, 106, 61, 0.12), transparent 55%),
-    #0d1219;
-}
-
-.score-core-center { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.score-core-center .score-badge { position: static; width: 96px; height: 96px; }
-.score-core-center .score-badge-number { font-size: 22px; }
-.score-core-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-.score-core-metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px 20px;
-  width: 100%;
-}
-
-.mini-metric { display: grid; grid-template-columns: 18px 1fr 34px; align-items: center; gap: 6px; }
-.mini-metric-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
-.mini-metric-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
-  transition: width 0.6s ease;
-}
-.mini-metric-value { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); }
-.mini-metric-label {
-  grid-column: 2 / span 2;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  color: #5a6472;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* -- evidence: the one section directly grounded in Exa's research, so it
-   gets a visually distinct "verified" treatment rather than blending into
-   the generic chip row -- */
-
-.evidence-section {
-  margin: 4px 0 18px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: rgba(46, 230, 214, 0.06);
-  border: 1px solid rgba(46, 230, 214, 0.25);
-}
-
-.evidence-label {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--runner-teal);
-  margin-bottom: 8px;
-}
-
-.evidence-quote {
-  margin: 0 0 8px;
-  padding: 0;
-  border: none;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #c8d0da;
-  font-style: italic;
-}
-
-.evidence-source-link {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--runner-teal);
-  text-decoration: none;
-}
-.evidence-source-link:hover { text-decoration: underline; }
-
-.dietary-note {
-  margin: 10px 0 0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--bloom-saffron);
-  line-height: 1.5;
-}
-
-.comparison-tease { margin: 4px 0 16px; }
-.comparison-toggle {
-  background: none;
-  border: 1px solid rgba(46, 230, 214, 0.3);
-  color: var(--runner-teal);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-.comparison-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.comparison-list li { display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #8a96a3; }

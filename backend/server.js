@@ -180,6 +180,38 @@ async function geocodeLocationName(name) {
   }
 }
 
+// Nominatim's usage policy blocks cloud-datacenter IPs, so every
+// server-side call from Render fails while the same call from the user's
+// browser succeeds. That is why this worked locally and broke in
+// production. Zippopotam is free, keyless, and does not block cloud egress,
+// and a ZIP is the one thing we can always resolve deterministically.
+async function resolveZipToPlace(zip) {
+  const key = `zip:${zip}`;
+  const cached = geoCacheGet(key);
+  if (cached !== undefined) return cached;
+
+  try {
+    const response = await http.get(`https://api.zippopotam.us/us/${zip}`, { timeout: 2500 });
+    const place = response.data?.places?.[0];
+    if (!place) return null;
+
+    const city = place["place name"];
+    const state = place["state"];
+    if (!city) return null;
+
+    const resolved = {
+      name: state ? `${city}, ${state}` : city,
+      lat: parseFloat(place.latitude),
+      lng: parseFloat(place.longitude),
+    };
+    geoCacheSet(key, resolved);
+    return resolved;
+  } catch (err) {
+    console.error(`ZIP lookup failed for ${zip}:`, err.response?.status || err.message);
+    return null;
+  }
+}
+
 function isPlaceName(value) {
   return typeof value === "string" && /[a-z]/i.test(value);
 }
@@ -838,12 +870,25 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // The reverse geocode of those coordinates IS the canonical name
     // ("Plainview, New York"), it is cached, and it is what both the query
     // and the location param want. It goes first now.
-    const resolvedPlaceName = await deviceLocationPromise;
-    const speculativeLocation =
-      resolvedPlaceName || fastParsed.location || (isPlaceName(typedHint) ? typedHint : null);
+    // Resolution order, most reliable first. A bare ZIP resolves through
+    // Zippopotam into a real city name; the Nominatim reverse geocode is now
+    // only a fallback, because it fails outright from a cloud IP.
+    const hintIsZip = /^\d{5}$/.test(typedHint);
+    const zipResolved = hintIsZip ? await resolveZipToPlace(typedHint) : null;
 
-    if (!resolvedPlaceName && typedHint) {
-      console.warn(`Reverse geocode failed for ${userLat},${userLng} — falling back to "${typedHint}".`);
+    const resolvedPlaceName = zipResolved?.name || (await deviceLocationPromise);
+
+    // CRITICAL: never fall through to null. The previous version gated the
+    // typed hint behind isPlaceName(), which rejects "11803" for having no
+    // letters — so when Nominatim was unavailable every branch failed, the
+    // query went out with no location at all, and Serper searched the whole
+    // country. A raw ZIP is still a perfectly good scope for the query text.
+    const speculativeLocation = resolvedPlaceName || fastParsed.location || typedHint || null;
+
+    if (!speculativeLocation) {
+      console.warn(`No location signal at all for ${userLat},${userLng} — results will not be geo-scoped.`);
+    } else if (!resolvedPlaceName) {
+      console.warn(`Falling back to raw hint "${speculativeLocation}" — no canonical place name available.`);
     }
 
     const candidatePromise = fetchCandidatePool({
@@ -852,10 +897,16 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       anchor: { lat: userLat, lng: userLng },
     }).catch((error) => ({ error }));
 
+    console.log(`Geo scope → "${speculativeLocation}" (zip: ${hintIsZip ? typedHint : "n/a"})`);
+
     // If the fast parser already spotted a place, resolve its coordinates
     // concurrently too, so the distance anchor is ready the moment OpenAI
     // confirms it rather than costing another serial Nominatim round-trip.
     const anchorHint = fastParsed.location || typedHint;
+    const zipAnchor =
+      zipResolved && Number.isFinite(zipResolved.lat) && Number.isFinite(zipResolved.lng)
+        ? { lat: zipResolved.lat, lng: zipResolved.lng }
+        : null;
     const speculativeAnchorPromise = anchorHint
       ? geocodeLocationName(anchorHint).catch(() => null)
       : Promise.resolve(null);
@@ -915,6 +966,11 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     let anchor = { lat: userLat, lng: userLng };
     let anchorSource = "device";
 
+    if (zipAnchor) {
+      anchor = zipAnchor;
+      anchorSource = "zip";
+    }
+
     if (namedLocation) {
       locationName = namedLocation;
       // Reuse the in-flight lookup when OpenAI agrees with the fast parser
@@ -926,6 +982,13 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       if (geocoded) {
         anchor = geocoded;
         anchorSource = "named";
+      } else if (!zipAnchor) {
+        // Nominatim is unavailable from cloud IPs, so a named city can leave
+        // us with no anchor for the place actually being searched. Rather
+        // than measure from the user's own position — which produced the
+        // "1067 mi away" nonsense — derive the anchor from the candidates
+        // themselves. Their median position IS the searched area.
+        anchorSource = "derived";
       }
       deviceLocationPromise.catch(() => null); // discard, keep the handler attached
     } else {
@@ -971,6 +1034,25 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     const dishKeyword = preferences.dish?.trim().toLowerCase();
     const cuisineKeyword = preferences.cuisine?.trim().toLowerCase();
     const userBudgetLevel = budgetTextToLevel(preferences.budget);
+
+    // Median candidate position, used when we could not geocode the named
+    // location. Median rather than mean so one distant outlier can't drag it.
+    if (anchorSource === "derived") {
+      const located = candidates.filter(
+        (p) => typeof p.latitude === "number" && typeof p.longitude === "number"
+      );
+      if (located.length > 0) {
+        const mid = (values) => {
+          const sorted = [...values].sort((a, b) => a - b);
+          return sorted[Math.floor(sorted.length / 2)];
+        };
+        anchor = {
+          lat: mid(located.map((p) => p.latitude)),
+          lng: mid(located.map((p) => p.longitude)),
+        };
+        console.log(`Derived anchor from candidates: ${anchor.lat.toFixed(3)},${anchor.lng.toFixed(3)}`);
+      }
+    }
 
     // ============================ STAGE 1 ==================================
     // Layer 1: raw per-candidate features across the full Serper pool.

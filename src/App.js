@@ -728,6 +728,18 @@ function App() {
   // countrycodes=us confirms it exists as a real U.S. place and returns
   // every same-named match; it does not just take Nominatim's word that one
   // exists somewhere on Earth and hope it's the right one.
+  // BUG: this was called by the confirm/disambiguation picker below but was
+  // never defined after the applyTypedLocation → applyZip/applyCityState →
+  // applyLocation rewrites. The click threw a silent ReferenceError, nothing
+  // ever confirmed, and whatever location was left over (or none) is what
+  // actually got searched — that's the 1000-mile result, not an OSM problem.
+  const chooseLocation = (option) => {
+    setResolvedLocation(option);
+    setLocationOptions([]);
+    setLocationError("");
+    setLocationInput("");
+  };
+
   const applyLocation = async () => {
     const text = locationInput.trim();
     if (!text || resolvingLocation) return;

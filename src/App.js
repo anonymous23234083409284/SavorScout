@@ -410,14 +410,7 @@ function App() {
   // way back to GPS.
   // One confirmed location, or none. { name, short, lat, lng }
   const [resolvedLocation, setResolvedLocation] = useState(null);
-  const [locationOptions, setLocationOptions] = useState([]);
   const [locationError, setLocationError] = useState("");
-  const [locStatus, setLocStatus] = useState("idle");
-  // Single box again. The Plainview bug is now solved differently: rather
-  // than forcing structured input, EVERY typed location is confirmed against
-  // Nominatim before search is allowed to run, and a bare city name (no
-  // state, no ZIP) always surfaces the picker rather than silently trusting
-  // whatever ranked first.
   const [locationInput, setLocationInput] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
 
@@ -601,7 +594,6 @@ function App() {
     setOnboardingError("");
     setLocationInput("");
     setResolvedLocation(null);
-    setLocationOptions([]);
     setLocationError("");
   };
 
@@ -673,51 +665,33 @@ function App() {
   // Location is now mandatory and explicit. No IP guessing: an IP puts you
   // in the right metro on a good day and the wrong state on a bad one, and
   // silently searching the wrong place is worse than asking.
-  const searchPlaces = useCallback(async (text, { isZip = false } = {}) => {
-    const trimmed = text.trim();
-    if (!trimmed) return [];
-
-    const url = isZip
-      ? `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&country=us&postalcode=${encodeURIComponent(trimmed)}`
-      : `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&countrycodes=us&q=${encodeURIComponent(trimmed)}`;
+  // ZIP-only by request: manual entry is now strictly a 5-digit ZIP, and
+  // Nominatim's structured postalcode query with limit=1 always returns at
+  // most one place — so there is no ambiguity to resolve and no picker to
+  // show. This replaces the earlier free-text/name-search path entirely.
+  const lookupZip = useCallback(async (zip) => {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&country=us&postalcode=${encodeURIComponent(zip)}`;
 
     try {
       const res = await fetch(url);
-      if (!res.ok) return [];
+      if (!res.ok) return null;
       const data = await res.json();
-      if (!Array.isArray(data)) return [];
+      const hit = Array.isArray(data) ? data[0] : null;
+      if (!hit) return null;
 
-      const seen = new Set();
-      return data
-        .map((hit) => {
-          const lat = parseFloat(hit.lat);
-          const lng = parseFloat(hit.lon);
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      const lat = parseFloat(hit.lat);
+      const lng = parseFloat(hit.lon);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
-          const a = hit.address || {};
-          const place =
-            a.city || a.town || a.village || a.hamlet || a.suburb || a.county || hit.name;
-          if (!place) return null;
+      const a = hit.address || {};
+      const place = a.city || a.town || a.village || a.hamlet || a.suburb || a.county || hit.name;
+      if (!place) return null;
 
-          const region = [a.state, a.country].filter(Boolean).join(", ");
-          return {
-            name: region ? `${place}, ${region}` : place,
-            short: place,
-            detail: hit.display_name,
-            lat,
-            lng,
-          };
-        })
-        .filter((entry) => {
-          if (!entry) return false;
-          const key = entry.name.toLowerCase();
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
+      const region = [a.state, a.country].filter(Boolean).join(", ");
+      return { name: region ? `${place}, ${region}` : place, short: place, lat, lng };
     } catch (err) {
-      console.error("Place lookup failed:", err);
-      return [];
+      console.error("ZIP lookup failed:", err);
+      return null;
     }
   }, []);
 
@@ -728,55 +702,26 @@ function App() {
   // countrycodes=us confirms it exists as a real U.S. place and returns
   // every same-named match; it does not just take Nominatim's word that one
   // exists somewhere on Earth and hope it's the right one.
-  // BUG: this was called by the confirm/disambiguation picker below but was
-  // never defined after the applyTypedLocation → applyZip/applyCityState →
-  // applyLocation rewrites. The click threw a silent ReferenceError, nothing
-  // ever confirmed, and whatever location was left over (or none) is what
-  // actually got searched — that's the 1000-mile result, not an OSM problem.
-  const chooseLocation = (option) => {
-    setResolvedLocation(option);
-    setLocationOptions([]);
-    setLocationError("");
-    setLocationInput("");
-  };
-
   const applyLocation = async () => {
-    const text = locationInput.trim();
-    if (!text || resolvingLocation) return;
+    const zip = locationInput.trim();
+    if (resolvingLocation) return;
 
-    const isZip = /^\d{5}$/.test(text);
-    // A qualified form ("Hicksville, NY" / "Hicksville, New York") already
-    // names its own state, so a single confirmed hit can resolve silently.
-    // A bare name ("Plainview") cannot — it always gets the picker, however
-    // many rows come back, because "only one result" there means "only one
-    // survived Nominatim's ranking," not "this is definitely the place."
-    const isQualified = isZip || /,\s*[A-Za-z]{2,}/.test(text);
+    if (!/^\d{5}$/.test(zip)) {
+      setLocationError("Enter a 5-digit ZIP code.");
+      return;
+    }
 
     setLocationError("");
-    setLocationOptions([]);
     setResolvingLocation(true);
 
     try {
-      const matches = await searchPlaces(text, { isZip });
-
-      if (matches.length === 0) {
-        setLocationError(
-          isZip
-            ? `Couldn't find ZIP "${text}" in the US.`
-            : `Couldn't find "${text}" — try "Town, State" or a 5-digit ZIP.`
-        );
+      const match = await lookupZip(zip);
+      if (!match) {
+        setLocationError(`Couldn't find ZIP "${zip}" in the US.`);
         return;
       }
-
-      if (matches.length === 1 && isQualified) {
-        setResolvedLocation(matches[0]);
-        setLocationInput("");
-        return;
-      }
-
-      // Either several real places match, or one place matched a name we
-      // can't yet confirm is unambiguous — ask either way.
-      setLocationOptions(matches);
+      setResolvedLocation(match);
+      setLocationInput("");
     } finally {
       setResolvingLocation(false);
     }
@@ -784,7 +729,7 @@ function App() {
 
   const useDeviceLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError("This browser can't share a location — enter a city or ZIP instead.");
+      setLocationError("This browser can't share a location — enter your ZIP code instead.");
       return;
     }
 
@@ -796,12 +741,10 @@ function App() {
         const { latitude: lat, longitude: lng } = position.coords;
         const name = await reverseGeocode(lat, lng);
         setResolvedLocation({ name: name || "Your current location", short: name, lat, lng });
-        setLocStatus("granted");
         setResolvingLocation(false);
       },
       () => {
-        setLocStatus("denied");
-        setLocationError("Location access was blocked — enter a city or ZIP instead.");
+        setLocationError("Location access was blocked — enter your ZIP code instead.");
         setResolvingLocation(false);
       },
       GEO_OPTIONS
@@ -1168,7 +1111,6 @@ function App() {
                 className="link-btn location-change"
                 onClick={() => {
                   setResolvedLocation(null);
-                  setLocationOptions([]);
                   setLocationError("");
                 }}
               >
@@ -1177,15 +1119,18 @@ function App() {
             </div>
           ) : (
             <>
-              <span className="location-prompt">Please enter your location to search</span>
+              <span className="location-prompt">Please enter your ZIP code to search</span>
 
               <div className="location-input-row">
                 <input
                   id="loc-input"
                   type="text"
-                  placeholder="City, State or ZIP — e.g. Hicksville, NY or 11801"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={5}
+                  placeholder="e.g. 11801"
                   value={locationInput}
-                  onChange={(e) => setLocationInput(e.target.value)}
+                  onChange={(e) => setLocationInput(e.target.value.replace(/\D/g, "").slice(0, 5))}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") applyLocation();
                   }}
@@ -1194,7 +1139,7 @@ function App() {
                   type="button"
                   className="location-set-btn"
                   onClick={applyLocation}
-                  disabled={resolvingLocation || !locationInput.trim()}
+                  disabled={resolvingLocation || locationInput.length !== 5}
                 >
                   {resolvingLocation ? "Checking…" : "Set"}
                 </button>
@@ -1203,26 +1148,6 @@ function App() {
               <button type="button" className="link-btn location-gps" onClick={useDeviceLocation}>
                 or use my current location
               </button>
-
-              {locationOptions.length > 0 && (
-                <div className="location-options">
-                  <span className="location-label">
-                    {locationOptions.length === 1
-                      ? "Confirm this is the right place:"
-                      : "Several places match — which one did you mean?"}
-                  </span>
-                  <ul>
-                    {locationOptions.map((option, i) => (
-                      <li key={`${option.name}-${i}`}>
-                        <button type="button" onClick={() => chooseLocation(option)}>
-                          <span className="option-name">{option.name}</span>
-                          <span className="option-detail">{option.detail}</span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
               {locationError && <p className="error-msg location-err">{locationError}</p>}
             </>

@@ -413,7 +413,12 @@ function App() {
   const [locationOptions, setLocationOptions] = useState([]);
   const [locationError, setLocationError] = useState("");
   const [locStatus, setLocStatus] = useState("idle");
-  const [manualLocation, setManualLocation] = useState("");
+  // Single box again. The Plainview bug is now solved differently: rather
+  // than forcing structured input, EVERY typed location is confirmed against
+  // Nominatim before search is allowed to run, and a bare city name (no
+  // state, no ZIP) always surfaces the picker rather than silently trusting
+  // whatever ranked first.
+  const [locationInput, setLocationInput] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
 
   const [user, setUser] = useState(null);
@@ -594,7 +599,7 @@ function App() {
     setAllergies("");
     setDietaryPreferences("");
     setOnboardingError("");
-    setManualLocation("");
+    setLocationInput("");
     setResolvedLocation(null);
     setLocationOptions([]);
     setLocationError("");
@@ -668,14 +673,13 @@ function App() {
   // Location is now mandatory and explicit. No IP guessing: an IP puts you
   // in the right metro on a good day and the wrong state on a bad one, and
   // silently searching the wrong place is worse than asking.
-  const searchPlaces = useCallback(async (text) => {
+  const searchPlaces = useCallback(async (text, { isZip = false } = {}) => {
     const trimmed = text.trim();
     if (!trimmed) return [];
 
-    const isZip = /^\d{5}$/.test(trimmed);
     const url = isZip
       ? `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&country=us&postalcode=${encodeURIComponent(trimmed)}`
-      : `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(trimmed)}`;
+      : `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&countrycodes=us&q=${encodeURIComponent(trimmed)}`;
 
     try {
       const res = await fetch(url);
@@ -717,40 +721,53 @@ function App() {
     }
   }, []);
 
-  const applyTypedLocation = async () => {
-    const text = manualLocation.trim();
+  // Single entry point for the one box: ZIP goes through the structured
+  // postalcode query (which always resolves to exactly one place); anything
+  // else goes through the name search. The country is now ALWAYS attached —
+  // that is the actual verification step. A search of "Plainview" with
+  // countrycodes=us confirms it exists as a real U.S. place and returns
+  // every same-named match; it does not just take Nominatim's word that one
+  // exists somewhere on Earth and hope it's the right one.
+  const applyLocation = async () => {
+    const text = locationInput.trim();
     if (!text || resolvingLocation) return;
+
+    const isZip = /^\d{5}$/.test(text);
+    // A qualified form ("Hicksville, NY" / "Hicksville, New York") already
+    // names its own state, so a single confirmed hit can resolve silently.
+    // A bare name ("Plainview") cannot — it always gets the picker, however
+    // many rows come back, because "only one result" there means "only one
+    // survived Nominatim's ranking," not "this is definitely the place."
+    const isQualified = isZip || /,\s*[A-Za-z]{2,}/.test(text);
 
     setLocationError("");
     setLocationOptions([]);
     setResolvingLocation(true);
 
     try {
-      const matches = await searchPlaces(text);
+      const matches = await searchPlaces(text, { isZip });
 
       if (matches.length === 0) {
-        setLocationError(`Couldn't find "${text}". Try "City, State" or a 5-digit ZIP.`);
+        setLocationError(
+          isZip
+            ? `Couldn't find ZIP "${text}" in the US.`
+            : `Couldn't find "${text}" — try "Town, State" or a 5-digit ZIP.`
+        );
         return;
       }
 
-      if (matches.length === 1) {
+      if (matches.length === 1 && isQualified) {
         setResolvedLocation(matches[0]);
-        setManualLocation("");
+        setLocationInput("");
         return;
       }
 
-      // Several real places share this name — ask rather than guess.
+      // Either several real places match, or one place matched a name we
+      // can't yet confirm is unambiguous — ask either way.
       setLocationOptions(matches);
     } finally {
       setResolvingLocation(false);
     }
-  };
-
-  const chooseLocation = (option) => {
-    setResolvedLocation(option);
-    setLocationOptions([]);
-    setLocationError("");
-    setManualLocation("");
   };
 
   const useDeviceLocation = () => {
@@ -1148,28 +1165,26 @@ function App() {
             </div>
           ) : (
             <>
-              <label htmlFor="manual-loc" className="location-prompt">
-                Please enter your location to search
-              </label>
+              <span className="location-prompt">Please enter your location to search</span>
 
               <div className="location-input-row">
                 <input
-                  id="manual-loc"
+                  id="loc-input"
                   type="text"
                   placeholder="City, State or ZIP — e.g. Hicksville, NY or 11801"
-                  value={manualLocation}
-                  onChange={(e) => setManualLocation(e.target.value)}
+                  value={locationInput}
+                  onChange={(e) => setLocationInput(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") applyTypedLocation();
+                    if (e.key === "Enter") applyLocation();
                   }}
                 />
                 <button
                   type="button"
                   className="location-set-btn"
-                  onClick={applyTypedLocation}
-                  disabled={resolvingLocation || !manualLocation.trim()}
+                  onClick={applyLocation}
+                  disabled={resolvingLocation || !locationInput.trim()}
                 >
-                  {resolvingLocation ? "Finding…" : "Set"}
+                  {resolvingLocation ? "Checking…" : "Set"}
                 </button>
               </div>
 
@@ -1180,7 +1195,9 @@ function App() {
               {locationOptions.length > 0 && (
                 <div className="location-options">
                   <span className="location-label">
-                    Several places match — which one did you mean?
+                    {locationOptions.length === 1
+                      ? "Confirm this is the right place:"
+                      : "Several places match — which one did you mean?"}
                   </span>
                   <ul>
                     {locationOptions.map((option, i) => (

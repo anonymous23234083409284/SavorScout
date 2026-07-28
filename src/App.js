@@ -4,7 +4,11 @@ import { supabase } from "./supabaseClient";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
 
-const GEO_OPTIONS = { enableHighAccuracy: false, timeout: 8000, maximumAge: 5 * 60 * 1000 };
+// ZIP is the only way location enters this app now — no GPS, no IP
+// guessing. That removes an entire class of "which fallback silently
+// fired" bugs; there is exactly one path, and it always confirms before
+// a search can run.
+const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 
 // --- Hero card helpers -----------------------------------------------------
 
@@ -370,10 +374,6 @@ function RestaurantImage({ imageUrl, imageSourceUrl, name, matchScore }) {
   );
 }
 
-// --- Geocoding cache -------------------------------------------------------
-// Nominatim asks for <=1 req/sec and no heavy browser traffic. Memoizing
-// repeats within a session keeps a user who searches "11801" five times from
-// hitting them five times.
 // A blank "please try again" makes a schema or policy problem look like a
 // network blip. These are the failures this upsert actually produces.
 function explainSaveError(error) {
@@ -394,8 +394,6 @@ function explainSaveError(error) {
   }
   return `Couldn't save — ${msg || "please try again."}`;
 }
-
-const geocodeCache = new Map();
 
 function App() {
   const [query, setQuery] = useState("");
@@ -632,76 +630,59 @@ function App() {
     setOnboardingSaving(false);
   };
 
-  // Nominatim works from a browser (the user's own IP, low volume) and is
-  // blocked from cloud datacenters — which is exactly where the backend
-  // runs. So the place name has to be resolved HERE and sent along, rather
-  // than the server trying and silently failing.
-  const reverseGeocode = useCallback(async (lat, lng) => {
-    const key = `rev:${lat.toFixed(2)},${lng.toFixed(2)}`;
-    if (geocodeCache.has(key)) return geocodeCache.get(key);
-
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&zoom=12&lat=${lat}&lon=${lng}`
-      );
-      if (!res.ok) return null;
-      const data = await res.json();
-      const address = data?.address;
-      if (!address) return null;
-
-      const place =
-        address.city || address.town || address.village || address.suburb || address.county;
-      if (!place) return null;
-
-      const name = address.state ? `${place}, ${address.state}` : place;
-      geocodeCache.set(key, name);
-      return name;
-    } catch (err) {
-      console.error("Reverse geocode failed:", err);
-      return null;
-    }
-  }, []);
-
   // Location is now mandatory and explicit. No IP guessing: an IP puts you
   // in the right metro on a good day and the wrong state on a bad one, and
   // silently searching the wrong place is worse than asking.
   // ZIP-only by request: manual entry is now strictly a 5-digit ZIP, and
-  // Nominatim's structured postalcode query with limit=1 always returns at
-  // most one place — so there is no ambiguity to resolve and no picker to
-  // show. This replaces the earlier free-text/name-search path entirely.
+  // Mapbox's postcode-typed forward geocode always resolves to at most one
+  // place, so — unlike the earlier free-text search — there is nothing to
+  // disambiguate and no picker to show.
+  // Mapbox's geocode/v6/forward endpoint, structured to a postcode lookup.
+  // A public (pk.*) token is safe to ship in the frontend bundle — that is
+  // its intended use, same as a Google Maps JS key.
   const lookupZip = useCallback(async (zip) => {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&country=us&postalcode=${encodeURIComponent(zip)}`;
+    if (!MAPBOX_TOKEN) {
+      console.error("REACT_APP_MAPBOX_TOKEN is not set — ZIP lookup cannot run.");
+      return null;
+    }
+
+    const url =
+      `https://api.mapbox.com/search/geocode/v6/forward` +
+      `?postcode=${encodeURIComponent(zip)}&country=US&types=postcode&limit=1&access_token=${MAPBOX_TOKEN}`;
 
     try {
       const res = await fetch(url);
       if (!res.ok) return null;
       const data = await res.json();
-      const hit = Array.isArray(data) ? data[0] : null;
-      if (!hit) return null;
+      const feature = Array.isArray(data?.features) ? data.features[0] : null;
+      if (!feature) return null;
 
-      const lat = parseFloat(hit.lat);
-      const lng = parseFloat(hit.lon);
+      const [lng, lat] = feature.geometry?.coordinates || [];
       if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
-      const a = hit.address || {};
-      const place = a.city || a.town || a.village || a.hamlet || a.suburb || a.county || hit.name;
-      if (!place) return null;
+      const props = feature.properties || {};
+      const ctx = props.context || {};
+      // place_formatted is v6's ready-made display string ("Hicksville, New
+      // York, United States"); built defensively from context in case that
+      // field is ever absent, rather than trusting one field name blindly.
+      const name =
+        props.place_formatted ||
+        [ctx.place?.name, ctx.region?.name, ctx.country?.name].filter(Boolean).join(", ") ||
+        props.name ||
+        zip;
+      const short = ctx.place?.name || props.name || name;
 
-      const region = [a.state, a.country].filter(Boolean).join(", ");
-      return { name: region ? `${place}, ${region}` : place, short: place, lat, lng };
+      return { name, short, lat, lng };
     } catch (err) {
       console.error("ZIP lookup failed:", err);
       return null;
     }
   }, []);
 
-  // Single entry point for the one box: ZIP goes through the structured
-  // postalcode query (which always resolves to exactly one place); anything
-  // else goes through the name search. The country is now ALWAYS attached —
-  // that is the actual verification step. A search of "Plainview" with
-  // countrycodes=us confirms it exists as a real U.S. place and returns
-  // every same-named match; it does not just take Nominatim's word that one
-  // exists somewhere on Earth and hope it's the right one.
+  // ZIP is the only door location comes through, full stop — no GPS, no
+  // typed city/state, no free text. A ZIP always resolves to at most one
+  // place, so there is nothing to disambiguate and nothing to confirm
+  // beyond "did Mapbox recognize it".
   const applyLocation = async () => {
     const zip = locationInput.trim();
     if (resolvingLocation) return;
@@ -725,30 +706,6 @@ function App() {
     } finally {
       setResolvingLocation(false);
     }
-  };
-
-  const useDeviceLocation = () => {
-    if (!navigator.geolocation) {
-      setLocationError("This browser can't share a location — enter your ZIP code instead.");
-      return;
-    }
-
-    setLocationError("");
-    setResolvingLocation(true);
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude: lat, longitude: lng } = position.coords;
-        const name = await reverseGeocode(lat, lng);
-        setResolvedLocation({ name: name || "Your current location", short: name, lat, lng });
-        setResolvingLocation(false);
-      },
-      () => {
-        setLocationError("Location access was blocked — enter your ZIP code instead.");
-        setResolvingLocation(false);
-      },
-      GEO_OPTIONS
-    );
   };
 
   const handleSearch = async () => {
@@ -1144,10 +1101,6 @@ function App() {
                   {resolvingLocation ? "Checking…" : "Set"}
                 </button>
               </div>
-
-              <button type="button" className="link-btn location-gps" onClick={useDeviceLocation}>
-                or use my current location
-              </button>
 
               {locationError && <p className="error-msg location-err">{locationError}</p>}
             </>

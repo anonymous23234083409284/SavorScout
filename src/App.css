@@ -420,11 +420,6 @@ body {
   cursor: not-allowed;
 }
 
-.location-gps {
-  align-self: flex-start;
-  font-size: 12px;
-}
-
 /* Confirmed location — compact, so it doesn't compete with the search box. */
 .location-set {
   display: flex;

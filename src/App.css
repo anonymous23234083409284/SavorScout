@@ -346,7 +346,173 @@ body {
   color: var(--bloom-saffron);
 }
 
-/* ---------- manual location fallback ---------- */
+/* ---------- location (mandatory, explicit) ---------- */
+
+.location-panel {
+  max-width: 640px;
+  margin: 20px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.location-prompt {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bloom-saffron);
+}
+
+.location-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.location-input-row input {
+  flex: 1;
+  min-width: 0;
+  background: #1e1626;
+  border: 1px solid rgba(255, 200, 87, 0.25);
+  color: var(--text-cream);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  padding: 13px 16px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.location-input-row input::placeholder {
+  color: #6b5d52;
+}
+
+.location-input-row input:focus {
+  border-color: var(--bloom-saffron);
+  box-shadow: 0 0 0 3px rgba(255, 200, 87, 0.15);
+}
+
+.location-set-btn {
+  background: transparent;
+  color: var(--bloom-saffron);
+  border: 1px solid rgba(255, 200, 87, 0.45);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.location-set-btn:hover:not(:disabled) {
+  background: var(--bloom-saffron);
+  color: var(--bg-deep);
+}
+
+.location-set-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.location-gps {
+  align-self: flex-start;
+  font-size: 12px;
+}
+
+/* Confirmed location — compact, so it doesn't compete with the search box. */
+.location-set {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: rgba(46, 230, 214, 0.06);
+  border: 1px solid rgba(46, 230, 214, 0.22);
+}
+
+.location-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--runner-teal);
+}
+
+.location-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--text-cream);
+}
+
+.location-change {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+/* Disambiguation: several real places share the name, so we ask. */
+.location-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: rgba(255, 200, 87, 0.06);
+  border: 1px solid rgba(255, 200, 87, 0.25);
+}
+
+.location-options ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.location-options button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.location-options button:hover {
+  background: rgba(255, 200, 87, 0.1);
+  border-color: rgba(255, 200, 87, 0.35);
+}
+
+.option-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--text-cream);
+}
+
+.option-detail {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.location-err {
+  margin-top: 2px;
+}
+
+/* ---------- legacy manual location (unused) ---------- */
 
 .loc-warning {
   font-family: 'IBM Plex Mono', monospace;

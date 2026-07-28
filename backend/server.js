@@ -57,15 +57,18 @@ if (!process.env.EXA_API_KEY) {
 // than confidently recommending a restaurant 1,000 miles away.
 // Tried in order; the first tier with any candidate in it wins. Only a real
 // location failure gets past the last one.
-// Was [30, 60, 120] — a 27-mile result sailed through the first tier. For a
-// "where should I eat" product the first tier has to be a walk/short-drive
-// radius, and only widen when a genuinely sparse area demands it.
-const RADIUS_TIERS = [8, 15, 25, 40];
+// Hard ceiling. Anything past this is not an answer to "where should I eat",
+// so it is filtered out rather than ranked down.
+const SEARCH_RADIUS_MILES = 25;
 
-// Beyond this, a place has to be extraordinary to still be the answer.
+// Inside the ceiling, closer still wins: past this a place needs to be
+// exceptional to beat something nearby.
 const PREFERRED_RADIUS_MILES = 12;
 
-const CANDIDATE_POOL_SIZE = 15;
+// The best N inside the radius go on to be ranked in full.
+const SHORTLIST_SIZE = 10;
+
+const CANDIDATE_POOL_SIZE = 20; // over-fetch, since the radius filter discards some
 const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
 const STAGE1_FINALIST_COUNT = 3; // was 5 — fewer parallel Exa calls means a shorter tail
 const DAILY_SEARCH_LIMIT = 5;
@@ -885,9 +888,23 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // country. A raw ZIP is still a perfectly good scope for the query text.
     const speculativeLocation = resolvedPlaceName || fastParsed.location || typedHint || null;
 
+    // Hard stop. Searching with no geographic scope produces a nationwide
+    // pool, burns a Serper credit and one of the user's daily searches, and
+    // returns something 2000 miles away. Failing here is strictly better —
+    // and because recordSearch only runs on success, it costs them nothing.
     if (!speculativeLocation) {
-      console.warn(`No location signal at all for ${userLat},${userLng} — results will not be geo-scoped.`);
-    } else if (!resolvedPlaceName) {
+      console.error(
+        `ABORT: no location signal for ${userLat},${userLng}. ` +
+          `locationHint="${typedHint}", reverseGeocode=${resolvedPlaceName || "null"}. ` +
+          `A nationwide search was prevented.`
+      );
+      return res.status(400).json({
+        error: "We couldn't work out which area to search. Enter a city or ZIP above and try again.",
+        searchesRemaining: DAILY_SEARCH_LIMIT - req.currentSearchCount,
+      });
+    }
+
+    if (!resolvedPlaceName) {
       console.warn(`Falling back to raw hint "${speculativeLocation}" — no canonical place name available.`);
     }
 
@@ -1103,18 +1120,12 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // single cliff. A rural search legitimately has its nearest option 50mi
     // out; only a genuine location failure lands everything 500mi away.
     const nearest = Math.min(...withFeatures.map((c) => c.distance));
-    let withinRadius = [];
-    let radiusUsed = 0;
-    for (const radius of RADIUS_TIERS) {
-      withinRadius = withFeatures.filter((c) => c.distance <= radius);
-      radiusUsed = radius;
-      if (withinRadius.length > 0) break;
-    }
+    const withinRadius = withFeatures.filter((c) => c.distance <= SEARCH_RADIUS_MILES);
 
     if (withinRadius.length === 0) {
       console.warn(
         `Location resolution failed: all ${withFeatures.length} candidates were beyond ` +
-          `${RADIUS_TIERS[RADIUS_TIERS.length - 1]}mi (nearest ${Math.round(nearest)}mi) ` +
+          `${SEARCH_RADIUS_MILES}mi (nearest ${Math.round(nearest)}mi) ` +
           `for query "${speculativeLocation || "none"}". ` +
           `Serper received: ${JSON.stringify({ q: candidatePool.scopedQuery, location: speculativeLocation })}`
       );
@@ -1130,9 +1141,10 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       });
     }
 
-    if (radiusUsed > RADIUS_TIERS[0]) {
-      console.log(`Widened search radius to ${radiusUsed}mi (nearest was ${Math.round(nearest)}mi).`);
-    }
+    console.log(
+      `${withinRadius.length}/${withFeatures.length} candidates inside ${SEARCH_RADIUS_MILES}mi ` +
+        `(nearest ${Math.round(nearest)}mi).`
+    );
 
     // Layer 2b: hard relevance gate.
     const wantsSomethingSpecific = Boolean(dishKeyword || cuisineKeyword);
@@ -1186,8 +1198,14 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       })
       .sort((a, b) => b.stage1Composite - a.stage1Composite);
 
+    // The best 10 inside the radius are the real competition set — every
+    // number the card reports ("beat N", dominance) is measured against
+    // these, not against whatever Serper happened to return.
+    const shortlist = stage1Ranked.slice(0, SHORTLIST_SIZE);
+    console.log(`Shortlist: ${shortlist.length} best within ${SEARCH_RADIUS_MILES}mi.`);
+
     // ============================ STAGE 2 ==================================
-    const finalists = stage1Ranked.slice(0, STAGE1_FINALIST_COUNT);
+    const finalists = shortlist.slice(0, STAGE1_FINALIST_COUNT);
 
     // --- Two evidence channels ------------------------------------------
     // Menu channel: what they serve. Reception channel: how it's described.
@@ -1386,7 +1404,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         matchedFactors: winner.matchedFactors.length > 0 ? winner.matchedFactors : null,
         matchedDietaryTerms: winner.matchedDietaryTerms.length > 0 ? winner.matchedDietaryTerms : null,
         matchedAllergyTerms: winner.matchedAllergyTerms.length > 0 ? winner.matchedAllergyTerms : null,
-        beatCount: Math.max(0, pool.length - 1),
+        beatCount: Math.max(0, shortlist.length - 1),
         poolSize: candidates.length,
         dominancePercent,
         runnerUps,
@@ -1400,7 +1418,8 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
 
     console.log(
-      `FINAL: stage1 pool ${pool.length}, researched ${finalists.length} ` +
+      `FINAL: ${withinRadius.length} in radius → ${shortlist.length} shortlisted → ` +
+        `${finalists.length} researched ` +
         `(channels: menu${wantsVibe ? " + reception" : ""}), winner "${winner.place.title}" ` +
         `(${winner.matchScore}%, dominance ${dominancePercent}%)`
     );

@@ -408,12 +408,13 @@ function App() {
   // overwrote `coords` with the geocoded manual location, so clearing the
   // manual box left the app permanently stuck on the typed location with no
   // way back to GPS.
-  const [deviceCoords, setDeviceCoords] = useState(null);
-  const [manualCoords, setManualCoords] = useState(null);
-  const [locStatus, setLocStatus] = useState("requesting");
+  // One confirmed location, or none. { name, short, lat, lng }
+  const [resolvedLocation, setResolvedLocation] = useState(null);
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [locationError, setLocationError] = useState("");
+  const [locStatus, setLocStatus] = useState("idle");
   const [manualLocation, setManualLocation] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
-  const lastGeocodedTextRef = useRef("");
 
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
@@ -435,28 +436,6 @@ function App() {
   const [onboardingError, setOnboardingError] = useState("");
 
   const searchAbortRef = useRef(null);
-
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setLocStatus("denied");
-      return;
-    }
-    let cancelled = false;
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        if (cancelled) return;
-        setDeviceCoords({ lat: position.coords.latitude, lng: position.coords.longitude });
-        setLocStatus("granted");
-      },
-      () => {
-        if (!cancelled) setLocStatus("denied");
-      },
-      GEO_OPTIONS // FIX: without a timeout this can hang indefinitely on some browsers
-    );
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -616,8 +595,9 @@ function App() {
     setDietaryPreferences("");
     setOnboardingError("");
     setManualLocation("");
-    setManualCoords(null);
-    lastGeocodedTextRef.current = "";
+    setResolvedLocation(null);
+    setLocationOptions([]);
+    setLocationError("");
   };
 
   const handleSaveOnboarding = async () => {
@@ -655,96 +635,148 @@ function App() {
     setOnboardingSaving(false);
   };
 
-  const geocodeManualLocation = useCallback(async (text) => {
-    const key = text.toLowerCase().trim();
+  // Nominatim works from a browser (the user's own IP, low volume) and is
+  // blocked from cloud datacenters — which is exactly where the backend
+  // runs. So the place name has to be resolved HERE and sent along, rather
+  // than the server trying and silently failing.
+  const reverseGeocode = useCallback(async (lat, lng) => {
+    const key = `rev:${lat.toFixed(2)},${lng.toFixed(2)}`;
     if (geocodeCache.has(key)) return geocodeCache.get(key);
 
-    // FIX: the original set a "User-Agent" header here. That is a forbidden
-    // header name — browsers strip it silently, so it never reached
-    // Nominatim. Removed rather than left as dead code. Better still, proxy
-    // this through your own backend (it already has geocodeLocationName)
-    // so you can send a real UA and cache across users.
-    // A bare 5-digit ZIP through the free-text `q` param is ambiguous —
-    // Nominatim can read it as a house number and hand back an unrelated
-    // address. The structured `postalcode` param resolves it properly.
-    const zipOnly = /^\d{5}$/.test(key);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&zoom=12&lat=${lat}&lon=${lng}`
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      const address = data?.address;
+      if (!address) return null;
 
-    const tryQuery = async (q) => {
-      const url = zipOnly
-        ? `https://nominatim.openstreetmap.org/search?format=json&limit=1&country=us&postalcode=${encodeURIComponent(key)}`
-        : `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(q)}`;
+      const place =
+        address.city || address.town || address.village || address.suburb || address.county;
+      if (!place) return null;
+
+      const name = address.state ? `${place}, ${address.state}` : place;
+      geocodeCache.set(key, name);
+      return name;
+    } catch (err) {
+      console.error("Reverse geocode failed:", err);
+      return null;
+    }
+  }, []);
+
+  // Location is now mandatory and explicit. No IP guessing: an IP puts you
+  // in the right metro on a good day and the wrong state on a bad one, and
+  // silently searching the wrong place is worse than asking.
+  const searchPlaces = useCallback(async (text) => {
+    const trimmed = text.trim();
+    if (!trimmed) return [];
+
+    const isZip = /^\d{5}$/.test(trimmed);
+    const url = isZip
+      ? `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&country=us&postalcode=${encodeURIComponent(trimmed)}`
+      : `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(trimmed)}`;
+
+    try {
       const res = await fetch(url);
-      if (!res.ok) return null;
+      if (!res.ok) return [];
       const data = await res.json();
-      if (!Array.isArray(data) || data.length === 0) return null;
-      const lat = parseFloat(data[0].lat);
-      const lng = parseFloat(data[0].lon);
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-      return { lat, lng };
-    };
+      if (!Array.isArray(data)) return [];
 
-    try {
-      let found = await tryQuery(text);
-      if (!found && !/usa|united states/i.test(text)) {
-        found = await tryQuery(`${text}, USA`);
-      }
-      if (found) geocodeCache.set(key, found);
-      return found;
+      const seen = new Set();
+      return data
+        .map((hit) => {
+          const lat = parseFloat(hit.lat);
+          const lng = parseFloat(hit.lon);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+          const a = hit.address || {};
+          const place =
+            a.city || a.town || a.village || a.hamlet || a.suburb || a.county || hit.name;
+          if (!place) return null;
+
+          const region = [a.state, a.country].filter(Boolean).join(", ");
+          return {
+            name: region ? `${place}, ${region}` : place,
+            short: place,
+            detail: hit.display_name,
+            lat,
+            lng,
+          };
+        })
+        .filter((entry) => {
+          if (!entry) return false;
+          const key = entry.name.toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
     } catch (err) {
-      console.error("Geocoding failed:", err);
-      return null;
+      console.error("Place lookup failed:", err);
+      return [];
     }
   }, []);
 
-  const getIpBasedLocation = useCallback(async () => {
-    try {
-      const res = await fetch("https://ipapi.co/json/");
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (typeof data.latitude !== "number" || typeof data.longitude !== "number") return null;
-      if (data.country_code && data.country_code !== "US") return null;
-      return { lat: data.latitude, lng: data.longitude };
-    } catch (err) {
-      console.error("IP location lookup failed:", err);
-      return null;
-    }
-  }, []);
+  const applyTypedLocation = async () => {
+    const text = manualLocation.trim();
+    if (!text || resolvingLocation) return;
 
-  const resolveCoords = async () => {
-    const typedLocation = manualLocation.trim();
-
-    if (typedLocation) {
-      if (typedLocation === lastGeocodedTextRef.current && manualCoords) return manualCoords;
-
-      setResolvingLocation(true);
-      try {
-        const geocoded = await geocodeManualLocation(typedLocation);
-        if (geocoded) {
-          lastGeocodedTextRef.current = typedLocation;
-          setManualCoords(geocoded);
-          return geocoded;
-        }
-        return null;
-      } finally {
-        setResolvingLocation(false);
-      }
-    }
-
-    // Manual box is empty — fall back to the device, then to IP.
-    if (deviceCoords) return deviceCoords;
-
+    setLocationError("");
+    setLocationOptions([]);
     setResolvingLocation(true);
+
     try {
-      const ipCoords = await getIpBasedLocation();
-      if (ipCoords) {
-        setDeviceCoords(ipCoords);
-        setLocStatus("granted");
-        return ipCoords;
+      const matches = await searchPlaces(text);
+
+      if (matches.length === 0) {
+        setLocationError(`Couldn't find "${text}". Try "City, State" or a 5-digit ZIP.`);
+        return;
       }
-      return null;
+
+      if (matches.length === 1) {
+        setResolvedLocation(matches[0]);
+        setManualLocation("");
+        return;
+      }
+
+      // Several real places share this name — ask rather than guess.
+      setLocationOptions(matches);
     } finally {
       setResolvingLocation(false);
     }
+  };
+
+  const chooseLocation = (option) => {
+    setResolvedLocation(option);
+    setLocationOptions([]);
+    setLocationError("");
+    setManualLocation("");
+  };
+
+  const useDeviceLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("This browser can't share a location — enter a city or ZIP instead.");
+      return;
+    }
+
+    setLocationError("");
+    setResolvingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude: lat, longitude: lng } = position.coords;
+        const name = await reverseGeocode(lat, lng);
+        setResolvedLocation({ name: name || "Your current location", short: name, lat, lng });
+        setLocStatus("granted");
+        setResolvingLocation(false);
+      },
+      () => {
+        setLocStatus("denied");
+        setLocationError("Location access was blocked — enter a city or ZIP instead.");
+        setResolvingLocation(false);
+      },
+      GEO_OPTIONS
+    );
   };
 
   const handleSearch = async () => {
@@ -752,20 +784,16 @@ function App() {
     if (!query.trim()) return;
     if (!user) return;
 
+    if (!resolvedLocation) {
+      setErrorMsg("Please set your location first.");
+      return;
+    }
+
     setErrorMsg("");
     setLoading(true);
 
     try {
-      const resolved = await resolveCoords();
-
-      if (!resolved) {
-        setErrorMsg(
-          manualLocation.trim()
-            ? `Couldn't find "${manualLocation}" — try the format "City, State" or a 5-digit ZIP code.`
-            : "We couldn't figure out your location — try entering a city or ZIP code above."
-        );
-        return;
-      }
+      const resolved = resolvedLocation;
 
       const {
         data: { session },
@@ -782,18 +810,17 @@ function App() {
       searchAbortRef.current = controller;
 
       const trimmed = query.trim();
+      // The place name was confirmed before the search button was live, so
+      // the server always receives a real, unambiguous scope.
+      const locationHint = resolvedLocation.name;
+
       const response = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         // FIX: send what the user actually typed. The backend was reverse-
         // geocoding these coordinates back into a place name to hand Serper,
         // which was both slow and lossy — "11803" is already the answer.
-        body: JSON.stringify({
-          query: trimmed,
-          lat: resolved.lat,
-          lng: resolved.lng,
-          locationHint: manualLocation.trim() || undefined,
-        }),
+        body: JSON.stringify({ query: trimmed, lat: resolved.lat, lng: resolved.lng, locationHint }),
         signal: controller.signal,
       });
 
@@ -821,10 +848,10 @@ function App() {
         // outOfRange means we found places but none were plausibly near the
         // location — a location problem, not a craving problem. Saying "try
         // a different craving" sent you chasing the wrong thing.
-        const where = manualLocation.trim() || data.locationName || "your area";
+        const where = resolvedLocation.name;
         setErrorMsg(
           data.outOfRange
-            ? `Nothing within range of ${where} — the closest was about ${data.nearestMiles} mi out. Try a nearby town or a more specific location.`
+            ? `Nothing within 25 miles of ${where} — the closest was about ${data.nearestMiles} mi out. Try a different location.`
             : `No match found near ${where} — try a different craving.`
         );
         setResults([]);
@@ -1091,8 +1118,8 @@ function App() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <button onClick={handleSearch} disabled={loading || !query.trim()}>
-            {loading ? (resolvingLocation ? "Finding you…" : "Searching…") : "Find my one"}
+          <button onClick={handleSearch} disabled={loading || !query.trim() || !resolvedLocation}>
+            {loading ? "Searching…" : "Find my one"}
           </button>
         </div>
 
@@ -1102,22 +1129,74 @@ function App() {
           </p>
         )}
 
-        <div className="manual-location">
-          <label htmlFor="manual-loc">
-            {locStatus === "denied"
-              ? "Location access is off — enter a city, ZIP, or neighborhood:"
-              : "Not seeing your area? Enter a city, ZIP, or neighborhood to fix it:"}
-          </label>
-          <input
-            id="manual-loc"
-            type="text"
-            placeholder="e.g. Hicksville, NY or 11801"
-            value={manualLocation}
-            onChange={(e) => setManualLocation(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          {locStatus === "denied" && (
-            <span className="loc-hint">Leave this blank and we'll estimate your location from your IP address.</span>
+        <div className="location-panel">
+          {resolvedLocation ? (
+            <div className="location-set">
+              <span className="location-label">Searching near</span>
+              <span className="location-value">{resolvedLocation.name}</span>
+              <button
+                type="button"
+                className="link-btn location-change"
+                onClick={() => {
+                  setResolvedLocation(null);
+                  setLocationOptions([]);
+                  setLocationError("");
+                }}
+              >
+                Change
+              </button>
+            </div>
+          ) : (
+            <>
+              <label htmlFor="manual-loc" className="location-prompt">
+                Please enter your location to search
+              </label>
+
+              <div className="location-input-row">
+                <input
+                  id="manual-loc"
+                  type="text"
+                  placeholder="City, State or ZIP — e.g. Hicksville, NY or 11801"
+                  value={manualLocation}
+                  onChange={(e) => setManualLocation(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") applyTypedLocation();
+                  }}
+                />
+                <button
+                  type="button"
+                  className="location-set-btn"
+                  onClick={applyTypedLocation}
+                  disabled={resolvingLocation || !manualLocation.trim()}
+                >
+                  {resolvingLocation ? "Finding…" : "Set"}
+                </button>
+              </div>
+
+              <button type="button" className="link-btn location-gps" onClick={useDeviceLocation}>
+                or use my current location
+              </button>
+
+              {locationOptions.length > 0 && (
+                <div className="location-options">
+                  <span className="location-label">
+                    Several places match — which one did you mean?
+                  </span>
+                  <ul>
+                    {locationOptions.map((option, i) => (
+                      <li key={`${option.name}-${i}`}>
+                        <button type="button" onClick={() => chooseLocation(option)}>
+                          <span className="option-name">{option.name}</span>
+                          <span className="option-detail">{option.detail}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {locationError && <p className="error-msg location-err">{locationError}</p>}
+            </>
           )}
         </div>
 

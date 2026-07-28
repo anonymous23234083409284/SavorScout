@@ -640,25 +640,45 @@ function App() {
   // Mapbox's geocode/v6/forward endpoint, structured to a postcode lookup.
   // A public (pk.*) token is safe to ship in the frontend bundle — that is
   // its intended use, same as a Google Maps JS key.
+  // Returns { ok: true, location } or { ok: false, reason }. A discriminated
+  // result rather than a bare null so the caller can tell "bad token" apart
+  // from "that ZIP genuinely isn't in Mapbox's data" — collapsing those into
+  // one message is exactly what made a real ZIP (11753 — Westbury, NY) look
+  // like a typo when the actual problem was elsewhere.
   const lookupZip = useCallback(async (zip) => {
     if (!MAPBOX_TOKEN) {
       console.error("REACT_APP_MAPBOX_TOKEN is not set — ZIP lookup cannot run.");
-      return null;
+      return { ok: false, reason: "no_token" };
     }
 
+    // FIX: every documented Mapbox v6 example uses the free-text `q` param
+    // (`?q=paris&access_token=...`); a bare `postcode=` with no `q` and no
+    // other structured field is not a documented request shape and returned
+    // nothing for a real ZIP. `q` + `types=postcode` is the well-supported
+    // pattern: free text to match, filtered to postcode-type results,
+    // scoped to the US.
     const url =
       `https://api.mapbox.com/search/geocode/v6/forward` +
-      `?postcode=${encodeURIComponent(zip)}&country=US&types=postcode&limit=1&access_token=${MAPBOX_TOKEN}`;
+      `?q=${encodeURIComponent(zip)}&country=US&types=postcode&limit=1&access_token=${MAPBOX_TOKEN}`;
 
     try {
       const res = await fetch(url);
-      if (!res.ok) return null;
+
+      if (res.status === 401 || res.status === 403) {
+        console.error(`Mapbox rejected the request (${res.status}) — check REACT_APP_MAPBOX_TOKEN.`);
+        return { ok: false, reason: "auth" };
+      }
+      if (!res.ok) {
+        console.error(`Mapbox request failed: ${res.status} ${res.statusText}`);
+        return { ok: false, reason: "network" };
+      }
+
       const data = await res.json();
       const feature = Array.isArray(data?.features) ? data.features[0] : null;
-      if (!feature) return null;
+      if (!feature) return { ok: false, reason: "not_found" };
 
       const [lng, lat] = feature.geometry?.coordinates || [];
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return { ok: false, reason: "not_found" };
 
       const props = feature.properties || {};
       const ctx = props.context || {};
@@ -672,10 +692,10 @@ function App() {
         zip;
       const short = ctx.place?.name || props.name || name;
 
-      return { name, short, lat, lng };
+      return { ok: true, location: { name, short, lat, lng } };
     } catch (err) {
       console.error("ZIP lookup failed:", err);
-      return null;
+      return { ok: false, reason: "network" };
     }
   }, []);
 
@@ -696,12 +716,20 @@ function App() {
     setResolvingLocation(true);
 
     try {
-      const match = await lookupZip(zip);
-      if (!match) {
-        setLocationError(`Couldn't find ZIP "${zip}" in the US.`);
+      const result = await lookupZip(zip);
+
+      if (!result.ok) {
+        const messages = {
+          no_token: "Location lookup isn't configured — this needs a Mapbox token set up.",
+          auth: "Location lookup rejected our credentials — the Mapbox token may be invalid.",
+          network: "Location lookup is temporarily unavailable — please try again in a moment.",
+          not_found: `Couldn't find ZIP "${zip}" in the US.`,
+        };
+        setLocationError(messages[result.reason] || `Couldn't find ZIP "${zip}" in the US.`);
         return;
       }
-      setResolvedLocation(match);
+
+      setResolvedLocation(result.location);
       setLocationInput("");
     } finally {
       setResolvingLocation(false);

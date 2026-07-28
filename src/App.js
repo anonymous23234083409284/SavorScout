@@ -124,43 +124,80 @@ function ComparisonTease({ runnerUps }) {
   );
 }
 
-function EvidenceSection({ evidence, reception, matchedDietaryTerms, matchedAllergyTerms }) {
-  // The backend now sends a single vetted `quote` per channel, or null. It
-  // rejects anything that looks like scraped markup rather than a sentence,
-  // so there is no longer a "###### $17.00 ... $17" case to defend against.
-  const hasMenu = Boolean(evidence?.quote);
-  const hasReception = Boolean(reception?.quote);
+function StarRating({ rating }) {
+  const filled = Math.round(typeof rating === "number" ? rating : 5);
+  return (
+    <span className="stars" aria-label={`${filled} out of 5 stars`}>
+      {"★★★★★".slice(0, filled)}
+      <span className="stars-empty">{"★★★★★".slice(filled)}</span>
+    </span>
+  );
+}
+
+function EvidenceSection({ evidence, reception, review, menuItems, rating, matchedDietaryTerms, matchedAllergyTerms }) {
+  const hasReview = Boolean(review?.text);
+  const hasMenu = Boolean(menuItems?.length);
+  const hasQuote = Boolean(evidence?.quote) && !hasReview;
+  const hasReception = Boolean(reception?.quote) && !hasReview;
   const hasAllergy = Boolean(matchedAllergyTerms?.length);
   const hasDietary = Boolean(matchedDietaryTerms?.length);
 
-  if (!hasMenu && !hasReception && !hasAllergy && !hasDietary) return null;
-
-  const menuLabel =
-    evidence?.sourceType === "official_site" ? "From their own menu" : "From web research";
+  if (!hasReview && !hasMenu && !hasQuote && !hasReception && !hasAllergy && !hasDietary) return null;
 
   return (
     <div className="evidence-section">
-      {hasMenu && (
-        <>
-          <span className="evidence-label">{menuLabel}</span>
-          <blockquote className="evidence-quote">{evidence.quote}</blockquote>
-          {evidence.sourceUrl && (
-            <a className="evidence-source-link" href={evidence.sourceUrl} target="_blank" rel="noreferrer">
-              View source →
+      {hasReview ? (
+        <div className="review-block">
+          <div className="review-head">
+            <StarRating rating={5} />
+            <span className="evidence-label review-label">What people say</span>
+          </div>
+          <blockquote className="evidence-quote">{review.text}</blockquote>
+          {review.sourceUrl && (
+            <a className="evidence-source-link" href={review.sourceUrl} target="_blank" rel="noreferrer">
+              Read the source →
             </a>
           )}
-        </>
+        </div>
+      ) : (
+        typeof rating === "number" && (
+          // No review sentence surfaced in the research. Show the real
+          // aggregate rating rather than manufacture a quote.
+          <div className="review-block">
+            <div className="review-head">
+              <StarRating rating={rating} />
+              <span className="evidence-label review-label">{rating.toFixed(1)} average rating</span>
+            </div>
+          </div>
+        )
+      )}
+
+      {hasMenu && (
+        <div className="menu-block">
+          <span className="evidence-label">On the menu</span>
+          <ul className="menu-list">
+            {menuItems.map((item, i) => (
+              <li key={i}>
+                <span className="menu-item-name">{item.name}</span>
+                <span className="menu-item-dash">—</span>
+                <span className="menu-item-price">{item.price}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {hasQuote && (
+        <div className="reception-block">
+          <span className="evidence-label">From their menu</span>
+          <blockquote className="evidence-quote">{evidence.quote}</blockquote>
+        </div>
       )}
 
       {hasReception && (
-        <div className={hasMenu ? "reception-block" : undefined}>
-          <span className="evidence-label">What people say</span>
+        <div className="reception-block">
+          <span className="evidence-label">From web research</span>
           <blockquote className="evidence-quote">{reception.quote}</blockquote>
-          {reception.sourceUrl && (
-            <a className="evidence-source-link" href={reception.sourceUrl} target="_blank" rel="noreferrer">
-              View source →
-            </a>
-          )}
         </div>
       )}
 
@@ -1164,6 +1201,9 @@ function App() {
                   <EvidenceSection
                     evidence={winner.evidence}
                     reception={winner.reception}
+                    review={winner.review}
+                    menuItems={winner.menuItems}
+                    rating={winner.rating}
                     matchedDietaryTerms={winner.matchedDietaryTerms}
                     matchedAllergyTerms={winner.matchedAllergyTerms}
                   />

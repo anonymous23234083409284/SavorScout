@@ -57,14 +57,20 @@ if (!process.env.EXA_API_KEY) {
 // than confidently recommending a restaurant 1,000 miles away.
 // Tried in order; the first tier with any candidate in it wins. Only a real
 // location failure gets past the last one.
-const RADIUS_TIERS = [30, 60, 120];
+// Was [30, 60, 120] — a 27-mile result sailed through the first tier. For a
+// "where should I eat" product the first tier has to be a walk/short-drive
+// radius, and only widen when a genuinely sparse area demands it.
+const RADIUS_TIERS = [8, 15, 25, 40];
+
+// Beyond this, a place has to be extraordinary to still be the answer.
+const PREFERRED_RADIUS_MILES = 12;
 
 const CANDIDATE_POOL_SIZE = 15;
 const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
 const STAGE1_FINALIST_COUNT = 3; // was 5 — fewer parallel Exa calls means a shorter tail
 const DAILY_SEARCH_LIMIT = 5;
 const EARTH_RADIUS_MILES = 3958.8;
-const PROXIMITY_DECAY_MILES = 4;
+const PROXIMITY_DECAY_MILES = 3;
 const MAX_QUERY_CHARS = 300;
 
 const EXA_API_KEY = process.env.EXA_API_KEY;
@@ -84,7 +90,10 @@ const NOMINATIM_UA = "SavorScout/1.0 (your-email@example.com)";
 
 // Competitive weights — decide WHO WINS. Operate on min-max normalized
 // features, so they answer "who is best relative to this pool".
-const STAGE1_WEIGHTS = { rating: 0.35, relevance: 0.3, proximity: 0.15, budget: 0.1, trust: 0.1 };
+// Proximity was 0.15 against rating's 0.35, so a well-rated place 27 miles
+// out beat a good one 3 miles away. Distance is a primary criterion here,
+// not a tiebreaker.
+const STAGE1_WEIGHTS = { rating: 0.28, relevance: 0.27, proximity: 0.3, budget: 0.08, trust: 0.07 };
 const STAGE2_WEIGHTS = { base: 0.45, evidence: 0.25, conceptual: 0.3 };
 
 // Display weights — decide WHAT NUMBER THE USER SEES. Operate on absolute
@@ -559,6 +568,68 @@ function cleanHighlight(raw) {
   return text.length > 240 ? `${text.slice(0, 237).trimEnd()}…` : text;
 }
 
+// The scraped menu text I was previously throwing away as noise is exactly
+// where the dish prices live ("Miso Ramen ... $17.00"). Parsed rather than
+// discarded, it becomes the menu list, ranked by relevance to what was
+// actually searched for.
+function extractMenuItems(research, terms, limit = 2) {
+  if (!research?.highlights?.length) return [];
+
+  const text = research.highlights
+    .join(" \n ")
+    .replace(/[#*_`|>]+/g, " ")
+    .replace(/\s+/g, " ");
+
+  const found = new Map();
+  const pattern = /([A-Za-z][A-Za-z0-9'&().\/-]*(?:\s+[A-Za-z0-9'&().\/-]+){0,4})\s*[-–—:·.]{0,4}\s*\$\s?(\d{1,3}(?:\.\d{2})?)/g;
+
+  let match;
+  while ((match = pattern.exec(text)) !== null) {
+    let name = match[1]
+      .replace(/^[\s.,\-–—·]+|[\s.,\-–—·]+$/g, "")
+      .replace(/^(?:and|or|the|with|add|plus|includes?|served|choice of)\s+/i, "")
+      .trim();
+
+    const words = name.split(/\s+/);
+    if (words.length > 5) name = words.slice(-4).join(" "); // trim run-on prefixes
+    if (name.length < 3 || name.length > 42) continue;
+    if (!/[A-Za-z]{3}/.test(name)) continue;
+    if (/^(?:price|total|tax|tip|from|only|each|per)$/i.test(name)) continue;
+
+    const value = parseFloat(match[2]);
+    if (!Number.isFinite(value) || value <= 0 || value > 300) continue;
+
+    const key = name.toLowerCase();
+    if (!found.has(key)) found.set(key, { name, price: `$${match[2]}` });
+  }
+
+  const wanted = terms.filter(Boolean).map((t) => String(t).toLowerCase());
+  return Array.from(found.values())
+    .map((item) => {
+      const lower = item.name.toLowerCase();
+      return { ...item, hits: wanted.filter((t) => lower.includes(t)).length };
+    })
+    .sort((a, b) => b.hits - a.hits)
+    .slice(0, limit)
+    .map(({ name, price }) => ({ name, price }));
+}
+
+// A review is a person talking, not a menu fragment. We surface a real one
+// when the research contains it — and return null rather than inventing a
+// quote when it doesn't.
+const REVIEW_MARKERS = /\b(?:we|i|my|our|they|staff|service|friendly|delicious|fresh|authentic|best|favou?rite|recommend|atmosphere|portions?|tasty|amazing|worth)\b/i;
+
+function extractReview(research) {
+  for (const raw of research?.highlights || []) {
+    const cleaned = cleanHighlight(raw);
+    if (!cleaned) continue;
+    if (!REVIEW_MARKERS.test(cleaned)) continue;
+    if ((cleaned.match(/\$/g) || []).length > 1) continue; // still a price list
+    return cleaned;
+  }
+  return null;
+}
+
 function pickQuote(research) {
   for (const h of research?.highlights || []) {
     const cleaned = cleanHighlight(h);
@@ -992,9 +1063,22 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // `stage1Ranked.indexOf(c)` against objects that had been recreated by a
     // spread — indexOf compared by reference, always returned -1, and every
     // scoreBreakdown field silently fell through to 0.
+    // THE ACTUAL BUG: proximity was min-max normalised along with everything
+    // else, which converts absolute distance into a RELATIVE rank. If every
+    // candidate sits 20-30mi out, the 27mi one still normalises to a healthy
+    // score — "closest of a bad pool" scored identically to "closest of a
+    // good pool". Distance is the one signal where the absolute number is
+    // the whole point, so it now bypasses normalisation entirely and a hard
+    // penalty is applied past the preferred radius.
+    const distancePenalty = (miles) => {
+      if (miles <= PREFERRED_RADIUS_MILES) return 1;
+      const excess = miles - PREFERRED_RADIUS_MILES;
+      return Math.max(0.15, Math.exp(-excess / 6));
+    };
+
     const ratingNorm = minMaxNormalize(pool.map((c) => c.bayesianRating));
     const relevanceNorm = minMaxNormalize(pool.map((c) => c.relevance));
-    const proximityNorm = minMaxNormalize(pool.map((c) => c.proximity));
+    const proximityNorm = pool.map((c) => c.proximity); // absolute, deliberately un-normalised
     const trustNorm = minMaxNormalize(pool.map((c) => c.dataTrust));
     const budgetNorm = minMaxNormalize(pool.map((c) => c.budgetMatch));
 
@@ -1014,7 +1098,9 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
           STAGE1_WEIGHTS.proximity * norm.proximity +
           STAGE1_WEIGHTS.budget * norm.budget +
           STAGE1_WEIGHTS.trust * norm.trust;
-        return { ...c, norm, stage1Composite: composite * confidenceMultiplier(c.reviewCount, c.dataTrust) };
+        const dampened =
+          composite * confidenceMultiplier(c.reviewCount, c.dataTrust) * distancePenalty(c.distance);
+        return { ...c, norm, stage1Composite: dampened };
       })
       .sort((a, b) => b.stage1Composite - a.stage1Composite);
 
@@ -1201,6 +1287,19 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
           const quote = pickQuote(winner.reception);
           return quote ? { sourceUrl: winner.reception.sourceUrl, quote } : null;
         })(),
+        // A genuine review sentence, from either channel, or null.
+        review: (() => {
+          const text = extractReview(winner.reception) || extractReview(winner.research);
+          if (!text) return null;
+          return {
+            text,
+            sourceUrl: winner.reception?.sourceUrl || winner.research?.sourceUrl || null,
+          };
+        })(),
+        menuItems: extractMenuItems(
+          winner.research,
+          [preferences.dish, preferences.cuisine].filter(Boolean)
+        ),
         requestedFactors: wantsVibe ? vibeTerms : null,
         matchedFactors: winner.matchedFactors.length > 0 ? winner.matchedFactors : null,
         matchedDietaryTerms: winner.matchedDietaryTerms.length > 0 ? winner.matchedDietaryTerms : null,

@@ -854,6 +854,81 @@ body {
   text-decoration: underline;
 }
 
+/* -- review + menu blocks -- */
+
+.review-block + .menu-block,
+.review-block + .reception-block {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(46, 230, 214, 0.18);
+}
+
+.review-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.review-label {
+  margin-bottom: 0;
+}
+
+.stars {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--bloom-saffron);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.stars-empty {
+  color: rgba(255, 200, 87, 0.25);
+}
+
+.menu-block {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(46, 230, 214, 0.18);
+}
+
+.menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: #c8d0da;
+}
+
+.menu-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-item-dash {
+  color: #4a5568;
+  flex: 1 0 auto;
+}
+
+.menu-item-price {
+  color: var(--bloom-saffron);
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
 .reception-block {
   margin-top: 14px;
   padding-top: 14px;

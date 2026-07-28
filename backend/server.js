@@ -52,13 +52,20 @@ if (!process.env.EXA_API_KEY) {
 
 // --- Tunables --------------------------------------------------------------
 
-// Hard ceiling. Anything past this is not an answer to "where should I eat",
-// so it is filtered out rather than ranked down.
-const SEARCH_RADIUS_MILES = 25;
+// Expandable radius. Start tight, because a 5-10 mile result is one someone
+// will actually drive to; widen only when the tight radius genuinely can't
+// field enough options. A single fixed number is wrong in both directions —
+// too small for rural users, too generous for dense ones.
+const RADIUS_TIERS = {
+  nearby: [5, 10, 15],
+  driving: [10, 15, 25],
+  anywhere: [15, 25, 40],
+};
+const DEFAULT_RADIUS_MODE = "nearby";
 
-// Inside the ceiling, closer still wins: past this a place needs to be
-// exceptional to beat something nearby.
-const PREFERRED_RADIUS_MILES = 12;
+// A tier has to field at least this many candidates before we settle there.
+// Picking a "winner" out of two is not a comparison worth reporting.
+const MIN_CANDIDATES_PER_TIER = 4;
 
 // The best N inside the radius go on to be ranked in full.
 const SHORTLIST_SIZE = 10;
@@ -705,6 +712,9 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       });
     }
 
+    const requestedMode = typeof req.body.radiusMode === "string" ? req.body.radiusMode : "";
+    const radiusMode = RADIUS_TIERS[requestedMode] ? requestedMode : DEFAULT_RADIUS_MODE;
+
     const anchor = { lat: userLat, lng: userLng };
 
     console.log("User said:", userRequest, "at", userLat, userLng);
@@ -864,15 +874,36 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       });
     }
 
-    // Layer 2a: distance sanity gate, widened in steps rather than as a
-    // single cliff. A rural search legitimately has its nearest option 50mi
-    // out; only a genuine location failure lands everything 500mi away.
+    // Layer 2a: expandable radius. Walk the tiers outward and stop at the
+    // first one holding a real field of options; only fall back to the
+    // widest tier's contents if none of them clear the threshold.
     const nearest = Math.min(...withFeatures.map((c) => c.distance));
-    const withinRadius = withFeatures.filter((c) => c.distance <= SEARCH_RADIUS_MILES);
+    const tiers = RADIUS_TIERS[radiusMode] || RADIUS_TIERS[DEFAULT_RADIUS_MODE];
+    const maxRadius = tiers[tiers.length - 1];
+
+    let withinRadius = [];
+    let radiusUsed = tiers[0];
+
+    for (const tier of tiers) {
+      const atTier = withFeatures.filter((c) => c.distance <= tier);
+      // Settle here if this tier fields enough, OR if it is the last one and
+      // has anything at all — better a short list than nothing.
+      if (atTier.length >= MIN_CANDIDATES_PER_TIER || (tier === maxRadius && atTier.length > 0)) {
+        withinRadius = atTier;
+        radiusUsed = tier;
+        break;
+      }
+      // Keep the best we have seen so the loop can't end empty-handed while
+      // candidates genuinely exist inside the widest tier.
+      if (atTier.length > withinRadius.length) {
+        withinRadius = atTier;
+        radiusUsed = tier;
+      }
+    }
 
     if (withinRadius.length === 0) {
       console.warn(
-        `All ${withFeatures.length} candidates were beyond ${SEARCH_RADIUS_MILES}mi ` +
+        `All ${withFeatures.length} candidates were beyond ${maxRadius}mi ` +
           `(nearest ${Math.round(nearest)}mi) for ZIP-scoped query "${locationName}". ` +
           `Serper received: ${JSON.stringify({ q: candidatePool.scopedQuery, location: locationName })}`
       );
@@ -884,13 +915,14 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         restaurants: [],
         outOfRange: true,
         nearestMiles: Math.round(nearest),
+        maxRadiusMiles: maxRadius,
         searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
       });
     }
 
     console.log(
-      `${withinRadius.length}/${withFeatures.length} candidates inside ${SEARCH_RADIUS_MILES}mi ` +
-        `(nearest ${Math.round(nearest)}mi).`
+      `Radius "${radiusMode}" settled at ${radiusUsed}mi: ` +
+        `${withinRadius.length}/${withFeatures.length} candidates (nearest ${Math.round(nearest)}mi).`
     );
 
     // Layer 2b: hard relevance gate.
@@ -911,10 +943,12 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // good pool". Distance is the one signal where the absolute number is
     // the whole point, so it now bypasses normalisation entirely and a hard
     // penalty is applied past the preferred radius.
+    // Scaled to the tier we actually settled on: inside it, distance is a
+    // non-issue; past it, a place has to be exceptional. A fixed 12mi cutoff
+    // punished every result in a legitimately sparse area.
     const distancePenalty = (miles) => {
-      if (miles <= PREFERRED_RADIUS_MILES) return 1;
-      const excess = miles - PREFERRED_RADIUS_MILES;
-      return Math.max(0.15, Math.exp(-excess / 6));
+      if (miles <= radiusUsed) return 1;
+      return Math.max(0.15, Math.exp(-(miles - radiusUsed) / 6));
     };
 
     const ratingNorm = minMaxNormalize(pool.map((c) => c.bayesianRating));
@@ -949,7 +983,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // number the card reports ("beat N", dominance) is measured against
     // these, not against whatever Serper happened to return.
     const shortlist = stage1Ranked.slice(0, SHORTLIST_SIZE);
-    console.log(`Shortlist: ${shortlist.length} best within ${SEARCH_RADIUS_MILES}mi.`);
+    console.log(`Shortlist: ${shortlist.length} best within ${radiusUsed}mi.`);
 
     // ============================ STAGE 2 ==================================
     const finalists = shortlist.slice(0, STAGE1_FINALIST_COUNT);
@@ -1165,7 +1199,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
 
     console.log(
-      `FINAL: ${withinRadius.length} in radius → ${shortlist.length} shortlisted → ` +
+      `FINAL: ${withinRadius.length} within ${radiusUsed}mi → ${shortlist.length} shortlisted → ` +
         `${finalists.length} researched ` +
         `(channels: menu${wantsVibe ? " + reception" : ""}), winner "${winner.place.title}" ` +
         `(${winner.matchScore}%, dominance ${dominancePercent}%)`
@@ -1174,6 +1208,8 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     return res.json({
       preferences,
       locationName,
+      radiusUsed,
+      radiusMode,
       restaurants: finalPicks,
       searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
     });

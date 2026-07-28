@@ -4,11 +4,31 @@ import { supabase } from "./supabaseClient";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
 
-// ZIP is the only way location enters this app now — no GPS, no IP
-// guessing. That removes an entire class of "which fallback silently
-// fired" bugs; there is exactly one path, and it always confirms before
-// a search can run.
-const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
+// ZIP is the only way location enters this app — no GPS, no IP guessing.
+//
+// Mapbox was a mistake here: it has no keyless mode, so without a token the
+// lookup failed before it ever sent a request. Every other service in this
+// app is either keyless (the old Nominatim calls) or lives on the BACKEND
+// (Serper, Exa, OpenAI, Supabase all read process.env in server.js, which
+// is why Render has those keys and Vercel needs none). Requiring a frontend
+// token broke that pattern and broke the app.
+//
+// A US ZIP is a fixed public dataset, so this is now a chain of keyless
+// providers tried in order. Zero configuration, and one provider being down
+// or rate-limiting no longer takes location out entirely.
+const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // optional upgrade, never required
+
+// Radius presets. "Nearby" is the default because a 5-10 mile result is one
+// someone will actually drive to; the wider tiers exist for sparse areas.
+// Mirrors the backend's first tier per mode, purely so the UI can say
+// "widened to 15 mi" only when it actually widened.
+const RADIUS_FIRST_TIER = { nearby: 5, driving: 10, anywhere: 15 };
+
+const RADIUS_MODES = [
+  { id: "nearby", label: "Nearby", hint: "5-15 mi" },
+  { id: "driving", label: "Willing to drive", hint: "10-25 mi" },
+  { id: "anywhere", label: "Anywhere worth it", hint: "15-40 mi" },
+];
 
 // --- Hero card helpers -----------------------------------------------------
 
@@ -408,6 +428,8 @@ function App() {
   // way back to GPS.
   // One confirmed location, or none. { name, short, lat, lng }
   const [resolvedLocation, setResolvedLocation] = useState(null);
+  const [radiusMode, setRadiusMode] = useState("nearby");
+  const [radiusUsed, setRadiusUsed] = useState(null); // what the backend settled on
   const [locationError, setLocationError] = useState("");
   const [locationInput, setLocationInput] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
@@ -593,6 +615,7 @@ function App() {
     setLocationInput("");
     setResolvedLocation(null);
     setLocationError("");
+    setRadiusUsed(null);
   };
 
   const handleSaveOnboarding = async () => {
@@ -645,59 +668,105 @@ function App() {
   // from "that ZIP genuinely isn't in Mapbox's data" — collapsing those into
   // one message is exactly what made a real ZIP (11753 — Westbury, NY) look
   // like a typo when the actual problem was elsewhere.
-  const lookupZip = useCallback(async (zip) => {
-    if (!MAPBOX_TOKEN) {
-      console.error("REACT_APP_MAPBOX_TOKEN is not set — ZIP lookup cannot run.");
-      return { ok: false, reason: "no_token" };
-    }
+  // Keyless providers, tried in order. Each returns a location or null; the
+  // first success wins. None of these require an account, a token, or any
+  // Vercel configuration — which is the whole point, since requiring one is
+  // what broke this in the first place.
+  const zipProviders = useMemo(
+    () => [
+      // 1. Zippopotam — purpose-built US ZIP database, keyless, CORS-open.
+      async (zip) => {
+        const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        const place = data?.places?.[0];
+        if (!place) return null;
 
-    // FIX: every documented Mapbox v6 example uses the free-text `q` param
-    // (`?q=paris&access_token=...`); a bare `postcode=` with no `q` and no
-    // other structured field is not a documented request shape and returned
-    // nothing for a real ZIP. `q` + `types=postcode` is the well-supported
-    // pattern: free text to match, filtered to postcode-type results,
-    // scoped to the US.
-    const url =
-      `https://api.mapbox.com/search/geocode/v6/forward` +
-      `?q=${encodeURIComponent(zip)}&country=US&types=postcode&limit=1&access_token=${MAPBOX_TOKEN}`;
+        const lat = parseFloat(place.latitude);
+        const lng = parseFloat(place.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
 
-    try {
-      const res = await fetch(url);
+        const city = place["place name"];
+        const state = place["state"];
+        if (!city) return null;
 
-      if (res.status === 401 || res.status === 403) {
-        console.error(`Mapbox rejected the request (${res.status}) — check REACT_APP_MAPBOX_TOKEN.`);
-        return { ok: false, reason: "auth" };
+        return { name: state ? `${city}, ${state}` : city, short: city, lat, lng };
+      },
+
+      // 2. Nominatim structured postcode query — keyless, and the thing that
+      //    worked in this app for weeks. Fine from a browser (the user's own
+      //    IP); it is only blocked from cloud datacenters, which is why the
+      //    SERVER could never call it but this can.
+      async (zip) => {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&country=us&postalcode=${encodeURIComponent(zip)}`
+        );
+        if (!res.ok) return null;
+        const data = await res.json();
+        const hit = Array.isArray(data) ? data[0] : null;
+        if (!hit) return null;
+
+        const lat = parseFloat(hit.lat);
+        const lng = parseFloat(hit.lon);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+        const a = hit.address || {};
+        const city = a.city || a.town || a.village || a.hamlet || a.suburb || a.county;
+        if (!city) return null;
+
+        return { name: a.state ? `${city}, ${a.state}` : city, short: city, lat, lng };
+      },
+
+      // 3. Mapbox — only if a token happens to be configured. A genuine
+      //    upgrade when present, never a requirement.
+      async (zip) => {
+        if (!MAPBOX_TOKEN) return null;
+        const res = await fetch(
+          `https://api.mapbox.com/search/geocode/v6/forward` +
+            `?q=${encodeURIComponent(zip)}&country=US&types=postcode&limit=1&access_token=${MAPBOX_TOKEN}`
+        );
+        if (!res.ok) return null;
+        const data = await res.json();
+        const feature = Array.isArray(data?.features) ? data.features[0] : null;
+        if (!feature) return null;
+
+        const [lng, lat] = feature.geometry?.coordinates || [];
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+        const props = feature.properties || {};
+        const ctx = props.context || {};
+        const name =
+          props.place_formatted ||
+          [ctx.place?.name, ctx.region?.name].filter(Boolean).join(", ") ||
+          props.name ||
+          zip;
+        return { name, short: ctx.place?.name || props.name || name, lat, lng };
+      },
+    ],
+    []
+  );
+
+  // Returns { ok: true, location } or { ok: false, reason }. "not_found"
+  // only when every provider ran and genuinely had no match — distinct from
+  // "they were all unreachable", so the message can tell the truth.
+  const lookupZip = useCallback(
+    async (zip) => {
+      let anyProviderResponded = false;
+
+      for (const provider of zipProviders) {
+        try {
+          const result = await provider(zip);
+          anyProviderResponded = true;
+          if (result) return { ok: true, location: result };
+        } catch (err) {
+          console.warn("ZIP provider failed, trying the next one:", err.message);
+        }
       }
-      if (!res.ok) {
-        console.error(`Mapbox request failed: ${res.status} ${res.statusText}`);
-        return { ok: false, reason: "network" };
-      }
 
-      const data = await res.json();
-      const feature = Array.isArray(data?.features) ? data.features[0] : null;
-      if (!feature) return { ok: false, reason: "not_found" };
-
-      const [lng, lat] = feature.geometry?.coordinates || [];
-      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return { ok: false, reason: "not_found" };
-
-      const props = feature.properties || {};
-      const ctx = props.context || {};
-      // place_formatted is v6's ready-made display string ("Hicksville, New
-      // York, United States"); built defensively from context in case that
-      // field is ever absent, rather than trusting one field name blindly.
-      const name =
-        props.place_formatted ||
-        [ctx.place?.name, ctx.region?.name, ctx.country?.name].filter(Boolean).join(", ") ||
-        props.name ||
-        zip;
-      const short = ctx.place?.name || props.name || name;
-
-      return { ok: true, location: { name, short, lat, lng } };
-    } catch (err) {
-      console.error("ZIP lookup failed:", err);
-      return { ok: false, reason: "network" };
-    }
-  }, []);
+      return { ok: false, reason: anyProviderResponded ? "not_found" : "network" };
+    },
+    [zipProviders]
+  );
 
   // ZIP is the only door location comes through, full stop — no GPS, no
   // typed city/state, no free text. A ZIP always resolves to at most one
@@ -719,13 +788,11 @@ function App() {
       const result = await lookupZip(zip);
 
       if (!result.ok) {
-        const messages = {
-          no_token: "Location lookup isn't configured — this needs a Mapbox token set up.",
-          auth: "Location lookup rejected our credentials — the Mapbox token may be invalid.",
-          network: "Location lookup is temporarily unavailable — please try again in a moment.",
-          not_found: `Couldn't find ZIP "${zip}" in the US.`,
-        };
-        setLocationError(messages[result.reason] || `Couldn't find ZIP "${zip}" in the US.`);
+        setLocationError(
+          result.reason === "network"
+            ? "Couldn't reach the location service — check your connection and try again."
+            : `Couldn't find ZIP "${zip}" in the US.`
+        );
         return;
       }
 
@@ -777,7 +844,13 @@ function App() {
         // FIX: send what the user actually typed. The backend was reverse-
         // geocoding these coordinates back into a place name to hand Serper,
         // which was both slow and lossy — "11803" is already the answer.
-        body: JSON.stringify({ query: trimmed, lat: resolved.lat, lng: resolved.lng, locationHint }),
+        body: JSON.stringify({
+          query: trimmed,
+          lat: resolved.lat,
+          lng: resolved.lng,
+          locationHint,
+          radiusMode,
+        }),
         signal: controller.signal,
       });
 
@@ -808,7 +881,7 @@ function App() {
         const where = resolvedLocation.name;
         setErrorMsg(
           data.outOfRange
-            ? `Nothing within 25 miles of ${where} — the closest was about ${data.nearestMiles} mi out. Try a different location.`
+            ? `Nothing within ${data.maxRadiusMiles || 25} miles of ${where} — the closest was about ${data.nearestMiles} mi out. Try "Anywhere worth it" or a different ZIP.`
             : `No match found near ${where} — try a different craving.`
         );
         setResults([]);
@@ -816,6 +889,7 @@ function App() {
       } else {
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
+        setRadiusUsed(typeof data.radiusUsed === "number" ? data.radiusUsed : null);
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       }
     } catch (error) {
@@ -1088,20 +1162,38 @@ function App() {
 
         <div className="location-panel">
           {resolvedLocation ? (
-            <div className="location-set">
-              <span className="location-label">Searching near</span>
-              <span className="location-value">{resolvedLocation.name}</span>
-              <button
-                type="button"
-                className="link-btn location-change"
-                onClick={() => {
-                  setResolvedLocation(null);
-                  setLocationError("");
-                }}
-              >
-                Change
-              </button>
-            </div>
+            <>
+              <div className="location-set">
+                <span className="location-label">Searching near</span>
+                <span className="location-value">{resolvedLocation.name}</span>
+                <button
+                  type="button"
+                  className="link-btn location-change"
+                  onClick={() => {
+                    setResolvedLocation(null);
+                    setLocationError("");
+                    setRadiusUsed(null);
+                  }}
+                >
+                  Change
+                </button>
+              </div>
+
+              <div className="radius-modes" role="group" aria-label="How far to search">
+                {RADIUS_MODES.map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    className={radiusMode === mode.id ? "radius-btn radius-btn--active" : "radius-btn"}
+                    aria-pressed={radiusMode === mode.id}
+                    onClick={() => setRadiusMode(mode.id)}
+                  >
+                    <span className="radius-btn-label">{mode.label}</span>
+                    <span className="radius-btn-hint">{mode.hint}</span>
+                  </button>
+                ))}
+              </div>
+            </>
           ) : (
             <>
               <span className="location-prompt">Please enter your ZIP code to search</span>
@@ -1146,6 +1238,16 @@ function App() {
                 <span className="match-banner-tag">Your one</span>
                 {submittedQuery && <span className="match-banner-query">"{submittedQuery}"</span>}
               </div>
+
+              {/* Only shown when the search had to widen past the preset's
+                  first tier — so a result further out than expected always
+                  explains itself instead of just looking wrong. */}
+              {typeof radiusUsed === "number" && radiusUsed > RADIUS_FIRST_TIER[radiusMode] && (
+                <p className="radius-notice">
+                  Nothing close enough at {RADIUS_FIRST_TIER[radiusMode]} mi — widened to {radiusUsed} mi to
+                  find real options.
+                </p>
+              )}
 
               <div className="result-split">
                 <div className="result-pane result-pane--visual">

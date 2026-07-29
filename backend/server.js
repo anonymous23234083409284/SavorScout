@@ -73,7 +73,7 @@ const SHORTLIST_SIZE = 10;
 const CANDIDATE_POOL_SIZE = 20; // over-fetch, since the radius filter discards some
 const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
 const STAGE1_FINALIST_COUNT = 3; // was 5 — fewer parallel Exa calls means a shorter tail
-const DAILY_SEARCH_LIMIT = 9999; // unlimited for testing
+const DAILY_SEARCH_LIMIT = 5;
 const EARTH_RADIUS_MILES = 3958.8;
 const PROXIMITY_DECAY_MILES = 3;
 const MAX_QUERY_CHARS = 300;
@@ -455,6 +455,49 @@ function settleWithin(promises, ms) {
   );
 }
 
+// Scraped HTML loses word boundaries wherever a tag sat between two words:
+// "<span>most liked</span><h3>Kinya Ramen</h3>" collapses to
+// "most likedKinya Ramen". Re-inserting a space at a lowercase→uppercase
+// seam repairs it. The {3,} guard keeps real names intact — "McDonald" has a
+// one-letter lowercase run, so it is left alone.
+function repairWordBoundaries(text) {
+  return text.replace(/([a-z]{3,})([A-Z])/g, "$1 $2");
+}
+
+// Google's menu widget prefixes items with its own labels. These are page
+// furniture, not part of the dish name.
+const MENU_CHROME = /^(?:most liked|people also (?:like|order|search for)|popular(?:\s+(?:dishes?|items?))?|customers? (?:like|also order|recommend)|top (?:rated|picks?)|best sellers?|recommended|featured|menu)\s+/i;
+
+// Review pages open with a header, a date and a reviewer byline before the
+// actual review starts — "Reviews for Kinya Ramen & Bar 06/10/2025 - Vic S.
+// If you're looking for..." — all of which reads as garbage in a pull quote.
+const QUOTE_CHROME = [
+  /\d{1,2}\/\d{1,2}\/\d{2,4}/,                 // an embedded date
+  /^\s*(?:\d+\s+)?reviews?\s+(?:for|of|on)\b/i,  // "Reviews for X"
+  /^\s*\d+\s*(?:reviews?|ratings?)\b/i,          // "933 reviews"
+  /^\s*(?:rated|rating)\b/i,
+  /^\s*[-–—]\s*[A-Z][a-z]+\s+[A-Z]\.?\s*$/,      // a bare "- Vic S." byline
+];
+
+// Drops leading segments that are page furniture and starts the quote at the
+// first sentence that is actually someone talking. Always keeps the final
+// segment so this can never return an empty string.
+function stripQuoteChrome(text) {
+  const segments = text.match(/[^.!?]+[.!?]*/g);
+  if (!segments || segments.length < 2) return text;
+
+  let start = 0;
+  while (start < segments.length - 1) {
+    const seg = segments[start].trim();
+    const looksLikeChrome =
+      QUOTE_CHROME.some((re) => re.test(seg)) || seg.split(/\s+/).length < 5;
+    if (!looksLikeChrome) break;
+    start += 1;
+  }
+
+  return segments.slice(start).join("").trim();
+}
+
 // Exa highlights from a menu page come back as scraped markup: markdown
 // hashes, bullet glyphs, and long runs of prices. That reads as broken to a
 // user and destroys trust in the whole card. A highlight has to look like a
@@ -463,12 +506,14 @@ function settleWithin(promises, ms) {
 function cleanHighlight(raw) {
   if (typeof raw !== "string") return null;
 
-  const text = raw
-    .replace(/[#*_`>|]+/g, " ")
-    .replace(/\s*[·•]\s*/g, ", ")
-    .replace(/\.{2,}/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+  const text = repairWordBoundaries(
+    raw
+      .replace(/[#*_`>|]+/g, " ")
+      .replace(/\s*[·•]\s*/g, ", ")
+      .replace(/\.{2,}/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+  );
 
   if (text.length < 45) return null;
 
@@ -491,10 +536,12 @@ function cleanHighlight(raw) {
 function extractMenuItems(research, terms, limit = 2) {
   if (!research?.highlights?.length) return [];
 
-  const text = research.highlights
-    .join(" \n ")
-    .replace(/[#*_`|>]+/g, " ")
-    .replace(/\s+/g, " ");
+  const text = repairWordBoundaries(
+    research.highlights
+      .join(" \n ")
+      .replace(/[#*_`|>]+/g, " ")
+      .replace(/\s+/g, " ")
+  );
 
   const found = new Map();
   const pattern = /([A-Za-z][A-Za-z0-9'&().\/-]*(?:\s+[A-Za-z0-9'&().\/-]+){0,4})\s*[-–—:·.]{0,4}\s*\$\s?(\d{1,3}(?:\.\d{2})?)/g;
@@ -503,6 +550,7 @@ function extractMenuItems(research, terms, limit = 2) {
   while ((match = pattern.exec(text)) !== null) {
     let name = match[1]
       .replace(/^[\s.,\-–—·]+|[\s.,\-–—·]+$/g, "")
+      .replace(MENU_CHROME, "") // "most liked Kinya Ramen" → "Kinya Ramen"
       .replace(/^(?:and|or|the|with|add|plus|includes?|served|choice of)\s+/i, "")
       .trim();
 
@@ -530,6 +578,24 @@ function extractMenuItems(research, terms, limit = 2) {
     .map(({ name, price }) => ({ name, price }));
 }
 
+// Belt and braces for the prompt fix above: even with corrected
+// instructions the model will sometimes file a taste word as a "factor".
+// Anything on this list is about the FOOD, so it gets checked against menu
+// text with the dish instead of against atmosphere reviews — where it would
+// never appear and would score a misleading 0%.
+const TASTE_WORDS = /^(?:spicy|hot|mild|crispy|crunchy|fresh|authentic|greasy|sweet|savou?ry|salty|tangy|smoky|juicy|tender|creamy|rich|light|healthy|filling|cheesy|garlicky|traditional|homemade|fried|grilled|baked|raw|organic)$/i;
+
+function splitFactors(factors) {
+  const dishAttributes = [];
+  const atmosphere = [];
+  for (const raw of factors) {
+    const term = String(raw).trim();
+    if (!term) continue;
+    (TASTE_WORDS.test(term) ? dishAttributes : atmosphere).push(term);
+  }
+  return { dishAttributes, atmosphere };
+}
+
 // A review is a person talking, not a menu fragment. We surface a real one
 // when the research contains it — and return null rather than inventing a
 // quote when it doesn't.
@@ -541,7 +607,12 @@ function extractReview(research) {
     if (!cleaned) continue;
     if (!REVIEW_MARKERS.test(cleaned)) continue;
     if ((cleaned.match(/\$/g) || []).length > 1) continue; // still a price list
-    return cleaned;
+
+    const trimmed = stripQuoteChrome(cleaned);
+    // Re-check after trimming: if the only review-ish words lived in the
+    // header we just removed, this was never a real review.
+    if (trimmed.length < 45 || !REVIEW_MARKERS.test(trimmed)) continue;
+    return trimmed;
   }
   return null;
 }
@@ -669,8 +740,12 @@ async function requireAuthAndLimit(req, res, next) {
     // post-search write is an upsert.
     const currentCount = existing && existing.search_date === today ? existing.count : 0;
 
-    // Limit check disabled for testing.
-    // if (currentCount >= DAILY_SEARCH_LIMIT) { ... }
+    if (currentCount >= DAILY_SEARCH_LIMIT) {
+      return res.status(429).json({
+        error: `You've hit your ${DAILY_SEARCH_LIMIT} searches for today — come back tomorrow!`,
+        searchesRemaining: 0,
+      });
+    }
 
     req.userId = userId;
     req.currentSearchCount = currentCount;
@@ -767,7 +842,15 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
               // user set, never from a place mentioned in the craving text —
               // that would be a second, silent door around the ZIP gate.
               "'dietaryRestrictions' is an array of dietary needs mentioned (e.g. 'vegetarian', 'gluten-free'). " +
-              "'importantFactors' is an array of qualities the user cares about (e.g. 'crispy', 'quiet', 'good for groups'). " +
+              // FIX: 'crispy' used to be the example here, which taught the
+              // model to file taste words as atmosphere. "spicy ramen" then
+              // put "spicy" in this list, and we went looking for the word
+              // "spicy" in ATMOSPHERE reviews — which is why Vibe Match read
+              // 0%. Taste and preparation belong with the dish.
+              "'importantFactors' is ONLY about atmosphere, company and occasion — " +
+              "e.g. 'quiet', 'cozy', 'romantic', 'good for groups', 'family friendly', 'late night'. " +
+              "Words describing the FOOD itself (spicy, crispy, fresh, authentic, greasy, sweet) " +
+              "are NOT importantFactors — fold those into 'dish' instead. " +
               "Use empty strings/arrays for anything not mentioned. Do not include any other keys.",
           },
           { role: "user", content: userRequest },
@@ -1007,13 +1090,16 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // "quiet" or "good for groups" could never match — those words don't
     // appear on menus — and the miss silently dragged down conceptualScore,
     // which is 0.30 of the stage-2 composite.
-    const vibeTerms = (Array.isArray(preferences.importantFactors) ? preferences.importantFactors : [])
-      .filter(Boolean)
-      .map((t) => String(t).trim())
+    const rawFactors = (Array.isArray(preferences.importantFactors) ? preferences.importantFactors : [])
       .filter(Boolean);
+    const { dishAttributes, atmosphere: vibeTerms } = splitFactors(rawFactors);
     const wantsVibe = vibeTerms.length > 0;
 
-    const menuQueryParts = [preferences.dish, preferences.cuisine, ...allDietaryTerms].filter(Boolean);
+    if (dishAttributes.length > 0) {
+      console.log(`Reclassified taste words as dish attributes: ${dishAttributes.join(", ")}`);
+    }
+
+    const menuQueryParts = [preferences.dish, preferences.cuisine, ...dishAttributes, ...allDietaryTerms].filter(Boolean);
     const menuQuery =
       menuQueryParts.length > 0
         ? `${menuQueryParts.join(" ")} menu specialties price`
@@ -1045,7 +1131,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
     const settled = (results, i) => results[i] ?? null;
 
-    const dishTerms = [preferences.dish, preferences.cuisine].filter(Boolean);
+    const dishTerms = [preferences.dish, preferences.cuisine, ...dishAttributes].filter(Boolean);
 
     const finalistsWithResearch = finalists.map((c, i) => {
       const research = settled(menuResults, i);
@@ -1079,7 +1165,12 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         evidenceScore,
         conceptualScore,
         dishScore: dishMatch.score,
-        vibeScore: vibeMatch ? vibeMatch.score : null,
+        // A review that doesn't happen to use the word "quiet" is not
+        // evidence the place is loud — it's an absence of evidence. Scoring
+        // that as 0% put a hard zero on the card for something we never
+        // actually measured. Nothing matched → unknown → excluded, exactly
+        // as we already treat a missed Exa lookup.
+        vibeScore: vibeMatch && vibeMatch.matched.length > 0 ? vibeMatch.score : null,
         matchedFactors: vibeMatch ? vibeMatch.matched : [],
         matchedDietaryTerms: dietaryPreferenceTerms.length > 0 ? dietaryMatch.matched : [],
         matchedAllergyTerms: allergyTerms.length > 0 ? allergyMatch.matched : [],

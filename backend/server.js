@@ -100,12 +100,24 @@ const STAGE2_WEIGHTS = { base: 0.45, evidence: 0.25, conceptual: 0.3 };
 // Display weights — decide WHAT NUMBER THE USER SEES. Operate on absolute
 // 0-1 signals, so a mediocre winner in a weak pool reads as a mediocre
 // match instead of a guaranteed 100%.
-// `vibe` is null whenever the user didn't ask for one; weightedAbsolute
-// renormalizes over whatever is present, so its 0.10 redistributes instead
-// of scoring zero.
+// Any signal that is null gets EXCLUDED and its weight redistributed by
+// weightedAbsolute — that is the core of honest scoring here. Previously
+// unknowns were scored as zero, so a great restaurant with no website and a
+// timed-out Exa lookup read 60% for reasons that were entirely about our own
+// data gaps rather than the restaurant. Unknown is not the same as bad.
+//
+// `trust` (website + phone on file) is gone from the display entirely: it is
+// a useful ranking tiebreaker but no diner has ever cared whether a listing
+// was complete, and it was quietly capping good small restaurants.
 const DISPLAY_WEIGHTS = {
-  quality: 0.3, relevance: 0.2, proximity: 0.15, evidence: 0.1, budget: 0.08, trust: 0.07, vibe: 0.1,
+  relevance: 0.34, quality: 0.3, proximity: 0.2, evidence: 0.08, budget: 0.08, vibe: 0.1,
 };
+
+// Restaurant ratings realistically cluster between ~3.5 and ~4.8; almost
+// nothing sits at 3.0 or 5.0. Mapping 3.0→0 made a 4.4-star place — which is
+// genuinely very good — score 0.69.
+const QUALITY_FLOOR = 3.5;
+const QUALITY_CEILING = 4.8;
 
 // --- Geocoding -------------------------------------------------------------
 // There is none, deliberately. Location now enters this app exactly one way:
@@ -858,6 +870,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         return {
           place: p, rating, reviewCount, bayesianRating, distance, proximity,
           relevance, dataTrust, budgetMatch, matchedDish, matchedCuisine,
+          placePriceLevel, // retained so the card can distinguish "unknown" from "poor fit"
         };
       });
 
@@ -1080,16 +1093,32 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
     const ranked = finalistsWithResearch
       .map((c, i) => {
-        // Absolute 0-1 signals — independent of who else is in the pool.
-        // These are what the user sees.
+        // Absolute 0-1 signals — independent of who else is in the pool, and
+        // null wherever we genuinely do not know. Null is excluded from the
+        // average rather than counted as zero, so missing data no longer
+        // reads as a bad restaurant.
         const absolute = {
-          quality: clamp01((c.bayesianRating - 3) / 2), // 3.0★ → 0, 5.0★ → 1
+          // Scaled to the range restaurants actually occupy.
+          quality: c.rating !== null
+            ? clamp01((c.bayesianRating - QUALITY_FLOOR) / (QUALITY_CEILING - QUALITY_FLOOR))
+            : null, // unrated → unknown, not bad
+
           relevance: c.dishScore, // dish/cuisine vs menu text
-          vibe: c.vibeScore, // requested qualities vs reception text (null if none asked)
-          proximity: c.proximity,
-          trust: c.dataTrust,
-          budget: c.budgetMatch,
-          evidence: c.evidenceScore,
+
+          vibe: c.vibeScore, // null when no qualities were requested
+
+          // Being inside the radius the user CHOSE is a good outcome, not a
+          // compromise. exp(-3/3) scored a 3-mile restaurant at 37%, which
+          // is nonsense when the user asked for "Nearby" (5mi).
+          proximity: clamp01(1 - (c.distance / Math.max(radiusUsed, 1)) * 0.35),
+
+          // Only meaningful when we know BOTH what they wanted and what the
+          // place costs. Otherwise it was silently anchoring everyone to 0.5.
+          budget: userBudgetLevel != null && c.placePriceLevel != null ? c.budgetMatch : null,
+
+          // A missed Exa deadline is our latency budget, not a verdict on the
+          // restaurant. No research came back → we don't know → excluded.
+          evidence: c.research || c.reception ? c.evidenceScore : null,
         };
 
         const displayScore = weightedAbsolute(absolute, DISPLAY_WEIGHTS);
@@ -1149,15 +1178,20 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         matchedDish: winner.matchedDish,
         matchedCuisine: winner.matchedCuisine,
         matchScore: winner.matchScore,
-        scoreBreakdown: {
-          quality: Math.round(winner.absolute.quality * 100),
-          relevance: Math.round(winner.absolute.relevance * 100),
-          vibe: winner.absolute.vibe != null ? Math.round(winner.absolute.vibe * 100) : null,
-          proximity: Math.round(winner.absolute.proximity * 100),
-          trust: Math.round(winner.absolute.trust * 100),
-          evidence: Math.round(winner.absolute.evidence * 100),
-          budget: userBudgetLevel != null ? Math.round(winner.absolute.budget * 100) : null,
-        },
+        // Mirrors the nulls above: MiniMetric skips any non-number, so a
+        // signal we couldn't measure is simply absent from the breakdown
+        // instead of rendering a misleading 0%.
+        scoreBreakdown: (() => {
+          const pct = (v) => (typeof v === "number" ? Math.round(v * 100) : null);
+          return {
+            relevance: pct(winner.absolute.relevance),
+            quality: pct(winner.absolute.quality),
+            proximity: pct(winner.absolute.proximity),
+            vibe: pct(winner.absolute.vibe),
+            evidence: pct(winner.absolute.evidence),
+            budget: pct(winner.absolute.budget),
+          };
+        })(),
         evidence: (() => {
           const quote = pickQuote(winner.research);
           return quote

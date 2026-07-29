@@ -52,7 +52,9 @@ function buildChips(restaurant) {
     chips.push(`Well reviewed — ${restaurant.reviewCount.toLocaleString()} ratings`);
   }
 
-  if (sb.proximity >= 65 && typeof restaurant.distanceMiles === "number") {
+  // Under the old exp-decay scale this threshold was near-unreachable (a
+  // 3-mile restaurant scored 37). It now means what it says.
+  if (sb.proximity >= 75 && typeof restaurant.distanceMiles === "number") {
     chips.push(`Close by — ${restaurant.distanceMiles} mi`);
   }
 
@@ -241,14 +243,18 @@ function EvidenceSection({ evidence, reception, review, menuItems, rating, match
 // row reading "DISTANCE 0%" undercuts the verdict it is supposed to
 // support, so the numbers move behind a toggle for people who want them,
 // and only metrics that carry real information are listed.
+// `trust` (website/phone on file) was dropped from the card: it's a useful
+// ranking tiebreaker but not something a diner cares about, and it quietly
+// capped good small restaurants that don't have a website.
+// Any metric the backend couldn't measure arrives as null, and MiniMetric
+// skips non-numbers — so an unmeasured signal is absent rather than 0%.
 const METRIC_LABELS = {
   relevance: "Dish match",
-  vibe: "Vibe match",
   quality: "Ratings",
   proximity: "Distance",
+  vibe: "Vibe match",
   evidence: "Evidence",
   budget: "Price fit",
-  trust: "Listing quality",
 };
 
 // The map was ~200px of always-on height that most people never look at.

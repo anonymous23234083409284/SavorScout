@@ -903,6 +903,9 @@ async function touchStreak(userId, state) {
   }
 
   const longest = Math.max(state.longest_streak || 0, streak);
+  const milestone = milestoneFor(streak);
+  if (milestone) freezes += milestone.freezes;
+
   const patch = {
     streak_days: streak,
     longest_streak: longest,
@@ -910,8 +913,16 @@ async function touchStreak(userId, state) {
     last_active_date: today,
     updated_at: new Date().toISOString(),
   };
+
+  // Milestone XP is applied in the same write rather than through awardXp,
+  // so a milestone can't race the caller's own XP award and lose one of them.
+  if (milestone) {
+    patch.xp = (state.xp || 0) + milestone.xp;
+    console.log(`Milestone: ${milestone.label} (${streak} days) → +${milestone.xp} XP, +${milestone.freezes} freeze`);
+  }
+
   await supabaseAdmin.from("game_state").update(patch).eq("user_id", userId);
-  return { state: { ...state, ...patch }, streakAdvanced: true, freezeUsed };
+  return { state: { ...state, ...patch }, streakAdvanced: true, freezeUsed, milestone };
 }
 
 async function awardXp(userId, amount, reason) {
@@ -929,6 +940,51 @@ async function awardXp(userId, amount, reason) {
   console.log(`XP +${amount} (${reason}) → ${xp}, Lv${after.level} ${after.rank}`);
 
   return { xp, gained: amount, leveledUp: after.level > before.level, level: after };
+}
+
+// --- Daily quest -----------------------------------------------------------
+// Directed data collection dressed as a game. We choose what gets asked, so
+// a quest is really "go label the thing our engine is currently worst at" —
+// and the user experiences it as a target, not a survey.
+
+const QUESTS = [
+  { id: "new_cuisine", label: "Search a cuisine you haven't tried", xp: 200, check: "cuisine" },
+  { id: "budget",      label: "Find something good under $15",      xp: 200, check: "budget" },
+  { id: "rate_one",    label: "Tell us if one of our picks landed", xp: 200, check: "rating" },
+  { id: "duel_sweep",  label: "Finish all five duels",              xp: 200, check: "duels" },
+  { id: "explore",     label: "Search somewhere further than usual", xp: 200, check: "distance" },
+];
+
+// Deterministic per user per day: everyone gets a stable quest they can't
+// reroll, which keeps it feeling like a fixture rather than a slot machine.
+function questForToday(userId) {
+  const seed = `${userId}:${todayStr()}`;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  return QUESTS[hash % QUESTS.length];
+}
+
+// --- Streak milestones -----------------------------------------------------
+// Rewards at intervals long enough to mean something. Each grants a freeze,
+// so the longer the streak the more forgiving the system becomes — the
+// opposite of the usual design, where a long streak makes one bad day
+// catastrophic and drives people to quit outright.
+
+const MILESTONES = [
+  { days: 3,   label: "Three days",   xp: 100,  freezes: 0 },
+  { days: 7,   label: "One week",     xp: 300,  freezes: 1 },
+  { days: 14,  label: "Two weeks",    xp: 600,  freezes: 1 },
+  { days: 30,  label: "One month",    xp: 1500, freezes: 2 },
+  { days: 60,  label: "Two months",   xp: 3000, freezes: 2 },
+  { days: 100, label: "One hundred",  xp: 6000, freezes: 3 },
+];
+
+function milestoneFor(days) {
+  return MILESTONES.find((m) => m.days === days) || null;
+}
+
+function nextMilestone(days) {
+  return MILESTONES.find((m) => m.days > days) || null;
 }
 
 // --- Place pool ------------------------------------------------------------
@@ -1027,6 +1083,32 @@ function buildDuelPair(pool, axis, used) {
     }
   }
   return null;
+}
+
+// A brand-new area has no cached places, so a first-time user would meet an
+// empty Today tab — the worst possible first impression for a daily habit.
+// One Serper call seeds it, then every subsequent search keeps it stocked
+// for free.
+async function seedPlacePool(zip, area) {
+  if (!zip) return 0;
+  try {
+    const response = await http.post(
+      "https://google.serper.dev/places",
+      { q: `popular restaurants near ${zip}`, gl: "us", num: 20 },
+      {
+        headers: { "X-API-KEY": process.env.SERPER_API_KEY, "Content-Type": "application/json" },
+        timeout: SERPER_TIMEOUT_MS,
+      }
+    );
+    const places = response.data.places || [];
+    if (places.length === 0) return 0;
+    await stockPlacePool(places, area);
+    console.log(`Seeded ${places.length} places into pool area ${area}.`);
+    return places.length;
+  } catch (err) {
+    console.error("pool seed failed:", err.response?.data || err.message);
+    return 0;
+  }
 }
 
 async function generateDuels(userId, area) {
@@ -1311,6 +1393,9 @@ app.get("/game/state", requireAuth, async (req, res) => {
       },
       duelsToday: state.duels_date === today ? state.duels_today : 0,
       duelsPerDay: DUELS_PER_DAY,
+      quest: questForToday(req.userId),
+      nextMilestone: nextMilestone(state.streak_days),
+      milestones: MILESTONES.map((m) => ({ ...m, reached: state.longest_streak >= m.days })),
     });
   } catch (err) {
     console.error("game state error:", err.message);
@@ -1320,7 +1405,8 @@ app.get("/game/state", requireAuth, async (req, res) => {
 
 app.get("/duels/today", requireAuth, async (req, res) => {
   try {
-    const area = zipArea(req.query.zip);
+    const zip = String(req.query.zip || "").trim();
+    const area = zipArea(zip);
     const today = todayStr();
 
     const { data: existing } = await supabaseAdmin
@@ -1331,7 +1417,17 @@ app.get("/duels/today", requireAuth, async (req, res) => {
       .order("created_at", { ascending: true });
 
     let duels = existing || [];
-    if (duels.length === 0) duels = await generateDuels(req.userId, area);
+
+    if (duels.length === 0) {
+      duels = await generateDuels(req.userId, area);
+
+      // Nothing cached for this area yet — seed it once and retry, so a new
+      // user gets duels immediately rather than an empty tab.
+      if (duels.length === 0 && zip) {
+        const seeded = await seedPlacePool(zip, area);
+        if (seeded > 0) duels = await generateDuels(req.userId, area);
+      }
+    }
 
     return res.json({
       duels: duels.filter((d) => !d.chosen),
@@ -2166,7 +2262,9 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
     // Every search quietly stocks the duel pool, so the daily game costs no
     // extra Serper calls and gets richer the more the area is searched.
-    stockPlacePool(candidates, zipArea(req.body.locationHint)).catch(() => {});
+    // BUG FIX: this used locationHint (a place NAME), so the pool was keyed
+    // "Hic" while duels asked for "118". Use the actual ZIP the client sends.
+    stockPlacePool(candidates, zipArea(req.body.zip || "")).catch(() => {});
 
     // Search XP decays through the day (40/25/15/5/0) so grinding converges
     // to zero. The bare-search rate is deliberately low — an unengaged

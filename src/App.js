@@ -627,6 +627,51 @@ function TasteVector({ vector }) {
   );
 }
 
+// Directed data collection, experienced as a target. Deterministic per day
+// so it can't be rerolled — a fixture, not a slot machine.
+function QuestCard({ quest, onGoFind }) {
+  if (!quest) return null;
+  return (
+    <section className="panel panel--quest">
+      <div className="panel-head">
+        <h2 className="panel-title">Today's quest</h2>
+        <span className="panel-sub"><span className="xp-tag">+{quest.xp} XP</span></span>
+      </div>
+      <p className="quest-label">{quest.label}</p>
+      <button className="cta cta--ghost" onClick={onGoFind}>Go do it →</button>
+    </section>
+  );
+}
+
+// Milestones grant freezes, so the longer the streak the MORE forgiving the
+// system gets. That's deliberately backwards from the usual design, where a
+// long streak makes one bad day catastrophic and pushes people to quit
+// rather than rebuild.
+function StreakLadder({ milestones, next, current }) {
+  if (!milestones?.length) return null;
+  return (
+    <section className="panel">
+      <div className="panel-head">
+        <h2 className="panel-title">Streak</h2>
+        <span className="panel-sub">
+          {next ? `${next.days - current} day${next.days - current === 1 ? "" : "s"} to ${next.label}` : "All reached"}
+        </span>
+      </div>
+      <div className="milestones">
+        {milestones.map((m) => (
+          <div className={`milestone${m.reached ? " milestone--hit" : ""}`} key={m.days}>
+            <span className="milestone-days">{m.days}</span>
+            <span className="milestone-label">{m.label}</span>
+            <span className="milestone-reward">
+              +{m.xp.toLocaleString()} XP{m.freezes > 0 ? ` · ${m.freezes} freeze` : ""}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function UnlockLadder({ unlocks, level }) {
   if (!unlocks) return null;
   return (
@@ -1175,7 +1220,12 @@ function App() {
         return;
       }
 
-      setResolvedLocation(result.location);
+      // BUG FIX: the ZIP itself has to travel with the location. The server
+      // was slicing the place NAME ("Hicksville, New York" → "Hic") to key
+      // the duel pool, while the client asked for the real ZIP ("11801" →
+      // "118"). They never matched, so the pool always looked empty and
+      // duels never appeared.
+      setResolvedLocation({ ...result.location, zip });
       setLocationInput("");
       localStorage_setZip(zip);
       // A newly-set area may have duels waiting that we couldn't build before.
@@ -1218,10 +1268,10 @@ function App() {
   }, [authedFetch]);
 
   const refreshDuels = useCallback(async () => {
-    const zip = localStorage_getZip();
+    const zip = resolvedLocation?.zip || localStorage_getZip();
     const data = await authedFetch(`/duels/today?zip=${encodeURIComponent(zip)}`);
     if (data) setDuelState(data);
-  }, [authedFetch]);
+  }, [authedFetch, resolvedLocation]);
 
   const answerDuel = async (id, chosen) => {
     if (duelBusy) return;
@@ -1355,6 +1405,7 @@ function App() {
           lat: resolved.lat,
           lng: resolved.lng,
           locationHint,
+          zip: resolved.zip || localStorage_getZip(),
           radiusMode,
         }),
         signal: controller.signal,
@@ -1692,6 +1743,8 @@ function App() {
             onGoFind={() => setTab("find")}
           />
 
+          <QuestCard quest={game?.quest} onGoFind={() => setTab("find")} />
+
           {pendingVerdicts.length > 0 && (
             <section className="panel">
               <div className="panel-head">
@@ -1730,6 +1783,12 @@ function App() {
             </div>
             <TasteVector vector={taste?.vector} />
           </section>
+
+          <StreakLadder
+            milestones={game?.milestones}
+            next={game?.nextMilestone}
+            current={game?.streak?.days ?? 0}
+          />
 
           <section className="panel">
             <div className="panel-head">

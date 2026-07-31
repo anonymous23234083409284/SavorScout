@@ -655,6 +655,508 @@ function computeConceptualRelevance(combinedText, terms) {
   return { score: matched.length / meaningful.length, matched };
 }
 
+// --- Verdict loop ----------------------------------------------------------
+// SavorScout is the only app in this category that makes a falsifiable
+// prediction ("86% match"). An ungraded prediction is an open loop, and an
+// open loop is a reason to come back that has nothing to do with being
+// hungry. Every verdict is recorded automatically — the user does no work
+// until they choose to answer.
+
+const OUTCOME_SCORE = { better: 1, expected: 0.6, worse: 0 };
+
+// Enough answers that a pattern isn't just noise. Below these thresholds the
+// profile stays empty rather than inventing a preference from two data
+// points — a wrong "we've learned you like X" is worse than saying nothing.
+const MIN_SAMPLES_PER_CATEGORY = 2;
+const MIN_SAMPLES_FOR_PRICE = 3;
+const TASTE_ADJUSTMENT_CAP = 0.12; // ±12% on the stage-1 composite, no more
+
+async function recordVerdict(userId, winner, meta) {
+  const { error } = await supabaseAdmin.from("verdicts").insert({
+    user_id: userId,
+    place_id: winner.place.placeId || winner.place.cid || null,
+    name: winner.place.title,
+    address: winner.place.address || null,
+    category: winner.place.type || null,
+    lat: winner.place.latitude ?? null,
+    lng: winner.place.longitude ?? null,
+    query: meta.query,
+    location_name: meta.locationName,
+    match_score: meta.matchScore,
+    price_level: winner.placePriceLevel ?? null,
+    rating: winner.rating ?? null,
+    review_count: winner.reviewCount ?? null,
+    distance_mi: Math.round(winner.distance * 10) / 10,
+  });
+  if (error) console.error("verdict insert failed:", error.message);
+}
+
+// Derives what this person actually likes from what they RATED, not from
+// what they told us at onboarding. Stated preferences and revealed
+// preferences diverge constantly.
+async function loadTasteProfile(userId) {
+  const empty = { likedCategories: [], dislikedCategories: [], preferredPriceLevel: null, sampleSize: 0 };
+
+  const { data, error } = await supabaseAdmin
+    .from("verdicts")
+    .select("outcome, price_level, category")
+    .eq("user_id", userId)
+    .eq("visited", true)
+    .not("outcome", "is", null)
+    .order("responded_at", { ascending: false })
+    .limit(60);
+
+  if (error || !data || data.length === 0) return empty;
+
+  const byCategory = new Map();
+  let priceSum = 0;
+  let priceWeight = 0;
+
+  for (const row of data) {
+    const score = OUTCOME_SCORE[row.outcome];
+    if (typeof score !== "number") continue;
+
+    if (row.category) {
+      const bucket = byCategory.get(row.category) || { sum: 0, n: 0 };
+      bucket.sum += score;
+      bucket.n += 1;
+      byCategory.set(row.category, bucket);
+    }
+
+    // Only places they actually liked inform the price preference.
+    if (row.price_level != null && score >= 0.6) {
+      priceSum += row.price_level * score;
+      priceWeight += score;
+    }
+  }
+
+  const likedCategories = [];
+  const dislikedCategories = [];
+  for (const [category, { sum, n }] of byCategory) {
+    if (n < MIN_SAMPLES_PER_CATEGORY) continue;
+    const avg = sum / n;
+    if (avg >= 0.7) likedCategories.push(category);
+    else if (avg <= 0.3) dislikedCategories.push(category);
+  }
+
+  return {
+    likedCategories,
+    dislikedCategories,
+    preferredPriceLevel: priceWeight >= MIN_SAMPLES_FOR_PRICE ? priceSum / priceWeight : null,
+    sampleSize: data.length,
+  };
+}
+
+// A deliberately small nudge. The engine's job is still to find the best
+// match; this only breaks ties toward what this person has actually enjoyed.
+function tasteMultiplier(candidate, profile) {
+  if (!profile || profile.sampleSize === 0) return 1;
+
+  let adjustment = 0;
+  const category = candidate.place.type;
+
+  if (category && profile.likedCategories.includes(category)) adjustment += TASTE_ADJUSTMENT_CAP;
+  if (category && profile.dislikedCategories.includes(category)) adjustment -= TASTE_ADJUSTMENT_CAP;
+
+  if (profile.preferredPriceLevel != null && candidate.placePriceLevel != null) {
+    const gap = Math.abs(candidate.placePriceLevel - profile.preferredPriceLevel);
+    adjustment += (1 - Math.min(gap, 2) / 2) * (TASTE_ADJUSTMENT_CAP / 2) - TASTE_ADJUSTMENT_CAP / 4;
+  }
+
+  return 1 + Math.max(-TASTE_ADJUSTMENT_CAP, Math.min(TASTE_ADJUSTMENT_CAP, adjustment));
+}
+
+// ===========================================================================
+// GAME ENGINE
+//
+// Two rules shape everything below.
+//
+// 1. The streak runs on DUELS, not searches. Nobody eats out daily, so a
+//    search streak either breaks (churn) or gets faked (poisoned data). A
+//    pairwise choice is doable every day and is the highest-value signal we
+//    can collect.
+//
+// 2. XP is priced by DATA VALUE, not effort. A rated verdict pays 100 and a
+//    bare search pays 5, because one grades our engine and the other is a
+//    log line. That pricing is also the anti-farming mechanism: farming
+//    isn't forbidden, it's just not worth the time.
+// ===========================================================================
+
+const XP = {
+  DUEL: 10,
+  DUEL_SET_BONUS: 25,       // finishing all 5
+  STREAK_DAY: 25,
+  SEARCH_ENGAGED: 40,       // searched AND interacted with the verdict
+  SEARCH_BARE: 5,           // searched, did nothing — priced like the log line it is
+  VERDICT_ACTION: 75,       // clicked Directions/Site — our visit proxy
+  VERDICT_RATED: 100,       // told us if we were right — the most valuable thing
+  NEW_CUISINE: 150,
+};
+
+// Search XP decays within a day so grinding converges to zero.
+const SEARCH_XP_DECAY = [40, 25, 15, 5, 0];
+
+const DUELS_PER_DAY = 5;
+
+// Rank names chosen to read as competence, not cuteness. "Taster" and
+// "Connoisseur" belong on an adult product; "Food Ninja" does not.
+const LEVELS = [
+  { level: 1,  xp: 0,      rank: "Newcomer" },
+  { level: 2,  xp: 600,    rank: "Taster" },
+  { level: 3,  xp: 1800,   rank: "Scout" },
+  { level: 4,  xp: 3200,   rank: "Scout" },
+  { level: 5,  xp: 4500,   rank: "Regular" },
+  { level: 6,  xp: 7000,   rank: "Regular" },
+  { level: 7,  xp: 9000,   rank: "Regular" },
+  { level: 8,  xp: 11000,  rank: "Local" },
+  { level: 9,  xp: 14000,  rank: "Local" },
+  { level: 10, xp: 17000,  rank: "Explorer" },
+  { level: 11, xp: 21000,  rank: "Explorer" },
+  { level: 12, xp: 25000,  rank: "Connoisseur" },
+  { level: 13, xp: 30000,  rank: "Connoisseur" },
+  { level: 14, xp: 36000,  rank: "Connoisseur" },
+  { level: 15, xp: 45000,  rank: "Tastemaker" },
+  { level: 16, xp: 55000,  rank: "Tastemaker" },
+  { level: 17, xp: 65000,  rank: "Authority" },
+  { level: 18, xp: 80000,  rank: "Authority" },
+  { level: 19, xp: 100000, rank: "Legend" },
+  { level: 20, xp: 125000, rank: "Legend" },
+];
+
+// Unlocks are features that genuinely can't work until the data exists —
+// not existing features taken away to manufacture progression. Nothing that
+// works at Lv1 is ever removed.
+const UNLOCKS = [
+  { level: 3,  key: "hidden_gems",  label: "Hidden Gems mode",     note: "needs taste signal to filter well" },
+  { level: 5,  key: "streak_freeze", label: "Streak freeze",       note: "one missed day forgiven" },
+  { level: 8,  key: "collection",   label: "Collection",           note: "needs visit history to exist" },
+  { level: 10, key: "passport",     label: "Cuisine Passport",     note: "needs breadth" },
+  { level: 12, key: "proactive",    label: "\u201cYou\u2019d love this\u201d picks", note: "needs ~15 rated visits" },
+  { level: 16, key: "group",        label: "Group Decide",         note: "social" },
+];
+
+function levelForXp(xp) {
+  let current = LEVELS[0];
+  for (const tier of LEVELS) if (xp >= tier.xp) current = tier;
+  const next = LEVELS.find((t) => t.xp > xp) || null;
+  const span = next ? next.xp - current.xp : 1;
+  const into = next ? xp - current.xp : 1;
+  return {
+    level: current.level,
+    rank: current.rank,
+    xpIntoLevel: into,
+    xpForLevel: span,
+    xpToNext: next ? next.xp - xp : 0,
+    nextRank: next ? next.rank : null,
+    progress: next ? Math.min(1, into / span) : 1,
+  };
+}
+
+function unlocksFor(level) {
+  return UNLOCKS.map((u) => ({ ...u, unlocked: level >= u.level }));
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function daysBetween(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+async function loadGameState(userId) {
+  const { data, error } = await supabaseAdmin
+    .from("game_state")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) console.error("game_state read error:", error.message);
+  if (data) return data;
+
+  const fresh = { user_id: userId, xp: 0, streak_days: 0, longest_streak: 0 };
+  await supabaseAdmin.from("game_state").insert(fresh);
+  return { ...fresh, last_active_date: null, streak_freezes: 0, duels_today: 0, duels_date: null, searches_today: 0, searches_date: null };
+}
+
+// Streak advances on any qualifying action. A freeze absorbs exactly one
+// missed day — deliberately forgiving, because punishing a missed day is the
+// mechanic that makes these systems feel hostile.
+async function touchStreak(userId, state) {
+  const today = todayStr();
+  if (state.last_active_date === today) return { state, streakAdvanced: false, freezeUsed: false };
+
+  let streak = state.streak_days;
+  let freezes = state.streak_freezes;
+  let freezeUsed = false;
+
+  if (!state.last_active_date) {
+    streak = 1;
+  } else {
+    const gap = daysBetween(state.last_active_date, today);
+    if (gap === 1) streak += 1;
+    else if (gap === 2 && freezes > 0) {
+      streak += 1;
+      freezes -= 1;
+      freezeUsed = true;
+    } else streak = 1;
+  }
+
+  const longest = Math.max(state.longest_streak || 0, streak);
+  const patch = {
+    streak_days: streak,
+    longest_streak: longest,
+    streak_freezes: freezes,
+    last_active_date: today,
+    updated_at: new Date().toISOString(),
+  };
+  await supabaseAdmin.from("game_state").update(patch).eq("user_id", userId);
+  return { state: { ...state, ...patch }, streakAdvanced: true, freezeUsed };
+}
+
+async function awardXp(userId, amount, reason) {
+  if (!amount) return null;
+  const state = await loadGameState(userId);
+  const before = levelForXp(state.xp);
+  const xp = state.xp + amount;
+  const after = levelForXp(xp);
+
+  const patch = { xp, updated_at: new Date().toISOString() };
+  // Reaching Lv5 grants the freeze that makes a missed day survivable.
+  if (before.level < 5 && after.level >= 5) patch.streak_freezes = (state.streak_freezes || 0) + 1;
+
+  await supabaseAdmin.from("game_state").update(patch).eq("user_id", userId);
+  console.log(`XP +${amount} (${reason}) → ${xp}, Lv${after.level} ${after.rank}`);
+
+  return { xp, gained: amount, leveledUp: after.level > before.level, level: after };
+}
+
+// --- Place pool ------------------------------------------------------------
+// Every search quietly stocks the pool, so duels cost no extra Serper calls.
+
+function zipArea(zip) {
+  return String(zip || "").slice(0, 3) || "000";
+}
+
+async function stockPlacePool(places, area) {
+  const rows = places
+    .filter((p) => (p.placeId || p.cid) && p.title)
+    .map((p) => ({
+      place_id: p.placeId || p.cid,
+      zip_area: area,
+      name: p.title,
+      category: p.type || null,
+      lat: p.latitude ?? null,
+      lng: p.longitude ?? null,
+      rating: typeof p.rating === "number" ? p.rating : null,
+      review_count: p.ratingCount || null,
+      price_level: derivePlacePriceLevel(p),
+      thumbnail: p.thumbnailUrl || p.thumbnail || null,
+      address: p.address || null,
+      last_seen: new Date().toISOString(),
+    }));
+
+  if (rows.length === 0) return;
+  const { error } = await supabaseAdmin.from("place_pool").upsert(rows, { onConflict: "place_id" });
+  if (error) console.error("place_pool upsert error:", error.message);
+}
+
+// --- Duel pairing ----------------------------------------------------------
+// The whole value of a duel is in the pairing. Two places that differ on
+// EVERYTHING teach us nothing — the choice is unattributable. Two that differ
+// on exactly ONE axis measure that axis precisely. So each pair is built to
+// isolate a single variable, and the five daily duels rotate through the
+// axes to produce a complete preference vector rather than five samples of
+// the same thing.
+
+const DUEL_AXES = ["price", "rating", "distance", "cuisine", "popularity"];
+
+function similar(a, b, key, tolerance) {
+  if (a[key] == null || b[key] == null) return false;
+  return Math.abs(a[key] - b[key]) <= tolerance;
+}
+
+function buildDuelPair(pool, axis, used) {
+  const available = pool.filter((p) => !used.has(p.place_id));
+
+  for (let i = 0; i < available.length; i += 1) {
+    for (let j = i + 1; j < available.length; j += 1) {
+      const a = available[i];
+      const b = available[j];
+
+      if (axis === "price") {
+        // Same cuisine, comparable quality, different price → measures
+        // price sensitivity in isolation.
+        if (a.category && a.category === b.category &&
+            similar(a, b, "rating", 0.3) &&
+            a.price_level != null && b.price_level != null &&
+            Math.abs(a.price_level - b.price_level) >= 1) return [a, b];
+      }
+
+      if (axis === "rating") {
+        if (a.category && a.category === b.category &&
+            a.price_level === b.price_level &&
+            a.rating != null && b.rating != null &&
+            Math.abs(a.rating - b.rating) >= 0.4) return [a, b];
+      }
+
+      if (axis === "distance") {
+        if (similar(a, b, "rating", 0.3) && a.price_level === b.price_level &&
+            a.lat != null && b.lat != null) return [a, b];
+      }
+
+      if (axis === "cuisine") {
+        // Both good, similar price, different food → measures cuisine
+        // affinity alone. Price MUST be held constant here: a $ vs $$$ pair
+        // measures budget, not taste, and would quietly corrupt the cuisine
+        // signal with price sensitivity.
+        if (a.category && b.category && a.category !== b.category &&
+            similar(a, b, "rating", 0.3) &&
+            a.price_level != null && b.price_level != null &&
+            a.price_level === b.price_level) return [a, b];
+      }
+
+      if (axis === "popularity") {
+        // Hidden gem vs crowd favourite — the "do you trust the crowd or
+        // your own nose" axis, which is genuinely predictive.
+        if (a.review_count != null && b.review_count != null &&
+            similar(a, b, "rating", 0.3) &&
+            Math.min(a.review_count, b.review_count) < 150 &&
+            Math.max(a.review_count, b.review_count) > 600) return [a, b];
+      }
+    }
+  }
+  return null;
+}
+
+async function generateDuels(userId, area) {
+  const { data: pool, error } = await supabaseAdmin
+    .from("place_pool")
+    .select("*")
+    .eq("zip_area", area)
+    .order("last_seen", { ascending: false })
+    .limit(120);
+
+  if (error) {
+    console.error("place_pool read error:", error.message);
+    return [];
+  }
+  if (!pool || pool.length < 4) return []; // not enough local data yet
+
+  const used = new Set();
+  const pairs = [];
+
+  for (const axis of DUEL_AXES) {
+    const pair = buildDuelPair(pool, axis, used);
+    if (!pair) continue;
+    used.add(pair[0].place_id);
+    used.add(pair[1].place_id);
+    pairs.push({ axis, left: pair[0], right: pair[1] });
+    if (pairs.length >= DUELS_PER_DAY) break;
+  }
+
+  // Backfill with random pairs only if the structured pairing came up short.
+  // These are weaker data, but an empty duel screen is worse than weak data.
+  while (pairs.length < DUELS_PER_DAY) {
+    const remaining = pool.filter((p) => !used.has(p.place_id));
+    if (remaining.length < 2) break;
+    const a = remaining[Math.floor(Math.random() * remaining.length)];
+    const b = remaining.find((p) => p.place_id !== a.place_id);
+    if (!b) break;
+    used.add(a.place_id);
+    used.add(b.place_id);
+    pairs.push({ axis: "open", left: a, right: b });
+  }
+
+  if (pairs.length === 0) return [];
+
+  const rows = pairs.map((p) => ({
+    user_id: userId,
+    duel_date: todayStr(),
+    axis: p.axis,
+    left_place: p.left,
+    right_place: p.right,
+  }));
+
+  const { data: inserted, error: insertError } = await supabaseAdmin
+    .from("duels")
+    .insert(rows)
+    .select("id, axis, left_place, right_place, chosen");
+
+  if (insertError) {
+    console.error("duel insert error:", insertError.message);
+    return [];
+  }
+  return inserted || [];
+}
+
+// --- Preference vector -----------------------------------------------------
+// What the duels actually buy us: a readable statement of how this person
+// trades one thing off against another.
+
+async function loadPreferenceVector(userId) {
+  const { data, error } = await supabaseAdmin
+    .from("duels")
+    .select("axis, chosen, left_place, right_place")
+    .eq("user_id", userId)
+    .not("chosen", "is", null)
+    .neq("chosen", "skip")
+    .order("answered_at", { ascending: false })
+    .limit(200);
+
+  if (error || !data || data.length === 0) {
+    return { sampleSize: 0, priceSensitivity: null, crowdTrust: null, distanceTolerance: null, cuisineAffinity: [] };
+  }
+
+  let cheaperWins = 0, pricePairs = 0;
+  let popularWins = 0, popPairs = 0;
+  let closerWins = 0, distPairs = 0;
+  const cuisineScore = new Map();
+
+  for (const d of data) {
+    const picked = d.chosen === "left" ? d.left_place : d.right_place;
+    const other  = d.chosen === "left" ? d.right_place : d.left_place;
+    if (!picked || !other) continue;
+
+    if (d.axis === "price" && picked.price_level != null && other.price_level != null) {
+      pricePairs += 1;
+      if (picked.price_level < other.price_level) cheaperWins += 1;
+    }
+    if (d.axis === "popularity" && picked.review_count != null && other.review_count != null) {
+      popPairs += 1;
+      if (picked.review_count > other.review_count) popularWins += 1;
+    }
+    if (d.axis === "distance" && picked.lat != null && other.lat != null) {
+      distPairs += 1;
+    }
+    if (picked.category) {
+      const b = cuisineScore.get(picked.category) || { w: 0, n: 0 };
+      b.w += 1; b.n += 1;
+      cuisineScore.set(picked.category, b);
+    }
+    if (other.category) {
+      const b = cuisineScore.get(other.category) || { w: 0, n: 0 };
+      b.n += 1;
+      cuisineScore.set(other.category, b);
+    }
+  }
+
+  const cuisineAffinity = Array.from(cuisineScore.entries())
+    .filter(([, b]) => b.n >= 3)
+    .map(([cuisine, b]) => ({ cuisine, winRate: b.w / b.n, n: b.n }))
+    .sort((a, b) => b.winRate - a.winRate);
+
+  return {
+    sampleSize: data.length,
+    // Only reported once there's enough to mean something — a "you're
+    // price-sensitive" claim off two duels is worse than saying nothing.
+    priceSensitivity: pricePairs >= 3 ? cheaperWins / pricePairs : null,
+    crowdTrust: popPairs >= 3 ? popularWins / popPairs : null,
+    distanceTolerance: distPairs >= 3 ? closerWins / distPairs : null,
+    cuisineAffinity: cuisineAffinity.slice(0, 6),
+  };
+}
+
 // --- Serper image search (winner only) -------------------------------------
 
 async function fetchWinnerImage(name, address) {
@@ -764,6 +1266,318 @@ async function recordSearch(userId, searchDate, newCount) {
   if (error) console.error("Failed to update search count:", error);
 }
 
+// Auth without the search-limit side effects: answering "did you go?" must
+// never cost someone one of their five searches.
+async function requireAuth(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Missing auth token — please sign in." });
+    }
+    const token = authHeader.slice("Bearer ".length).trim();
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !data?.user) {
+      return res.status(401).json({ error: "Invalid or expired session — please sign in again." });
+    }
+    req.userId = data.user.id;
+    next();
+  } catch (err) {
+    console.error("requireAuth error:", err.message);
+    return res.status(500).json({ error: "Failed to verify your session" });
+  }
+}
+
+// Verdicts old enough that they've had a chance to actually go. Asking
+// "did you go?" ten minutes after the search is annoying and useless.
+const VERDICT_ASK_DELAY_HOURS = 4;
+
+// --- Game endpoints --------------------------------------------------------
+
+app.get("/game/state", requireAuth, async (req, res) => {
+  try {
+    const state = await loadGameState(req.userId);
+    const level = levelForXp(state.xp);
+    const today = todayStr();
+
+    return res.json({
+      xp: state.xp,
+      level,
+      unlocks: unlocksFor(level.level),
+      streak: {
+        days: state.streak_days,
+        longest: state.longest_streak,
+        freezes: state.streak_freezes,
+        activeToday: state.last_active_date === today,
+      },
+      duelsToday: state.duels_date === today ? state.duels_today : 0,
+      duelsPerDay: DUELS_PER_DAY,
+    });
+  } catch (err) {
+    console.error("game state error:", err.message);
+    return res.status(500).json({ error: "Couldn't load your progress" });
+  }
+});
+
+app.get("/duels/today", requireAuth, async (req, res) => {
+  try {
+    const area = zipArea(req.query.zip);
+    const today = todayStr();
+
+    const { data: existing } = await supabaseAdmin
+      .from("duels")
+      .select("id, axis, left_place, right_place, chosen")
+      .eq("user_id", req.userId)
+      .eq("duel_date", today)
+      .order("created_at", { ascending: true });
+
+    let duels = existing || [];
+    if (duels.length === 0) duels = await generateDuels(req.userId, area);
+
+    return res.json({
+      duels: duels.filter((d) => !d.chosen),
+      completed: duels.filter((d) => d.chosen).length,
+      total: duels.length,
+      // An honest empty state beats a fake one: with no local places cached
+      // yet, we say so and point at search rather than inventing pairs.
+      needsSeed: duels.length === 0,
+    });
+  } catch (err) {
+    console.error("duels error:", err.message);
+    return res.status(500).json({ error: "Couldn't load today's duels" });
+  }
+});
+
+app.post("/duels/answer", requireAuth, async (req, res) => {
+  try {
+    const { id, chosen } = req.body || {};
+    if (typeof id !== "string" || !["left", "right", "skip"].includes(chosen)) {
+      return res.status(400).json({ error: "Invalid duel answer" });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("duels")
+      .update({ chosen, answered_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("user_id", req.userId)
+      .is("chosen", null)
+      .select("id")
+      .maybeSingle();
+
+    if (error) {
+      console.error("duel answer error:", error.message);
+      return res.status(500).json({ error: "Couldn't record that" });
+    }
+    if (!data) return res.status(404).json({ error: "Duel already answered" });
+
+    const today = todayStr();
+    const state = await loadGameState(req.userId);
+    const count = (state.duels_date === today ? state.duels_today : 0) + 1;
+
+    await supabaseAdmin
+      .from("game_state")
+      .update({ duels_today: count, duels_date: today })
+      .eq("user_id", req.userId);
+
+    // Skips record data (an ambivalence signal) but earn nothing, so
+    // skipping through five duels isn't a shortcut to the bonus.
+    let award = null;
+    if (chosen !== "skip") {
+      const bonus = count === DUELS_PER_DAY ? XP.DUEL_SET_BONUS : 0;
+      await touchStreak(req.userId, state);
+      const streakBonus = state.last_active_date === today ? 0 : XP.STREAK_DAY;
+      award = await awardXp(req.userId, XP.DUEL + bonus + streakBonus, "duel");
+    }
+
+    return res.json({ ok: true, completed: count, total: DUELS_PER_DAY, award });
+  } catch (err) {
+    console.error("duel answer error:", err.message);
+    return res.status(500).json({ error: "Couldn't record that" });
+  }
+});
+
+// Zero-effort telemetry. A Directions click is revealed intent and costs the
+// user nothing — it's worth more than any survey answer we could ask for.
+app.post("/events", requireAuth, async (req, res) => {
+  try {
+    const { kind, payload } = req.body || {};
+    const allowed = [
+      "directions_click", "site_click", "call_click", "comparisons_open",
+      "breakdown_open", "map_open", "rapid_research", "tab_view",
+    ];
+    if (!allowed.includes(kind)) return res.status(400).json({ error: "Unknown event" });
+
+    await supabaseAdmin.from("events").insert({
+      user_id: req.userId,
+      kind,
+      payload: payload && typeof payload === "object" ? payload : null,
+    });
+
+    // Acting on a verdict is our visit proxy, so it pays — but only once per
+    // verdict, or clicking Directions five times would be free XP.
+    let award = null;
+    if (kind === "directions_click" || kind === "site_click") {
+      const { count } = await supabaseAdmin
+        .from("events")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", req.userId)
+        .in("kind", ["directions_click", "site_click"])
+        .eq("payload->>verdictId", payload?.verdictId || "");
+
+      if ((count || 0) <= 1) {
+        const state = await loadGameState(req.userId);
+        await touchStreak(req.userId, state);
+        award = await awardXp(req.userId, XP.VERDICT_ACTION, "verdict action");
+      }
+    }
+
+    return res.json({ ok: true, award });
+  } catch (err) {
+    console.error("event error:", err.message);
+    return res.json({ ok: false }); // telemetry must never break the UI
+  }
+});
+
+app.get("/me/taste", requireAuth, async (req, res) => {
+  try {
+    const [vector, profile] = await Promise.all([
+      loadPreferenceVector(req.userId),
+      loadTasteProfile(req.userId),
+    ]);
+
+    const { data: stamps } = await supabaseAdmin
+      .from("stamps")
+      .select("cuisine, place_name, first_at")
+      .eq("user_id", req.userId)
+      .order("first_at", { ascending: false });
+
+    return res.json({ vector, profile, stamps: stamps || [] });
+  } catch (err) {
+    console.error("taste error:", err.message);
+    return res.status(500).json({ error: "Couldn't load your taste profile" });
+  }
+});
+
+app.get("/verdicts/pending", requireAuth, async (req, res) => {
+  try {
+    const cutoff = new Date(Date.now() - VERDICT_ASK_DELAY_HOURS * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await supabaseAdmin
+      .from("verdicts")
+      .select("id, name, category, query, match_score, created_at, distance_mi")
+      .eq("user_id", req.userId)
+      .is("visited", null)
+      .lt("created_at", cutoff)
+      .order("created_at", { ascending: false })
+      .limit(3); // never a chore list — at most a few
+
+    if (error) {
+      console.error("pending verdicts error:", error.message);
+      return res.status(500).json({ error: "Couldn't load your pending verdicts" });
+    }
+
+    return res.json({ pending: data || [] });
+  } catch (err) {
+    console.error("pending verdicts error:", err.message);
+    return res.status(500).json({ error: "Couldn't load your pending verdicts" });
+  }
+});
+
+app.post("/verdicts/feedback", requireAuth, async (req, res) => {
+  try {
+    const { id, visited, outcome } = req.body || {};
+
+    if (typeof id !== "string" || !id) {
+      return res.status(400).json({ error: "Missing verdict id" });
+    }
+    if (typeof visited !== "boolean") {
+      return res.status(400).json({ error: "Missing 'visited'" });
+    }
+    if (visited && !["better", "expected", "worse"].includes(outcome)) {
+      return res.status(400).json({ error: "Invalid 'outcome'" });
+    }
+
+    // Scoped to user_id as well as id, so one user can never write to
+    // another's verdict even with a guessed UUID.
+    const { data, error } = await supabaseAdmin
+      .from("verdicts")
+      .update({
+        visited,
+        outcome: visited ? outcome : null,
+        responded_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .eq("user_id", req.userId)
+      .select("id")
+      .maybeSingle();
+
+    if (error) {
+      console.error("verdict feedback error:", error.message);
+      return res.status(500).json({ error: "Couldn't save that" });
+    }
+    if (!data) return res.status(404).json({ error: "Verdict not found" });
+
+    // The highest-value action in the whole product: it grades our engine.
+    // Paying the most for it keeps the XP economy and the data moat pointed
+    // in the same direction.
+    const state = await loadGameState(req.userId);
+    await touchStreak(req.userId, state);
+    const award = await awardXp(req.userId, XP.VERDICT_RATED, "verdict rated");
+
+    return res.json({ ok: true, award });
+  } catch (err) {
+    console.error("verdict feedback error:", err.message);
+    return res.status(500).json({ error: "Couldn't save that" });
+  }
+});
+
+// The payoff screen: how often the engine was right FOR THIS PERSON, and
+// what it has learned. This is the thing a competitor can't copy — it's
+// built from our own graded predictions.
+app.get("/me/scout-report", requireAuth, async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("verdicts")
+      .select("outcome, visited, match_score, name, category, responded_at")
+      .eq("user_id", req.userId)
+      .not("visited", "is", null)
+      .order("responded_at", { ascending: false })
+      .limit(100);
+
+    if (error) {
+      console.error("scout report error:", error.message);
+      return res.status(500).json({ error: "Couldn't load your scout report" });
+    }
+
+    const answered = data || [];
+    const visits = answered.filter((v) => v.visited && v.outcome);
+    const hits = visits.filter((v) => v.outcome === "better" || v.outcome === "expected");
+
+    const profile = await loadTasteProfile(req.userId);
+
+    return res.json({
+      answeredCount: answered.length,
+      visitCount: visits.length,
+      hitCount: hits.length,
+      // Only meaningful once there's a real sample. Below that we say
+      // nothing rather than publish "100% accurate" off one rating.
+      accuracy: visits.length >= 3 ? Math.round((hits.length / visits.length) * 100) : null,
+      learned: {
+        likes: profile.likedCategories,
+        avoids: profile.dislikedCategories,
+        sampleSize: profile.sampleSize,
+      },
+      recent: visits.slice(0, 5).map((v) => ({
+        name: v.name,
+        outcome: v.outcome,
+        matchScore: v.match_score,
+      })),
+    });
+  } catch (err) {
+    console.error("scout report error:", err.message);
+    return res.status(500).json({ error: "Couldn't load your scout report" });
+  }
+});
+
 app.post("/search", requireAuthAndLimit, async (req, res) => {
   try {
     const userRequest = req.body.query;
@@ -819,6 +1633,13 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     ).catch((err) => {
       console.error("profile fetch error:", err.message);
       return { data: null };
+    });
+
+    // Revealed preferences, learned from verdicts they've actually rated.
+    // Runs concurrently with everything else, so it costs no latency.
+    const tastePromise = loadTasteProfile(req.userId).catch((err) => {
+      console.error("taste profile load failed:", err.message);
+      return null;
     });
 
     const candidatePromise = fetchCandidatePool({
@@ -1047,6 +1868,16 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       return Math.max(0.15, Math.exp(-(miles - radiusUsed) / 6));
     };
 
+    const tasteProfile = await tastePromise;
+    if (tasteProfile?.sampleSize > 0) {
+      console.log(
+        `Taste profile (${tasteProfile.sampleSize} rated): ` +
+          `likes [${tasteProfile.likedCategories.join(", ") || "—"}], ` +
+          `avoids [${tasteProfile.dislikedCategories.join(", ") || "—"}], ` +
+          `price ${tasteProfile.preferredPriceLevel?.toFixed(1) ?? "—"}`
+      );
+    }
+
     const ratingNorm = minMaxNormalize(pool.map((c) => c.bayesianRating));
     const relevanceNorm = minMaxNormalize(pool.map((c) => c.relevance));
     const proximityNorm = pool.map((c) => c.proximity); // absolute, deliberately un-normalised
@@ -1070,7 +1901,10 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
           STAGE1_WEIGHTS.budget * norm.budget +
           STAGE1_WEIGHTS.trust * norm.trust;
         const dampened =
-          composite * confidenceMultiplier(c.reviewCount, c.dataTrust) * distancePenalty(c.distance);
+          composite *
+          confidenceMultiplier(c.reviewCount, c.dataTrust) *
+          distancePenalty(c.distance) *
+          tasteMultiplier(c, tasteProfile); // ±12% max — breaks ties, never overrides
         return { ...c, norm, stage1Composite: dampened };
       })
       .sort((a, b) => b.stage1Composite - a.stage1Composite);
@@ -1320,8 +2154,52 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     ];
 
     const newCount = req.currentSearchCount + 1;
-    // Not awaited: the user's answer should not wait on a bookkeeping write.
+    // Neither of these blocks the response — the answer shouldn't wait on
+    // bookkeeping. The verdict row is what makes the "did you go?" loop
+    // possible, and it costs the user nothing to create.
     recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
+    recordVerdict(req.userId, winner, {
+      query: userRequest.trim(),
+      locationName,
+      matchScore: winner.matchScore,
+    }).catch(() => {});
+
+    // Every search quietly stocks the duel pool, so the daily game costs no
+    // extra Serper calls and gets richer the more the area is searched.
+    stockPlacePool(candidates, zipArea(req.body.locationHint)).catch(() => {});
+
+    // Search XP decays through the day (40/25/15/5/0) so grinding converges
+    // to zero. The bare-search rate is deliberately low — an unengaged
+    // search is a log line, not data, and shouldn't be priced like data.
+    (async () => {
+      try {
+        const state = await loadGameState(req.userId);
+        const today = todayStr();
+        const nth = state.searches_date === today ? state.searches_today : 0;
+        await supabaseAdmin
+          .from("game_state")
+          .update({ searches_today: nth + 1, searches_date: today })
+          .eq("user_id", req.userId);
+
+        await touchStreak(req.userId, state);
+        const amount = SEARCH_XP_DECAY[Math.min(nth, SEARCH_XP_DECAY.length - 1)];
+        if (amount > 0) await awardXp(req.userId, amount, `search #${nth + 1}`);
+      } catch (err) {
+        console.error("search xp error:", err.message);
+      }
+    })();
+
+    // Cuisine passport: first time they're sent to a category is a stamp.
+    if (winner.place.type) {
+      supabaseAdmin
+        .from("stamps")
+        .upsert(
+          { user_id: req.userId, cuisine: winner.place.type, place_name: winner.place.title },
+          { onConflict: "user_id,cuisine", ignoreDuplicates: true }
+        )
+        .then(() => {})
+        .catch(() => {});
+    }
 
     console.log(
       `FINAL: ${withinRadius.length} within ${radiusUsed}mi → ${shortlist.length} shortlisted → ` +

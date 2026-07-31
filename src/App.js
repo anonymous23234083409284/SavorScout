@@ -421,6 +421,359 @@ function explainSaveError(error) {
   return `Couldn't save — ${msg || "please try again."}`;
 }
 
+// ===========================================================================
+// GAME LAYER
+//
+// Deliberately NOT Duolingo-shaped. Same underlying mechanics — streak, XP,
+// levels, loss aversion — but presented as instrumentation rather than play,
+// which is what separates Strava/Whoop/Letterboxd from a children's app.
+// Concretely: mono numerals, thin exact progress bars, geometric marks, no
+// mascot, no confetti, no exclamation marks.
+// ===========================================================================
+
+const TABS = [
+  { id: "today", label: "Today", minLevel: 1 },
+  { id: "find", label: "Find", minLevel: 1 },
+  { id: "you", label: "You", minLevel: 1 },
+  { id: "collection", label: "Collection", minLevel: 8 },
+];
+
+// The single number that carries loss aversion. Shown on every tab so the
+// cue is always present — but never accompanied by a nag, because guilt
+// mechanics are the part of Duolingo worth leaving behind.
+function StreakBadge({ streak }) {
+  if (!streak || streak.days === 0) return null;
+  return (
+    <div className={`streak-badge${streak.activeToday ? " streak-badge--active" : ""}`}>
+      <span className="streak-flame" aria-hidden="true">▲</span>
+      <span className="streak-days">{streak.days}</span>
+      <span className="streak-unit">day{streak.days === 1 ? "" : "s"}</span>
+    </div>
+  );
+}
+
+function LevelPill({ level }) {
+  if (!level) return null;
+  return (
+    <div className="level-pill" title={`${level.xpToNext.toLocaleString()} XP to ${level.nextRank || "max"}`}>
+      <span className="level-rank">{level.rank}</span>
+      <span className="level-num">Lv{level.level}</span>
+      <span className="level-track">
+        <span className="level-fill" style={{ width: `${Math.round(level.progress * 100)}%` }} />
+      </span>
+    </div>
+  );
+}
+
+// Pairwise choice — the daily action. Doable 365 days a year because it
+// costs nothing, and it's the highest-value signal we can collect: forced
+// choice reveals an ordering that star ratings never can.
+const AXIS_PROMPT = {
+  price: "Same food, different price",
+  rating: "Same price, different reputation",
+  distance: "Which is worth the trip",
+  cuisine: "Two good options, different food",
+  popularity: "Crowd favourite or hidden gem",
+  open: "Which would you rather, tonight",
+};
+
+function DuelCard({ place, onPick, disabled, side }) {
+  const price = place.price_level ? "$".repeat(place.price_level) : null;
+  return (
+    <button
+      className={`duel-card duel-card--${side}`}
+      onClick={onPick}
+      disabled={disabled}
+      aria-label={`Choose ${place.name}`}
+    >
+      <span className="duel-card-visual">
+        {place.thumbnail ? (
+          <img src={place.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
+        ) : (
+          <span className="duel-card-monogram">{(place.name || "?").charAt(0).toUpperCase()}</span>
+        )}
+      </span>
+      <span className="duel-card-body">
+        <span className="duel-card-name">{place.name}</span>
+        <span className="duel-card-meta">
+          {typeof place.rating === "number" && <span className="duel-stat">{place.rating.toFixed(1)}★</span>}
+          {price && <span className="duel-stat">{price}</span>}
+          {place.review_count ? <span className="duel-stat duel-stat--dim">{place.review_count.toLocaleString()}</span> : null}
+        </span>
+        {place.category && <span className="duel-card-cat">{place.category}</span>}
+      </span>
+    </button>
+  );
+}
+
+function DuelPanel({ duels, completed, total, needsSeed, busy, onAnswer, onGoFind }) {
+  if (needsSeed) {
+    return (
+      <section className="panel panel--duels">
+        <div className="panel-head">
+          <h2 className="panel-title">Taste duels</h2>
+          <span className="panel-sub">Locked until we know your area</span>
+        </div>
+        <p className="panel-empty">
+          Run one search first. Every search stocks the pool of places your duels are drawn from —
+          after that they'll be here daily.
+        </p>
+        <button className="cta" onClick={onGoFind}>Find somewhere to eat →</button>
+      </section>
+    );
+  }
+
+  const done = total > 0 && duels.length === 0;
+
+  return (
+    <section className="panel panel--duels">
+      <div className="panel-head">
+        <h2 className="panel-title">Taste duels</h2>
+        <span className="panel-sub">
+          {completed}/{total} today · <span className="xp-tag">+{10} XP each</span>
+        </span>
+      </div>
+
+      <div className="duel-progress">
+        {Array.from({ length: total || 5 }).map((_, i) => (
+          <span key={i} className={`duel-pip${i < completed ? " duel-pip--done" : ""}`} />
+        ))}
+      </div>
+
+      {done ? (
+        <p className="panel-done">
+          All five done. Your profile got sharper — come back tomorrow for the next set.
+        </p>
+      ) : (
+        duels.slice(0, 1).map((duel) => (
+          <div className="duel" key={duel.id}>
+            <p className="duel-prompt">{AXIS_PROMPT[duel.axis] || AXIS_PROMPT.open}</p>
+            <div className="duel-pair">
+              <DuelCard side="left" place={duel.left_place} disabled={busy}
+                        onPick={() => onAnswer(duel.id, "left")} />
+              <span className="duel-vs">or</span>
+              <DuelCard side="right" place={duel.right_place} disabled={busy}
+                        onPick={() => onAnswer(duel.id, "right")} />
+            </div>
+            <button className="duel-skip" disabled={busy} onClick={() => onAnswer(duel.id, "skip")}>
+              No preference
+            </button>
+          </div>
+        ))
+      )}
+    </section>
+  );
+}
+
+// The payoff screen. Everything here is derived from the user's own answers,
+// which is what makes it feel earned rather than decorative.
+function TasteVector({ vector }) {
+  if (!vector || vector.sampleSize === 0) {
+    return (
+      <p className="panel-empty">
+        Answer a few duels and your preference profile builds itself here — no questionnaire.
+      </p>
+    );
+  }
+
+  const rows = [];
+  if (vector.priceSensitivity != null) {
+    rows.push({
+      label: "Price sensitivity",
+      value: Math.round(vector.priceSensitivity * 100),
+      read: vector.priceSensitivity > 0.6 ? "You take the cheaper option" : "You'll pay up for quality",
+    });
+  }
+  if (vector.crowdTrust != null) {
+    rows.push({
+      label: "Crowd trust",
+      value: Math.round(vector.crowdTrust * 100),
+      read: vector.crowdTrust > 0.6 ? "You trust the crowd" : "You back hidden gems",
+    });
+  }
+
+  return (
+    <>
+      {rows.map((r) => (
+        <div className="vector-row" key={r.label}>
+          <div className="vector-head">
+            <span className="vector-label">{r.label}</span>
+            <span className="vector-value">{r.value}%</span>
+          </div>
+          <div className="vector-track"><div className="vector-fill" style={{ width: `${r.value}%` }} /></div>
+          <span className="vector-read">{r.read}</span>
+        </div>
+      ))}
+
+      {vector.cuisineAffinity.length > 0 && (
+        <div className="affinity">
+          <span className="panel-label">What you pick most</span>
+          <div className="affinity-rows">
+            {vector.cuisineAffinity.map((c) => (
+              <div className="affinity-row" key={c.cuisine}>
+                <span className="affinity-name">{c.cuisine}</span>
+                <span className="affinity-track">
+                  <span className="affinity-fill" style={{ width: `${Math.round(c.winRate * 100)}%` }} />
+                </span>
+                <span className="affinity-pct">{Math.round(c.winRate * 100)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p className="vector-foot">Built from {vector.sampleSize} duel{vector.sampleSize === 1 ? "" : "s"}.</p>
+    </>
+  );
+}
+
+function UnlockLadder({ unlocks, level }) {
+  if (!unlocks) return null;
+  return (
+    <div className="ladder">
+      {unlocks.map((u) => (
+        <div className={`ladder-row${u.unlocked ? " ladder-row--open" : ""}`} key={u.key}>
+          <span className="ladder-lv">Lv{u.level}</span>
+          <span className="ladder-label">{u.label}</span>
+          <span className="ladder-state">{u.unlocked ? "open" : `${u.level - level} to go`}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Passport({ stamps }) {
+  if (!stamps || stamps.length === 0) {
+    return <p className="panel-empty">Every new kind of food you're sent to earns a stamp.</p>;
+  }
+  return (
+    <div className="passport">
+      {stamps.map((s) => (
+        <div className="stamp" key={s.cuisine}>
+          <span className="stamp-mark" aria-hidden="true">◆</span>
+          <span className="stamp-name">{s.cuisine}</span>
+          <span className="stamp-place">{s.place_name}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// --- Verdict loop ----------------------------------------------------------
+// The reason to come back when you're not hungry: we made a prediction and
+// nobody has graded it yet. One tap answers it — no forms, no ratings out of
+// ten, no photo upload.
+
+const OUTCOMES = [
+  { id: "better", label: "Better than expected", tone: "good" },
+  { id: "expected", label: "About right", tone: "ok" },
+  { id: "worse", label: "Worse", tone: "bad" },
+];
+
+function PendingVerdict({ verdict, onAnswer, busy }) {
+  const [stage, setStage] = useState("ask"); // "ask" → "rate"
+
+  return (
+    <div className="verdict-prompt">
+      <div className="verdict-prompt-head">
+        <span className="verdict-prompt-eyebrow">We sent you here</span>
+        <span className="verdict-prompt-name">{verdict.name}</span>
+        {typeof verdict.match_score === "number" && (
+          <span className="verdict-prompt-claim">we said {verdict.match_score}%</span>
+        )}
+      </div>
+
+      {stage === "ask" ? (
+        <>
+          <p className="verdict-prompt-q">Did you end up going?</p>
+          <div className="verdict-prompt-actions">
+            <button className="verdict-btn verdict-btn--primary" disabled={busy} onClick={() => setStage("rate")}>
+              Yes, I went
+            </button>
+            <button
+              className="verdict-btn"
+              disabled={busy}
+              onClick={() => onAnswer(verdict.id, { visited: false })}
+            >
+              Didn't go
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="verdict-prompt-q">How close were we?</p>
+          <div className="verdict-prompt-actions">
+            {OUTCOMES.map((o) => (
+              <button
+                key={o.id}
+                className={`verdict-btn verdict-btn--${o.tone}`}
+                disabled={busy}
+                onClick={() => onAnswer(verdict.id, { visited: true, outcome: o.id })}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// The payoff. Shown only once there's a real sample — a "100% accurate"
+// badge off one rating is worse than no badge at all.
+function ScoutReport({ report }) {
+  if (!report || report.visitCount === 0) return null;
+
+  const { accuracy, hitCount, visitCount, learned } = report;
+  const hasLearned = learned?.likes?.length > 0 || learned?.avoids?.length > 0;
+
+  return (
+    <div className="scout-report">
+      <div className="scout-report-stat">
+        {typeof accuracy === "number" ? (
+          <>
+            <span className="scout-report-number">{accuracy}%</span>
+            <span className="scout-report-label">
+              of our picks landed — {hitCount} of {visitCount}
+            </span>
+          </>
+        ) : (
+          <span className="scout-report-label">
+            {visitCount} {visitCount === 1 ? "visit" : "visits"} rated — a few more and we'll show
+            how often we're right
+          </span>
+        )}
+      </div>
+
+      {hasLearned && (
+        <p className="scout-report-learned">
+          {learned.likes.length > 0 && <>Learned you like <strong>{learned.likes.join(", ")}</strong>. </>}
+          {learned.avoids.length > 0 && <>Steering you away from <strong>{learned.avoids.join(", ")}</strong>.</>}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// The ZIP the user last confirmed, kept so duels can be drawn from their
+// area even before they've searched this session.
+function localStorage_getZip() {
+  try {
+    return window.sessionStorage.getItem("savorscout_zip") || "";
+  } catch {
+    return "";
+  }
+}
+
+function localStorage_setZip(zip) {
+  try {
+    window.sessionStorage.setItem("savorscout_zip", zip);
+  } catch {
+    /* private mode — duels just fall back to a wider pool */
+  }
+}
+
 function App() {
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState(""); // echoed in .match-banner-query
@@ -451,6 +804,20 @@ function App() {
   const [resetSent, setResetSent] = useState(false);
 
   const [searchesRemaining, setSearchesRemaining] = useState(null);
+
+  const [pendingVerdicts, setPendingVerdicts] = useState([]);
+  const [scoutReport, setScoutReport] = useState(null);
+  const [verdictBusy, setVerdictBusy] = useState(false);
+
+  // Tab state rather than react-router: no new dependency, and no SPA
+  // rewrite rule needed on Vercel (a direct hit on /find would 404 without
+  // one, which catches a lot of people mid-launch).
+  const [tab, setTab] = useState("today");
+  const [game, setGame] = useState(null);
+  const [duelState, setDuelState] = useState({ duels: [], completed: 0, total: 0, needsSeed: true });
+  const [duelBusy, setDuelBusy] = useState(false);
+  const [taste, setTaste] = useState(null);
+  const [xpFlash, setXpFlash] = useState(null);
 
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
@@ -622,6 +989,12 @@ function App() {
     setResolvedLocation(null);
     setLocationError("");
     setRadiusUsed(null);
+    setPendingVerdicts([]);
+    setScoutReport(null);
+    setGame(null);
+    setTaste(null);
+    setDuelState({ duels: [], completed: 0, total: 0, needsSeed: true });
+    setTab("today");
   };
 
   const handleSaveOnboarding = async () => {
@@ -804,8 +1177,135 @@ function App() {
 
       setResolvedLocation(result.location);
       setLocationInput("");
+      localStorage_setZip(zip);
+      // A newly-set area may have duels waiting that we couldn't build before.
+      refreshDuels().catch(() => {});
     } finally {
       setResolvingLocation(false);
+    }
+  };
+
+  // Shared auth wrapper so the loop's three endpoints don't each re-implement
+  // token handling.
+  const authedFetch = useCallback(async (path, init = {}) => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) return null;
+
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...(init.headers || {}) },
+    });
+    if (!res.ok) return null;
+    return res.json().catch(() => null);
+  }, []);
+
+  const flashXp = useCallback((award) => {
+    if (!award?.gained) return;
+    setXpFlash({ amount: award.gained, leveledUp: award.leveledUp, rank: award.level?.rank });
+    setTimeout(() => setXpFlash(null), 2600);
+  }, []);
+
+  const refreshGame = useCallback(async () => {
+    const [state, taste_] = await Promise.all([
+      authedFetch("/game/state"),
+      authedFetch("/me/taste"),
+    ]);
+    if (state) setGame(state);
+    if (taste_) setTaste(taste_);
+  }, [authedFetch]);
+
+  const refreshDuels = useCallback(async () => {
+    const zip = localStorage_getZip();
+    const data = await authedFetch(`/duels/today?zip=${encodeURIComponent(zip)}`);
+    if (data) setDuelState(data);
+  }, [authedFetch]);
+
+  const answerDuel = async (id, chosen) => {
+    if (duelBusy) return;
+    setDuelBusy(true);
+    // Optimistic: the pair disappears the instant they tap. A spinner on a
+    // one-tap choice makes the daily action feel like work.
+    setDuelState((prev) => ({
+      ...prev,
+      duels: prev.duels.filter((d) => d.id !== id),
+      completed: prev.completed + (chosen === "skip" ? 0 : 1),
+    }));
+    try {
+      const res = await authedFetch("/duels/answer", {
+        method: "POST",
+        body: JSON.stringify({ id, chosen }),
+      });
+      if (res?.award) flashXp(res.award);
+      refreshGame().catch(() => {});
+    } finally {
+      setDuelBusy(false);
+    }
+  };
+
+  // Zero-effort telemetry. Fire-and-forget so it can never block or break
+  // the UI — a Directions click is revealed intent and is worth more than
+  // any survey answer we could ask for.
+  const track = useCallback(
+    async (kind, payload) => {
+      try {
+        const res = await authedFetch("/events", {
+          method: "POST",
+          body: JSON.stringify({ kind, payload: payload || null }),
+        });
+        if (res?.award) {
+          flashXp(res.award);
+          refreshGame().catch(() => {});
+        }
+      } catch {
+        /* telemetry must never surface an error */
+      }
+    },
+    [authedFetch, flashXp, refreshGame]
+  );
+
+  const refreshLoop = useCallback(async () => {
+    const [pending, report] = await Promise.all([
+      authedFetch("/verdicts/pending"),
+      authedFetch("/me/scout-report"),
+    ]);
+    if (pending?.pending) setPendingVerdicts(pending.pending);
+    if (report) setScoutReport(report);
+  }, [authedFetch]);
+
+  // Load the loop once onboarding is done — this is what greets a returning
+  // user who has no craving in mind yet.
+  useEffect(() => {
+    if (!user || needsOnboarding || !onboardingChecked) return undefined;
+    let cancelled = false;
+    refreshLoop().catch(() => {});
+    refreshGame().catch(() => {});
+    refreshDuels().catch(() => {});
+    return () => {
+      cancelled = true;
+      void cancelled;
+    };
+  }, [user, needsOnboarding, onboardingChecked, refreshLoop, refreshGame, refreshDuels]);
+
+  const answerVerdict = async (id, answer) => {
+    if (verdictBusy) return;
+    setVerdictBusy(true);
+
+    // Optimistic: the prompt disappears the instant they tap. A spinner on a
+    // one-tap answer would make the loop feel like work.
+    setPendingVerdicts((prev) => prev.filter((v) => v.id !== id));
+
+    try {
+      await authedFetch("/verdicts/feedback", {
+        method: "POST",
+        body: JSON.stringify({ id, ...answer }),
+      });
+      const report = await authedFetch("/me/scout-report");
+      if (report) setScoutReport(report);
+    } finally {
+      setVerdictBusy(false);
     }
   };
 
@@ -896,6 +1396,10 @@ function App() {
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
         setRadiusUsed(typeof data.radiusUsed === "number" ? data.radiusUsed : null);
+        // The pool just gained this area's places, so duels may now be
+        // buildable where they weren't a moment ago.
+        refreshGame().catch(() => {});
+        refreshDuels().catch(() => {});
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       }
     } catch (error) {
@@ -1126,18 +1630,139 @@ function App() {
           <span className="brand-mark">SS</span>
           <span className="brand-name">SavorScout</span>
         </div>
-        <nav>
-          <a href="#how">How it works</a>
-          <a href="#about">About</a>
-          <div className="user-badge">
-            <span className="user-email">{user.email}</span>
-            <button className="signout-btn" onClick={handleSignOut}>
-              Sign Out
+
+        {/* Tabs unlock as they become real. A tab that opens onto an empty
+            state teaches people the app is hollow, so Collection stays
+            hidden until there's something in it. */}
+        <nav className="tabs" role="tablist">
+          {TABS.filter((t) => (game?.level?.level ?? 1) >= t.minLevel).map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={tab === t.id}
+              className={`tab${tab === t.id ? " tab--active" : ""}`}
+              onClick={() => {
+                setTab(t.id);
+                track("tab_view", { tab: t.id });
+              }}
+            >
+              {t.label}
             </button>
-          </div>
+          ))}
         </nav>
+
+        <div className="header-right">
+          <StreakBadge streak={game?.streak} />
+          <LevelPill level={game?.level} />
+          <button className="signout-btn" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        </div>
       </header>
 
+      {/* XP feedback: a single restrained line, not a confetti burst. The
+          difference between "instrument" and "toy" is mostly this. */}
+      {xpFlash && (
+        <div className={`xp-flash${xpFlash.leveledUp ? " xp-flash--level" : ""}`} role="status">
+          <span className="xp-flash-amount">+{xpFlash.amount} XP</span>
+          {xpFlash.leveledUp && <span className="xp-flash-rank">{xpFlash.rank}</span>}
+        </div>
+      )}
+
+      {tab === "today" && (
+        <section className="page page--today">
+          <div className="today-head">
+            <h1 className="today-title">
+              {game?.streak?.activeToday ? "You're set for today." : "Five taps. Then you're done."}
+            </h1>
+            <p className="today-sub">
+              {game?.streak?.days > 0
+                ? `${game.streak.days} day streak${game.streak.freezes > 0 ? ` · ${game.streak.freezes} freeze banked` : ""}`
+                : "Your streak starts with your first duel."}
+            </p>
+          </div>
+
+          <DuelPanel
+            duels={duelState.duels}
+            completed={duelState.completed}
+            total={duelState.total}
+            needsSeed={duelState.needsSeed}
+            busy={duelBusy}
+            onAnswer={answerDuel}
+            onGoFind={() => setTab("find")}
+          />
+
+          {pendingVerdicts.length > 0 && (
+            <section className="panel">
+              <div className="panel-head">
+                <h2 className="panel-title">Open verdicts</h2>
+                <span className="panel-sub"><span className="xp-tag">+100 XP</span></span>
+              </div>
+              <div className="verdict-prompts">
+                {pendingVerdicts.map((v) => (
+                  <PendingVerdict key={v.id} verdict={v} onAnswer={answerVerdict} busy={verdictBusy} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="panel">
+            <div className="panel-head">
+              <h2 className="panel-title">Hungry now?</h2>
+            </div>
+            <button className="cta" onClick={() => setTab("find")}>Find my one →</button>
+          </section>
+        </section>
+      )}
+
+      {tab === "you" && (
+        <section className="page page--you">
+          <div className="today-head">
+            <h1 className="today-title">Your taste profile</h1>
+            <p className="today-sub">Built from what you picked, not what you told us.</p>
+          </div>
+
+          <ScoutReport report={scoutReport} />
+
+          <section className="panel">
+            <div className="panel-head">
+              <h2 className="panel-title">How you choose</h2>
+            </div>
+            <TasteVector vector={taste?.vector} />
+          </section>
+
+          <section className="panel">
+            <div className="panel-head">
+              <h2 className="panel-title">Progress</h2>
+              <span className="panel-sub">
+                {game?.xp?.toLocaleString() ?? 0} XP
+                {game?.level?.nextRank ? ` · ${game.level.xpToNext.toLocaleString()} to ${game.level.nextRank}` : ""}
+              </span>
+            </div>
+            <UnlockLadder unlocks={game?.unlocks} level={game?.level?.level ?? 1} />
+          </section>
+        </section>
+      )}
+
+      {tab === "collection" && (
+        <section className="page page--collection">
+          <div className="today-head">
+            <h1 className="today-title">Collection</h1>
+            <p className="today-sub">
+              {taste?.stamps?.length || 0} cuisine{(taste?.stamps?.length || 0) === 1 ? "" : "s"} stamped
+            </p>
+          </div>
+          <section className="panel">
+            <div className="panel-head">
+              <h2 className="panel-title">Cuisine passport</h2>
+            </div>
+            <Passport stamps={taste?.stamps} />
+          </section>
+        </section>
+      )}
+
+      {tab === "find" && (
+        <>
       <section className="hero">
         <p className="eyebrow">Say what you're craving</p>
         <h1>
@@ -1268,17 +1893,36 @@ function App() {
                     <p className="verdict-line">{verdictLine(winner)}</p>
                   </div>
 
+                  {/* Every click here is revealed intent, captured at zero
+                      cost to the user. A Directions click is a better visit
+                      signal than any survey answer we could ask for. */}
                   <div className="action-row">
-                    <a className="action-btn action-btn--primary" href={mapsUrl(winner)} target="_blank" rel="noreferrer">
+                    <a
+                      className="action-btn action-btn--primary"
+                      href={mapsUrl(winner)}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => track("directions_click", { verdictId: winner.id, name: winner.name })}
+                    >
                       Directions
                     </a>
                     {winner.website && (
-                      <a className="action-btn" href={winner.website} target="_blank" rel="noreferrer">
+                      <a
+                        className="action-btn"
+                        href={winner.website}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => track("site_click", { verdictId: winner.id, name: winner.name })}
+                      >
                         Menu / Site
                       </a>
                     )}
                     {winner.phone && (
-                      <a className="action-btn" href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}>
+                      <a
+                        className="action-btn"
+                        href={`tel:${winner.phone.replace(/[^\d+]/g, "")}`}
+                        onClick={() => track("call_click", { verdictId: winner.id })}
+                      >
                         Call
                       </a>
                     )}
@@ -1375,6 +2019,8 @@ function App() {
           choice your problem. This one picks, and shows its work so you can disagree with it.
         </p>
       </section>
+        </>
+      )}
 
       <footer>© 2026 SavorScout</footer>
     </div>

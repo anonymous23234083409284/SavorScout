@@ -11,15 +11,62 @@
    =========================================================================== */
 
 :root {
-  --bg-deep: #140f1b;
+  /* ---------------------------------------------------------------------
+     COLOUR SYSTEM
+
+     Two deliberate principles, both doing real work:
+
+     1. HUE ENCODES SYSTEM MEMBERSHIP. Everything about FOOD is warm
+        (saffron/paprika/ember). Everything about YOUR PROGRESS is cool
+        (teal/mint). The eye learns this separation in about two sessions
+        without ever being told, so a teal number is instantly "mine" and a
+        warm one is "the world's". Warm hues also carry the appetite
+        association that food branding has leaned on for decades.
+
+     2. SATURATION RESTRAINT IS WHAT KEEPS IT ADULT. Pure primaries
+        (#00FF00, #FF0000) read as toy. Every accent here is complex and
+        slightly desaturated, which is why Strava and Whoop feel like
+        instruments while brighter palettes feel like games for children.
+
+     Elevation is expressed as lightness rather than shadow — on a dark
+     surface a lighter plane reads as "closer" far more cleanly than a
+     drop shadow does.
+     --------------------------------------------------------------------- */
+
+  /* surfaces (60% of the screen) */
+  --surface-0: #0b0810;
+  --surface-1: #140f1b;
+  --surface-2: #1c1526;
+  --surface-3: #251d31;
+  --surface-4: #30263f;
+
+  --bg-deep: var(--surface-1);
+
+  /* warm — food, search, verdicts (30%) */
   --bloom-saffron: #ffc857;
   --bloom-paprika: #ff6a3d;
   --bloom-plum: #7c2d6b;
+  --winner-pink: #ff2e88;
+  --ember: #ff8a4c;
+
+  /* cool — progress, XP, anything that belongs to the user (10%) */
+  --runner-teal: #2ee6d6;
+  --mint: #7ee8d5;
+  --xp: #2ee6d6;
+
+  /* streak is warm on purpose: it's a fire metaphor, and it keeps the
+     "your progress is cool" rule from being broken by the one element
+     that's genuinely about heat */
+  --streak: #ff6a3d;
+
   --text-cream: #f7efe4;
   --text-dim: #a89a8c;
+  --text-faint: #6b5d72;
   --err: #ff4757;
-  --winner-pink: #ff2e88;
-  --runner-teal: #2ee6d6;
+
+  --line: rgba(247, 239, 228, 0.09);
+  --line-warm: rgba(255, 200, 87, 0.22);
+  --line-cool: rgba(46, 230, 214, 0.22);
 }
 
 * {
@@ -344,6 +391,761 @@ body {
 
 .link-btn:hover {
   color: var(--bloom-saffron);
+}
+
+/* ===========================================================================
+   GAME LAYER
+
+   Presented as instrumentation, not play. Every numeral is monospaced,
+   every progress bar is thin and exact, every mark is geometric. There is
+   no mascot, no confetti and no exclamation mark anywhere in this file —
+   those are the specific things that make gamification read as childish,
+   and they're all avoidable while keeping the mechanics intact.
+   =========================================================================== */
+
+/* ---------- header tabs ---------- */
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 auto;
+}
+
+.tab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.tab:hover { color: var(--text-cream); }
+
+.tab--active {
+  color: var(--bg-deep);
+  background: linear-gradient(100deg, var(--bloom-saffron), var(--bloom-paprika) 90%);
+  font-weight: 600;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- streak ---------- */
+/* The one element carrying loss aversion. Always visible, never accompanied
+   by a nag — showing what you have is enough; shaming you for what you
+   might lose is the part of this genre worth leaving behind. */
+
+.streak-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 106, 61, 0.1);
+  border: 1px solid rgba(255, 106, 61, 0.3);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.streak-badge--active {
+  border-color: var(--streak);
+  box-shadow: 0 0 14px rgba(255, 106, 61, 0.3);
+}
+
+.streak-flame { color: var(--streak); font-size: 10px; }
+.streak-days  { color: var(--text-cream); font-size: 14px; font-weight: 600; }
+.streak-unit  { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ---------- level ---------- */
+
+.level-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 116px;
+}
+
+.level-rank {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--xp);
+}
+
+.level-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+/* 3px, not 12px. A thin precise bar reads as a gauge; a fat rounded one
+   reads as a toy. */
+.level-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.level-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--xp), var(--mint));
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- xp flash ---------- */
+/* Restrained by design: one line, slides in, leaves. The urge to fire
+   confetti here is exactly the urge that makes products feel juvenile. */
+
+.xp-flash {
+  position: fixed;
+  top: 84px;
+  right: 28px;
+  z-index: 40;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(11, 8, 16, 0.94);
+  border: 1px solid var(--line-cool);
+  backdrop-filter: blur(8px);
+  animation: xp-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.xp-flash--level {
+  border-color: var(--bloom-saffron);
+  box-shadow: 0 0 24px rgba(255, 200, 87, 0.28);
+}
+
+.xp-flash-amount {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--xp);
+}
+
+.xp-flash-rank {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bloom-saffron);
+}
+
+@keyframes xp-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- pages + panels ---------- */
+
+.page {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 40px 90px;
+}
+
+/* Page variants carry no styling yet, but exist as hooks so per-page tuning
+   doesn't require touching the JSX later. */
+.page--today,
+.page--you,
+.page--collection { display: block; }
+
+.duel { display: block; }
+
+.today-head { margin-bottom: 28px; }
+
+.today-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(24px, 3.4vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  color: var(--text-cream);
+}
+
+.today-sub {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+
+.panel {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.panel--duels {
+  background: linear-gradient(160deg, var(--surface-3), var(--surface-2) 60%);
+  border-color: var(--line-warm);
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.panel-title {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-cream);
+}
+
+.panel-sub,
+.panel-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+.panel-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.xp-tag { color: var(--xp); }
+
+.panel-empty,
+.panel-done {
+  margin: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-dim);
+}
+
+.panel-done { color: var(--mint); }
+
+.cta {
+  margin-top: 14px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-saffron) 85%);
+  color: var(--bg-deep);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cta:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(255, 46, 136, 0.32); }
+
+/* ---------- duels ---------- */
+
+.duel-progress { display: flex; gap: 5px; margin-bottom: 20px; }
+
+.duel-pip {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background 0.4s ease;
+}
+
+.duel-pip--done { background: linear-gradient(90deg, var(--xp), var(--mint)); }
+
+.duel-prompt {
+  margin: 0 0 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bloom-saffron);
+}
+
+.duel-pair {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.duel-vs {
+  align-self: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+}
+
+/* The tap target is the whole card. Binary choice is the compulsive part —
+   it works because deciding is easy and instant, so nothing here should
+   slow that down. */
+.duel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  background: var(--surface-3);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.duel-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: var(--bloom-saffron);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.duel-card:active:not(:disabled) { transform: translateY(-1px); }
+.duel-card:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.duel-card-visual {
+  display: block;
+  height: 104px;
+  background: var(--surface-4);
+  overflow: hidden;
+}
+
+.duel-card-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.duel-card-monogram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 30px;
+  font-weight: 700;
+  color: rgba(255, 200, 87, 0.3);
+}
+
+.duel-card-body { display: block; padding: 12px 14px 14px; }
+
+.duel-card-name {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-cream);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.duel-card-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+
+.duel-stat {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--bloom-saffron);
+}
+
+.duel-stat--dim { color: var(--text-faint); }
+
+.duel-card-cat {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Skipping is always available and never punished — it's also real data
+   (ambivalence), just not data we pay for. */
+.duel-skip {
+  display: block;
+  margin: 16px auto 0;
+  padding: 7px 16px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-faint);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.duel-skip:hover { color: var(--text-dim); border-color: rgba(247, 239, 228, 0.25); }
+
+/* ---------- taste vector ---------- */
+
+.vector-row { margin-bottom: 18px; }
+
+.vector-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.vector-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-cream);
+}
+
+.vector-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--xp);
+}
+
+.vector-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.vector-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--xp), var(--mint));
+  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vector-read,
+.vector-foot {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.vector-foot { display: block; margin: 14px 0 0; color: var(--text-faint); }
+
+.affinity { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.affinity-rows { display: flex; flex-direction: column; gap: 9px; }
+
+.affinity-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.affinity-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-cream);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.affinity-track { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+
+.affinity-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
+}
+
+.affinity-pct {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* ---------- unlock ladder ---------- */
+/* Everything listed here is a feature that genuinely can't work until the
+   data exists — not an existing feature withheld to manufacture progress.
+   Nothing that works at Lv1 is ever taken away. */
+
+.ladder { display: flex; flex-direction: column; gap: 2px; }
+
+.ladder-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  opacity: 0.45;
+}
+
+.ladder-row--open {
+  opacity: 1;
+  background: rgba(46, 230, 214, 0.05);
+  border-color: var(--line-cool);
+}
+
+.ladder-lv {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.ladder-row--open .ladder-lv { color: var(--xp); }
+
+.ladder-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  color: var(--text-cream);
+}
+
+.ladder-state {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+
+.ladder-row--open .ladder-state { color: var(--mint); }
+
+/* ---------- passport ---------- */
+
+.passport {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.stamp {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px;
+  border-radius: 10px;
+  background: var(--surface-3);
+  border: 1px solid var(--line-warm);
+}
+
+.stamp-mark { color: var(--bloom-saffron); font-size: 12px; }
+
+.stamp-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-cream);
+}
+
+.stamp-place {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 860px) {
+  .header { flex-wrap: wrap; gap: 10px; }
+  .tabs { order: 3; width: 100%; justify-content: space-between; overflow-x: auto; }
+  .tab { padding: 8px 12px; font-size: 11px; }
+  .page { padding: 32px 20px 80px; }
+  .duel-pair { grid-template-columns: 1fr; }
+  .duel-vs { justify-self: center; padding: 2px 0; }
+  .xp-flash { top: auto; bottom: 22px; right: 16px; left: 16px; justify-content: center; }
+  .level-pill { min-width: 92px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .duel-card,
+  .level-fill,
+  .vector-fill,
+  .duel-pip,
+  .cta { transition: none; }
+  .xp-flash { animation: none; }
+}
+
+/* ---------- verdict loop (retention) ---------- */
+
+/* Sits above the search box: the open question is what a returning user
+   should meet first, before they've thought of a craving. */
+.verdict-prompts {
+  max-width: 640px;
+  margin: 0 auto 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.verdict-prompt {
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: rgba(255, 46, 136, 0.07);
+  border: 1px solid rgba(255, 46, 136, 0.3);
+}
+
+.verdict-prompt-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.verdict-prompt-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--winner-pink);
+}
+
+.verdict-prompt-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-cream);
+}
+
+/* The claim we're asking them to grade. Shown plainly — the whole point is
+   that we committed to a number and are willing to be wrong about it. */
+.verdict-prompt-claim {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.verdict-prompt-q {
+  margin: 0 0 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  color: var(--text-cream);
+}
+
+.verdict-prompt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.verdict-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-cream);
+  border: 1px solid rgba(247, 239, 228, 0.28);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.verdict-btn:hover:not(:disabled) {
+  border-color: rgba(247, 239, 228, 0.6);
+  transform: translateY(-1px);
+}
+
+.verdict-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.verdict-btn--primary {
+  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-paprika) 80%);
+  color: #0a0e14;
+  font-weight: 600;
+  border-color: transparent;
+}
+
+.verdict-btn--good {
+  color: var(--runner-teal);
+  border-color: rgba(46, 230, 214, 0.45);
+}
+
+.verdict-btn--ok {
+  color: var(--bloom-saffron);
+  border-color: rgba(255, 200, 87, 0.45);
+}
+
+.verdict-btn--bad {
+  color: var(--err);
+  border-color: rgba(255, 71, 87, 0.45);
+}
+
+/* The payoff: how often we were right for THIS person. Built entirely from
+   our own graded predictions, which is the part a competitor can't copy. */
+.scout-report {
+  max-width: 640px;
+  margin: 0 auto 18px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  text-align: left;
+  background: rgba(46, 230, 214, 0.05);
+  border: 1px solid rgba(46, 230, 214, 0.2);
+}
+
+.scout-report-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scout-report-number {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--runner-teal);
+  line-height: 1;
+}
+
+.scout-report-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.scout-report-learned {
+  margin: 8px 0 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.scout-report-learned strong {
+  color: var(--bloom-saffron);
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .verdict-prompt-actions {
+    flex-direction: column;
+  }
+
+  .verdict-btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 /* ---------- location (mandatory, explicit) ---------- */

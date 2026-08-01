@@ -1239,6 +1239,369 @@ async function loadPreferenceVector(userId) {
   };
 }
 
+// ===========================================================================
+// CALIBRATION + TASTE MAP
+//
+// The reframe that matters: duels don't plateau because they're binary —
+// Tinder is binary and Wordle is basically binary, and both are extremely
+// sticky. Duels plateau because NOTHING VISIBLY CHANGES when you answer one.
+// You tap, you get +10 XP, the world looks identical.
+//
+// So the fix isn't replacing duels. It's giving them a consequence surface.
+// The map is that surface: every answer moves a node, raises a confidence
+// number, or reveals a trait. Duels are the verb; the map is the noun. A verb
+// with no noun is a chore; a noun with no verb is a dashboard. Together
+// they're a loop.
+// ===========================================================================
+
+const CALIBRATIONS_PER_DAY = 7;
+
+// A prediction needs real evidence behind it, or "we thought you'd pick the
+// left one" is just a coin flip wearing a lab coat — and being caught
+// coin-flipping is exactly what would destroy trust in the match scores.
+const PREDICT_MIN_EVIDENCE = 4;
+const PREDICT_MIN_EDGE = 0.15;
+
+// Fog of war: a node is only shown once actually encountered. Confidence
+// climbs with evidence and is reported honestly, including when it's low.
+function nodeConfidence(appearances) {
+  if (!appearances) return 0;
+  return Math.min(1, appearances / 6);
+}
+
+function nodeAffinity(wins, appearances) {
+  if (!appearances) return null;
+  return wins / appearances;
+}
+
+async function loadDeck() {
+  const { data, error } = await supabaseAdmin.from("taste_cards").select("id, name, kind, family, rarity");
+  if (error) {
+    console.error("deck load error:", error.message);
+    return [];
+  }
+  return data || [];
+}
+
+let DECK_CACHE = null;
+let DECK_CACHE_AT = 0;
+async function deck() {
+  if (DECK_CACHE && Date.now() - DECK_CACHE_AT < 10 * 60 * 1000) return DECK_CACHE;
+  DECK_CACHE = await loadDeck();
+  DECK_CACHE_AT = Date.now();
+  return DECK_CACHE;
+}
+
+async function loadNodes(userId) {
+  const { data, error } = await supabaseAdmin
+    .from("taste_nodes")
+    .select("card_id, wins, appearances")
+    .eq("user_id", userId);
+  if (error) {
+    console.error("nodes load error:", error.message);
+    return new Map();
+  }
+  return new Map((data || []).map((n) => [n.card_id, n]));
+}
+
+// Pairs two cards from the SAME family so the comparison is meaningful —
+// "Thai vs Sichuan" tells us something; "Thai vs counter seating" doesn't.
+//
+// Selection is deliberately weighted toward cards we know least about. That's
+// active learning: the highest-information answer is always the one we can't
+// already guess, so the game naturally asks about exactly what it needs.
+function buildConceptPair(cards, nodes, used) {
+  const byFamily = new Map();
+  for (const c of cards) {
+    if (used.has(c.id)) continue;
+    if (!byFamily.has(c.family)) byFamily.set(c.family, []);
+    byFamily.get(c.family).push(c);
+  }
+
+  const families = Array.from(byFamily.entries()).filter(([, list]) => list.length >= 2);
+  if (families.length === 0) return null;
+
+  // Score each family by how little we know about it — least-known first.
+  const scored = families.map(([family, list]) => {
+    const known = list.reduce((sum, c) => sum + (nodes.get(c.id)?.appearances || 0), 0);
+    return { family, list, ignorance: 1 / (1 + known / list.length) };
+  }).sort((a, b) => b.ignorance - a.ignorance);
+
+  // Sample from the top third so it isn't identical every day.
+  const pool = scored.slice(0, Math.max(1, Math.ceil(scored.length / 3)));
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
+
+  const ranked = chosen.list
+    .map((c) => ({ c, seen: nodes.get(c.id)?.appearances || 0 }))
+    .sort((a, b) => a.seen - b.seen);
+
+  const head = ranked.slice(0, Math.max(2, Math.ceil(ranked.length / 2)));
+  const a = head[Math.floor(Math.random() * head.length)].c;
+  const b = head.filter((x) => x.c.id !== a.id)[Math.floor(Math.random() * Math.max(1, head.length - 1))]?.c;
+  if (!b || b.id === a.id) return null;
+
+  return { left: a, right: b, family: chosen.family };
+}
+
+// Predict the user's own answer. This is the upgrade over plain duels: the
+// app commits to a guess, the user's tap grades it, and BOTH outcomes are
+// valuable — a hit proves the model knows them (identity), a miss is the
+// single highest-information data point we can collect (it lands exactly
+// where the model was uncertain).
+function predictChoice(left, right, nodes) {
+  const ln = nodes.get(left.id);
+  const rn = nodes.get(right.id);
+  if (!ln || !rn) return null;
+  if (ln.appearances < PREDICT_MIN_EVIDENCE || rn.appearances < PREDICT_MIN_EVIDENCE) return null;
+
+  const la = nodeAffinity(ln.wins, ln.appearances);
+  const ra = nodeAffinity(rn.wins, rn.appearances);
+  if (la == null || ra == null) return null;
+  if (Math.abs(la - ra) < PREDICT_MIN_EDGE) return null; // too close to call — don't pretend
+
+  return la > ra ? "left" : "right";
+}
+
+async function generateCalibrations(userId, area) {
+  const today = todayStr();
+  const cards = await deck();
+  if (cards.length === 0) return [];
+
+  const nodes = await loadNodes(userId);
+  const used = new Set();
+  const rows = [];
+
+  // Local place pairs are richer signal when we have them, so they lead.
+  // But they are never REQUIRED — concept cards guarantee a full set on day
+  // one in a ZIP we've never seen.
+  let placePairs = [];
+  try {
+    const { data: pool } = await supabaseAdmin
+      .from("place_pool")
+      .select("*")
+      .eq("zip_area", area)
+      .order("last_seen", { ascending: false })
+      .limit(80);
+
+    if (pool && pool.length >= 4) {
+      const pUsed = new Set();
+      for (const axis of DUEL_AXES) {
+        const pair = buildDuelPair(pool, axis, pUsed);
+        if (!pair) continue;
+        pUsed.add(pair[0].place_id);
+        pUsed.add(pair[1].place_id);
+        placePairs.push({ axis, left: pair[0], right: pair[1] });
+        if (placePairs.length >= 3) break;
+      }
+    }
+  } catch (err) {
+    console.error("place pair build failed:", err.message);
+  }
+
+  let slot = 0;
+  for (const p of placePairs) {
+    rows.push({
+      user_id: userId, cal_date: today, slot: slot++, mode: "place", axis: p.axis,
+      left_ref: p.left, right_ref: p.right, predicted: null,
+    });
+  }
+
+  while (slot < CALIBRATIONS_PER_DAY) {
+    const pair = buildConceptPair(cards, nodes, used);
+    if (!pair) break;
+    used.add(pair.left.id);
+    used.add(pair.right.id);
+    const predicted = predictChoice(pair.left, pair.right, nodes);
+    rows.push({
+      user_id: userId, cal_date: today, slot: slot++,
+      mode: predicted ? "predict" : "concept",
+      axis: pair.family,
+      left_ref: pair.left, right_ref: pair.right,
+      predicted,
+    });
+  }
+
+  if (rows.length === 0) return [];
+
+  const { data, error } = await supabaseAdmin
+    .from("calibrations")
+    .insert(rows)
+    .select("id, slot, mode, axis, left_ref, right_ref, predicted, chosen");
+
+  if (error) {
+    console.error("calibration insert error:", error.message);
+    return [];
+  }
+  return data || [];
+}
+
+// ---------------------------------------------------------------------------
+// TRAITS
+//
+// Every trait below is a real inference with a real evidence threshold. None
+// are fabricated for flavour — partly because that would be dishonest, and
+// partly because a wrong "you're an adventurous eater" is a direct attack on
+// the only thing this product sells. The honest version and the effective
+// version happen to be the same version.
+// ---------------------------------------------------------------------------
+
+const TRAIT_RULES = [
+  {
+    key: "heat_seeker",
+    label: "Heat seeker",
+    minEvidence: 5,
+    test: (ctx) => {
+      const r = ctx.familyRate("Heat");
+      if (r == null || r.n < 5) return null;
+      if (r.rate >= 0.68) return { detail: "You pick the spicier option most of the time.", confidence: r.rate };
+      if (r.rate <= 0.32) return { detail: "You steer away from heat.", confidence: 1 - r.rate, label: "Heat averse" };
+      return null;
+    },
+  },
+  {
+    key: "texture_led",
+    label: "Texture led",
+    minEvidence: 5,
+    test: (ctx) => {
+      const r = ctx.familyRate("Texture");
+      if (r == null || r.n < 5) return null;
+      if (r.rate >= 0.66) return { detail: "Crunch and crust decide it for you more than flavour does.", confidence: r.rate };
+      return null;
+    },
+  },
+  {
+    key: "adventurous",
+    label: "Adventurous",
+    minEvidence: 8,
+    test: (ctx) => {
+      const rare = ctx.rarityRate(3);
+      if (rare == null || rare.n < 8) return null;
+      if (rare.rate >= 0.6) return { detail: "You reach for the unfamiliar option more than most.", confidence: rare.rate };
+      if (rare.rate <= 0.3) return { detail: "You know what you like and stay there.", confidence: 1 - rare.rate, label: "Loyalist" };
+      return null;
+    },
+  },
+  {
+    key: "vibe_over_food",
+    label: "Room matters",
+    minEvidence: 6,
+    test: (ctx) => {
+      const v = ctx.kindRate("vibe");
+      const d = ctx.kindRate("dish");
+      if (!v || !d || v.n < 6 || d.n < 6) return null;
+      if (v.decisiveness > d.decisiveness + 0.12) {
+        return { detail: "You have stronger opinions about rooms than about dishes.", confidence: v.decisiveness };
+      }
+      return null;
+    },
+  },
+  {
+    key: "late_night",
+    label: "Late-night bias",
+    minEvidence: 4,
+    test: (ctx) => {
+      const r = ctx.cardRate("Late night");
+      if (r == null || r.n < 4) return null;
+      if (r.rate >= 0.7) return { detail: "Late-night options win when you're offered them.", confidence: r.rate };
+      return null;
+    },
+  },
+  {
+    key: "value_hunter",
+    label: "Value hunter",
+    minEvidence: 5,
+    test: (ctx) => {
+      const cheap = ctx.anyCardRate(["Under 10 dollars", "Under 15 dollars", "Under 20 dollars"]);
+      if (cheap == null || cheap.n < 5) return null;
+      if (cheap.rate >= 0.66) return { detail: "Price shapes your pick more than you'd probably admit.", confidence: cheap.rate };
+      return null;
+    },
+  },
+  {
+    key: "gem_hunter",
+    label: "Gem hunter",
+    minEvidence: 5,
+    test: (ctx) => {
+      const g = ctx.anyCardRate(["Hole in the wall", "Underrated", "Locals only", "No sign outside", "Strip mall gem"]);
+      if (g == null || g.n < 5) return null;
+      if (g.rate >= 0.68) return { detail: "You back the unmarked door over the famous one.", confidence: g.rate };
+      return null;
+    },
+  },
+];
+
+function buildTraitContext(cards, nodes) {
+  const byId = new Map(cards.map((c) => [c.id, c]));
+
+  const agg = (filterFn) => {
+    let wins = 0, n = 0, decisive = 0;
+    for (const [cardId, node] of nodes) {
+      const card = byId.get(cardId);
+      if (!card || !filterFn(card)) continue;
+      wins += node.wins;
+      n += node.appearances;
+      const a = nodeAffinity(node.wins, node.appearances);
+      if (a != null) decisive += Math.abs(a - 0.5) * 2;
+    }
+    if (n === 0) return null;
+    const count = Array.from(nodes.keys()).filter((id) => byId.get(id) && filterFn(byId.get(id))).length;
+    return { rate: wins / n, n, decisiveness: count ? decisive / count : 0 };
+  };
+
+  return {
+    familyRate: (family) => agg((c) => c.family === family),
+    kindRate: (kind) => agg((c) => c.kind === kind),
+    rarityRate: (rarity) => agg((c) => c.rarity >= rarity),
+    cardRate: (name) => agg((c) => c.name === name),
+    anyCardRate: (names) => agg((c) => names.includes(c.name)),
+  };
+}
+
+async function refreshTraits(userId) {
+  const cards = await deck();
+  const nodes = await loadNodes(userId);
+  if (cards.length === 0 || nodes.size === 0) return { revealed: [], pending: [] };
+
+  const ctx = buildTraitContext(cards, nodes);
+
+  const { data: existing } = await supabaseAdmin
+    .from("taste_traits")
+    .select("trait_key")
+    .eq("user_id", userId);
+  const have = new Set((existing || []).map((t) => t.trait_key));
+
+  const fresh = [];
+  const pending = [];
+
+  for (const rule of TRAIT_RULES) {
+    const result = rule.test(ctx);
+    if (!result) {
+      // The incompletion hook: name what's ALMOST known. A vague progress bar
+      // doesn't pull anyone back; "2 answers from Heat seeker" does.
+      const probe = ctx.familyRate(rule.key === "heat_seeker" ? "Heat" : "Texture");
+      pending.push({
+        key: rule.key,
+        label: rule.label,
+        need: Math.max(1, rule.minEvidence - (probe?.n || 0)),
+      });
+      continue;
+    }
+    if (have.has(rule.key)) continue;
+
+    const row = {
+      user_id: userId,
+      trait_key: rule.key,
+      label: result.label || rule.label,
+      detail: result.detail,
+      confidence: Math.round(Math.min(1, result.confidence) * 1000) / 1000,
+    };
+    const { error } = await supabaseAdmin.from("taste_traits").upsert(row, { onConflict: "user_id,trait_key" });
+    if (!error) fresh.push(row);
+  }
+
+  return { revealed: fresh, pending: pending.slice(0, 3) };
+}
+
 // --- Serper image search (winner only) -------------------------------------
 
 async function fetchWinnerImage(name, address) {
@@ -1400,6 +1763,192 @@ app.get("/game/state", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("game state error:", err.message);
     return res.status(500).json({ error: "Couldn't load your progress" });
+  }
+});
+
+// --- Calibration endpoints -------------------------------------------------
+
+app.get("/calibration/today", requireAuth, async (req, res) => {
+  try {
+    const zip = String(req.query.zip || "").trim();
+    const area = zipArea(zip);
+    const today = todayStr();
+
+    const { data: existing } = await supabaseAdmin
+      .from("calibrations")
+      .select("id, slot, mode, axis, left_ref, right_ref, predicted, chosen")
+      .eq("user_id", req.userId)
+      .eq("cal_date", today)
+      .order("slot", { ascending: true });
+
+    let set = existing || [];
+    if (set.length === 0) set = await generateCalibrations(req.userId, area);
+
+    const { revealed, pending } = await refreshTraits(req.userId);
+
+    return res.json({
+      remaining: set.filter((c) => !c.chosen),
+      completed: set.filter((c) => c.chosen).length,
+      total: set.length || CALIBRATIONS_PER_DAY,
+      pendingTraits: pending,
+      justRevealed: revealed,
+    });
+  } catch (err) {
+    console.error("calibration error:", err.message);
+    return res.status(500).json({ error: "Couldn't load today's calibration" });
+  }
+});
+
+app.post("/calibration/answer", requireAuth, async (req, res) => {
+  try {
+    const { id, chosen } = req.body || {};
+    if (typeof id !== "string" || !["left", "right", "skip"].includes(chosen)) {
+      return res.status(400).json({ error: "Invalid answer" });
+    }
+
+    const { data: row, error: fetchErr } = await supabaseAdmin
+      .from("calibrations")
+      .select("id, mode, left_ref, right_ref, predicted, chosen")
+      .eq("id", id)
+      .eq("user_id", req.userId)
+      .maybeSingle();
+
+    if (fetchErr || !row) return res.status(404).json({ error: "Not found" });
+    if (row.chosen) return res.status(409).json({ error: "Already answered" });
+
+    await supabaseAdmin
+      .from("calibrations")
+      .update({ chosen, answered_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("user_id", req.userId);
+
+    // Move the map. This is the whole point — an answer that changes nothing
+    // visible is why plain duels go stale.
+    let movedNodes = [];
+    if (chosen !== "skip" && row.mode !== "place") {
+      const winner = chosen === "left" ? row.left_ref : row.right_ref;
+      const loser = chosen === "left" ? row.right_ref : row.left_ref;
+
+      for (const [card, isWin] of [[winner, true], [loser, false]]) {
+        if (!card?.id) continue;
+        const { data: node } = await supabaseAdmin
+          .from("taste_nodes")
+          .select("wins, appearances")
+          .eq("user_id", req.userId)
+          .eq("card_id", card.id)
+          .maybeSingle();
+
+        const wins = (node?.wins || 0) + (isWin ? 1 : 0);
+        const appearances = (node?.appearances || 0) + 1;
+
+        await supabaseAdmin.from("taste_nodes").upsert(
+          { user_id: req.userId, card_id: card.id, wins, appearances, last_seen: new Date().toISOString() },
+          { onConflict: "user_id,card_id" }
+        );
+
+        movedNodes.push({
+          id: card.id,
+          name: card.name,
+          affinity: wins / appearances,
+          confidence: nodeConfidence(appearances),
+          isNew: !node,
+        });
+      }
+    }
+
+    const today = todayStr();
+    const { count } = await supabaseAdmin
+      .from("calibrations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.userId)
+      .eq("cal_date", today)
+      .not("chosen", "is", null);
+
+    const done = count || 0;
+
+    let award = null;
+    if (chosen !== "skip") {
+      const state = await loadGameState(req.userId);
+      await touchStreak(req.userId, state);
+      const streakBonus = state.last_active_date === today ? 0 : XP.STREAK_DAY;
+      const setBonus = done >= CALIBRATIONS_PER_DAY ? XP.DUEL_SET_BONUS : 0;
+      award = await awardXp(req.userId, XP.DUEL + setBonus + streakBonus, "calibration");
+    }
+
+    const { revealed, pending } = await refreshTraits(req.userId);
+
+    return res.json({
+      ok: true,
+      completed: done,
+      total: CALIBRATIONS_PER_DAY,
+      // Was our guess right? Both answers are good: a hit says the model knows
+      // them, a miss is the most informative data point available.
+      prediction: row.predicted ? { guessed: row.predicted, correct: row.predicted === chosen } : null,
+      movedNodes,
+      justRevealed: revealed,
+      pendingTraits: pending,
+      award,
+    });
+  } catch (err) {
+    console.error("calibration answer error:", err.message);
+    return res.status(500).json({ error: "Couldn't record that" });
+  }
+});
+
+// The map itself. Only encountered nodes come back — the absence of a row IS
+// the fog of war, so we never have to fake "undiscovered" state.
+app.get("/me/map", requireAuth, async (req, res) => {
+  try {
+    const cards = await deck();
+    const nodes = await loadNodes(req.userId);
+    const byId = new Map(cards.map((c) => [c.id, c]));
+
+    const families = new Map();
+    for (const c of cards) {
+      if (!families.has(c.family)) families.set(c.family, { family: c.family, total: 0, seen: 0, nodes: [] });
+      const f = families.get(c.family);
+      f.total += 1;
+      const n = nodes.get(c.id);
+      if (n) {
+        f.seen += 1;
+        f.nodes.push({
+          id: c.id,
+          name: c.name,
+          kind: c.kind,
+          rarity: c.rarity,
+          affinity: nodeAffinity(n.wins, n.appearances),
+          confidence: nodeConfidence(n.appearances),
+          appearances: n.appearances,
+        });
+      }
+    }
+
+    const { data: traits } = await supabaseAdmin
+      .from("taste_traits")
+      .select("trait_key, label, detail, confidence, revealed_at")
+      .eq("user_id", req.userId)
+      .order("revealed_at", { ascending: false });
+
+    const { pending } = await refreshTraits(req.userId);
+
+    const regions = Array.from(families.values())
+      .map((f) => ({
+        ...f,
+        nodes: f.nodes.sort((a, b) => (b.affinity ?? 0) - (a.affinity ?? 0)).slice(0, 14),
+        explored: f.total ? f.seen / f.total : 0,
+      }))
+      .sort((a, b) => b.seen - a.seen);
+
+    return res.json({
+      regions,
+      traits: traits || [],
+      pendingTraits: pending,
+      discovered: nodes.size,
+      totalCards: cards.length,
+    });
+  } catch (err) {
+    console.error("map error:", err.message);
+    return res.status(500).json({ error: "Couldn't load your taste map" });
   }
 });
 

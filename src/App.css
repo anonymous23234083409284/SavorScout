@@ -1,2421 +1,2048 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
 
 /* ===========================================================================
-   SavorScout — complete stylesheet.
+   SAVORSCOUT — DESIGN SYSTEM
 
-   This replaces App.css wholesale. The version you pasted had the additions
-   block appended twice (.link-btn, .notice-msg, .searches-left,
-   .comparison-name, .comparison-score, .results-section and the
-   reduced-motion query each appeared two times). Duplicates are resolved
-   here, and .google-btn / .reception-block are folded in properly.
+   Direction: "Ember." A near-black canvas with living heat underneath it.
+   The reference points are Linear, Arc and Whoop rather than Duolingo —
+   premium dark products that are heavily gamified without reading as toys.
+
+   Three rules govern every choice below.
+
+   1. HUE ENCODES OWNERSHIP.
+      Warm (ember/saffron/magenta) = the world: food, places, verdicts.
+      Cool (ion/mint) = you: XP, progress, accuracy, anything earned.
+      The eye learns this in two sessions with no explanation, so a cool
+      number reads instantly as "mine."
+
+   2. LIGHT IS THE REWARD.
+      Progress is expressed as luminance, not decoration. Higher streak =
+      literally more light on screen. That's why the flame tiers shift
+      toward white-hot: the screen physically brightens as you invest, which
+      is a far stronger feedback loop than a badge.
+
+   3. MOTION EXPLAINS, NEVER DECORATES.
+      Every animation either shows a value changing, directs attention to
+      one thing, or confirms a tap. Nothing loops purely to be busy except
+      the ambient field, which sits at 6% opacity behind everything.
    =========================================================================== */
 
 :root {
-  /* ---------------------------------------------------------------------
-     COLOUR SYSTEM
+  /* ---- canvas: 5-step elevation ramp. On dark, lightness reads as
+         proximity far more cleanly than drop shadows do. ---- */
+  --void:      #07050b;
+  --base:      #0c0912;
+  --raised:    #13101c;
+  --card:      #1a1626;
+  --elevated:  #241f33;
+  --hover:     #2e2740;
 
-     Two deliberate principles, both doing real work:
+  /* ---- warm: the world ---- */
+  --ember:     #ff5f1f;
+  --saffron:   #ffc857;
+  --magenta:   #ff2e88;
+  --plum:      #7c2d6b;
+  --coral:     #ff8a5c;
 
-     1. HUE ENCODES SYSTEM MEMBERSHIP. Everything about FOOD is warm
-        (saffron/paprika/ember). Everything about YOUR PROGRESS is cool
-        (teal/mint). The eye learns this separation in about two sessions
-        without ever being told, so a teal number is instantly "mine" and a
-        warm one is "the world's". Warm hues also carry the appetite
-        association that food branding has leaned on for decades.
+  /* ---- cool: you ---- */
+  --ion:       #2ee6d6;
+  --mint:      #7ef5df;
+  --violet:    #8b5cf6;
+  --azure:     #4fc3ff;
 
-     2. SATURATION RESTRAINT IS WHAT KEEPS IT ADULT. Pure primaries
-        (#00FF00, #FF0000) read as toy. Every accent here is complex and
-        slightly desaturated, which is why Strava and Whoop feel like
-        instruments while brighter palettes feel like games for children.
+  /* ---- type ---- */
+  --ink:       #fdf8f2;
+  --ink-soft:  #b9aec4;
+  --ink-faint: #6d6480;
+  --ink-ghost: #453e56;
 
-     Elevation is expressed as lightness rather than shadow — on a dark
-     surface a lighter plane reads as "closer" far more cleanly than a
-     drop shadow does.
-     --------------------------------------------------------------------- */
+  --danger:    #ff4d6a;
+  --success:   #3ddc97;
 
-  /* surfaces (60% of the screen) */
-  --surface-0: #0b0810;
-  --surface-1: #140f1b;
-  --surface-2: #1c1526;
-  --surface-3: #251d31;
-  --surface-4: #30263f;
+  /* ---- lines ---- */
+  --line:      rgba(253, 248, 242, 0.07);
+  --line-warm: rgba(255, 200, 87, 0.2);
+  --line-cool: rgba(46, 230, 214, 0.2);
 
-  --bg-deep: var(--surface-1);
+  /* ---- motion: one easing curve everywhere. A single curve is what makes
+         an interface feel like one object rather than many. ---- */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* warm — food, search, verdicts (30%) */
-  --bloom-saffron: #ffc857;
-  --bloom-paprika: #ff6a3d;
-  --bloom-plum: #7c2d6b;
-  --winner-pink: #ff2e88;
-  --ember: #ff8a4c;
-
-  /* cool — progress, XP, anything that belongs to the user (10%) */
-  --runner-teal: #2ee6d6;
-  --mint: #7ee8d5;
-  --xp: #2ee6d6;
-
-  /* streak is warm on purpose: it's a fire metaphor, and it keeps the
-     "your progress is cool" rule from being broken by the one element
-     that's genuinely about heat */
-  --streak: #ff6a3d;
-
-  --text-cream: #f7efe4;
-  --text-dim: #a89a8c;
-  --text-faint: #6b5d72;
-  --err: #ff4757;
-
-  --line: rgba(247, 239, 228, 0.09);
-  --line-warm: rgba(255, 200, 87, 0.22);
-  --line-cool: rgba(46, 230, 214, 0.22);
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-full: 999px;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  margin: 0;
-  background: var(--bg-deep);
-  color: var(--text-cream);
-  font-family: 'Space Grotesk', sans-serif;
+  background: var(--void);
+  color: var(--ink);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.hero-script {
-  font-family: 'Pacifico', cursive;
-  font-weight: 400;
+/* Every numeral in the product is monospaced. This single decision does more
+   than anything else to make progress read as measurement rather than play. */
+.mono, .num {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
 }
+
+/* ===========================================================================
+   ANIMATION LIBRARY
+   =========================================================================== */
+
+@keyframes rise      { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes fade      { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop       { 0% { transform: scale(0.86); opacity: 0; } 60% { transform: scale(1.04); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes flicker   { 0%,100% { transform: scale(1) translateY(0); opacity: 1; }
+                       25% { transform: scale(1.05, 0.97) translateY(-1px); opacity: 0.94; }
+                       50% { transform: scale(0.97, 1.06) translateY(1px); opacity: 1; }
+                       75% { transform: scale(1.03, 0.99) translateY(-0.5px); opacity: 0.96; } }
+@keyframes drift     { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(4%, -3%) scale(1.12); } }
+@keyframes sweep     { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+@keyframes halo      { 0%,100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.75; transform: scale(1.09); } }
+@keyframes slideUp   { from { opacity: 0; transform: translateY(28px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes countIn   { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes shimmer   { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+/* ===========================================================================
+   AMBIENT FIELD
+   Three slow-drifting heat blooms behind everything. Sits at low opacity so
+   it registers as atmosphere rather than as an element. pointer-events:none
+   is mandatory — a decorative layer must never intercept a click.
+   =========================================================================== */
 
 .app {
-  background: var(--bg-deep);
-  min-height: 100vh;
   position: relative;
+  min-height: 100vh;
+  background: var(--void);
   overflow-x: hidden;
 }
 
-.app::before {
-  content: "";
+.ambient {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(247, 239, 228, 0.02),
-    rgba(247, 239, 228, 0.02) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  z-index: 1;
+  z-index: 0;
+  overflow: hidden;
 }
 
-/* ---------- header ---------- */
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.24;
+  will-change: transform;
+}
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 40px;
-  border-bottom: 1px solid rgba(255, 200, 87, 0.15);
-  /* Sticky + a z-index well clear of any page content. Tabs are the primary
-     navigation now, so they must be reachable from anywhere on any page and
-     can never sit behind decoration. */
+.ambient-blob--1 {
+  width: 46vw; height: 46vw; top: -14vw; left: -8vw;
+  background: radial-gradient(circle, var(--ember), transparent 68%);
+  animation: drift 26s var(--ease) infinite alternate;
+}
+.ambient-blob--2 {
+  width: 40vw; height: 40vw; top: 8vw; right: -10vw;
+  background: radial-gradient(circle, var(--magenta), transparent 68%);
+  animation: drift 34s var(--ease) infinite alternate-reverse;
+}
+.ambient-blob--3 {
+  width: 52vw; height: 52vw; bottom: -22vw; left: 24vw;
+  background: radial-gradient(circle, var(--plum), transparent 70%);
+  animation: drift 42s var(--ease) infinite alternate;
+}
+
+/* Fine grain over the top — kills gradient banding and adds a tactile
+   quality that flat dark UIs otherwise lack. */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.032;
+  background-image: repeating-linear-gradient(0deg, #fff, #fff 1px, transparent 1px, transparent 3px);
+}
+
+.shell { position: relative; z-index: 2; }
+
+/* ===========================================================================
+   TOP BAR
+   =========================================================================== */
+
+.topbar {
   position: sticky;
   top: 0;
-  z-index: 50;
-  background: rgba(11, 8, 16, 0.88);
-  backdrop-filter: blur(14px);
-}
-
-.brand {
+  z-index: 60;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
+  padding: 14px 28px;
+  background: rgba(7, 5, 11, 0.76);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--line);
 }
 
-.brand-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--bloom-paprika);
-  color: var(--bloom-paprika);
+.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.logo-mark {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(140deg, var(--ember), var(--magenta));
   font-family: 'IBM Plex Mono', monospace;
   font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.05em;
-  box-shadow: 0 0 12px rgba(255, 106, 61, 0.35);
+  font-size: 12px;
+  color: var(--void);
+  box-shadow: 0 0 22px rgba(255, 95, 31, 0.42);
 }
 
-.brand-name {
-  font-family: 'IBM Plex Mono', monospace;
+.logo-word {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
   font-size: 15px;
-  letter-spacing: 0.08em;
-  color: var(--text-cream);
-  text-transform: uppercase;
-}
-
-.header nav {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.header nav a {
-  color: var(--text-dim);
-  text-decoration: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: color 0.15s ease;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
-}
-
-.header nav a:hover,
-.header nav a:focus-visible {
-  color: var(--bloom-saffron);
-  border-bottom-color: var(--bloom-saffron);
-}
-
-.user-badge {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: 20px;
-  padding: 6px 8px 6px 16px;
-  background: rgba(255, 200, 87, 0.08);
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  border-radius: 999px;
-}
-
-.user-email {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  letter-spacing: 0.02em;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.signout-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(100deg, var(--bloom-saffron), var(--bloom-paprika) 70%);
-  color: var(--bg-deep);
-  border: none;
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 8px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  white-space: nowrap;
-}
-
-.signout-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(255, 106, 61, 0.45);
-}
-
-.signout-btn:active {
-  transform: translateY(0);
-}
-
-/* ---------- hero ---------- */
-
-.hero {
-  position: relative;
-  z-index: 2;
-  padding: 120px 40px 80px;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  top: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(420px, 60vw, 720px);
-  height: clamp(420px, 60vw, 720px);
-  background:
-    radial-gradient(circle at 30% 30%, var(--bloom-saffron) 0%, transparent 45%),
-    radial-gradient(circle at 68% 42%, var(--bloom-paprika) 0%, transparent 50%),
-    radial-gradient(circle at 48% 72%, var(--bloom-plum) 0%, transparent 55%);
-  filter: blur(85px) saturate(1.3);
-  opacity: 0.5;
-  z-index: -1;
-  /* BUG FIX: this blob starts 80px ABOVE the hero, so it overlapped the
-     header — and since .hero shares z-index 2 with .header but comes later
-     in the DOM, it painted on top and intercepted every tab click. It's
-     decoration; it should never be a click target. */
-  pointer-events: none;
-  animation: bloom-drift 18s ease-in-out infinite alternate;
-}
-
-@keyframes bloom-drift {
-  0% { transform: translateX(-50%) scale(1) rotate(0deg); }
-  100% { transform: translateX(-50%) scale(1.08) rotate(5deg); }
-}
-
-.eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--bloom-saffron);
-  margin: 0 0 20px;
-}
-
-.eyebrow::before {
-  content: "// ";
-  color: var(--bloom-paprika);
-}
-
-.hero h1 {
-  font-size: clamp(32px, 5vw, 52px);
-  line-height: 1.15;
-  font-weight: 700;
-  margin: 0 0 40px;
-  color: var(--text-cream);
   letter-spacing: -0.01em;
 }
 
-.hero-accent {
-  background: linear-gradient(100deg, var(--bloom-saffron), var(--bloom-paprika) 55%, var(--bloom-plum));
+/* ---- tabs ---- */
+
+.nav {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  margin: 0 auto;
+}
+
+.nav-tab {
+  position: relative;
+  padding: 8px 18px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--r-full);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  transition: color 0.2s var(--ease);
+  white-space: nowrap;
+}
+
+.nav-tab:hover { color: var(--ink); }
+
+.nav-tab--on {
+  color: var(--void);
+  font-weight: 600;
+  background: linear-gradient(120deg, var(--saffron), var(--ember));
+  box-shadow: 0 2px 16px rgba(255, 95, 31, 0.4);
+}
+
+.nav-tab-dot {
+  position: absolute;
+  top: 5px; right: 8px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ion);
+  box-shadow: 0 0 8px var(--ion);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+
+/* ===========================================================================
+   THE FLAME
+   Tiers every 5 days. This is the single most important object in the
+   product: it's the visual proof of investment, and it must visibly grow in
+   power. Progression runs orange → gold → white-hot → blue → violet →
+   spectral, which is both the real physical temperature ramp and a legible
+   "this is getting serious" signal.
+   =========================================================================== */
+
+.flame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 14px 6px 8px;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+
+.flame-svg { width: 26px; height: 32px; overflow: visible; flex-shrink: 0; }
+.flame-body { transform-origin: 50% 85%; animation: flicker 2.4s ease-in-out infinite; }
+
+/* The halo is what makes higher tiers feel physically hotter. */
+.flame-halo {
+  position: absolute;
+  left: 10px; top: 50%;
+  width: 30px; height: 30px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  filter: blur(13px);
+  pointer-events: none;
+  animation: halo 3s ease-in-out infinite;
+}
+
+.flame-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.flame-unit {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  line-height: 1;
+}
+
+.flame-meta { display: flex; flex-direction: column; gap: 3px; }
+
+/* Tier tinting. Each step raises luminance — the screen literally gets
+   brighter as the streak grows, which is the reward.
+   t0 (Dormant) has no override — it uses the base .flame styling as-is,
+   so there's nothing to put in a t0 ruleset. */
+.flame--t0 .flame-halo { background: transparent; }
+
+.flame--t1 { border-color: rgba(255, 95, 31, 0.35); }
+.flame--t1 .flame-halo { background: var(--ember); }
+
+.flame--t2 { border-color: rgba(255, 200, 87, 0.45); box-shadow: 0 0 18px rgba(255, 200, 87, 0.16); }
+.flame--t2 .flame-halo { background: var(--saffron); }
+
+.flame--t3 { border-color: rgba(255, 234, 170, 0.6); box-shadow: 0 0 24px rgba(255, 220, 140, 0.24); }
+.flame--t3 .flame-halo { background: #ffe6a8; }
+
+.flame--t4 { border-color: rgba(79, 195, 255, 0.6); box-shadow: 0 0 28px rgba(79, 195, 255, 0.3); }
+.flame--t4 .flame-halo { background: var(--azure); }
+
+.flame--t5 { border-color: rgba(139, 92, 246, 0.65); box-shadow: 0 0 32px rgba(139, 92, 246, 0.34); }
+.flame--t5 .flame-halo { background: var(--violet); }
+
+.flame--t6 { border-color: rgba(255, 46, 136, 0.7); box-shadow: 0 0 36px rgba(255, 46, 136, 0.38); }
+.flame--t6 .flame-halo { background: var(--magenta); }
+
+.flame--t7 {
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 46px rgba(255, 240, 200, 0.5), inset 0 0 20px rgba(255, 240, 200, 0.1);
+}
+.flame--t7 .flame-halo { background: #fff4d6; }
+.flame--t7 .flame-body { animation-duration: 1.5s; }
+
+/* Big presentation of the same object, for the Today hero. */
+.flame--hero {
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+  flex-direction: column;
+  gap: 4px;
+}
+.flame--hero .flame-svg { width: 78px; height: 96px; }
+.flame--hero .flame-halo { left: 50%; top: 40%; width: 92px; height: 92px; transform: translate(-50%, -50%); filter: blur(34px); }
+.flame--hero .flame-count { font-size: 46px; letter-spacing: -0.03em; }
+.flame--hero .flame-unit { font-size: 10px; }
+.flame--hero .flame-meta { align-items: center; }
+
+/* ===========================================================================
+   LEVEL RING
+   =========================================================================== */
+
+.ring-wrap { position: relative; display: grid; place-items: center; flex-shrink: 0; }
+.ring { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: rgba(255, 255, 255, 0.08); }
+.ring-fill {
+  fill: none;
+  stroke: url(#ringGrad);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.1s var(--ease);
+}
+.ring-label {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  line-height: 1;
+}
+.ring-lv {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.ring-rank {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ion);
+  margin-top: 2px;
+}
+
+.signout {
+  padding: 7px 14px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-faint);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.signout:hover { color: var(--ink); border-color: rgba(253, 248, 242, 0.25); }
+
+/* ===========================================================================
+   PAGE + SECTION PRIMITIVES
+   =========================================================================== */
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 120px;
+  animation: rise 0.5s var(--ease) both;
+}
+
+.page--wide { max-width: 1040px; }
+
+.page-head { margin-bottom: 30px; }
+
+.page-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  margin-bottom: 10px;
+}
+
+.page-title em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  background: linear-gradient(100deg, var(--saffron), var(--ember) 55%, var(--magenta));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.search-box {
+.page-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  letter-spacing: 0.01em;
+}
+
+/* Staggered entrance. Each card arrives a beat after the last, which reads
+   as the page assembling itself rather than snapping into place. */
+.card {
+  position: relative;
+  background: linear-gradient(165deg, var(--card), var(--raised) 70%);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+  animation: slideUp 0.55s var(--ease) both;
+  overflow: hidden;
+}
+
+.card:nth-of-type(1) { animation-delay: 0.04s; }
+.card:nth-of-type(2) { animation-delay: 0.1s; }
+.card:nth-of-type(3) { animation-delay: 0.16s; }
+.card:nth-of-type(4) { animation-delay: 0.22s; }
+.card:nth-of-type(5) { animation-delay: 0.28s; }
+
+.card--glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(130deg, var(--saffron), transparent 40%, transparent 60%, var(--magenta));
+  /* FIX: -webkit-mask was paired with unprefixed mask-composite but no
+     unprefixed mask image — an incomplete vendor-prefix pair. Firefox reads
+     mask-composite: exclude but had no unprefixed mask to composite against,
+     so it only worked via Firefox's webkit-prefix aliasing rather than on
+     its own. Adding the unprefixed mask shorthand makes the pair complete:
+     -webkit-mask + -webkit-mask-composite (old Safari keyword "xor") for
+     WebKit, mask + mask-composite (spec keyword "exclude") for everyone else. */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.card-head {
   display: flex;
-  gap: 12px;
-  max-width: 640px;
-  margin: 0 auto;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
 }
 
-.search-box input {
-  flex: 1;
-  background: #1e1626;
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  color: var(--text-cream);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  padding: 16px 18px;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.search-box input::placeholder {
-  color: #6b5d52;
-}
-
-.search-box input:focus {
-  border-color: var(--bloom-saffron);
-  box-shadow: 0 0 0 3px rgba(255, 200, 87, 0.15);
-}
-
-.search-box button {
-  background: var(--bloom-paprika);
-  color: var(--bg-deep);
-  border: none;
-  font-family: 'IBM Plex Mono', monospace;
+.card-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
   font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 16px 26px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
-  white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
-.search-box button:hover:not(:disabled) {
-  background: var(--bloom-saffron);
-  box-shadow: 0 0 20px rgba(255, 200, 87, 0.5);
+.card-sub, .meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
 }
 
-.search-box button:active:not(:disabled) {
-  transform: scale(0.98);
+.xp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+  background: rgba(46, 230, 214, 0.11);
+  border: 1px solid var(--line-cool);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ion);
 }
 
-.search-box button:disabled {
-  background: #3a3f4a;
-  color: #7a8290;
-  cursor: not-allowed;
+.empty {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
 }
 
-/* ---------- auth screen ---------- */
+/* ===========================================================================
+   BUTTONS
+   =========================================================================== */
 
-/* The Google button is currently styled inline in App.js. These rules match
-   it exactly — delete that inline `style` object whenever you like. */
-.google-btn {
-  margin-top: 0.75rem;
-  display: flex;
+.btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  width: 100%;
-  height: 56px;
-  background-color: #1f1f1f;
-  color: #fff;
-  border: 1px solid #1f1f1f;
-  border-radius: 8px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 500;
+  gap: 8px;
+  padding: 13px 26px;
+  border: none;
+  border-radius: var(--r-full);
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  transition: transform 0.18s var(--spring), box-shadow 0.25s var(--ease), opacity 0.2s;
 }
 
-.google-btn:hover {
-  background-color: #3c3c3c;
+.btn:active:not(:disabled) { transform: scale(0.97); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn--hot {
+  color: var(--void);
+  background: linear-gradient(110deg, var(--saffron), var(--ember) 60%, var(--magenta));
+  background-size: 200% auto;
+  box-shadow: 0 6px 26px rgba(255, 95, 31, 0.34);
+}
+.btn--hot:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background-position: right center;
+  box-shadow: 0 10px 34px rgba(255, 95, 31, 0.46);
 }
 
-/* Inline text buttons that read as links: forgot password, sign in / sign up.
-   These are real <button>s — they perform actions rather than navigating, and
-   one of them was the malformed <a> that stopped the app compiling. */
+.btn--cool {
+  color: var(--void);
+  background: linear-gradient(110deg, var(--ion), var(--mint));
+  box-shadow: 0 6px 24px rgba(46, 230, 214, 0.3);
+}
+.btn--cool:hover:not(:disabled) { transform: translateY(-2px); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid rgba(253, 248, 242, 0.18);
+}
+.btn--ghost:hover:not(:disabled) { border-color: var(--saffron); color: var(--saffron); }
+
+.btn--block { width: 100%; }
+
 .link-btn {
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  color: #e0a3ff;
+  font-size: 12px;
+  color: var(--ion);
   text-decoration: underline;
-  text-underline-offset: 2px;
-  transition: color 0.15s ease;
+  text-underline-offset: 3px;
+  transition: color 0.2s var(--ease);
+}
+.link-btn:hover { color: var(--mint); }
+
+/* ===========================================================================
+   TODAY — status hero
+   One glance answers "where am I". The flame is the hero because it's the
+   thing being protected.
+   =========================================================================== */
+
+.status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 30px;
+  align-items: center;
+  padding: 32px;
+  margin-bottom: 18px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(120% 140% at 12% 20%, rgba(255, 95, 31, 0.14), transparent 62%),
+    linear-gradient(165deg, var(--card), var(--raised) 75%);
+  border: 1px solid var(--line-warm);
+  animation: slideUp 0.55s var(--ease) both;
+  overflow: hidden;
 }
 
-.link-btn:hover {
-  color: var(--bloom-saffron);
+.status-right { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+.status-line {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(19px, 2.6vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.24;
+}
+
+.status-tier {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--saffron);
+}
+
+.status-stats { display: flex; gap: 26px; flex-wrap: wrap; }
+
+.stat-block { display: flex; flex-direction: column; gap: 3px; }
+
+.stat-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1;
+  animation: countIn 0.5s var(--ease) both;
+}
+
+.stat-num--cool { color: var(--ion); }
+.stat-num--warm { color: var(--saffron); }
+
+.stat-key {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Next-tier teaser: the specific, concrete thing that makes a streak worth
+   protecting. Vague progress doesn't motivate; "2 days to Blaze" does. */
+.next-tier {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.next-tier-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.next-tier-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--ember), var(--saffron));
+  transition: width 1s var(--ease);
+}
+
+.next-tier-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
 
 /* ===========================================================================
-   GAME LAYER
-
-   Presented as instrumentation, not play. Every numeral is monospaced,
-   every progress bar is thin and exact, every mark is geometric. There is
-   no mascot, no confetti and no exclamation mark anywhere in this file —
-   those are the specific things that make gamification read as childish,
-   and they're all avoidable while keeping the mechanics intact.
+   DUEL ARENA
+   The daily action. Two big tap targets, nothing else competing.
    =========================================================================== */
 
-/* ---------- header tabs ---------- */
-
-.tabs {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin: 0 auto;
-}
-
-.tab {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px 16px;
-  border-radius: 999px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.tab:hover { color: var(--text-cream); }
-
-.tab--active {
-  color: var(--bg-deep);
-  background: linear-gradient(100deg, var(--bloom-saffron), var(--bloom-paprika) 90%);
-  font-weight: 600;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* ---------- streak ---------- */
-/* The one element carrying loss aversion. Always visible, never accompanied
-   by a nag — showing what you have is enough; shaming you for what you
-   might lose is the part of this genre worth leaving behind. */
-
-.streak-badge {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255, 106, 61, 0.1);
-  border: 1px solid rgba(255, 106, 61, 0.3);
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-.streak-badge--active {
-  border-color: var(--streak);
-  box-shadow: 0 0 14px rgba(255, 106, 61, 0.3);
-}
-
-.streak-flame { color: var(--streak); font-size: 10px; }
-.streak-days  { color: var(--text-cream); font-size: 14px; font-weight: 600; }
-.streak-unit  { color: var(--text-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
-
-/* ---------- level ---------- */
-
-.level-pill {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 116px;
-}
-
-.level-rank {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--xp);
-}
-
-.level-num {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--text-faint);
-}
-
-/* 3px, not 12px. A thin precise bar reads as a gauge; a fat rounded one
-   reads as a toy. */
-.level-track {
-  height: 3px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.08);
+.arena {
+  position: relative;
+  padding: 26px;
+  margin-bottom: 16px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(90% 120% at 50% 0%, rgba(255, 46, 136, 0.1), transparent 60%),
+    linear-gradient(165deg, var(--elevated), var(--card) 70%);
+  border: 1px solid rgba(255, 46, 136, 0.24);
+  animation: slideUp 0.55s var(--ease) 0.06s both;
   overflow: hidden;
 }
 
-.level-fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--xp), var(--mint));
-  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
+.pips { display: flex; gap: 5px; margin-bottom: 20px; }
 
-/* ---------- xp flash ---------- */
-/* Restrained by design: one line, slides in, leaves. The urge to fire
-   confetti here is exactly the urge that makes products feel juvenile. */
-
-.xp-flash {
-  position: fixed;
-  top: 84px;
-  right: 28px;
-  z-index: 40;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(11, 8, 16, 0.94);
-  border: 1px solid var(--line-cool);
-  backdrop-filter: blur(8px);
-  animation: xp-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.xp-flash--level {
-  border-color: var(--bloom-saffron);
-  box-shadow: 0 0 24px rgba(255, 200, 87, 0.28);
-}
-
-.xp-flash-amount {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--xp);
-}
-
-.xp-flash-rank {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--bloom-saffron);
-}
-
-@keyframes xp-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ---------- pages + panels ---------- */
-
-.page {
-  position: relative;
-  z-index: 2;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 56px 40px 90px;
-}
-
-/* Page variants carry no styling yet, but exist as hooks so per-page tuning
-   doesn't require touching the JSX later. */
-.page--today,
-.page--you,
-.page--collection { display: block; }
-
-.duel { display: block; }
-
-.today-head { margin-bottom: 28px; }
-
-.today-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(24px, 3.4vw, 34px);
-  font-weight: 700;
-  line-height: 1.2;
-  margin: 0 0 8px;
-  color: var(--text-cream);
-}
-
-.today-sub {
-  margin: 0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  letter-spacing: 0.03em;
-}
-
-.panel {
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
-}
-
-.panel--duels {
-  background: linear-gradient(160deg, var(--surface-3), var(--surface-2) 60%);
-  border-color: var(--line-warm);
-}
-
-.panel-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.panel-title {
-  margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text-cream);
-}
-
-.panel-sub,
-.panel-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: 0.04em;
-}
-
-.panel-label {
-  display: block;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 10px;
-}
-
-.xp-tag { color: var(--xp); }
-
-.panel-empty,
-.panel-done {
-  margin: 0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12.5px;
-  line-height: 1.65;
-  color: var(--text-dim);
-}
-
-.panel-done { color: var(--mint); }
-
-.cta {
-  margin-top: 14px;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-saffron) 85%);
-  color: var(--bg-deep);
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.cta:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(255, 46, 136, 0.32); }
-
-/* ---------- duels ---------- */
-
-.duel-progress { display: flex; gap: 5px; margin-bottom: 20px; }
-
-.duel-pip {
+.pip {
   flex: 1;
-  height: 3px;
+  height: 4px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.08);
-  transition: background 0.4s ease;
+  transition: background 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 
-.duel-pip--done { background: linear-gradient(90deg, var(--xp), var(--mint)); }
+.pip--on {
+  background: linear-gradient(90deg, var(--ion), var(--mint));
+  box-shadow: 0 0 12px rgba(46, 230, 214, 0.5);
+}
 
-.duel-prompt {
-  margin: 0 0 16px;
+.arena-prompt {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--bloom-saffron);
+  color: var(--magenta);
+  margin-bottom: 16px;
+  animation: fade 0.4s var(--ease) both;
 }
 
-.duel-pair {
+.versus {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
   align-items: stretch;
-  gap: 12px;
 }
 
-.duel-vs {
+.vs-mark {
   align-self: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-faint);
-}
-
-/* The tap target is the whole card. Binary choice is the compulsive part —
-   it works because deciding is easy and instant, so nothing here should
-   slow that down. */
-.duel-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 0;
-  overflow: hidden;
-  cursor: pointer;
-  text-align: left;
-  background: var(--surface-3);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
-}
-
-.duel-card:hover:not(:disabled) {
-  transform: translateY(-3px);
-  border-color: var(--bloom-saffron);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-}
-
-.duel-card:active:not(:disabled) { transform: translateY(-1px); }
-.duel-card:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.duel-card-visual {
-  display: block;
-  height: 104px;
-  background: var(--surface-4);
-  overflow: hidden;
-}
-
-.duel-card-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-.duel-card-monogram {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 30px;
-  font-weight: 700;
-  color: rgba(255, 200, 87, 0.3);
-}
-
-.duel-card-body { display: block; padding: 12px 14px 14px; }
-
-.duel-card-name {
-  display: block;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-cream);
-  line-height: 1.3;
-  margin-bottom: 6px;
-}
-
-.duel-card-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-
-.duel-stat {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--bloom-saffron);
-}
-
-.duel-stat--dim { color: var(--text-faint); }
-
-.duel-card-cat {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* Skipping is always available and never punished — it's also real data
-   (ambivalence), just not data we pay for. */
-.duel-skip {
-  display: block;
-  margin: 16px auto 0;
-  padding: 7px 16px;
-  background: none;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-faint);
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.duel-skip:hover { color: var(--text-dim); border-color: rgba(247, 239, 228, 0.25); }
-
-/* ---------- quest ---------- */
-
-.panel--quest {
-  background: linear-gradient(160deg, rgba(255, 46, 136, 0.09), var(--surface-2) 65%);
-  border-color: rgba(255, 46, 136, 0.28);
-}
-
-.quest-label {
-  margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 16px;
-  line-height: 1.4;
-  color: var(--text-cream);
-}
-
-.cta--ghost {
-  background: transparent;
-  color: var(--winner-pink);
-  border: 1px solid rgba(255, 46, 136, 0.45);
-}
-
-.cta--ghost:hover {
-  background: rgba(255, 46, 136, 0.12);
-  box-shadow: none;
-}
-
-/* ---------- streak milestones ---------- */
-
-.milestones { display: flex; flex-direction: column; gap: 2px; }
-
-.milestone {
   display: grid;
-  grid-template-columns: 40px 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  opacity: 0.42;
-}
-
-.milestone--hit {
-  opacity: 1;
-  background: rgba(255, 106, 61, 0.06);
-  border-color: rgba(255, 106, 61, 0.26);
-}
-
-.milestone-days {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-faint);
-}
-
-.milestone--hit .milestone-days { color: var(--streak); }
-
-.milestone-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  color: var(--text-cream);
-}
-
-.milestone-reward {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--text-faint);
-  letter-spacing: 0.04em;
-}
-
-.milestone--hit .milestone-reward { color: var(--xp); }
-
-/* ---------- taste vector ---------- */
-
-.vector-row { margin-bottom: 18px; }
-
-.vector-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 6px;
-}
-
-.vector-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-cream);
-}
-
-.vector-value {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--xp);
-}
-
-.vector-track {
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  margin-bottom: 6px;
-}
-
-.vector-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--xp), var(--mint));
-  transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.vector-read,
-.vector-foot {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.vector-foot { display: block; margin: 14px 0 0; color: var(--text-faint); }
-
-.affinity { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
-.affinity-rows { display: flex; flex-direction: column; gap: 9px; }
-
-.affinity-row {
-  display: grid;
-  grid-template-columns: 1fr 2fr auto;
-  align-items: center;
-  gap: 10px;
-}
-
-.affinity-name {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11.5px;
-  color: var(--text-cream);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.affinity-track { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
-
-.affinity-fill {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
-}
-
-.affinity-pct {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-/* ---------- unlock ladder ---------- */
-/* Everything listed here is a feature that genuinely can't work until the
-   data exists — not an existing feature withheld to manufacture progress.
-   Nothing that works at Lv1 is ever taken away. */
-
-.ladder { display: flex; flex-direction: column; gap: 2px; }
-
-.ladder-row {
-  display: grid;
-  grid-template-columns: 44px 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 12px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  opacity: 0.45;
-}
-
-.ladder-row--open {
-  opacity: 1;
-  background: rgba(46, 230, 214, 0.05);
-  border-color: var(--line-cool);
-}
-
-.ladder-lv {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-faint);
-}
-
-.ladder-row--open .ladder-lv { color: var(--xp); }
-
-.ladder-label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  color: var(--text-cream);
-}
-
-.ladder-state {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-faint);
-}
-
-.ladder-row--open .ladder-state { color: var(--mint); }
-
-/* ---------- passport ---------- */
-
-.passport {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
-}
-
-.stamp {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 14px;
-  border-radius: 10px;
-  background: var(--surface-3);
-  border: 1px solid var(--line-warm);
-}
-
-.stamp-mark { color: var(--bloom-saffron); font-size: 12px; }
-
-.stamp-name {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-cream);
-}
-
-.stamp-place {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--text-faint);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ---------- responsive ---------- */
-
-@media (max-width: 860px) {
-  .header { flex-wrap: wrap; gap: 10px; }
-  .tabs { order: 3; width: 100%; justify-content: space-between; overflow-x: auto; }
-  .tab { padding: 8px 12px; font-size: 11px; }
-  .page { padding: 32px 20px 80px; }
-  .duel-pair { grid-template-columns: 1fr; }
-  .duel-vs { justify-self: center; padding: 2px 0; }
-  .xp-flash { top: auto; bottom: 22px; right: 16px; left: 16px; justify-content: center; }
-  .level-pill { min-width: 92px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .duel-card,
-  .level-fill,
-  .vector-fill,
-  .duel-pip,
-  .cta { transition: none; }
-  .xp-flash { animation: none; }
-}
-
-/* ---------- verdict loop (retention) ---------- */
-
-/* Sits above the search box: the open question is what a returning user
-   should meet first, before they've thought of a craving. */
-.verdict-prompts {
-  max-width: 640px;
-  margin: 0 auto 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.verdict-prompt {
-  text-align: left;
-  padding: 16px 18px;
-  border-radius: 10px;
-  background: rgba(255, 46, 136, 0.07);
-  border: 1px solid rgba(255, 46, 136, 0.3);
-}
-
-.verdict-prompt-head {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.verdict-prompt-eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--winner-pink);
-}
-
-.verdict-prompt-name {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-cream);
-}
-
-/* The claim we're asking them to grade. Shown plainly — the whole point is
-   that we committed to a number and are willing to be wrong about it. */
-.verdict-prompt-claim {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.verdict-prompt-q {
-  margin: 0 0 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  color: var(--text-cream);
-}
-
-.verdict-prompt-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.verdict-btn {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text-cream);
-  border: 1px solid rgba(247, 239, 228, 0.28);
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-}
-
-.verdict-btn:hover:not(:disabled) {
-  border-color: rgba(247, 239, 228, 0.6);
-  transform: translateY(-1px);
-}
-
-.verdict-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.verdict-btn--primary {
-  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-paprika) 80%);
-  color: #0a0e14;
-  font-weight: 600;
-  border-color: transparent;
-}
-
-.verdict-btn--good {
-  color: var(--runner-teal);
-  border-color: rgba(46, 230, 214, 0.45);
-}
-
-.verdict-btn--ok {
-  color: var(--bloom-saffron);
-  border-color: rgba(255, 200, 87, 0.45);
-}
-
-.verdict-btn--bad {
-  color: var(--err);
-  border-color: rgba(255, 71, 87, 0.45);
-}
-
-/* The payoff: how often we were right for THIS person. Built entirely from
-   our own graded predictions, which is the part a competitor can't copy. */
-.scout-report {
-  max-width: 640px;
-  margin: 0 auto 18px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  text-align: left;
-  background: rgba(46, 230, 214, 0.05);
-  border: 1px solid rgba(46, 230, 214, 0.2);
-}
-
-.scout-report-stat {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.scout-report-number {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--runner-teal);
-  line-height: 1;
-}
-
-.scout-report-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  line-height: 1.5;
-}
-
-.scout-report-learned {
-  margin: 8px 0 0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--text-dim);
-}
-
-.scout-report-learned strong {
-  color: var(--bloom-saffron);
-  font-weight: 600;
-}
-
-@media (max-width: 720px) {
-  .verdict-prompt-actions {
-    flex-direction: column;
-  }
-
-  .verdict-btn {
-    width: 100%;
-    text-align: center;
-  }
-}
-
-/* ---------- location (mandatory, explicit) ---------- */
-
-.location-panel {
-  max-width: 640px;
-  margin: 20px auto 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: left;
-}
-
-.location-prompt {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--bloom-saffron);
-}
-
-.location-input-row {
-  display: flex;
-  gap: 10px;
-}
-
-
-
-.location-input-row input {
-  flex: 1;
-  min-width: 0;
-  background: #1e1626;
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  color: var(--text-cream);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  padding: 13px 16px;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.location-input-row input::placeholder {
-  color: #6b5d52;
-}
-
-.location-input-row input:focus {
-  border-color: var(--bloom-saffron);
-  box-shadow: 0 0 0 3px rgba(255, 200, 87, 0.15);
-}
-
-.location-set-btn {
-  background: transparent;
-  color: var(--bloom-saffron);
-  border: 1px solid rgba(255, 200, 87, 0.45);
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0 22px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.location-set-btn:hover:not(:disabled) {
-  background: var(--bloom-saffron);
-  color: var(--bg-deep);
-}
-
-.location-set-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* Confirmed location — compact, so it doesn't compete with the search box. */
-.location-set {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 10px 14px;
-  border-radius: 6px;
-  background: rgba(46, 230, 214, 0.06);
-  border: 1px solid rgba(46, 230, 214, 0.22);
-}
-
-.location-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--runner-teal);
-}
-
-.location-value {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  color: var(--text-cream);
-}
-
-.location-change {
-  margin-left: auto;
-  font-size: 12px;
-}
-
-.location-err {
-  margin-top: 2px;
-}
-
-/* Radius presets — shown once a ZIP is confirmed, since "how far" only
-   makes sense relative to a known "from where". */
-.radius-modes {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.radius-btn {
-  flex: 1;
-  min-width: 118px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  padding: 9px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid rgba(255, 200, 87, 0.22);
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.radius-btn:hover {
-  border-color: rgba(255, 200, 87, 0.5);
-}
-
-.radius-btn--active {
-  background: rgba(255, 200, 87, 0.12);
-  border-color: var(--bloom-saffron);
-}
-
-.radius-btn-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-cream);
-  letter-spacing: 0.02em;
-}
-
-.radius-btn--active .radius-btn-label {
-  color: var(--bloom-saffron);
-  font-weight: 600;
-}
-
-.radius-btn-hint {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--text-dim);
-}
-
-/* Explains a further-out result rather than letting it look like a bug. */
-.radius-notice {
-  margin: 0;
-  padding: 8px 18px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--bloom-saffron);
-  background: rgba(255, 200, 87, 0.07);
-  border-bottom: 1px solid rgba(255, 200, 87, 0.18);
-}
-
-/* ---------- legacy manual location (unused) ---------- */
-
-.loc-warning {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  margin-top: 18px;
-  color: var(--bloom-saffron);
-}
-
-.manual-location {
-  max-width: 640px;
-  margin: 18px auto 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: left;
-}
-
-.manual-location label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: var(--bloom-saffron);
-}
-
-.manual-location input {
-  background: #1e1626;
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  color: var(--text-cream);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  padding: 12px 16px;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.manual-location input::placeholder {
-  color: #6b5d52;
-}
-
-.manual-location input:focus {
-  border-color: var(--bloom-saffron);
-  box-shadow: 0 0 0 3px rgba(255, 200, 87, 0.15);
-}
-
-.loc-hint {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text-dim);
-  opacity: 0.85;
-}
-
-/* ---------- status messages ---------- */
-
-.error-msg {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  margin-top: 18px;
-  color: var(--err);
-}
-
-/* Non-error status: "check your email", "reset link sent". These were
-   previously routed through .error-msg and rendered in alarming red. */
-.notice-msg {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  margin-top: 14px;
-  color: var(--runner-teal);
-  line-height: 1.5;
-}
-
-.searches-left {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-top: 14px;
-  letter-spacing: 0.03em;
-}
-
-/* ---------- results ---------- */
-
-.results-section {
-  position: relative;
-  z-index: 2;
-  padding: 8px 40px 100px;
-}
-
-.empty-state {
-  text-align: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  color: #4a5568;
-  max-width: 480px;
-  margin: 40px auto;
-  line-height: 1.6;
-}
-
-.verdict {
-  display: flex;
-  justify-content: center;
-  max-width: 940px;
-  margin: 0 auto;
-}
-
-/* Two panes on desktop: the visual and the decision on the left, the detail
-   you read on the right. Halves the card's height so the whole verdict is
-   legible without scrolling. Collapses to one column below 860px. */
-.result-split {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: start;
-}
-
-.result-pane {
-  min-width: 0;
-}
-
-.result-pane--visual {
-  border-right: 1px solid rgba(46, 230, 214, 0.15);
-  padding-bottom: 18px;
-}
-
-.result-pane--detail {
-  padding: 22px;
-}
-
-.result-pane--visual .dominance-block {
-  padding: 14px 20px 4px;
-  text-align: left;
-}
-
-.result-pane--visual .action-row {
-  padding: 12px 20px 0;
-  margin-bottom: 0;
-}
-
-.map-peek {
-  padding: 14px 20px 0;
-}
-
-.map-peek .map-embed {
-  margin-top: 12px;
-}
-
-@media (max-width: 860px) {
-  .result-split {
-    grid-template-columns: 1fr;
-  }
-
-  .result-pane--visual {
-    border-right: none;
-    border-bottom: 1px solid rgba(46, 230, 214, 0.15);
-  }
-}
-
-.verdict .result-card {
-  width: 100%;
-}
-
-.result-card {
-  background: #111823;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid rgba(46, 230, 214, 0.2);
-  display: flex;
-  flex-direction: column;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.result-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(46, 230, 214, 0.45);
-}
-
-.result-card--winner {
-  border: 1px solid var(--winner-pink);
-  box-shadow: 0 0 30px rgba(255, 46, 136, 0.25), inset 0 0 0 1px rgba(255, 46, 136, 0.1);
-  position: relative;
-}
-
-.result-card--winner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, transparent 0%, rgba(255, 46, 136, 0.06) 50%, transparent 100%);
-  background-size: 100% 200%;
-  animation: scan 4s linear infinite;
-}
-
-@keyframes scan {
-  0% { background-position: 0 -100%; }
-  100% { background-position: 0 100%; }
-}
-
-.match-banner {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  padding: 10px 18px;
-  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-paprika) 70%);
-  position: relative;
-  z-index: 1;
-}
-
-.match-banner-tag {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #0a0e14;
-}
-
-.match-banner-query {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: rgba(10, 14, 20, 0.75);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* -- hero visual: a real photo (Serper thumbnail or image search) with the
-   animated match score overlaid, and a plain monogram fallback when no photo
-   is found or it fails to load — never an emoji, never a guessed stock image */
-
-.result-hero-visual {
-  position: relative;
-  height: 240px;
-  overflow: hidden;
-  background: #0d1219;
-}
-
-.hero-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(1.05) contrast(1.05);
-  display: block;
-}
-
-.hero-monogram {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 64px;
-  font-weight: 700;
-  color: rgba(255, 200, 87, 0.35);
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 200, 87, 0.25), transparent 55%),
-    radial-gradient(circle at 75% 75%, rgba(255, 106, 61, 0.2), transparent 55%);
-}
-
-.hero-photo-source {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: rgba(247, 239, 228, 0.75);
-  background: rgba(10, 14, 20, 0.55);
-  padding: 4px 8px;
-  border-radius: 999px;
-  text-decoration: none;
-}
-
-.score-badge {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
+  place-items: center;
+  width: 34px; height: 34px;
   border-radius: 50%;
-  background: rgba(10, 14, 20, 0.85);
-  border: 2px solid var(--winner-pink);
-  box-shadow: 0 0 18px rgba(255, 46, 136, 0.5);
-  backdrop-filter: blur(6px);
-  animation: badge-pop 0.4s ease;
-}
-
-.score-badge-number {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-cream);
-  line-height: 1.1;
-}
-
-.score-badge-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-@keyframes badge-pop {
-  from { transform: scale(0.6); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* -- dominance stats: the "beat N others" / "+X% vs average" numbers -- */
-
-.dominance-block {
-  text-align: center;
-  padding: 10px 18px 0;
-}
-
-.beat-line {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin: 0;
-}
-
-.beat-line strong {
-  color: var(--winner-pink);
-}
-
-.dominance-stat {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--bloom-saffron);
-  margin: 4px 0 0;
-}
-
-/* The verdict now leads the card instead of a grid of percentages. It has
-   to read as a statement, not a stat — hence the larger, non-mono type. */
-.verdict-line {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-cream);
-  margin: 0;
-  padding: 4px 0 2px;
-}
-
-/* Score breakdown + comparisons, side by side at the foot of the card. */
-.detail-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 4px 0 16px;
-}
-
-.detail-row .comparison-tease,
-.detail-row .score-detail {
-  margin: 0;
-}
-
-.score-detail .score-core-metrics {
-  padding: 14px 0 0;
-}
-
-/* -- score core metrics: the sub-scores behind the composite.
-   auto-fit accommodates the seventh "vibe match" bar, which only renders
-   when the search actually asked for a quality. -- */
-
-.score-core-metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px 20px;
-  padding: 18px 22px 4px;
-}
-
-.mini-metric {
-  display: grid;
-  grid-template-columns: 1fr 34px;
-  align-items: center;
-  gap: 6px;
-}
-
-.mini-metric-bar {
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-
-.mini-metric-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--bloom-saffron), var(--winner-pink));
-  transition: width 0.6s ease;
-}
-
-.mini-metric-value {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--text-dim);
-  text-align: right;
-}
-
-.mini-metric-label {
-  grid-column: 1 / span 2;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  color: #5a6472;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--ink-faint);
 }
 
-.result-body {
-  padding: 20px 22px 24px;
-}
-
-.result-pane--detail h2 {
-  margin: 0 0 10px;
-  font-size: 21px;
-  font-weight: 700;
-  color: #e8ecf1;
-  line-height: 1.25;
-}
-
-.result-body h2 {
-  margin: 0 0 10px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #e8ecf1;
-}
-
-.meta-row {
+.pick {
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  color: #8a96a3;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  background: var(--raised);
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-md);
+  transition: transform 0.2s var(--spring), border-color 0.2s var(--ease), box-shadow 0.25s var(--ease);
+  animation: pop 0.4s var(--ease) both;
 }
 
-.meta-row .rating {
-  color: #ffb020;
+.pick:nth-child(1) { animation-delay: 0.05s; }
+.pick:nth-child(3) { animation-delay: 0.12s; }
+
+.pick:hover:not(:disabled) {
+  transform: translateY(-5px) scale(1.015);
+  border-color: var(--saffron);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 26px rgba(255, 200, 87, 0.18);
+}
+
+.pick:active:not(:disabled) { transform: translateY(-1px) scale(0.99); }
+.pick:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.pick-img { position: relative; height: 118px; background: var(--elevated); overflow: hidden; }
+.pick-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s var(--ease); }
+.pick:hover:not(:disabled) .pick-img img { transform: scale(1.07); }
+
+.pick-mono {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 34px;
   font-weight: 600;
+  color: rgba(255, 200, 87, 0.26);
+  background: radial-gradient(circle at 30% 25%, rgba(255, 200, 87, 0.14), transparent 60%);
 }
 
-.meta-row .rating--new {
-  color: #8a96a3;
-  font-weight: 500;
-}
+.pick-body { padding: 13px 15px 15px; }
 
-.meta-row .category::before,
-.meta-row .distance::before {
-  content: "•";
-  color: #4a5568;
-  margin-right: 6px;
-}
-
-.address {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: #5a6472;
-  margin: 0 0 16px;
-  letter-spacing: 0.02em;
-}
-
-/* -- evidence: grounded in Exa research, split into two channels.
-   The menu quote sits on top; "what people say" sits below a hairline. -- */
-
-.evidence-section {
-  margin: 4px 0 18px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: rgba(46, 230, 214, 0.06);
-  border: 1px solid rgba(46, 230, 214, 0.25);
-}
-
-.evidence-label {
+.pick-name {
   display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.28;
+  margin-bottom: 7px;
+  letter-spacing: -0.01em;
+}
+
+.pick-stats { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 5px; }
+
+.pick-stat {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--saffron);
+}
+.pick-stat--dim { color: var(--ink-faint); }
+
+.pick-cat {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-ghost);
+}
+
+.arena-skip {
+  display: block;
+  margin: 18px auto 0;
+  padding: 8px 18px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-ghost);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.arena-skip:hover { color: var(--ink-soft); border-color: rgba(253, 248, 242, 0.2); }
+
+.arena-done {
+  text-align: center;
+  padding: 18px 0 6px;
+}
+
+.arena-done-mark {
+  font-size: 30px;
+  color: var(--ion);
+  display: block;
+  margin-bottom: 10px;
+  animation: pop 0.5s var(--spring) both;
+}
+
+.arena-done-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+
+.arena-done-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-faint); }
+
+/* ===========================================================================
+   CALIBRATION
+
+   One screen, one action. The purpose line sits at the top because a person
+   who understands WHY they're tapping keeps tapping; a person who thinks
+   they're feeding a slot machine stops.
+   =========================================================================== */
+
+.cal {
+  position: relative;
+  padding: 26px;
+  margin-bottom: 16px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(90% 130% at 50% 0%, rgba(255, 46, 136, 0.12), transparent 62%),
+    linear-gradient(165deg, var(--elevated), var(--card) 72%);
+  border: 1px solid rgba(255, 46, 136, 0.26);
+  animation: slideUp 0.55s var(--ease) 0.06s both;
+  overflow: hidden;
+}
+
+.cal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+
+.cal-tag {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--runner-teal);
-  margin-bottom: 8px;
+  color: var(--magenta);
 }
 
-.evidence-quote {
-  margin: 0 0 8px;
+.cal-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ion);
+}
+
+.cal-why {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+  max-width: 48ch;
+}
+
+.cal-track { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.07); overflow: hidden; margin-bottom: 20px; }
+.cal-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--ion), var(--mint));
+  box-shadow: 0 0 14px rgba(46, 230, 214, 0.5);
+  transition: width 0.7s var(--ease);
+}
+
+.cal-predict {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--violet);
+  margin-bottom: 10px;
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+/* The grading moment. A miss is framed as USEFUL, never as the user being
+   wrong — they can't be wrong about their own taste, and telling them
+   otherwise would be both false and alienating. */
+.cal-verdict {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  margin-bottom: 14px;
+  animation: pop 0.4s var(--spring) both;
+}
+.cal-verdict--hit  { color: var(--ion); background: rgba(46, 230, 214, 0.09); border: 1px solid var(--line-cool); }
+.cal-verdict--miss { color: var(--saffron); background: rgba(255, 200, 87, 0.08); border: 1px solid var(--line-warm); }
+
+.cal-axis {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 14px;
+}
+
+.cal-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch; }
+
+.cal-or {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+
+.cal-btn {
   padding: 0;
   border: none;
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: #c8d0da;
-  font-style: italic;
-}
-
-.evidence-source-link {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--runner-teal);
-  text-decoration: none;
-}
-
-.evidence-source-link:hover {
-  text-decoration: underline;
-}
-
-/* -- review + menu blocks -- */
-
-.review-block + .menu-block,
-.review-block + .reception-block {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(46, 230, 214, 0.18);
-}
-
-.review-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-
-.review-label {
-  margin-bottom: 0;
-}
-
-.stars {
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: var(--bloom-saffron);
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.stars-empty {
-  color: rgba(255, 200, 87, 0.25);
-}
-
-.menu-block {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(46, 230, 214, 0.18);
-}
-
-.menu-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.menu-list li {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
-  color: #c8d0da;
-}
-
-.menu-item-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.menu-item-dash {
-  color: #4a5568;
-  flex: 1 0 auto;
-}
-
-.menu-item-price {
-  color: var(--bloom-saffron);
-  font-weight: 600;
-  white-space: nowrap;
-  margin-left: auto;
-}
-
-.reception-block {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(46, 230, 214, 0.18);
-}
-
-/* Saffron rather than teal, so the two channels read as distinct sources. */
-.reception-block .evidence-label {
-  color: var(--bloom-saffron);
-}
-
-.allergy-note {
-  margin: 10px 0 0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--err);
-  line-height: 1.5;
-}
-
-.dietary-note {
-  margin: 8px 0 0;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--bloom-saffron);
-  line-height: 1.5;
-}
-
-/* -- "why this won" chips -- */
-
-.why-section {
-  margin: 4px 0 18px;
-}
-
-.why-label {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--winner-pink);
-  margin-bottom: 10px;
-}
-
-.why-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: #c8d0da;
-  background: rgba(255, 46, 136, 0.08);
-  border: 1px solid rgba(255, 46, 136, 0.25);
-  padding: 6px 12px;
-  border-radius: 999px;
-  line-height: 1.3;
-}
-
-/* -- comparison tease -- */
-
-.comparison-tease {
-  margin: 4px 0 16px;
-}
-
-.comparison-toggle {
   background: none;
-  border: 1px solid rgba(46, 230, 214, 0.3);
-  color: var(--runner-teal);
+  cursor: pointer;
+  border-radius: var(--r-md);
+  transition: transform 0.2s var(--spring);
+  animation: pop 0.4s var(--ease) both;
+}
+.cal-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.cal-btn:hover:not(:disabled) { transform: translateY(-4px); }
+.cal-btn:active:not(:disabled) { transform: translateY(-1px) scale(0.99); }
+
+/* Concept faces are typographic, not photographic — a "Spicy" card has no
+   photo, and inventing one would be a lie about what we know. */
+.face {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  padding: 22px 18px;
+  border-radius: var(--r-md);
+  background: linear-gradient(160deg, var(--raised), var(--card));
+  border: 1.5px solid var(--line);
+  text-align: left;
+  transition: border-color 0.2s var(--ease), box-shadow 0.25s var(--ease);
+}
+
+.cal-btn:hover:not(:disabled) .face {
+  border-color: var(--saffron);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.5), 0 0 24px rgba(255,200,87,0.16);
+}
+
+.face-kind {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-ghost);
+}
+
+.face-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.face-rare {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  background: rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+/* Each card kind gets its own accent so the deck reads as a taxonomy
+   rather than a pile. */
+.face--k-cuisine { border-left: 3px solid var(--ember); }
+.face--k-dish    { border-left: 3px solid var(--saffron); }
+.face--k-trait   { border-left: 3px solid var(--magenta); }
+.face--k-vibe    { border-left: 3px solid var(--violet); }
+.face--k-context { border-left: 3px solid var(--azure); }
+.face--k-diet    { border-left: 3px solid var(--ion); }
+
+.face--place { padding: 0; overflow: hidden; }
+.face-img { display: block; height: 108px; background: var(--elevated); overflow: hidden; }
+.face-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.face-mono { display: grid; place-items: center; height: 100%; font-family: 'IBM Plex Mono', monospace; font-size: 30px; color: rgba(255,200,87,0.26); }
+.face-body { display: block; padding: 13px 15px 15px; }
+.face--place .face-name { font-size: 14.5px; margin-bottom: 6px; }
+.face-stats { display: flex; gap: 9px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--saffron); }
+
+.cal-skip {
+  display: block;
+  margin: 18px auto 0;
+  padding: 8px 18px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  cursor: pointer;
+  color: var(--ink-ghost);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
+.cal-skip:hover { color: var(--ink-soft); border-color: rgba(253,248,242,0.2); }
 
-.comparison-list {
-  list-style: none;
-  margin: 10px 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.cal-done { text-align: center; padding: 20px 0 8px; }
+.cal-done-mark { display: block; font-size: 30px; color: var(--ion); margin-bottom: 10px; animation: pop 0.5s var(--spring) both; }
+.cal-done-t { font-family: 'Space Grotesk', sans-serif; font-size: 16px; margin-bottom: 6px; }
+.cal-done-s { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
+.cal-done-s strong { color: var(--saffron); }
 
-.comparison-list li {
+/* ===========================================================================
+   INCOMPLETION HOOK
+
+   Named and specific. "2 more answers unlocks Heat seeker" pulls people back
+   in a way "you have progress remaining" never will — the brain holds open
+   loops that have a NAME.
+   =========================================================================== */
+
+.pending {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: #8a96a3;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--r-sm);
+  background: rgba(139, 92, 246, 0.06);
+  border: 1px dashed rgba(139, 92, 246, 0.32);
 }
 
-.comparison-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding-right: 12px;
-}
+.pending-name { font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: var(--ink); }
+.pending-need { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--violet); white-space: nowrap; }
 
-.comparison-score {
-  color: var(--runner-teal);
-  white-space: nowrap;
-}
+/* ===========================================================================
+   TRAIT REVEAL
+   =========================================================================== */
 
-/* -- actions + map -- */
-
-.action-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.action-btn {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--runner-teal);
-  border: 1px solid rgba(46, 230, 214, 0.4);
-  padding: 8px 16px;
-  border-radius: 999px;
-  transition: background 0.15s ease, transform 0.1s ease;
-}
-
-.action-btn:hover {
-  background: rgba(46, 230, 214, 0.12);
-  transform: translateY(-1px);
-}
-
-.action-btn--primary {
-  color: #0a0e14;
-  background: linear-gradient(100deg, var(--winner-pink), var(--bloom-saffron) 80%);
-  border-color: transparent;
-}
-
-.action-btn--primary:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-}
-
-.map-embed {
-  margin-top: 4px;
-  border: 1px solid rgba(46, 230, 214, 0.2);
-  border-radius: 8px;
-  overflow: hidden;
-  filter: grayscale(0.3) contrast(1.1) brightness(0.9);
-}
-
-/* ---------- info / about ---------- */
-
-.info,
-.about {
-  position: relative;
-  z-index: 2;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 140px 40px 70px;
-  border-top: 1px solid rgba(255, 200, 87, 0.12);
-}
-
-.info h2,
-.about h2 {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--bloom-saffron);
-  margin: 0 0 32px;
-}
-
-.info h2::before {
-  content: "01 / ";
-  color: var(--bloom-paprika);
-}
-
-.about h2::before {
-  content: "02 / ";
-  color: var(--bloom-paprika);
-}
-
-.steps {
+.reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  place-items: center;
+  padding: 24px;
+  background: rgba(7, 5, 11, 0.82);
+  backdrop-filter: blur(10px);
+  animation: fade 0.3s var(--ease) both;
 }
 
-.steps .step-label {
+.reveal-card {
+  max-width: 420px;
+  width: 100%;
+  padding: 34px 30px;
+  border-radius: var(--r-lg);
+  text-align: center;
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(139, 92, 246, 0.24), transparent 62%),
+    linear-gradient(165deg, var(--elevated), var(--card));
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 50px rgba(139, 92, 246, 0.22);
+  animation: pop 0.5s var(--spring) both;
+}
+
+.reveal-tag {
   display: block;
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--bloom-paprika);
-  margin-bottom: 10px;
+  color: var(--violet);
+  margin-bottom: 14px;
 }
 
-.steps p {
-  font-size: 15px;
-  color: var(--text-dim);
-  line-height: 1.6;
-  margin: 0;
-}
-
-.about p {
-  font-size: 16px;
-  color: var(--text-dim);
-  line-height: 1.7;
-  max-width: 560px;
-}
-
-/* ---------- footer ---------- */
-
-footer {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding: 30px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: #4a3f38;
-  border-top: 1px solid rgba(255, 200, 87, 0.08);
-}
-
-/* ---------- onboarding (allergies / dietary preferences) ---------- */
-
-.onboarding-hero {
-  position: relative;
-  z-index: 2;
-  min-height: calc(100vh - 160px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 40px 100px;
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.onboarding-hero::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: clamp(480px, 70vw, 820px);
-  height: clamp(480px, 70vw, 820px);
-  background:
-    radial-gradient(circle at 25% 25%, var(--bloom-saffron) 0%, transparent 45%),
-    radial-gradient(circle at 75% 35%, var(--bloom-paprika) 0%, transparent 50%),
-    radial-gradient(circle at 50% 85%, #7ee8d5 0%, transparent 50%);
-  filter: blur(90px) saturate(1.25);
-  opacity: 0.45;
-  z-index: -1;
-  pointer-events: none;
-  animation: bloom-drift 20s ease-in-out infinite alternate;
-}
-
-.onboarding-heading {
-  margin: 6px 0 16px;
-}
-
-.onboarding-heading .hero-script {
-  font-size: 40px;
-  background: linear-gradient(100deg, var(--bloom-saffron), #7ee8d5 65%, var(--bloom-plum));
+.reveal-title {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1.05;
+  margin-bottom: 12px;
+  background: linear-gradient(100deg, var(--mint), var(--azure) 60%, var(--violet));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.onboarding-sub {
-  color: var(--text-dim);
+.reveal-detail {
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
-  line-height: 1.7;
-  max-width: 460px;
-  margin: 0 auto 40px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 22px;
 }
 
-.onboarding-card {
-  width: 100%;
-  padding: 40px;
-  border-radius: 28px;
-  background: rgba(30, 22, 38, 0.55);
-  border: 1px solid rgba(255, 200, 87, 0.2);
-  backdrop-filter: blur(24px);
+.reveal-conf { margin-bottom: 22px; }
+.reveal-conf-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; margin-bottom: 7px; }
+.reveal-conf-fill { height: 100%; background: linear-gradient(90deg, var(--violet), var(--mint)); transition: width 1s var(--ease); }
+.reveal-conf-n { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); }
+
+/* ===========================================================================
+   TASTE MAP
+   =========================================================================== */
+
+.traits { display: flex; flex-direction: column; gap: 16px; }
+
+.trait { padding: 16px 18px; border-radius: var(--r-md); background: rgba(46, 230, 214, 0.05); border: 1px solid var(--line-cool); }
+.trait-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.trait-label { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; }
+.trait-conf { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ion); }
+.trait-detail { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 10px; }
+.trait-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.07); overflow: hidden; }
+.trait-fill { height: 100%; background: linear-gradient(90deg, var(--ion), var(--mint)); transition: width 1s var(--ease); }
+
+.region {
+  padding: 20px 22px;
+  margin-bottom: 12px;
+  border-radius: var(--r-md);
+  background: linear-gradient(165deg, var(--card), var(--raised) 75%);
+  border: 1px solid var(--line);
+  animation: slideUp 0.5s var(--ease) both;
+}
+
+.region-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.region-name { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; }
+.region-explored { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
+.region-track { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 14px; }
+.region-fill { height: 100%; background: linear-gradient(90deg, var(--ember), var(--saffron)); transition: width 0.9s var(--ease); }
+
+.nodes { display: flex; flex-wrap: wrap; gap: 7px; }
+
+/* Brightness carries confidence — a node we barely know is literally dimmer.
+   That's honest AND it makes the map visibly light up as you play. */
+.node {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--r-full);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  border: 1px solid transparent;
+  transition: opacity 0.5s var(--ease), transform 0.18s var(--spring);
+}
+.node:hover { transform: translateY(-2px); }
+
+.node--love { color: var(--mint);      background: rgba(46, 230, 214, 0.1);  border-color: rgba(46, 230, 214, 0.34); }
+.node--mid  { color: var(--ink-soft);  background: rgba(255, 255, 255, 0.04); border-color: var(--line); }
+.node--cold { color: var(--ink-ghost); background: rgba(255, 255, 255, 0.02); border-color: rgba(253,248,242,0.06); }
+
+.node--fog {
+  color: var(--ink-ghost);
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 4px, transparent 4px, transparent 8px);
+  border-color: rgba(253,248,242,0.08);
+  border-style: dashed;
+}
+
+.node-rare { color: var(--violet); font-size: 8px; }
+
+/* ===========================================================================
+   XP TOAST + LEVEL UP
+   =========================================================================== */
+
+.toast {
+  position: fixed;
+  top: 78px;
+  right: 24px;
+  z-index: 80;
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 22px;
+  border-radius: var(--r-full);
+  background: rgba(12, 9, 18, 0.95);
+  border: 1px solid var(--line-cool);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  animation: pop 0.4s var(--spring) both;
+}
+
+.toast--level {
+  border-color: var(--saffron);
+  box-shadow: 0 12px 46px rgba(255, 200, 87, 0.32);
+  background:
+    radial-gradient(120% 200% at 0% 50%, rgba(255, 200, 87, 0.18), transparent 60%),
+    rgba(12, 9, 18, 0.95);
+}
+
+.toast-xp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion);
+}
+
+.toast-rank {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+
+/* ===========================================================================
+   QUEST
+   =========================================================================== */
+
+.quest {
+  position: relative;
+  padding: 24px;
+  margin-bottom: 16px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(100% 160% at 100% 0%, rgba(139, 92, 246, 0.14), transparent 60%),
+    linear-gradient(165deg, var(--card), var(--raised) 70%);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  animation: slideUp 0.55s var(--ease) 0.12s both;
+  overflow: hidden;
+}
+
+.quest-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--violet);
+  margin-bottom: 10px;
+}
+
+.quest-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  margin-bottom: 18px;
+}
+
+/* ===========================================================================
+   FIND — search
+   =========================================================================== */
+
+.hero-search { text-align: center; padding: 30px 0 14px; }
+
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px, 6vw, 60px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  margin-bottom: 12px;
+}
+
+.hero-title em {
+  display: block;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  background: linear-gradient(100deg, var(--saffron), var(--ember) 50%, var(--magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 18px;
+}
+
+.searchbar {
+  display: flex;
+  gap: 10px;
+  max-width: 620px;
+  margin: 0 auto 14px;
+}
+
+.searchbar input {
+  flex: 1;
+  min-width: 0;
+  padding: 17px 22px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s;
+}
+
+.searchbar input::placeholder { color: var(--ink-ghost); }
+
+.searchbar input:focus {
+  border-color: var(--saffron);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 4px rgba(255, 200, 87, 0.12);
+}
+
+/* ---- location ---- */
+
+.loc { max-width: 620px; margin: 0 auto 12px; }
+
+.loc-set {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 11px 18px;
+  border-radius: var(--r-full);
+  background: rgba(46, 230, 214, 0.06);
+  border: 1px solid var(--line-cool);
+}
+
+.loc-key {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ion);
+}
+
+.loc-val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+
+.loc-row { display: flex; gap: 10px; }
+
+.loc-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 20px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.25s var(--ease);
+}
+.loc-row input:focus { border-color: var(--saffron); }
+
+.loc-prompt {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 10px;
   text-align: left;
 }
 
-.onboarding-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.radius { display: flex; gap: 8px; max-width: 620px; margin: 12px auto 0; }
+
+.radius-opt {
+  flex: 1;
+  padding: 11px 12px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.18s var(--spring);
 }
 
-.onboarding-field label {
+.radius-opt:hover { transform: translateY(-2px); border-color: rgba(255, 200, 87, 0.4); }
+
+.radius-opt--on {
+  background: rgba(255, 200, 87, 0.1);
+  border-color: var(--saffron);
+}
+
+.radius-name {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12.5px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.radius-opt--on .radius-name { color: var(--saffron); }
+
+.radius-hint { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-faint); }
+
+.err {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--danger);
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+.notice {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ion);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* ===========================================================================
+   VERDICT CARD
+   =========================================================================== */
+
+.verdict-wrap { max-width: 940px; margin: 26px auto 0; animation: slideUp 0.6s var(--ease) both; }
+
+.verdict {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: linear-gradient(165deg, var(--card), var(--raised) 70%);
+  border: 1px solid rgba(255, 46, 136, 0.4);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), 0 0 44px rgba(255, 46, 136, 0.12);
+}
+
+.verdict-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 22px;
+  background: linear-gradient(100deg, var(--magenta), var(--ember) 70%);
+}
+
+.verdict-tag {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--bloom-saffron);
-}
-
-.onboarding-field textarea {
-  background: rgba(20, 15, 27, 0.6);
-  border: 1px solid rgba(255, 200, 87, 0.25);
-  color: var(--text-cream);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  outline: none;
-  resize: vertical;
-  min-height: 70px;
-  line-height: 1.5;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.onboarding-field textarea::placeholder {
-  color: #6b5d52;
-}
-
-.onboarding-field textarea:focus {
-  border-color: #7ee8d5;
-  box-shadow: 0 0 0 3px rgba(126, 232, 213, 0.18);
-}
-
-.onboarding-continue-btn {
-  align-self: center;
-  background: linear-gradient(100deg, #7ee8d5, var(--bloom-saffron) 60%, var(--bloom-paprika));
-  color: var(--bg-deep);
-  border: none;
-  font-family: 'IBM Plex Mono', monospace;
   font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 14px 40px;
-  border-radius: 999px;
+  color: var(--void);
+}
+
+.verdict-q {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: rgba(7, 5, 11, 0.7);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.verdict-note {
+  padding: 9px 22px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--saffron);
+  background: rgba(255, 200, 87, 0.07);
+  border-bottom: 1px solid var(--line-warm);
+}
+
+.split { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); }
+
+.pane-visual { border-right: 1px solid var(--line); padding-bottom: 18px; }
+.pane-detail { padding: 24px; }
+
+.shot { position: relative; height: 252px; overflow: hidden; background: var(--elevated); }
+.shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.shot-mono {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 66px;
+  font-weight: 600;
+  color: rgba(255, 200, 87, 0.24);
+}
+
+.shot-src {
+  position: absolute;
+  left: 14px; bottom: 14px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  background: rgba(7, 5, 11, 0.62);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  color: rgba(253, 248, 242, 0.75);
+  text-decoration: none;
+}
+
+.score {
+  position: absolute;
+  right: 16px; bottom: 16px;
+  display: grid;
+  place-items: center;
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  background: rgba(7, 5, 11, 0.86);
+  border: 2px solid var(--magenta);
+  box-shadow: 0 0 26px rgba(255, 46, 136, 0.5);
+  backdrop-filter: blur(8px);
+  animation: pop 0.55s var(--spring) both;
+}
+
+.score-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.score-k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+.verdict-line {
+  padding: 16px 22px 6px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 22px 0; }
+
+.act {
+  padding: 10px 18px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line-cool);
+  text-decoration: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ion);
+  transition: transform 0.18s var(--spring), background 0.2s var(--ease);
+}
+.act:hover { transform: translateY(-2px); background: rgba(46, 230, 214, 0.12); }
+
+.act--go {
+  color: var(--void);
+  border-color: transparent;
+  background: linear-gradient(110deg, var(--magenta), var(--saffron) 85%);
+}
+
+.name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.16;
+  margin-bottom: 10px;
+}
+
+.rowmeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+
+.rowmeta .rating { color: var(--saffron); font-weight: 600; }
+.rowmeta .sep { color: var(--ink-ghost); }
+
+.addr {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-ghost);
+  margin-bottom: 18px;
+}
+
+.why-key {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  margin-bottom: 10px;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+
+.chip {
+  padding: 7px 13px;
+  border-radius: var(--r-full);
+  background: rgba(255, 46, 136, 0.08);
+  border: 1px solid rgba(255, 46, 136, 0.22);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  animation: pop 0.35s var(--ease) both;
+}
+.chips .chip:nth-child(1) { animation-delay: 0.05s; }
+.chips .chip:nth-child(2) { animation-delay: 0.1s; }
+.chips .chip:nth-child(3) { animation-delay: 0.15s; }
+.chips .chip:nth-child(4) { animation-delay: 0.2s; }
+
+.evidence {
+  padding: 16px 18px;
+  border-radius: var(--r-md);
+  background: rgba(46, 230, 214, 0.05);
+  border: 1px solid var(--line-cool);
+  margin-bottom: 18px;
+}
+
+.ev-key {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ion);
+  margin-bottom: 9px;
+}
+
+.stars { color: var(--saffron); font-size: 13px; letter-spacing: 1.5px; }
+.stars-off { color: rgba(255, 200, 87, 0.22); }
+
+.ev-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; flex-wrap: wrap; }
+.ev-head .ev-key { margin-bottom: 0; }
+
+.quote {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13.5px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 9px;
+}
+
+.ev-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ion);
+  text-decoration: none;
+}
+.ev-link:hover { text-decoration: underline; }
+
+.menu-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-cool); }
+
+.menu-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+
+.menu-dash { flex: 1; border-bottom: 1px dotted var(--ink-ghost); }
+.menu-price { color: var(--saffron); font-weight: 600; }
+
+.allergy { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--danger); line-height: 1.6; margin-top: 10px; }
+.dietary { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--saffron); line-height: 1.6; margin-top: 8px; }
+
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.toggle {
+  padding: 7px 14px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line-cool);
+  background: none;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ion);
+  transition: background 0.2s var(--ease);
+}
+.toggle:hover { background: rgba(46, 230, 214, 0.1); }
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 12px 20px;
+  margin-top: 14px;
+  animation: fade 0.35s var(--ease) both;
 }
 
-.onboarding-continue-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(126, 232, 213, 0.35);
+.metric { display: grid; grid-template-columns: 1fr 34px; gap: 5px; align-items: center; }
+.metric-bar { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.metric-fill { height: 100%; background: linear-gradient(90deg, var(--saffron), var(--magenta)); transition: width 0.9s var(--ease); }
+.metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); text-align: right; }
+.metric-key { grid-column: 1 / -1; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-ghost); }
+
+.compare { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
+.compare li { display: flex; justify-content: space-between; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+.compare-score { color: var(--ion); }
+
+.mapbox { margin-top: 12px; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line); filter: grayscale(0.35) contrast(1.1) brightness(0.86); }
+
+/* ===========================================================================
+   VERDICT PROMPT (did you go?)
+   =========================================================================== */
+
+.ask {
+  padding: 18px 20px;
+  border-radius: var(--r-md);
+  background: rgba(255, 46, 136, 0.06);
+  border: 1px solid rgba(255, 46, 136, 0.26);
+  margin-bottom: 10px;
+  animation: slideUp 0.45s var(--ease) both;
 }
 
-.onboarding-continue-btn:disabled {
-  background: #3a3f4a;
-  color: #7a8290;
-  cursor: not-allowed;
+.ask-head { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; margin-bottom: 11px; }
+.ask-key { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--magenta); }
+.ask-name { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; }
+.ask-claim { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
+.ask-q { font-family: 'Space Grotesk', sans-serif; font-size: 14px; margin-bottom: 12px; }
+.ask-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.opt {
+  padding: 9px 16px;
+  border-radius: var(--r-full);
+  border: 1px solid rgba(253, 248, 242, 0.2);
+  background: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink);
+  transition: transform 0.18s var(--spring), border-color 0.2s, background 0.2s;
+}
+.opt:hover:not(:disabled) { transform: translateY(-2px); border-color: rgba(253, 248, 242, 0.45); }
+.opt:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.opt--yes { background: linear-gradient(110deg, var(--magenta), var(--ember)); color: var(--void); border-color: transparent; font-weight: 600; }
+.opt--good { color: var(--success); border-color: rgba(61, 220, 151, 0.4); }
+.opt--mid  { color: var(--saffron); border-color: rgba(255, 200, 87, 0.4); }
+.opt--bad  { color: var(--danger); border-color: rgba(255, 77, 106, 0.4); }
+
+/* ===========================================================================
+   YOU — stats
+   =========================================================================== */
+
+.bigstat { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+
+.bigstat-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 46px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ion);
 }
 
-/* The onboarding error can now carry a real schema/policy message, which
-   runs longer than the old one-liner. Give it room to wrap. */
-.onboarding-card .error-msg {
-  margin-top: 0;
-  line-height: 1.5;
+.bigstat-k { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
+
+.vrow { margin-bottom: 20px; }
+.vrow-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+.vrow-key { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+.vrow-val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: var(--ion); }
+.vrow-bar { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.07); overflow: hidden; margin-bottom: 7px; }
+.vrow-fill { height: 100%; background: linear-gradient(90deg, var(--ion), var(--mint)); box-shadow: 0 0 12px rgba(46, 230, 214, 0.4); transition: width 1s var(--ease); }
+.vrow-read { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
+
+.aff { display: flex; flex-direction: column; gap: 9px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.aff-row { display: grid; grid-template-columns: 1fr 2fr auto; align-items: center; gap: 11px; }
+.aff-name { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aff-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.07); overflow: hidden; }
+.aff-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--saffron), var(--magenta)); }
+.aff-pct { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-faint); }
+
+.ladder { display: flex; flex-direction: column; gap: 3px; }
+
+.rung {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  opacity: 0.42;
+  transition: opacity 0.3s var(--ease);
+}
+
+.rung--on {
+  opacity: 1;
+  background: rgba(46, 230, 214, 0.05);
+  border-color: var(--line-cool);
+}
+
+.rung-lv { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-ghost); }
+.rung--on .rung-lv { color: var(--ion); }
+.rung-name { font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; }
+.rung-state { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-ghost); }
+.rung--on .rung-state { color: var(--mint); }
+
+.mstones { display: flex; flex-direction: column; gap: 3px; }
+
+.mstone {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  opacity: 0.4;
+}
+
+.mstone--on {
+  opacity: 1;
+  background: rgba(255, 95, 31, 0.06);
+  border-color: rgba(255, 95, 31, 0.26);
+}
+
+.mstone-d { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: var(--ink-ghost); }
+.mstone--on .mstone-d { color: var(--ember); }
+.mstone-n { font-family: 'Space Grotesk', sans-serif; font-size: 13px; }
+.mstone-r { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-ghost); }
+.mstone--on .mstone-r { color: var(--ion); }
+
+/* ===========================================================================
+   COLLECTION
+   =========================================================================== */
+
+.stamps { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 11px; }
+
+.stamp {
+  position: relative;
+  padding: 18px 16px;
+  border-radius: var(--r-md);
+  background: linear-gradient(160deg, var(--elevated), var(--card));
+  border: 1px solid var(--line-warm);
+  overflow: hidden;
+  animation: pop 0.4s var(--ease) both;
+}
+
+.stamp::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 200, 87, 0.14) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: sweep 4s linear infinite;
+  pointer-events: none;
+}
+
+.stamp-mark { display: block; font-size: 15px; color: var(--saffron); margin-bottom: 8px; }
+.stamp-n { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.stamp-p { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-ghost); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ===========================================================================
+   AUTH + ONBOARDING
+   =========================================================================== */
+
+.gate { max-width: 420px; margin: 0 auto; padding: 70px 24px 100px; text-align: center; animation: rise 0.6s var(--ease) both; }
+
+.gate-form { display: flex; flex-direction: column; gap: 11px; margin-bottom: 14px; }
+
+.gate-form input,
+.field textarea {
+  padding: 15px 20px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14.5px;
+  outline: none;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+
+.gate-form input::placeholder, .field textarea::placeholder { color: var(--ink-ghost); }
+.gate-form input:focus, .field textarea:focus { border-color: var(--saffron); box-shadow: 0 0 0 4px rgba(255, 200, 87, 0.1); }
+
+.google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(253, 248, 242, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s var(--ease), transform 0.18s var(--spring);
+}
+.google:hover { background: rgba(255, 255, 255, 0.09); transform: translateY(-1px); }
+
+.gate-alt { margin-top: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); }
+
+.onb-card {
+  padding: 32px;
+  border-radius: var(--r-lg);
+  background: linear-gradient(165deg, var(--card), var(--raised));
+  border: 1px solid var(--line-warm);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+.field label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--saffron); }
+.field textarea { resize: vertical; min-height: 74px; line-height: 1.5; }
+
+/* ===========================================================================
+   FOOTER + MISC
+   =========================================================================== */
+
+.foot {
   text-align: center;
+  padding: 40px 24px 50px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-ghost);
+  border-top: 1px solid var(--line);
 }
 
-/* ---------- responsive ---------- */
+.center-note { text-align: center; padding: 80px 24px; font-family: 'IBM Plex Mono', monospace; color: var(--ink-soft); }
 
-@media (max-width: 720px) {
-  .steps {
-    grid-template-columns: 1fr;
-  }
+.searches-left { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); margin-top: 12px; }
 
-  .header {
-    padding: 16px 20px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+/* ===========================================================================
+   RESPONSIVE
+   =========================================================================== */
 
-  .hero {
-    padding: 72px 20px 56px;
-  }
-
-  .search-box {
-    flex-direction: column;
-  }
-
-  .results-section {
-    padding: 8px 20px 72px;
-  }
-
-  .info,
-  .about {
-    padding: 80px 20px 56px;
-  }
-
-  .user-badge {
-    margin-left: 0;
-  }
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; }
+  .pane-visual { border-right: none; border-bottom: 1px solid var(--line); }
 }
 
-/* ---------- accessibility ---------- */
+@media (max-width: 760px) {
+  .topbar { flex-wrap: wrap; padding: 12px 16px; gap: 12px; }
+  .nav { order: 3; width: 100%; margin: 0; justify-content: space-between; overflow-x: auto; }
+  .nav-tab { flex: 1; padding: 9px 10px; font-size: 12px; text-align: center; }
+  .topbar-right { margin-left: auto; }
+
+  .page { padding: 26px 16px 100px; }
+
+  .status { grid-template-columns: 1fr; gap: 22px; padding: 24px; text-align: center; }
+  .status-stats { justify-content: center; }
+  .flame--hero .flame-svg { width: 64px; height: 78px; }
+  .flame--hero .flame-count { font-size: 38px; }
+
+  .versus { grid-template-columns: 1fr; }
+  .vs-mark { justify-self: center; }
+
+  .radius { flex-direction: column; }
+  .searchbar { flex-direction: column; }
+
+  .toast { top: auto; bottom: 20px; left: 16px; right: 16px; justify-content: center; }
+}
+
+/* ===========================================================================
+   ACCESSIBILITY
+   Motion is a garnish, not a dependency — with it off, everything still
+   reads and every state is still legible.
+   =========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .result-card--winner::after,
-  .hero::before,
-  .onboarding-hero::before,
-  .score-badge {
-    animation: none;
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
-
-  .result-card,
-  .link-btn,
-  .comparison-toggle,
-  .mini-metric-fill,
-  .action-btn,
-  .signout-btn {
-    transition: none;
-  }
+  .ambient-blob, .flame-body, .flame-halo, .stamp::after { animation: none !important; }
 }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--bloom-saffron);
-  outline-offset: 2px;
+:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 3px;
+  border-radius: 4px;
 }

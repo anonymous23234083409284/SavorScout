@@ -1,9 +1,96 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, useId } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // optional upgrade, never required
+
+/* ===========================================================================
+   LOGO MARK
+
+   A simple, warm, two-tone flame — the same silhouette already used for the
+   streak indicator, given a clean standalone treatment instead of a new
+   invented icon. The first version of this mark used gem-cut facets to
+   differentiate "logo" from "living streak flame," but that read as
+   abstract rather than considered, so this version leans the other way:
+   familiar, legible, and immediately recognizable as fire at every size
+   from a 16px favicon up. The inner core's position and size were computed
+   from the outer path's real bounding box (via the browser's own
+   getBBox(), not eyeballed), so it sits centered and contained rather than
+   guessed into place.
+   =========================================================================== */
+
+function LogoMark({ size = 30 }) {
+  const g1 = `logoOuter-${useId()}`;
+  const g2 = `logoInner-${useId()}`;
+  return (
+    <svg
+      className="logo-mark"
+      viewBox="0 0 26 32"
+      style={{ width: size, height: size * (32 / 26) }}
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={g1} x1="50%" y1="100%" x2="50%" y2="0%">
+          <stop offset="0%" stopColor="#c62a2f" />
+          <stop offset="45%" stopColor="#ff5f1f" />
+          <stop offset="100%" stopColor="#ffc857" />
+        </linearGradient>
+        <linearGradient id={g2} x1="50%" y1="100%" x2="50%" y2="0%">
+          <stop offset="0%" stopColor="#ff8a3d" />
+          <stop offset="100%" stopColor="#ffefc4" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M13 1.5c3.4 4.2 2.1 6.9.6 9.2-1.2 1.9-2.1 3.4-1.5 5.3.5 1.6 2 2.3 3.2 1.6 1.4-.8 1.6-2.6 1-4.3 2.9 2.2 4.7 5.3 4.7 8.6 0 5-4.1 8.6-9 8.6S3 26.9 3 21.9c0-4.6 2.6-7.4 5.3-10.4C11.2 8.3 13.6 5.5 13 1.5z"
+        fill={`url(#${g1})`}
+      />
+      <path
+        d="M12 14.5c2.5 1.5 4.2 4 4.2 7 0 3.5-1.7 6-4.2 6s-4.2-2.5-4.2-6c0-3 1.7-5.5 4.2-7z"
+        fill={`url(#${g2})`}
+        opacity="0.95"
+      />
+    </svg>
+  );
+}
+
+/* Larger hero variant for the sign-in screen — identical geometry, just
+   bigger, plus the soft ambient halo the rest of the product already uses
+   to mean "earned light." */
+function LogoMarkHero({ size = 72 }) {
+  const g1 = `logoHeroOuter-${useId()}`;
+  const g2 = `logoHeroInner-${useId()}`;
+  const glow = `logoHeroGlow-${useId()}`;
+  return (
+    <svg viewBox="0 0 26 32" style={{ width: size, height: size * (32 / 26) }} aria-hidden="true">
+      <defs>
+        <radialGradient id={glow} cx="48%" cy="55%" r="65%">
+          <stop offset="0%" stopColor="#ff8a3d" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#ff8a3d" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id={g1} x1="50%" y1="100%" x2="50%" y2="0%">
+          <stop offset="0%" stopColor="#c62a2f" />
+          <stop offset="45%" stopColor="#ff5f1f" />
+          <stop offset="100%" stopColor="#ffc857" />
+        </linearGradient>
+        <linearGradient id={g2} x1="50%" y1="100%" x2="50%" y2="0%">
+          <stop offset="0%" stopColor="#ff8a3d" />
+          <stop offset="100%" stopColor="#ffefc4" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="13" cy="17" rx="17" ry="19" fill={`url(#${glow})`} />
+      <path
+        d="M13 1.5c3.4 4.2 2.1 6.9.6 9.2-1.2 1.9-2.1 3.4-1.5 5.3.5 1.6 2 2.3 3.2 1.6 1.4-.8 1.6-2.6 1-4.3 2.9 2.2 4.7 5.3 4.7 8.6 0 5-4.1 8.6-9 8.6S3 26.9 3 21.9c0-4.6 2.6-7.4 5.3-10.4C11.2 8.3 13.6 5.5 13 1.5z"
+        fill={`url(#${g1})`}
+      />
+      <path
+        d="M12 14.5c2.5 1.5 4.2 4 4.2 7 0 3.5-1.7 6-4.2 6s-4.2-2.5-4.2-6c0-3 1.7-5.5 4.2-7z"
+        fill={`url(#${g2})`}
+        opacity="0.95"
+      />
+    </svg>
+  );
+}
 
 /* ===========================================================================
    THE FLAME
@@ -966,12 +1053,13 @@ function App() {
         <div className="shell">
           <header className="topbar">
             <div className="logo">
-              <span className="logo-mark">SS</span>
+              <LogoMark />
               <span className="logo-word">SavorScout</span>
             </div>
           </header>
 
           <section className="gate">
+            <LogoMarkHero size={64} />
             <p className="hero-kicker">Sign in to find your one</p>
             <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>
 
@@ -1032,7 +1120,7 @@ function App() {
         <div className="shell">
           <header className="topbar">
             <div className="logo">
-              <span className="logo-mark">SS</span>
+              <LogoMark />
               <span className="logo-word">SavorScout</span>
             </div>
           </header>
@@ -1081,10 +1169,15 @@ function App() {
 
       <div className="shell">
         <header className="topbar">
-          <div className="logo">
-            <span className="logo-mark">SS</span>
+          <button
+            type="button"
+            className="logo logo--live"
+            onClick={() => setTab("today")}
+            aria-label="Go to Today"
+          >
+            <LogoMark />
             <span className="logo-word">SavorScout</span>
-          </div>
+          </button>
 
           <nav className="nav" role="tablist">
             {visibleTabs.map((t) => (

@@ -1349,6 +1349,21 @@ function buildConceptPair(cards, nodes, used) {
 // single highest-information data point we can collect (it lands exactly
 // where the model was uncertain).
 function predictChoice(left, right, nodes) {
+  return predictWithConfidence(left, right, nodes)?.side || null;
+}
+
+// The same inference, but carrying the number we're willing to say out loud.
+//
+// Confidence is a monotone function of the two things that actually justify a
+// guess — how far apart the affinities are, and how much evidence sits behind
+// them — and it is capped below 1. We never claim certainty, because the one
+// prediction that gets caught overclaiming costs more trust than the ninety
+// that land are worth.
+const PREDICT_CONFIDENCE_FLOOR = 0.55;
+const PREDICT_CONFIDENCE_CEIL = 0.93;
+const PREDICT_EVIDENCE_FULL = 8;
+
+function predictWithConfidence(left, right, nodes) {
   const ln = nodes.get(left.id);
   const rn = nodes.get(right.id);
   if (!ln || !rn) return null;
@@ -1357,9 +1372,115 @@ function predictChoice(left, right, nodes) {
   const la = nodeAffinity(ln.wins, ln.appearances);
   const ra = nodeAffinity(rn.wins, rn.appearances);
   if (la == null || ra == null) return null;
-  if (Math.abs(la - ra) < PREDICT_MIN_EDGE) return null; // too close to call — don't pretend
 
-  return la > ra ? "left" : "right";
+  const gap = Math.abs(la - ra);
+  if (gap < PREDICT_MIN_EDGE) return null; // too close to call — don't pretend
+
+  const evidence = Math.min(1, Math.min(ln.appearances, rn.appearances) / PREDICT_EVIDENCE_FULL);
+  const raw = 0.5 + gap * 0.45 * evidence;
+
+  return {
+    side: la > ra ? "left" : "right",
+    confidence: Math.min(PREDICT_CONFIDENCE_CEIL, Math.max(PREDICT_CONFIDENCE_FLOOR, raw)),
+  };
+}
+
+// The running scoreboard. This is the spine of the Daily Read: the user is
+// not answering questions, they are playing against a model that keeps score
+// — and crucially, BOTH columns are a good outcome for them. A high model
+// score means the thing understands them; a high user score means they're
+// unreadable. Neither reads as losing, which is why the loop has no
+// discouraging branch to fall out of.
+async function modelRecord(userId) {
+  const { data, error } = await supabaseAdmin
+    .from("calibrations")
+    .select("predicted, chosen")
+    .eq("user_id", userId)
+    .not("predicted", "is", null)
+    .not("chosen", "is", null);
+
+  if (error) {
+    console.error("model record error:", error.message);
+    return { model: 0, you: 0, total: 0, accuracy: null };
+  }
+
+  let model = 0;
+  let you = 0;
+  for (const row of data || []) {
+    if (row.chosen === "skip") continue;
+    if (row.predicted === row.chosen) model += 1;
+    else you += 1;
+  }
+
+  const total = model + you;
+  return { model, you, total, accuracy: total ? model / total : null };
+}
+
+// How many more answers before we can stake a claim at all.
+//
+// A prediction needs two cards in the SAME family each at PREDICT_MIN_EVIDENCE
+// appearances. Every answer in a family adds one appearance to each of its two
+// cards, so the shortfall closes at two per answer. Reporting the real number
+// rather than a decorative progress bar matters here — this message is a
+// promise, and a promise that resolves late is worse than no promise.
+function answersUntilPrediction(cards, nodes) {
+  const byFamily = new Map();
+  for (const c of cards) {
+    if (!byFamily.has(c.family)) byFamily.set(c.family, []);
+    byFamily.get(c.family).push(nodes.get(c.id)?.appearances || 0);
+  }
+
+  let best = Infinity;
+  for (const appearances of byFamily.values()) {
+    if (appearances.length < 2) continue;
+    const top2 = appearances.sort((a, b) => b - a).slice(0, 2);
+    const shortfall = top2.reduce((sum, n) => sum + Math.max(0, PREDICT_MIN_EVIDENCE - n), 0);
+    best = Math.min(best, Math.ceil(shortfall / 2));
+  }
+
+  return Number.isFinite(best) ? best : null;
+}
+
+// Builds the headline claim for the day: the single boldest unanswered
+// prediction we're holding. Boldest rather than first, because the Read is
+// the front door — it should be the most interesting thing we know, not
+// whatever happened to land in slot zero.
+async function buildDailyRead(userId, set, cards, nodes) {
+  const record = await modelRecord(userId);
+
+  const staked = (set || [])
+    .filter((c) => !c.chosen && c.predicted && c.mode !== "place" && c.left_ref?.id && c.right_ref?.id)
+    .map((c) => {
+      const scored = predictWithConfidence(c.left_ref, c.right_ref, nodes);
+      return scored ? { row: c, ...scored } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.confidence - a.confidence)[0];
+
+  if (staked) {
+    const pickSide = staked.row.predicted;
+    const pick = pickSide === "left" ? staked.row.left_ref : staked.row.right_ref;
+    const other = pickSide === "left" ? staked.row.right_ref : staked.row.left_ref;
+    return {
+      state: "staked",
+      id: staked.row.id,
+      axis: staked.row.axis,
+      side: pickSide,
+      confidence: staked.confidence,
+      pick: { id: pick.id, name: pick.name, kind: pick.kind, rarity: pick.rarity },
+      other: { id: other.id, name: other.name, kind: other.kind, rarity: other.rarity },
+      left: staked.row.left_ref,
+      right: staked.row.right_ref,
+      record,
+    };
+  }
+
+  // Nothing staked. Either we already spent today's call, or we haven't
+  // earned the right to make one yet — and those are very different messages.
+  const spentToday = (set || []).some((c) => c.predicted && c.chosen);
+  if (spentToday) return { state: "spent", record };
+
+  return { state: "warming", need: answersUntilPrediction(cards, nodes), record };
 }
 
 async function generateCalibrations(userId, area) {
@@ -1786,12 +1907,20 @@ app.get("/calibration/today", requireAuth, async (req, res) => {
 
     const { revealed, pending } = await refreshTraits(req.userId);
 
+    // The Read is computed from the same nodes the predictions were made
+    // against, so the confidence shown is the confidence we actually hold —
+    // not a number stored at generation time that may since have drifted.
+    const cards = await deck();
+    const nodes = await loadNodes(req.userId);
+    const read = await buildDailyRead(req.userId, set, cards, nodes);
+
     return res.json({
       remaining: set.filter((c) => !c.chosen),
       completed: set.filter((c) => c.chosen).length,
       total: set.length || CALIBRATIONS_PER_DAY,
       pendingTraits: pending,
       justRevealed: revealed,
+      read,
     });
   } catch (err) {
     console.error("calibration error:", err.message);
@@ -1877,6 +2006,11 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
 
     const { revealed, pending } = await refreshTraits(req.userId);
 
+    // The scoreboard has to move in the same response that resolved the call.
+    // A record that updates on the next poll reads as decorative; one that
+    // ticks on the tap reads as a game being played.
+    const record = row.predicted && chosen !== "skip" ? await modelRecord(req.userId) : null;
+
     return res.json({
       ok: true,
       completed: done,
@@ -1884,6 +2018,7 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
       // Was our guess right? Both answers are good: a hit says the model knows
       // them, a miss is the most informative data point available.
       prediction: row.predicted ? { guessed: row.predicted, correct: row.predicted === chosen } : null,
+      record,
       movedNodes,
       justRevealed: revealed,
       pendingTraits: pending,

@@ -348,6 +348,158 @@ function PlaceFace({ place }) {
   );
 }
 
+/* ===========================================================================
+   THE DAILY READ
+
+   The front door. Before the user does anything, the app has already made a
+   falsifiable call about them and put a number on it.
+
+   Two design rules earn their keep here:
+
+   1. THE CONFIDENCE IS SHOWN, THE SIDE IS SEALED.
+      Naming the predicted card up front would anchor the answer and poison
+      the exact signal the prediction was built from — some users would
+      conform, others would contrarian-pick to beat it, and neither is taste.
+      Staking a visible number on a sealed call is also simply better drama:
+      an envelope beats a stated guess.
+
+   2. NEITHER OUTCOME IS A LOSS.
+      A hit means the model knows them, which is eerie and worth showing
+      someone. A miss means they're unreadable, which is flattering and also
+      worth showing someone. There is no discouraging branch to fall out of,
+      which is what makes this survivable as a daily mechanic where a plain
+      win/lose duel is not.
+   =========================================================================== */
+
+function ReadScore({ record }) {
+  if (!record?.total) return null;
+  return (
+    <span className="read-score" title={`${record.total} calls resolved`}>
+      <span className="read-score-side">
+        <span className="read-score-k">Model</span>
+        <span className="read-score-n read-score-n--world">{record.model}</span>
+      </span>
+      <span className="read-score-div" />
+      <span className="read-score-side">
+        <span className="read-score-k">You</span>
+        <span className="read-score-n read-score-n--you">{record.you}</span>
+      </span>
+    </span>
+  );
+}
+
+function DailyRead({ read, result, busy, onAnswer, onDismiss }) {
+  if (!read) return null;
+
+  /* ---- resolved: the payoff frame, and the only place the warm/cool
+          merge gradient is allowed to appear in the whole product ---- */
+  if (result) {
+    const hit = result.correct;
+    return (
+      <section className={`read read--resolved read--${hit ? "hit" : "miss"}`} role="status">
+        <div className="read-head">
+          <span className="read-tag">Today's read</span>
+          <ReadScore record={result.record} />
+        </div>
+
+        <p className="read-outcome">{hit ? "Called it." : "Missed."}</p>
+        <p className="read-outcome-sub">
+          {hit
+            ? <>We had you on <strong>{result.pickName}</strong> before you tapped.</>
+            : <>We had you on <strong>{result.pickName}</strong>. You went the other way — that's the answer that teaches us the most.</>}
+        </p>
+
+        <button className="read-dismiss" onClick={onDismiss}>
+          {hit ? "Unsettling. Go on." : "Good."}
+        </button>
+      </section>
+    );
+  }
+
+  /* ---- warming: no call earned yet. The countdown is a real number, and
+          an unfinished thing with a named finish line is the single
+          cheapest reason to come back tomorrow.
+
+          Two distinct reasons land here and they must not share copy. Not
+          enough evidence is "we don't know you yet"; enough evidence but no
+          clear edge is "today's pairs were too close." Collapsing them would
+          have the app claim ignorance it doesn't have — a small lie, but
+          this product only sells one thing and that thing is being right
+          about what it actually knows. ---- */
+  if (read.state === "warming") {
+    const tooClose = read.need === 0;
+    return (
+      <section className="read read--warming">
+        <div className="read-head">
+          <span className="read-tag">Today's read</span>
+          <ReadScore record={read.record} />
+        </div>
+        <p className="read-claim read-claim--quiet">
+          {tooClose
+            ? "Today's pairs were too close for us to call."
+            : "We don't know you well enough to call it yet."}
+        </p>
+        <p className="read-sub">
+          {tooClose
+            ? <>We'd rather say nothing than flip a coin and dress it up. Keep answering — we'll have a call on you tomorrow.</>
+            : typeof read.need === "number" && read.need > 0
+              ? <><strong>{read.need}</strong> more {read.need === 1 ? "answer" : "answers"} before we start staking predictions on you.</>
+              : <>Answer today's calibration and we'll start staking predictions on you.</>}
+        </p>
+      </section>
+    );
+  }
+
+  /* ---- spent: today's call is already resolved ---- */
+  if (read.state === "spent") {
+    return (
+      <section className="read read--spent">
+        <div className="read-head">
+          <span className="read-tag">Today's read</span>
+          <ReadScore record={read.record} />
+        </div>
+        <p className="read-claim read-claim--quiet">Today's call is settled.</p>
+        <p className="read-sub">We'll have a new one on you tomorrow morning.</p>
+      </section>
+    );
+  }
+
+  /* ---- staked: the live call ---- */
+  const pct = Math.round((read.confidence || 0) * 100);
+
+  return (
+    <section className="read read--staked">
+      <div className="read-head">
+        <span className="read-tag">Today's read</span>
+        <ReadScore record={read.record} />
+      </div>
+
+      <p className="read-claim">We've already made the call on this one.</p>
+
+      <div className="read-stake">
+        <div className="read-stake-bar">
+          <div className="read-stake-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="read-stake-n">{pct}% confident</span>
+      </div>
+
+      <p className="read-axis">{read.axis}</p>
+
+      <div className="read-pair">
+        <button className="read-btn" disabled={busy} onClick={() => onAnswer(read, "left")}>
+          <ConceptFace card={read.left} side="l" />
+        </button>
+        <span className="read-or">or</span>
+        <button className="read-btn" disabled={busy} onClick={() => onAnswer(read, "right")}>
+          <ConceptFace card={read.right} side="r" />
+        </button>
+      </div>
+
+      <p className="read-foot">Pick, and we'll show you what we'd written down.</p>
+    </section>
+  );
+}
+
 function Calibration({ item, completed, total, busy, onAnswer, lastResult, pendingTraits, onFind, needsSeed }) {
   const pct = total ? Math.round((completed / total) * 100) : 0;
 
@@ -576,6 +728,7 @@ function App() {
   const [cal, setCal] = useState({ remaining: [], completed: 0, total: 7, pendingTraits: [] });
   const [calBusy, setCalBusy] = useState(false);
   const [lastResult, setLastResult] = useState(null);
+  const [readResult, setReadResult] = useState(null);
   const [reveal, setReveal] = useState(null);
   const [taste, setTaste] = useState(null);
   const [tasteMap, setTasteMap] = useState(null);
@@ -674,6 +827,47 @@ function App() {
     } catch { /* telemetry never surfaces an error */ }
   }, [authedFetch, flash, refreshGame]);
 
+  /* The Read resolves in its own frame rather than through the calibration
+     flow, because the reveal is the whole point of it — routing it through
+     the shared handler would clear the pair and drop the payoff. */
+  const answerRead = async (read, chosen) => {
+    if (calBusy) return;
+    setCalBusy(true);
+    setCal((p) => ({
+      ...p,
+      remaining: p.remaining.filter((c) => c.id !== read.id),
+      completed: p.completed + 1,
+    }));
+    try {
+      const res = await authedFetch("/calibration/answer", {
+        method: "POST",
+        body: JSON.stringify({ id: read.id, chosen }),
+      });
+      if (res) {
+        const pick = read.side === "left" ? read.left : read.right;
+        setReadResult({
+          correct: Boolean(res.prediction?.correct),
+          pickName: pick?.name || "that one",
+          record: res.record,
+        });
+        if (res.award) flash(res.award);
+        if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
+        if (res.pendingTraits) setCal((p) => ({ ...p, pendingTraits: res.pendingTraits }));
+      }
+      refreshGame().catch(() => {});
+      refreshMap().catch(() => {});
+    } finally { setCalBusy(false); }
+  };
+
+  /* Retire the card optimistically. Clearing the result and waiting on the
+     refetch would flash the already-answered pair back onto the screen for a
+     frame, which reads as the tap having failed. */
+  const dismissRead = () => {
+    setCal((p) => ({ ...p, read: { state: "spent", record: readResult?.record || p.read?.record } }));
+    setReadResult(null);
+    refreshCal().catch(() => {});
+  };
+
   const answerCal = async (id, chosen) => {
     if (calBusy) return;
     setCalBusy(true);
@@ -770,7 +964,7 @@ function App() {
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
     setLocationInput(""); setResolvedLocation(null); setLocationError(""); setRadiusUsed(null);
     setPendingVerdicts([]); setScoutReport(null); setGame(null); setTaste(null);
-    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setTasteMap(null); setTab("today");
+    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setTasteMap(null); setTab("today");
   };
 
   const handleSaveOnboarding = async () => {
@@ -1120,6 +1314,16 @@ function App() {
         {/* ================= TODAY ================= */}
         {tab === "today" && (
           <main className="page">
+            {/* The Read sits above the streak because it's the reason to
+                open the app; the flame is the reward for having done so. */}
+            <DailyRead
+              read={cal.read}
+              result={readResult}
+              busy={calBusy}
+              onAnswer={answerRead}
+              onDismiss={dismissRead}
+            />
+
             <div className="status">
               <Flame days={streakDays} hero />
               <div className="status-right">
@@ -1165,7 +1369,9 @@ function App() {
             </div>
 
             <Calibration
-              item={cal.remaining?.[0]}
+              /* The Read is drawn from today's set, so it has to be skipped
+                 here or the same pair renders twice on one screen. */
+              item={cal.remaining?.find((c) => c.id !== cal.read?.id)}
               completed={cal.completed}
               total={cal.total}
               busy={calBusy}

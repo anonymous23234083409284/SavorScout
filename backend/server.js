@@ -786,6 +786,7 @@ const XP = {
   DUEL: 10,
   DUEL_SET_BONUS: 25,       // finishing all 5
   STREAK_DAY: 25,
+  SEAL_OPEN: 50,            // paid for showing up the next day, which is the point
   SEARCH_ENGAGED: 40,       // searched AND interacted with the verdict
   SEARCH_BARE: 5,           // searched, did nothing — priced like the log line it is
   VERDICT_ACTION: 75,       // clicked Directions/Site — our visit proxy
@@ -1262,6 +1263,25 @@ const CALIBRATIONS_PER_DAY = 7;
 const PREDICT_MIN_EVIDENCE = 4;
 const PREDICT_MIN_EDGE = 0.15;
 
+// Staleness. A preference we measured four months ago is not a preference we
+// currently know — people change, and a map that renders a stale reading at
+// full strength is quietly lying about its own freshness.
+//
+// This is presentation only. Nothing stored is ever reduced: wins and
+// appearances are untouched, and the moment a card reappears it renders at
+// full strength again. Fading what we display is honest; deleting what
+// someone earned is the move that turns loss aversion from a reason to
+// return into a reason to quit.
+const STALE_GRACE_DAYS = 14;
+const STALE_FULL_DAYS = 45;
+
+function nodeStaleness(lastSeen) {
+  if (!lastSeen) return 0;
+  const days = (Date.now() - new Date(lastSeen).getTime()) / 86400000;
+  if (!Number.isFinite(days) || days <= STALE_GRACE_DAYS) return 0;
+  return Math.min(1, (days - STALE_GRACE_DAYS) / (STALE_FULL_DAYS - STALE_GRACE_DAYS));
+}
+
 // Fog of war: a node is only shown once actually encountered. Confidence
 // climbs with evidence and is reported honestly, including when it's low.
 function nodeConfidence(appearances) {
@@ -1295,7 +1315,7 @@ async function deck() {
 async function loadNodes(userId) {
   const { data, error } = await supabaseAdmin
     .from("taste_nodes")
-    .select("card_id, wins, appearances")
+    .select("card_id, wins, appearances, last_seen")
     .eq("user_id", userId);
   if (error) {
     console.error("nodes load error:", error.message);
@@ -1483,6 +1503,107 @@ async function buildDailyRead(userId, set, cards, nodes) {
   return { state: "warming", need: answersUntilPrediction(cards, nodes), record };
 }
 
+// ---------------------------------------------------------------------------
+// THE OVERNIGHT SEAL
+//
+// Everything else in this product resolves on the tap, which means nothing
+// gives anyone a reason to return TOMORROW specifically. One prediction a day
+// is therefore answered but not graded — the outcome is held overnight.
+//
+// That converts a habit into an appointment. A habit competes with everything
+// else on the phone; an appointment is something of yours already waiting.
+// It's the shape behind a Wordle reset, minus the currency.
+//
+// The seal is deliberately not on a timer that can expire. Someone who
+// vanishes for a week returns to an envelope still sitting there, which turns
+// a lapse into a welcome-back rather than a loss.
+// ---------------------------------------------------------------------------
+
+// The columns ship in backend/migrations/001_overnight_seal.sql. Until that
+// has been run the feature simply switches itself off rather than 500ing
+// every calibration fetch, so deploying the code first can't break anything.
+// A positive result is cached for good — columns don't disappear. A negative
+// one is re-probed, so applying the migration takes effect on its own instead
+// of needing a restart nobody would think to do.
+const SEAL_RETRY_MS = 5 * 60 * 1000;
+let SEAL_READY = false;
+let SEAL_PROBED_AT = 0;
+
+async function sealSupported() {
+  if (SEAL_READY) return true;
+  if (SEAL_PROBED_AT && Date.now() - SEAL_PROBED_AT < SEAL_RETRY_MS) return false;
+
+  SEAL_PROBED_AT = Date.now();
+  const { error } = await supabaseAdmin.from("calibrations").select("sealed_at").limit(1);
+  SEAL_READY = !error;
+
+  if (SEAL_READY) console.log("overnight seal: enabled");
+  else console.warn(`overnight seal: DISABLED — run backend/migrations/001_overnight_seal.sql (${error.message})`);
+  return SEAL_READY;
+}
+
+async function outstandingSeal(userId) {
+  if (!(await sealSupported())) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from("calibrations")
+    .select("id, axis, left_ref, right_ref, predicted, chosen, sealed_at")
+    .eq("user_id", userId)
+    .not("sealed_at", "is", null)
+    .is("revealed_at", null)
+    .order("sealed_at", { ascending: true })
+    .limit(1);
+
+  if (error) return null;
+  const row = (data || [])[0];
+  if (!row) return null;
+
+  // sealed_at is stored UTC and todayStr() is a UTC date, so the comparison
+  // is apples to apples. A seal set today isn't due yet.
+  const sealedOn = String(row.sealed_at).slice(0, 10);
+  if (sealedOn >= todayStr()) return { state: "set", sealedOn };
+
+  return {
+    state: "ready",
+    id: row.id,
+    axis: row.axis,
+    left: row.left_ref,
+    right: row.right_ref,
+    chose: row.chosen,
+    sealedOn,
+  };
+}
+
+// Whether the answer being recorded right now should be held instead of
+// graded. Requires that today's Read has already paid out, so nobody's first
+// interaction of the day is a deferral.
+async function shouldSeal(userId, row) {
+  if (!row.predicted) return false;
+  if (!(await sealSupported())) return false;
+
+  const today = todayStr();
+
+  const { count: sealedToday } = await supabaseAdmin
+    .from("calibrations")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("cal_date", today)
+    .not("sealed_at", "is", null);
+  if (sealedToday) return false;
+
+  const { count: gradedToday } = await supabaseAdmin
+    .from("calibrations")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("cal_date", today)
+    .neq("id", row.id)
+    .not("predicted", "is", null)
+    .not("chosen", "is", null)
+    .is("sealed_at", null);
+
+  return (gradedToday || 0) > 0;
+}
+
 async function generateCalibrations(userId, area) {
   const today = todayStr();
   const cards = await deck();
@@ -1557,125 +1678,421 @@ async function generateCalibrations(userId, area) {
 }
 
 // ---------------------------------------------------------------------------
-// TRAITS
+// AXES, TRAITS, ARCHETYPE
 //
-// Every trait below is a real inference with a real evidence threshold. None
-// are fabricated for flavour — partly because that would be dishonest, and
-// partly because a wrong "you're an adventurous eater" is a direct attack on
-// the only thing this product sells. The honest version and the effective
-// version happen to be the same version.
+// WHY THIS IS AXIS-BASED AND NOT FAMILY-BASED.
+//
+// Concept pairs are always drawn from the SAME family. That makes any rate
+// aggregated over a whole family arithmetically pinned:
+//
+//     every answered pair gives one card +1 win / +1 appearance
+//                          and the other  +0 win / +1 appearance
+//     => sum(wins) = pairs, sum(appearances) = 2 * pairs
+//     => familyRate(F) == 0.5, always, for every F
+//
+// The old heat_seeker and texture_led rules tested familyRate against 0.68,
+// so they could never fire once. Every family in the deck is also single-kind,
+// which pinned kindRate the same way.
+//
+// The fix is to measure a POLE — a named subset inside the family — instead of
+// the family. "Ghost pepper hot" beating "Mild" is a real signal about heat;
+// "some Heat card beat some other Heat card" is not.
+//
+// Card names below are taken from the live deck, not invented. The previous
+// rules referenced "Under 10 dollars", "Locals only", "Strip mall gem" and
+// others that do not exist in taste_cards, so those rules were quietly
+// aggregating one card or zero.
 // ---------------------------------------------------------------------------
 
-const TRAIT_RULES = [
+const AXES = [
   {
-    key: "heat_seeker",
-    label: "Heat seeker",
-    minEvidence: 5,
-    test: (ctx) => {
-      const r = ctx.familyRate("Heat");
-      if (r == null || r.n < 5) return null;
-      if (r.rate >= 0.68) return { detail: "You pick the spicier option most of the time.", confidence: r.rate };
-      if (r.rate <= 0.32) return { detail: "You steer away from heat.", confidence: 1 - r.rate, label: "Heat averse" };
-      return null;
-    },
-  },
-  {
-    key: "texture_led",
-    label: "Texture led",
-    minEvidence: 5,
-    test: (ctx) => {
-      const r = ctx.familyRate("Texture");
-      if (r == null || r.n < 5) return null;
-      if (r.rate >= 0.66) return { detail: "Crunch and crust decide it for you more than flavour does.", confidence: r.rate };
-      return null;
-    },
-  },
-  {
-    key: "adventurous",
-    label: "Adventurous",
-    minEvidence: 8,
-    test: (ctx) => {
-      const rare = ctx.rarityRate(3);
-      if (rare == null || rare.n < 8) return null;
-      if (rare.rate >= 0.6) return { detail: "You reach for the unfamiliar option more than most.", confidence: rare.rate };
-      if (rare.rate <= 0.3) return { detail: "You know what you like and stay there.", confidence: 1 - rare.rate, label: "Loyalist" };
-      return null;
-    },
-  },
-  {
-    key: "vibe_over_food",
-    label: "Room matters",
+    key: "heat",
+    left: "Mild",
+    right: "Fiery",
     minEvidence: 6,
-    test: (ctx) => {
-      const v = ctx.kindRate("vibe");
-      const d = ctx.kindRate("dish");
-      if (!v || !d || v.n < 6 || d.n < 6) return null;
-      if (v.decisiveness > d.decisiveness + 0.12) {
-        return { detail: "You have stronger opinions about rooms than about dishes.", confidence: v.decisiveness };
-      }
-      return null;
+    low: ["Mild", "Medium heat"],
+    high: ["Properly spicy", "Numbing spice", "Ghost pepper hot", "Chili oil forward",
+           "Wasabi sharp", "Black pepper heavy", "Harissa heat", "Scotch bonnet heat"],
+    say: (p) =>
+      p >= 0.72 ? "You take the spicier option almost every time it's offered."
+      : p >= 0.58 ? "You lean hot when heat is on the table."
+      : p <= 0.28 ? "You steer away from heat, consistently."
+      : p <= 0.42 ? "You keep it mild more often than not."
+      : "Heat doesn't swing your pick either way.",
+    traits: {
+      high: { key: "heat_seeker", label: "Heat seeker", detail: "You pick the spicier option most of the time." },
+      low:  { key: "heat_averse", label: "Heat averse", detail: "You steer away from heat." },
     },
   },
   {
-    key: "late_night",
-    label: "Late-night bias",
+    key: "texture",
+    left: "Soft",
+    right: "Crisp",
+    minEvidence: 6,
+    low: ["Silky", "Creamy", "Gooey", "Melt in mouth", "Springy", "Chewy", "Juicy"],
+    high: ["Crispy", "Crunchy", "Crackly skin", "Flaky", "Charred edges", "Al dente"],
+    say: (p) =>
+      p >= 0.70 ? "Crust and crackle decide it before flavour gets a vote."
+      : p >= 0.58 ? "You lean toward the crisper version."
+      : p <= 0.30 ? "You go soft, rich and slow-melting."
+      : p <= 0.42 ? "You lean toward the softer version."
+      : "Texture isn't what decides it for you.",
+    traits: {
+      high: { key: "texture_crisp", label: "Texture led", detail: "Crunch and crust decide it for you more than flavour does." },
+      low:  { key: "texture_soft",  label: "Silk seeker", detail: "You go for soft and rich over crisp." },
+    },
+  },
+  {
+    key: "adventure",
+    left: "Familiar",
+    right: "Adventurous",
+    minEvidence: 8,
+    rarityHigh: 3, // rare cards can genuinely be paired against common ones in-family
+    say: (p) =>
+      p >= 0.68 ? "You order the thing you can't pronounce."
+      : p >= 0.56 ? "You reach for the unfamiliar more than most people do."
+      : p <= 0.30 ? "You know what you like and you stay there."
+      : p <= 0.44 ? "You lean familiar when given the choice."
+      : "You split evenly between the known and the new.",
+    traits: {
+      high: { key: "adventurous", label: "Adventurous", detail: "You reach for the unfamiliar option more than most." },
+      low:  { key: "loyalist",    label: "Loyalist",    detail: "You know what you like and stay there." },
+    },
+  },
+  {
+    key: "price",
+    left: "Cheap",
+    right: "Expensive",
+    minEvidence: 5,
+    low: ["Under 15 dollars", "Under 25 dollars"],
+    high: ["Splurge worthy", "Tasting menu"],
+    say: (p) =>
+      p >= 0.70 ? "You'd rather pay for the good one than save on the near one."
+      : p >= 0.58 ? "You'll spend when the food justifies it."
+      : p <= 0.30 ? "Price shapes your pick more than you'd probably admit."
+      : p <= 0.42 ? "You lean toward the cheaper option."
+      : "Price isn't the thing deciding it.",
+    traits: {
+      high: { key: "splurger",     label: "Splurger",     detail: "You'll pay up when the food is worth it." },
+      low:  { key: "value_hunter", label: "Value hunter", detail: "Price shapes your pick more than you'd probably admit." },
+    },
+  },
+  {
+    key: "polish",
+    left: "Humble",
+    right: "Polished",
+    minEvidence: 5,
+    low: ["Dive", "No frills", "Hole in the wall", "Unmarked door", "Hidden entrance", "Neighborhood joint"],
+    high: ["White tablecloth", "Elevated casual", "Destination spot", "Chef's counter", "Omakase style"],
+    say: (p) =>
+      p >= 0.70 ? "You want a room that knows exactly what it's doing."
+      : p >= 0.58 ? "You lean toward the more polished room."
+      : p <= 0.30 ? "You back the unmarked door over the famous one."
+      : p <= 0.42 ? "You lean toward the plainer room."
+      : "The room's polish doesn't sway you.",
+    traits: {
+      high: { key: "polished",   label: "Room matters", detail: "You want a room that knows what it's doing." },
+      low:  { key: "gem_hunter", label: "Gem hunter",   detail: "You back the unmarked door over the famous one." },
+    },
+  },
+  {
+    key: "time",
+    left: "Early",
+    right: "Late night",
     minEvidence: 4,
-    test: (ctx) => {
-      const r = ctx.cardRate("Late night");
-      if (r == null || r.n < 4) return null;
-      if (r.rate >= 0.7) return { detail: "Late-night options win when you're offered them.", confidence: r.rate };
-      return null;
-    },
-  },
-  {
-    key: "value_hunter",
-    label: "Value hunter",
-    minEvidence: 5,
-    test: (ctx) => {
-      const cheap = ctx.anyCardRate(["Under 10 dollars", "Under 15 dollars", "Under 20 dollars"]);
-      if (cheap == null || cheap.n < 5) return null;
-      if (cheap.rate >= 0.66) return { detail: "Price shapes your pick more than you'd probably admit.", confidence: cheap.rate };
-      return null;
-    },
-  },
-  {
-    key: "gem_hunter",
-    label: "Gem hunter",
-    minEvidence: 5,
-    test: (ctx) => {
-      const g = ctx.anyCardRate(["Hole in the wall", "Underrated", "Locals only", "No sign outside", "Strip mall gem"]);
-      if (g == null || g.n < 5) return null;
-      if (g.rate >= 0.68) return { detail: "You back the unmarked door over the famous one.", confidence: g.rate };
-      return null;
+    low: ["Early breakfast", "Mid morning", "Early dinner"],
+    high: ["Late night", "After midnight", "24 hour"],
+    say: (p) =>
+      p >= 0.70 ? "Your best meals happen after most kitchens close."
+      : p >= 0.58 ? "You drift late when the option is there."
+      : p <= 0.30 ? "You eat before the rush, and you're right to."
+      : p <= 0.42 ? "You lean earlier than most."
+      : "Time of day doesn't decide it.",
+    traits: {
+      high: { key: "late_night", label: "Late-night bias", detail: "Late-night options win when you're offered them." },
+      low:  { key: "early_bird", label: "Early bird",      detail: "You eat before the rush." },
     },
   },
 ];
 
-function buildTraitContext(cards, nodes) {
-  const byId = new Map(cards.map((c) => [c.id, c]));
+// Pole membership is a property of the DECK, not of any user, so it is
+// resolved once and reused. The population snapshot reads every axis for every
+// user; doing an Array.includes per card per axis per user made that roughly
+// seventy thousand string comparisons per user, for an answer that never
+// changes between them.
+let POLE_INDEX = null;
+let POLE_INDEX_DECK = null;
 
-  const agg = (filterFn) => {
-    let wins = 0, n = 0, decisive = 0;
-    for (const [cardId, node] of nodes) {
-      const card = byId.get(cardId);
-      if (!card || !filterFn(card)) continue;
-      wins += node.wins;
-      n += node.appearances;
-      const a = nodeAffinity(node.wins, node.appearances);
-      if (a != null) decisive += Math.abs(a - 0.5) * 2;
+function poleIndex(cards) {
+  if (POLE_INDEX && POLE_INDEX_DECK === cards) return POLE_INDEX;
+
+  const index = new Map(); // card.id -> Map(axisKey -> "high" | "low")
+  const byName = new Map();
+  for (const axis of AXES) {
+    if (axis.rarityHigh) continue;
+    for (const n of axis.high) byName.set(`${axis.key}|${n}`, "high");
+    for (const n of axis.low) byName.set(`${axis.key}|${n}`, "low");
+  }
+
+  for (const card of cards) {
+    const sides = new Map();
+    for (const axis of AXES) {
+      if (axis.rarityHigh) {
+        sides.set(axis.key, (card.rarity || 1) >= axis.rarityHigh ? "high" : "low");
+        continue;
+      }
+      const side = byName.get(`${axis.key}|${card.name}`);
+      if (side) sides.set(axis.key, side);
     }
-    if (n === 0) return null;
-    const count = Array.from(nodes.keys()).filter((id) => byId.get(id) && filterFn(byId.get(id))).length;
-    return { rate: wins / n, n, decisiveness: count ? decisive / count : 0 };
-  };
+    if (sides.size) index.set(card.id, sides);
+  }
 
+  POLE_INDEX = index;
+  POLE_INDEX_DECK = cards;
+  return index;
+}
+
+// A pole reading. Evidence pointing "high" is high-pole wins PLUS low-pole
+// losses, over every appearance on either pole — symmetric, and it still works
+// when only one pole has been seen.
+//
+// Iterating the user's nodes rather than the whole deck matters: a person has
+// met a few hundred cards at most, and the deck is 1,446.
+function readAxis(axis, cards, nodes) {
+  const index = poleIndex(cards);
+  let hiWins = 0, hiApps = 0, loWins = 0, loApps = 0;
+
+  for (const [cardId, node] of nodes) {
+    if (!node.appearances) continue;
+    const side = index.get(cardId)?.get(axis.key);
+    if (!side) continue;
+    if (side === "high") { hiWins += node.wins; hiApps += node.appearances; }
+    else { loWins += node.wins; loApps += node.appearances; }
+  }
+
+  const seen = hiApps + loApps;
+  if (seen === 0) return null;
+
+  // Confidence counts INFORMATIVE evidence, not raw appearances.
+  //
+  // A pair drawn entirely from one pole — two rare cards, or two mild ones —
+  // says nothing about where the person sits on this axis, but it still lands
+  // in wins/appearances. Counting it made an axis look well measured on zero
+  // real comparisons: the adventure axis reported evidence 66 and "confident"
+  // for a user who had never once been shown a rare card against a common one.
+  //
+  // We can't see pair membership from taste_nodes, but a straddling pair must
+  // touch both poles, so min(hiApps, loApps) bounds how many could have
+  // existed. That's the honest ceiling, and it correctly reads zero when a
+  // pole has never appeared at all.
+  const informative = 2 * Math.min(hiApps, loApps);
+
+  const toward = hiWins + (loApps - loWins);
   return {
-    familyRate: (family) => agg((c) => c.family === family),
-    kindRate: (kind) => agg((c) => c.kind === kind),
-    rarityRate: (rarity) => agg((c) => c.rarity >= rarity),
-    cardRate: (name) => agg((c) => c.name === name),
-    anyCardRate: (names) => agg((c) => names.includes(c.name)),
+    key: axis.key,
+    position: toward / seen,
+    evidence: informative,
+    seen,
+    confident: informative >= axis.minEvidence,
   };
+}
+
+function readAllAxes(cards, nodes) {
+  const out = new Map();
+  for (const axis of AXES) {
+    const r = readAxis(axis, cards, nodes);
+    if (r) out.set(axis.key, r);
+  }
+  return out;
+}
+
+// How far from the middle a reading sits. Drives which axis names the
+// archetype and which order the bars appear in.
+const DECISIVE = 0.14;
+function decisiveness(position) {
+  return Math.abs(position - 0.5) * 2;
+}
+
+// ---------------------------------------------------------------------------
+// ARCHETYPE
+//
+// A label for the strongest thing we have actually measured — never a
+// personality read invented to fill the space. It is gated on two confident,
+// decisive axes, because a type produced from one weak signal is a Forer
+// statement, and a product that sells "we know you" cannot afford one.
+// ---------------------------------------------------------------------------
+
+const ARCHETYPE_NAMES = {
+  "heat:high":      { name: "The Char Chaser",  line: "You want heat, and you want it marked by fire." },
+  "heat:low":       { name: "The Clean Palate", line: "You want the ingredient, not the burn." },
+  "texture:high":   { name: "The Crunch Hunter", line: "Crust and crackle decide it before flavour gets a vote." },
+  "texture:low":    { name: "The Silk Seeker",  line: "You go for soft, rich and slow-melting." },
+  "adventure:high": { name: "The Far Traveller", line: "You order the thing you can't pronounce." },
+  "adventure:low":  { name: "The Loyalist",     line: "You know what you like and you go back to it." },
+  "price:high":     { name: "The Splurger",     line: "You'd rather pay for the good one than save on the near one." },
+  "price:low":      { name: "The Value Hunter", line: "Price shapes your pick more than you'd probably admit." },
+  "polish:high":    { name: "The Well Dressed", line: "You like a room that knows what it's doing." },
+  "polish:low":     { name: "The Gem Hunter",   line: "You back the unmarked door over the famous one." },
+  "time:high":      { name: "The Night Owl",    line: "Your best meals happen after most kitchens close." },
+  "time:low":       { name: "The Early Bird",   line: "You eat before the rush, and you're right to." },
+};
+
+const ARCHETYPE_CLAUSE = {
+  "heat:high": "chase the burn",           "heat:low": "keep it mild",
+  "texture:high": "want the crunch",       "texture:low": "want it silky",
+  "adventure:high": "reach for the unfamiliar", "adventure:low": "stay with what works",
+  "price:high": "don't flinch at the bill", "price:low": "won't overpay",
+  "polish:high": "like a room with polish", "polish:low": "prefer the unmarked door",
+  "time:high": "eat late",                 "time:low": "eat early",
+};
+
+function archetypeFor(readings) {
+  const ranked = AXES
+    .map((a) => ({ axis: a, r: readings.get(a.key) }))
+    .filter((x) => x.r && x.r.confident && decisiveness(x.r.position) >= DECISIVE)
+    .sort((a, b) => decisiveness(b.r.position) - decisiveness(a.r.position));
+
+  if (ranked.length < 2) return null;
+
+  const poleOf = (x) => `${x.axis.key}:${x.r.position >= 0.5 ? "high" : "low"}`;
+  const primary = ARCHETYPE_NAMES[poleOf(ranked[0])];
+  if (!primary) return null;
+
+  const clause = ARCHETYPE_CLAUSE[poleOf(ranked[1])];
+  return {
+    key: poleOf(ranked[0]),
+    name: primary.name,
+    line: clause ? `${primary.line} You also ${clause}.` : primary.line,
+    from: ranked.slice(0, 3).map((x) => x.axis.key),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// POPULATION
+//
+// Percentiles need a distribution, and there is no per-user axis table, so we
+// build one in memory from taste_nodes on a long TTL. Comparative claims are
+// suppressed entirely below POP_MIN readers on an axis — "more than most
+// people" computed from four people is a lie with a number attached.
+// ---------------------------------------------------------------------------
+
+const POP_TTL_MS = 30 * 60 * 1000;
+const POP_MIN = 25;
+const POP_ROW_CAP = 200000;
+
+let POP_CACHE = null;
+let POP_CACHE_AT = 0;
+
+async function population() {
+  if (POP_CACHE && Date.now() - POP_CACHE_AT < POP_TTL_MS) return POP_CACHE;
+
+  const empty = { axes: new Map(), archetypes: new Map(), users: 0 };
+  try {
+    const cards = await deck();
+    const { data, error } = await supabaseAdmin
+      .from("taste_nodes")
+      .select("user_id, card_id, wins, appearances")
+      .limit(POP_ROW_CAP);
+    if (error || !data?.length) { POP_CACHE = empty; POP_CACHE_AT = Date.now(); return empty; }
+
+    const byUser = new Map();
+    for (const row of data) {
+      if (!byUser.has(row.user_id)) byUser.set(row.user_id, new Map());
+      byUser.get(row.user_id).set(row.card_id, row);
+    }
+
+    const axes = new Map(AXES.map((a) => [a.key, []]));
+    const archetypes = new Map();
+
+    for (const nodes of byUser.values()) {
+      const readings = readAllAxes(cards, nodes);
+      for (const [key, r] of readings) {
+        if (r.confident) axes.get(key).push(r.position);
+      }
+      const arch = archetypeFor(readings);
+      if (arch) archetypes.set(arch.key, (archetypes.get(arch.key) || 0) + 1);
+    }
+
+    for (const list of axes.values()) list.sort((a, b) => a - b);
+
+    POP_CACHE = { axes, archetypes, users: byUser.size };
+    POP_CACHE_AT = Date.now();
+    console.log(`population snapshot: ${byUser.size} users, ${data.length} nodes`);
+    return POP_CACHE;
+  } catch (err) {
+    console.error("population snapshot failed:", err.message);
+    POP_CACHE = empty;
+    POP_CACHE_AT = Date.now();
+    return empty;
+  }
+}
+
+function percentileIn(sorted, value) {
+  if (!sorted || sorted.length < POP_MIN) return null;
+  let lo = 0, hi = sorted.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (sorted[mid] < value) lo = mid + 1; else hi = mid;
+  }
+  return lo / sorted.length;
+}
+
+// "More than most people" only when it is both true and worth saying.
+function compareLine(pct) {
+  if (pct == null) return null;
+  if (pct >= 0.9) return `Further this way than ${Math.round(pct * 100)}% of people.`;
+  if (pct <= 0.1) return `Further this way than ${Math.round((1 - pct) * 100)}% of people.`;
+  if (pct >= 0.7) return "More than most people.";
+  if (pct <= 0.3) return "Less than most people.";
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// TRAITS
+//
+// Traits are now derived from the same axis readings the bars use, so the two
+// surfaces can never disagree, and every rule tests something that can
+// actually move.
+// ---------------------------------------------------------------------------
+
+const TRAIT_MIN_DECISIVE = 0.2;
+
+function traitsFromAxes(readings) {
+  const out = [];
+  for (const axis of AXES) {
+    const r = readings.get(axis.key);
+    if (!r || !r.confident) continue;
+    if (decisiveness(r.position) < TRAIT_MIN_DECISIVE) continue;
+
+    const side = r.position >= 0.5 ? "high" : "low";
+    const t = axis.traits?.[side];
+    if (!t) continue;
+
+    out.push({
+      key: t.key,
+      label: t.label,
+      detail: t.detail,
+      confidence: Math.min(0.95, 0.5 + decisiveness(r.position) * 0.5),
+    });
+  }
+  return out;
+}
+
+// What is almost known. Named and countable — a specific nearly-finished thing
+// pulls people back in a way a percentage never does.
+function pendingFromAxes(readings) {
+  const out = [];
+  for (const axis of AXES) {
+    const r = readings.get(axis.key);
+    if (r?.confident && decisiveness(r.position) >= TRAIT_MIN_DECISIVE) continue;
+    const have = r?.evidence || 0;
+    out.push({
+      key: axis.key,
+      label: `${axis.left} vs ${axis.right}`,
+      need: Math.max(1, axis.minEvidence - have),
+    });
+  }
+  return out.sort((a, b) => a.need - b.need);
 }
 
 async function refreshTraits(userId) {
@@ -1683,7 +2100,8 @@ async function refreshTraits(userId) {
   const nodes = await loadNodes(userId);
   if (cards.length === 0 || nodes.size === 0) return { revealed: [], pending: [] };
 
-  const ctx = buildTraitContext(cards, nodes);
+  const readings = readAllAxes(cards, nodes);
+  const earned = traitsFromAxes(readings);
 
   const { data: existing } = await supabaseAdmin
     .from("taste_traits")
@@ -1692,35 +2110,22 @@ async function refreshTraits(userId) {
   const have = new Set((existing || []).map((t) => t.trait_key));
 
   const fresh = [];
-  const pending = [];
-
-  for (const rule of TRAIT_RULES) {
-    const result = rule.test(ctx);
-    if (!result) {
-      // The incompletion hook: name what's ALMOST known. A vague progress bar
-      // doesn't pull anyone back; "2 answers from Heat seeker" does.
-      const probe = ctx.familyRate(rule.key === "heat_seeker" ? "Heat" : "Texture");
-      pending.push({
-        key: rule.key,
-        label: rule.label,
-        need: Math.max(1, rule.minEvidence - (probe?.n || 0)),
-      });
-      continue;
-    }
-    if (have.has(rule.key)) continue;
-
+  for (const t of earned) {
+    if (have.has(t.key)) continue;
     const row = {
       user_id: userId,
-      trait_key: rule.key,
-      label: result.label || rule.label,
-      detail: result.detail,
-      confidence: Math.round(Math.min(1, result.confidence) * 1000) / 1000,
+      trait_key: t.key,
+      label: t.label,
+      detail: t.detail,
+      confidence: Math.round(t.confidence * 1000) / 1000,
     };
-    const { error } = await supabaseAdmin.from("taste_traits").upsert(row, { onConflict: "user_id,trait_key" });
+    const { error } = await supabaseAdmin
+      .from("taste_traits")
+      .upsert(row, { onConflict: "user_id,trait_key" });
     if (!error) fresh.push(row);
   }
 
-  return { revealed: fresh, pending: pending.slice(0, 3) };
+  return { revealed: fresh, pending: pendingFromAxes(readings).slice(0, 3) };
 }
 
 // --- Serper image search (winner only) -------------------------------------
@@ -1913,6 +2318,7 @@ app.get("/calibration/today", requireAuth, async (req, res) => {
     const cards = await deck();
     const nodes = await loadNodes(req.userId);
     const read = await buildDailyRead(req.userId, set, cards, nodes);
+    const seal = await outstandingSeal(req.userId);
 
     return res.json({
       remaining: set.filter((c) => !c.chosen),
@@ -1921,6 +2327,7 @@ app.get("/calibration/today", requireAuth, async (req, res) => {
       pendingTraits: pending,
       justRevealed: revealed,
       read,
+      seal,
     });
   } catch (err) {
     console.error("calibration error:", err.message);
@@ -2006,18 +2413,38 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
 
     const { revealed, pending } = await refreshTraits(req.userId);
 
+    // Hold this one overnight? The answer is still recorded and the map still
+    // moves — only the GRADE is withheld, which is the entire mechanic. A seal
+    // that also withheld the data would just be a slower duel.
+    let sealed = false;
+    if (chosen !== "skip" && (await shouldSeal(req.userId, row))) {
+      const { error: sealErr } = await supabaseAdmin
+        .from("calibrations")
+        .update({ sealed_at: new Date().toISOString() })
+        .eq("id", row.id)
+        .eq("user_id", req.userId);
+      sealed = !sealErr;
+    }
+
     // The scoreboard has to move in the same response that resolved the call.
     // A record that updates on the next poll reads as decorative; one that
-    // ticks on the tap reads as a game being played.
-    const record = row.predicted && chosen !== "skip" ? await modelRecord(req.userId) : null;
+    // ticks on the tap reads as a game being played. A sealed answer moves
+    // neither — its result doesn't exist for the user yet.
+    const record = row.predicted && chosen !== "skip" && !sealed
+      ? await modelRecord(req.userId)
+      : null;
 
     return res.json({
       ok: true,
       completed: done,
       total: CALIBRATIONS_PER_DAY,
+      sealed,
       // Was our guess right? Both answers are good: a hit says the model knows
-      // them, a miss is the most informative data point available.
-      prediction: row.predicted ? { guessed: row.predicted, correct: row.predicted === chosen } : null,
+      // them, a miss is the most informative data point available. Withheld
+      // entirely when sealed — the client must not be able to peek.
+      prediction: row.predicted && !sealed
+        ? { guessed: row.predicted, correct: row.predicted === chosen }
+        : null,
       record,
       movedNodes,
       justRevealed: revealed,
@@ -2030,6 +2457,59 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
   }
 });
 
+// Opening the envelope. This is the payoff for coming back, so it pays XP and
+// advances the streak on its own — the appointment has to be worth keeping,
+// not merely a prettier way to start the same daily grind.
+app.post("/calibration/reveal", requireAuth, async (req, res) => {
+  try {
+    if (!(await sealSupported())) return res.status(409).json({ error: "Seals aren't enabled" });
+
+    const { id } = req.body || {};
+    if (typeof id !== "string") return res.status(400).json({ error: "Invalid seal" });
+
+    const { data: row, error: fetchErr } = await supabaseAdmin
+      .from("calibrations")
+      .select("id, left_ref, right_ref, predicted, chosen, sealed_at, revealed_at")
+      .eq("id", id)
+      .eq("user_id", req.userId)
+      .maybeSingle();
+
+    if (fetchErr || !row) return res.status(404).json({ error: "Not found" });
+    if (!row.sealed_at) return res.status(409).json({ error: "That wasn't sealed" });
+    if (row.revealed_at) return res.status(409).json({ error: "Already opened" });
+
+    // Claim it first. Two tabs opening the same envelope must not both pay out.
+    const { data: claimed, error: claimErr } = await supabaseAdmin
+      .from("calibrations")
+      .update({ revealed_at: new Date().toISOString() })
+      .eq("id", row.id)
+      .eq("user_id", req.userId)
+      .is("revealed_at", null)
+      .select("id");
+
+    if (claimErr || !claimed?.length) return res.status(409).json({ error: "Already opened" });
+
+    const today = todayStr();
+    const state = await loadGameState(req.userId);
+    await touchStreak(req.userId, state);
+    const streakBonus = state.last_active_date === today ? 0 : XP.STREAK_DAY;
+    const award = await awardXp(req.userId, XP.SEAL_OPEN + streakBonus, "seal opened");
+
+    const pick = row.predicted === "left" ? row.left_ref : row.right_ref;
+
+    return res.json({
+      ok: true,
+      correct: row.predicted === row.chosen,
+      pickName: pick?.name || "that one",
+      record: await modelRecord(req.userId),
+      award,
+    });
+  } catch (err) {
+    console.error("seal reveal error:", err.message);
+    return res.status(500).json({ error: "Couldn't open that" });
+  }
+});
+
 // The map itself. Only encountered nodes come back — the absence of a row IS
 // the fog of war, so we never have to fake "undiscovered" state.
 app.get("/me/map", requireAuth, async (req, res) => {
@@ -2039,6 +2519,7 @@ app.get("/me/map", requireAuth, async (req, res) => {
     const byId = new Map(cards.map((c) => [c.id, c]));
 
     const families = new Map();
+    const all = [];
     for (const c of cards) {
       if (!families.has(c.family)) families.set(c.family, { family: c.family, total: 0, seen: 0, nodes: [] });
       const f = families.get(c.family);
@@ -2046,17 +2527,48 @@ app.get("/me/map", requireAuth, async (req, res) => {
       const n = nodes.get(c.id);
       if (n) {
         f.seen += 1;
-        f.nodes.push({
+        const node = {
           id: c.id,
           name: c.name,
           kind: c.kind,
-          rarity: c.rarity,
+          rarity: c.rarity || 1,
+          family: c.family,
           affinity: nodeAffinity(n.wins, n.appearances),
           confidence: nodeConfidence(n.appearances),
           appearances: n.appearances,
-        });
+          staleness: nodeStaleness(n.last_seen),
+        };
+        f.nodes.push(node);
+        all.push(node);
       }
     }
+
+    // The at-a-glance answer to "what do I actually like." A constellation is
+    // beautiful but slow to read; these two lists are the same truth in the
+    // form a person can absorb in a second. Both are gated on confidence,
+    // because an unconfident reading stated boldly is how a taste product
+    // loses the only credibility it has.
+    const confident = all.filter((n) => n.confidence >= 0.5 && n.affinity != null);
+    const strongest = confident
+      .filter((n) => n.affinity >= 0.6)
+      .sort((a, b) => b.affinity - a.affinity || b.confidence - a.confidence)
+      .slice(0, 6);
+    const coldest = confident
+      .filter((n) => n.affinity <= 0.35)
+      .sort((a, b) => a.affinity - b.affinity || b.confidence - a.confidence)
+      .slice(0, 6);
+
+    // Regions drifting out of date, so the map can say which corner of it has
+    // gone quiet rather than just dimming without explanation.
+    const fading = Array.from(families.values())
+      .filter((f) => f.seen >= 3)
+      .map((f) => ({
+        family: f.family,
+        staleness: f.nodes.reduce((s, n) => s + n.staleness, 0) / f.nodes.length,
+      }))
+      .filter((f) => f.staleness >= 0.35)
+      .sort((a, b) => b.staleness - a.staleness)
+      .slice(0, 3);
 
     const { data: traits } = await supabaseAdmin
       .from("taste_traits")
@@ -2066,13 +2578,79 @@ app.get("/me/map", requireAuth, async (req, res) => {
 
     const { pending } = await refreshTraits(req.userId);
 
+    // The cap is per-region and generous: the constellation reads as a field,
+    // and a field needs density. 40 is where an average phone stops gaining
+    // anything from more dots.
     const regions = Array.from(families.values())
       .map((f) => ({
         ...f,
-        nodes: f.nodes.sort((a, b) => (b.affinity ?? 0) - (a.affinity ?? 0)).slice(0, 14),
+        nodes: f.nodes.sort((a, b) => (b.affinity ?? 0) - (a.affinity ?? 0)).slice(0, 40),
         explored: f.total ? f.seen / f.total : 0,
       }))
       .sort((a, b) => b.seen - a.seen);
+
+    // --- the signature ---
+    const readings = readAllAxes(cards, nodes);
+    const pop = await population();
+
+    // Only confident axes are rendered as bars. An unsure reading shown as a
+    // bar is a puzzle the user has to decode; withheld, with a named finish
+    // line under it, it's a reason to come back. Sorted by decisiveness so the
+    // most interesting thing about someone is the first thing they read.
+    const axes = AXES
+      .map((axis) => {
+        const r = readings.get(axis.key);
+        if (!r || !r.confident) return null;
+        const pct = percentileIn(pop.axes.get(axis.key), r.position);
+        return {
+          key: axis.key,
+          left: axis.left,
+          right: axis.right,
+          position: r.position,
+          evidence: r.evidence,
+          say: axis.say(r.position),
+          compare: compareLine(pct),
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => decisiveness(b.position) - decisiveness(a.position));
+
+    const measuring = AXES
+      .filter((axis) => !axes.some((a) => a.key === axis.key))
+      .map((axis) => `${axis.left.toLowerCase()} vs ${axis.right.toLowerCase()}`);
+
+    const arch = archetypeFor(readings);
+    let archetype = null;
+    if (arch) {
+      const share = pop.users >= POP_MIN && pop.archetypes.get(arch.key)
+        ? pop.archetypes.get(arch.key) / pop.users
+        : null;
+      archetype = { ...arch, share };
+    }
+
+    // One collection row: the region nearest completion. Visible countable
+    // gaps beat a percentage — the empty slots are the mechanic.
+    const collectable = Array.from(families.values())
+      .filter((f) => f.seen > 0 && f.seen < f.total && f.total <= 24)
+      .sort((a, b) => b.seen / b.total - a.seen / a.total)[0]
+      || Array.from(families.values()).filter((f) => f.seen > 0 && f.seen < f.total)
+        .sort((a, b) => b.seen / b.total - a.seen / a.total)[0];
+
+    let collection = null;
+    if (collectable) {
+      const found = collectable.nodes
+        .slice()
+        .sort((a, b) => (b.affinity ?? 0) - (a.affinity ?? 0))
+        .slice(0, 8)
+        .map((n) => ({ id: n.id, name: n.name, rarity: n.rarity }));
+      collection = {
+        family: collectable.family,
+        seen: collectable.seen,
+        total: collectable.total,
+        found,
+        missing: Math.min(6, collectable.total - collectable.seen),
+      };
+    }
 
     return res.json({
       regions,
@@ -2080,6 +2658,18 @@ app.get("/me/map", requireAuth, async (req, res) => {
       pendingTraits: pending,
       discovered: nodes.size,
       totalCards: cards.length,
+      strongest,
+      coldest,
+      fading,
+      archetype,
+      axes,
+      measuring,
+      collection,
+      // Every answered pair touches exactly two cards, so appearances halves
+      // back to the number of choices the person actually made.
+      choices: Math.round(
+        Array.from(nodes.values()).reduce((s, n) => s + (n.appearances || 0), 0) / 2
+      ),
     });
   } catch (err) {
     console.error("map error:", err.message);

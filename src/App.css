@@ -55,6 +55,12 @@
   --ink-soft:  #b9aec4;
   --ink-faint: #6d6480;
   --ink-ghost: #453e56;
+  /* Secondary text that still has to be READ. --ink-faint measures 3.19:1 on
+     --card and --ink-ghost measures 1.75:1, which is fine for decoration and
+     not fine for words carrying meaning. This lands at ~5:1, so copy can sit
+     below the primary tier without dropping out of legibility — hierarchy
+     comes from size and weight instead. */
+  --ink-mid:   #8d84a0;
 
   --danger:    #ff4d6a;
   --success:   #3ddc97;
@@ -879,6 +885,167 @@ body {
    =========================================================================== */
 
 /* ===========================================================================
+   THE OVERNIGHT SEAL
+
+   The envelope sits above everything on Today, because it was already waiting
+   when the app opened. Its unopened state is deliberately the quietest card
+   in the product — violet, low-contrast, one button — so that opening it is a
+   jump in light rather than a flat continuation. Restraint here is what buys
+   the payoff frame its impact.
+   =========================================================================== */
+
+.seal {
+  position: relative;
+  padding: 24px 26px;
+  margin-bottom: 16px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  animation: slideUp 0.5s var(--ease) both;
+}
+
+.seal--ready {
+  background:
+    radial-gradient(80% 120% at 50% 0%, rgba(139, 92, 246, 0.14), transparent 66%),
+    linear-gradient(165deg, var(--raised), var(--base) 78%);
+  border: 1px dashed rgba(139, 92, 246, 0.42);
+}
+
+.seal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+
+.seal-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+
+.seal-claim {
+  font-family: 'Instrument Serif', serif;
+  font-size: 23px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: 18px;
+  max-width: 26ch;
+}
+
+.seal-pair { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+
+.seal-face {
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-mid);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+}
+/* Their own choice is shown; ours is what stays sealed. */
+.seal-face--yours { color: var(--ink); border-color: var(--line-warm); background: rgba(255, 200, 87, 0.07); }
+
+.seal-vs {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+}
+
+.seal-chose {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-mid);
+  margin-bottom: 18px;
+}
+
+.seal-open { width: 100%; }
+
+/* ---- sealed for tonight: a receipt, not an event ---- */
+
+.seal--set {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  background: linear-gradient(165deg, var(--raised), var(--base) 80%);
+  border: 1px dashed rgba(139, 92, 246, 0.3);
+}
+.seal-wax { font-size: 18px; color: var(--violet); flex-shrink: 0; }
+.seal-set-t { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink); }
+.seal-set-s { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-mid); margin-top: 3px; }
+
+/* ---- opened: the payoff, sharing the Read's merge treatment ---- */
+
+.seal--open {
+  background: linear-gradient(165deg, var(--elevated), var(--card) 74%);
+  animation: pop 0.5s var(--spring) both;
+}
+.seal--open::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(118deg,
+    rgba(255, 95, 31, 0.16) 0%,
+    rgba(255, 200, 87, 0.10) 32%,
+    rgba(46, 230, 214, 0.12) 72%,
+    transparent 100%);
+  background-size: 220% 100%;
+  animation: sweep 1.5s var(--ease) both;
+  pointer-events: none;
+}
+.seal--open > * { position: relative; z-index: 1; }
+
+.seal--hit  { border: 1px solid rgba(46, 230, 214, 0.45); }
+.seal--miss { border: 1px solid rgba(255, 200, 87, 0.45); }
+
+.seal-outcome {
+  font-family: 'Instrument Serif', serif;
+  font-size: 38px;
+  line-height: 1.05;
+  margin-bottom: 10px;
+  animation: countIn 0.5s var(--ease) 0.12s both;
+}
+.seal--hit  .seal-outcome { color: var(--ion); }
+.seal--miss .seal-outcome { color: var(--saffron); }
+
+.seal-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 44ch;
+  margin-bottom: 20px;
+  animation: countIn 0.5s var(--ease) 0.2s both;
+}
+.seal-sub strong { color: var(--ink); font-weight: 600; }
+
+.seal-done {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 11px 20px;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+  animation: countIn 0.5s var(--ease) 0.3s both;
+}
+.seal-done:hover { background: rgba(255, 255, 255, 0.09); color: var(--ink); }
+
+@media (max-width: 560px) {
+  .seal { padding: 20px; }
+  .seal-claim { font-size: 20px; }
+  .seal-outcome { font-size: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seal, .seal--open, .seal--open::before, .seal-outcome, .seal-sub, .seal-done { animation: none; }
+}
+
+/* ===========================================================================
    THE DAILY READ
 
    The front door, and the only element in the product allowed to use the
@@ -1407,60 +1574,246 @@ body {
    TASTE MAP
    =========================================================================== */
 
-.traits { display: flex; flex-direction: column; gap: 16px; }
 
-.trait { padding: 16px 18px; border-radius: var(--r-md); background: rgba(46, 230, 214, 0.05); border: 1px solid var(--line-cool); }
-.trait-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.trait-label { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; }
-.trait-conf { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ion); }
-.trait-detail { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 10px; }
-.trait-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.07); overflow: hidden; }
-.trait-fill { height: 100%; background: linear-gradient(90deg, var(--ion), var(--mint)); transition: width 1s var(--ease); }
+/* ===========================================================================
+   THE SIGNATURE
 
-.region {
-  padding: 20px 22px;
-  margin-bottom: 12px;
-  border-radius: var(--r-md);
-  background: linear-gradient(165deg, var(--card), var(--raised) 75%);
-  border: 1px solid var(--line);
-  animation: slideUp 0.5s var(--ease) both;
+   Replaced a radial constellation. Cleveland & McGill rank POSITION ALONG A
+   COMMON SCALE first for decoding accuracy and ANGLE/AREA near last; a polar
+   taste map forced both weak channels, which is how it looked like something
+   while communicating nothing.
+
+   Two rules keep this legend-free:
+
+   1. THE RAIL IS THE SCALE. It runs dim on the left to saffron on the right,
+      so "which end means more" is seen rather than explained. The dot is cool
+      because the dot is you — rule 1 of this system doing the work a key
+      would otherwise need to do.
+
+   2. NOTHING UNCERTAIN IS DRAWN. Unconfident axes are withheld and named in
+      one line of prose instead. Same Zeigarnik pull, no interpretation cost,
+      and the product never shows a reading it can't stand behind.
+   =========================================================================== */
+
+/* ---- archetype: the shareable object ---- */
+
+.arch {
+  position: relative;
+  padding: 30px 26px;
+  margin-bottom: 16px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(90% 130% at 50% 0%, rgba(255, 95, 31, 0.16), transparent 64%),
+    linear-gradient(165deg, var(--elevated), var(--card) 74%);
+  border: 1px solid rgba(255, 200, 87, 0.28);
+  animation: slideUp 0.55s var(--ease) both;
 }
 
-.region-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-.region-name { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; }
-.region-explored { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-faint); }
-.region-track { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 14px; }
-.region-fill { height: 100%; background: linear-gradient(90deg, var(--ember), var(--saffron)); transition: width 0.9s var(--ease); }
+.arch-rare {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--violet);
+}
 
-.nodes { display: flex; flex-wrap: wrap; gap: 7px; }
+.arch-tag {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--saffron);
+  margin-bottom: 12px;
+}
 
-/* Brightness carries confidence — a node we barely know is literally dimmer.
-   That's honest AND it makes the map visibly light up as you play. */
-.node {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border-radius: var(--r-full);
+/* The one gradient-filled headline in the product. It marks the single
+   sentence that is purely about who the user is. */
+.arch-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 14px;
+  background: linear-gradient(100deg, var(--saffron), var(--ember) 62%, var(--magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.arch-line {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  max-width: 40ch;
+}
+
+.arch-from {
+  margin-top: 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  line-height: 1.6;
+  color: var(--ink-mid);
+}
+
+/* ---- one axis = one rail + one sentence ---- */
+
+.ax { margin-bottom: 26px; }
+.ax:last-of-type { margin-bottom: 0; }
+
+.ax-poles {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.ax-poles .on { color: var(--saffron); }
+
+.ax-rail { position: relative; height: 16px; display: flex; align-items: center; margin-bottom: 11px; }
+
+.ax-track {
+  position: absolute;
+  left: 0; right: 0;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(253, 248, 242, 0.06), rgba(255, 95, 31, 0.28), var(--saffron));
+}
+
+.ax-dot {
+  position: absolute;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--mint);
+  border: 3px solid var(--void);
+  box-shadow: 0 0 14px var(--ion);
+  transform: translateX(-50%);
+  transition: left 0.9s var(--ease);
+}
+
+.ax-say {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.ax-cmp { color: var(--ion); }
+
+/* the open loop, in one line */
+.soon {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--ink-mid);
+}
+.soon b { color: var(--ink); font-weight: 500; }
+
+/* ---- strongest signals ---- */
+
+.sigs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.sig-title {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  margin-bottom: 12px;
+}
+
+.sig-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+
+.sig-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11.5px;
   border: 1px solid transparent;
-  transition: opacity 0.5s var(--ease), transform 0.18s var(--spring);
+  animation: countIn 0.4s var(--ease) both;
 }
-.node:hover { transform: translateY(-2px); }
+.sig-item--love { color: var(--saffron);   background: rgba(255, 200, 87, 0.08);  border-color: var(--line-warm); }
+.sig-item--cold { color: var(--ink-mid); background: rgba(255, 255, 255, 0.025); border-color: var(--line); }
 
-.node--love { color: var(--mint);      background: rgba(46, 230, 214, 0.1);  border-color: rgba(46, 230, 214, 0.34); }
-.node--mid  { color: var(--ink-soft);  background: rgba(255, 255, 255, 0.04); border-color: var(--line); }
-.node--cold { color: var(--ink-ghost); background: rgba(255, 255, 255, 0.02); border-color: rgba(253,248,242,0.06); }
+.sig-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sig-pct  { font-variant-numeric: tabular-nums; opacity: 0.82; flex-shrink: 0; }
+.sig-empty { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-mid); }
 
-.node--fog {
+/* ---- collection: countable gaps ---- */
+
+.coll { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.slot {
+  width: 62px; height: 62px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8.5px;
+  line-height: 1.2;
+  text-align: center;
+  overflow: hidden;
+}
+.slot--got  { background: rgba(255, 200, 87, 0.08); border: 1px solid var(--line-warm); color: var(--saffron); }
+.slot--rare {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.42);
+  color: #c4b0ff;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.16);
+}
+.slot--fog {
+  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.028), rgba(255,255,255,0.028) 4px, transparent 4px, transparent 8px);
+  border: 1px dashed rgba(253, 248, 242, 0.09);
   color: var(--ink-ghost);
-  background: repeating-linear-gradient(45deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 4px, transparent 4px, transparent 8px);
-  border-color: rgba(253,248,242,0.08);
-  border-style: dashed;
 }
 
-.node-rare { color: var(--violet); font-size: 8px; }
+/* ---- going cold ---- */
+
+.card--fading { border-color: rgba(255, 200, 87, 0.22); }
+.fading-why {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+  max-width: 52ch;
+}
+.fading-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.fading-chip {
+  padding: 6px 13px;
+  border-radius: var(--r-full);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--saffron);
+  background: rgba(255, 200, 87, 0.08);
+  border: 1px dashed rgba(255, 200, 87, 0.32);
+}
+
+@media (max-width: 560px) {
+  .sigs { grid-template-columns: 1fr; gap: 18px; }
+  .arch-name { font-size: 34px; }
+  .arch { padding: 24px 20px; }
+  .arch-rare { top: 20px; right: 20px; }
+  .slot { width: 56px; height: 56px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arch, .sig-item { animation: none; }
+  .ax-dot { transition: none; }
+}
 
 /* ===========================================================================
    XP TOAST + LEVEL UP

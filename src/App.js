@@ -349,6 +349,132 @@ function PlaceFace({ place }) {
 }
 
 /* ===========================================================================
+   THE SIGNATURE
+
+   This replaced a radial constellation, for a reason worth writing down.
+
+   Cleveland & McGill's perceptual ranking puts POSITION ALONG A COMMON SCALE
+   at the top for decoding accuracy, and ANGLE and AREA near the bottom. A
+   polar map of taste forces exactly the two weakest judgements, which is how
+   it managed to look like something while telling you nothing. A row of bars
+   uses the strongest one.
+
+   That isn't only a legibility argument. Processing fluency (Reber, Schwarz
+   & Winkielman) shows easily-processed information is judged both more
+   pleasant AND more true. For a product whose whole claim is "we know you,"
+   being judged more true is not decoration — it is the product.
+
+   Two rules keep it simple enough to read without a legend:
+
+     1. THE RAIL IS THE SCALE. It runs dim on the left to warm on the right,
+        so which end means "more" is visible rather than explained. The dot is
+        cool because the dot is you — the house hue rule does the work a key
+        would otherwise have to do.
+
+     2. WE ONLY DRAW WHAT WE'RE SURE OF. An unconfident reading rendered as a
+        fuzzy bar is a puzzle. Withheld, and named underneath as something
+        still being measured, it's a reason to come back — the same Zeigarnik
+        pull with none of the interpretation cost.
+   =========================================================================== */
+
+function Archetype({ archetype, choices }) {
+  if (!archetype) return null;
+  const share = archetype.share;
+  return (
+    <section className="arch">
+      {share != null && share <= 0.25 && (
+        <span className="arch-rare">{Math.max(1, Math.round(share * 100))}% of people</span>
+      )}
+      <span className="arch-tag">Your type</span>
+      <h2 className="arch-name">{archetype.name}</h2>
+      <p className="arch-line">{archetype.line}</p>
+      {choices > 0 && (
+        <p className="arch-from">From {choices.toLocaleString()} choices — you never answered a question about yourself.</p>
+      )}
+    </section>
+  );
+}
+
+function AxisBar({ axis }) {
+  const pct = Math.round(axis.position * 100);
+  return (
+    <div className="ax">
+      <div className="ax-poles">
+        <span className={pct < 45 ? "on" : ""}>{axis.left}</span>
+        <span className={pct > 55 ? "on" : ""}>{axis.right}</span>
+      </div>
+      <div className="ax-rail">
+        <div className="ax-track" />
+        <div className="ax-dot" style={{ left: `${pct}%` }} />
+      </div>
+      <p className="ax-say">
+        {axis.say}
+        {axis.compare && <span className="ax-cmp"> {axis.compare}</span>}
+      </p>
+    </div>
+  );
+}
+
+/* The open loop, in one line. Naming three specific unfinished things pulls
+   harder than a progress bar, and costs the reader nothing to parse. */
+function Measuring({ items }) {
+  if (!items?.length) return null;
+  const shown = items.slice(0, 3);
+  const list = shown.length === 1
+    ? shown[0]
+    : `${shown.slice(0, -1).join(", ")} and ${shown[shown.length - 1]}`;
+  return (
+    <p className="soon">
+      Still measuring — <b>{list}</b>. They appear here once we're sure.
+    </p>
+  );
+}
+
+function SignalList({ title, tone, nodes, empty }) {
+  return (
+    <div className="sig">
+      <span className="sig-title">{title}</span>
+      {nodes?.length ? (
+        <ul className="sig-list">
+          {nodes.map((n) => (
+            <li className={`sig-item sig-item--${tone}`} key={n.id}>
+              <span className="sig-name">{n.name}</span>
+              <span className="sig-pct">{Math.round((n.affinity ?? 0) * 100)}%</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="sig-empty">{empty}</p>
+      )}
+    </div>
+  );
+}
+
+/* Visible, countable gaps. Panini built a business on the fact that an empty
+   slot you can point at pulls harder than "23% complete" ever will. */
+function Collection({ collection }) {
+  if (!collection?.found?.length) return null;
+  return (
+    <section className="card">
+      <div className="card-head">
+        <h2 className="card-title">Closest to complete</h2>
+        <span className="card-sub">{collection.family} · {collection.seen} of {collection.total}</span>
+      </div>
+      <div className="coll">
+        {collection.found.map((c) => (
+          <span className={`slot${c.rarity >= 3 ? " slot--rare" : " slot--got"}`} key={c.id}>
+            {c.name}
+          </span>
+        ))}
+        {Array.from({ length: collection.missing }).map((_, i) => (
+          <span className="slot slot--fog" key={`f${i}`}>?</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ===========================================================================
    THE DAILY READ
 
    The front door. Before the user does anything, the app has already made a
@@ -385,6 +511,82 @@ function ReadScore({ record }) {
         <span className="read-score-n read-score-n--you">{record.you}</span>
       </span>
     </span>
+  );
+}
+
+/* ===========================================================================
+   THE OVERNIGHT SEAL
+
+   Everything else here resolves on the tap, which leaves nothing that needs
+   TOMORROW specifically. So one call a day is answered and not graded, and
+   the outcome waits until morning.
+
+   That's the difference between a habit and an appointment. A habit competes
+   with everything else on the phone; an appointment is something of yours
+   already sitting there. It's the Wordle-reset shape without the currency.
+
+   It never expires on purpose. Disappear for a week and the envelope is still
+   waiting, which turns a lapse into a welcome-back instead of a loss — the
+   opposite of a streak, which punishes exactly the person you most want to
+   win back.
+   =========================================================================== */
+
+function Seal({ seal, result, busy, onOpen, onDismiss }) {
+  if (result) {
+    const hit = result.correct;
+    return (
+      <section className={`seal seal--open seal--${hit ? "hit" : "miss"}`} role="status">
+        <div className="seal-head">
+          <span className="seal-tag">Last night's call</span>
+          <ReadScore record={result.record} />
+        </div>
+        <p className="seal-outcome">{hit ? "We had you." : "You beat it."}</p>
+        <p className="seal-sub">
+          {hit
+            ? <>Sealed yesterday, before you picked: <strong>{result.pickName}</strong>.</>
+            : <>We'd written down <strong>{result.pickName}</strong>. You went the other way.</>}
+        </p>
+        <button className="seal-done" onClick={onDismiss}>{hit ? "Unsettling." : "Good."}</button>
+      </section>
+    );
+  }
+
+  if (!seal) return null;
+
+  if (seal.state === "set") {
+    return (
+      <section className="seal seal--set">
+        <span className="seal-wax" aria-hidden="true">✦</span>
+        <div>
+          <p className="seal-set-t">Sealed for tonight.</p>
+          <p className="seal-set-s">What it said about you opens tomorrow morning.</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (seal.state !== "ready") return null;
+
+  return (
+    <section className="seal seal--ready">
+      <div className="seal-head">
+        <span className="seal-tag">Sealed {seal.sealedOn}</span>
+      </div>
+      <p className="seal-claim">We wrote down what you'd pick — before you picked it.</p>
+      <div className="seal-pair">
+        <span className={`seal-face${seal.chose === "left" ? " seal-face--yours" : ""}`}>
+          {seal.left?.name}
+        </span>
+        <span className="seal-vs">vs</span>
+        <span className={`seal-face${seal.chose === "right" ? " seal-face--yours" : ""}`}>
+          {seal.right?.name}
+        </span>
+      </div>
+      <p className="seal-chose">You took {seal.chose === "left" ? seal.left?.name : seal.right?.name}.</p>
+      <button className="btn btn--hot seal-open" disabled={busy} onClick={() => onOpen(seal)}>
+        {busy ? "Opening…" : "Open it"}
+      </button>
+    </section>
   );
 }
 
@@ -729,6 +931,8 @@ function App() {
   const [calBusy, setCalBusy] = useState(false);
   const [lastResult, setLastResult] = useState(null);
   const [readResult, setReadResult] = useState(null);
+  const [sealResult, setSealResult] = useState(null);
+  const [sealBusy, setSealBusy] = useState(false);
   const [reveal, setReveal] = useState(null);
   const [taste, setTaste] = useState(null);
   const [tasteMap, setTasteMap] = useState(null);
@@ -844,12 +1048,19 @@ function App() {
         body: JSON.stringify({ id: read.id, chosen }),
       });
       if (res) {
-        const pick = read.side === "left" ? read.left : read.right;
-        setReadResult({
-          correct: Boolean(res.prediction?.correct),
-          pickName: pick?.name || "that one",
-          record: res.record,
-        });
+        // A withheld grade comes back as prediction:null. Coercing that to
+        // `correct: false` would print "Missed." over an answer nobody has
+        // graded yet, so the payoff frame only opens on a real result.
+        if (res.sealed) {
+          setCal((p) => ({ ...p, seal: { state: "set" } }));
+        } else if (res.prediction) {
+          const pick = read.side === "left" ? read.left : read.right;
+          setReadResult({
+            correct: res.prediction.correct,
+            pickName: pick?.name || "that one",
+            record: res.record,
+          });
+        }
         if (res.award) flash(res.award);
         if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
         if (res.pendingTraits) setCal((p) => ({ ...p, pendingTraits: res.pendingTraits }));
@@ -862,6 +1073,28 @@ function App() {
   /* Retire the card optimistically. Clearing the result and waiting on the
      refetch would flash the already-answered pair back onto the screen for a
      frame, which reads as the tap having failed. */
+  const openSeal = async (seal) => {
+    if (sealBusy) return;
+    setSealBusy(true);
+    try {
+      const res = await authedFetch("/calibration/reveal", {
+        method: "POST",
+        body: JSON.stringify({ id: seal.id }),
+      });
+      if (res?.ok) {
+        setSealResult({ correct: res.correct, pickName: res.pickName, record: res.record });
+        if (res.award) flash(res.award);
+        refreshGame().catch(() => {});
+      }
+    } finally { setSealBusy(false); }
+  };
+
+  const dismissSeal = () => {
+    setCal((p) => ({ ...p, seal: null }));
+    setSealResult(null);
+    refreshCal().catch(() => {});
+  };
+
   const dismissRead = () => {
     setCal((p) => ({ ...p, read: { state: "spent", record: readResult?.record || p.read?.record } }));
     setReadResult(null);
@@ -883,6 +1116,9 @@ function App() {
       if (res) {
         setLastResult(res);
         setTimeout(() => setLastResult(null), 2600);
+        // Confirm the seal on the tap. Waiting for the next poll would make
+        // the deferral feel like the answer simply vanished.
+        if (res.sealed) setCal((p) => ({ ...p, seal: { state: "set" } }));
         if (res.award) flash(res.award);
         if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
         if (res.pendingTraits) setCal((p) => ({ ...p, pendingTraits: res.pendingTraits }));
@@ -964,7 +1200,7 @@ function App() {
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
     setLocationInput(""); setResolvedLocation(null); setLocationError(""); setRadiusUsed(null);
     setPendingVerdicts([]); setScoutReport(null); setGame(null); setTaste(null);
-    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setTasteMap(null); setTab("today");
+    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setSealResult(null); setTasteMap(null); setTab("today");
   };
 
   const handleSaveOnboarding = async () => {
@@ -1314,6 +1550,17 @@ function App() {
         {/* ================= TODAY ================= */}
         {tab === "today" && (
           <main className="page">
+            {/* The envelope outranks even the Read: it was already waiting
+                when they opened the app, and it's the thing that made
+                tomorrow a specific appointment rather than a vague intention. */}
+            <Seal
+              seal={cal.seal}
+              result={sealResult}
+              busy={sealBusy}
+              onOpen={openSeal}
+              onDismiss={dismissSeal}
+            />
+
             {/* The Read sits above the streak because it's the reason to
                 open the app; the flame is the reward for having done so. */}
             <DailyRead
@@ -1642,76 +1889,80 @@ function App() {
         {tab === "map" && (
           <main className="page">
             <div className="page-head">
-              <h1 className="page-title">Your <em>taste map</em></h1>
+              <h1 className="page-title">Your <em>signature</em></h1>
               <p className="page-sub">
-                {tasteMap?.discovered || 0} of {tasteMap?.totalCards || 1446} discovered ·
-                {" "}fog clears as you calibrate
+                {tasteMap?.discovered || 0} of {tasteMap?.totalCards || 1446} cards met
               </p>
             </div>
 
-            {tasteMap?.traits?.length > 0 && (
-              <section className="card card--glow">
-                <div className="card-head"><h2 className="card-title">What we know</h2></div>
-                <div className="traits">
-                  {tasteMap.traits.map((t) => (
-                    <div className="trait" key={t.trait_key}>
-                      <div className="trait-top">
-                        <span className="trait-label">{t.label}</span>
-                        <span className="trait-conf">{Math.round((t.confidence || 0) * 100)}%</span>
-                      </div>
-                      <p className="trait-detail">{t.detail}</p>
-                      <div className="trait-bar"><div className="trait-fill" style={{ width: `${Math.round((t.confidence || 0) * 100)}%` }} /></div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {tasteMap?.pendingTraits?.length > 0 && (
-              <section className="card">
-                <div className="card-head"><h2 className="card-title">Still decoding</h2></div>
-                {tasteMap.pendingTraits.map((t) => (
-                  <div className="pending" key={t.key}>
-                    <span className="pending-name">{t.label}</span>
-                    <span className="pending-need">{t.need} more {t.need === 1 ? "answer" : "answers"}</span>
-                  </div>
-                ))}
-              </section>
-            )}
-
             {tasteMap?.regions?.filter((r) => r.seen > 0).length > 0 ? (
-              tasteMap.regions.filter((r) => r.seen > 0).map((region) => (
-                <section className="region" key={region.family}>
-                  <div className="region-head">
-                    <h2 className="region-name">{region.family}</h2>
-                    <span className="region-explored">{region.seen}/{region.total}</span>
-                  </div>
-                  <div className="region-track">
-                    <div className="region-fill" style={{ width: `${Math.round(region.explored * 100)}%` }} />
-                  </div>
-                  <div className="nodes">
-                    {region.nodes.map((n) => (
-                      <span
-                        key={n.id}
-                        className={`node node--${n.affinity >= 0.6 ? "love" : n.affinity <= 0.35 ? "cold" : "mid"}`}
-                        style={{ opacity: 0.45 + n.confidence * 0.55 }}
-                        title={`${Math.round((n.affinity ?? 0) * 100)}% affinity · ${Math.round(n.confidence * 100)}% confidence`}
-                      >
-                        {n.name}
-                        {n.rarity >= 3 && <span className="node-rare">◆</span>}
+              <>
+                <Archetype archetype={tasteMap.archetype} choices={tasteMap.choices} />
+
+                {tasteMap.axes?.length > 0 && (
+                  <section className="card">
+                    <div className="card-head">
+                      <h2 className="card-title">Where you sit</h2>
+                      <span className="card-sub">
+                        {tasteMap.axes.length} of {tasteMap.axes.length + (tasteMap.measuring?.length || 0)} known
                       </span>
-                    ))}
-                    {region.total > region.seen && (
-                      <span className="node node--fog">+{region.total - region.seen} hidden</span>
-                    )}
-                  </div>
-                </section>
-              ))
+                    </div>
+                    {tasteMap.axes.map((a) => <AxisBar key={a.key} axis={a} />)}
+                    <Measuring items={tasteMap.measuring} />
+                  </section>
+                )}
+
+                {/* Before any axis is confident there is nothing to draw, so
+                    say what's coming rather than showing an empty card. */}
+                {!tasteMap.axes?.length && tasteMap.measuring?.length > 0 && (
+                  <section className="card">
+                    <div className="card-head"><h2 className="card-title">Where you sit</h2></div>
+                    <p className="empty">
+                      Nothing measured with confidence yet — we'd rather show you nothing than a guess.
+                    </p>
+                    <Measuring items={tasteMap.measuring} />
+                  </section>
+                )}
+
+                {(tasteMap.strongest?.length > 0 || tasteMap.coldest?.length > 0) && (
+                  <section className="card card--glow">
+                    <div className="card-head">
+                      <h2 className="card-title">Your strongest signals</h2>
+                    </div>
+                    <div className="sigs">
+                      <SignalList title="You reach for" tone="love"
+                                  nodes={tasteMap.strongest} empty="Nothing decisive yet." />
+                      <SignalList title="You pass on" tone="cold"
+                                  nodes={tasteMap.coldest} empty="Nothing decisive yet." />
+                    </div>
+                  </section>
+                )}
+
+                <Collection collection={tasteMap.collection} />
+
+                {/* Named, recoverable, and specific. A region going quiet is a
+                    reason to come back that doesn't require breaking anything
+                    the user has already earned. */}
+                {tasteMap.fading?.length > 0 && (
+                  <section className="card card--fading">
+                    <div className="card-head"><h2 className="card-title">Going cold</h2></div>
+                    <p className="fading-why">
+                      We haven't tested these in a while, so we're less sure than we were.
+                      They sharpen again the moment they come back up.
+                    </p>
+                    <div className="fading-list">
+                      {tasteMap.fading.map((f) => (
+                        <span className="fading-chip" key={f.family}>{f.family}</span>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
             ) : (
               <section className="card">
                 <p className="empty">
-                  Nothing mapped yet. Answer today's calibration and this fills in — each answer lights up
-                  the two cards it touched.
+                  Nothing mapped yet. Answer today's calibration and this fills in — each answer
+                  moves the two cards it touched.
                 </p>
                 <button className="btn btn--hot" style={{ marginTop: 16 }} onClick={() => setTab("today")}>
                   Start calibrating

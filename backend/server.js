@@ -20,6 +20,8 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   "http://localhost:3000",
   "https://savor-scout-ugbv-two.vercel.app",
+  "https://savorscout.net",
+  "https://www.savorscout.net",
 ];
 
 app.use(
@@ -2507,6 +2509,94 @@ app.post("/calibration/reveal", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("seal reveal error:", err.message);
     return res.status(500).json({ error: "Couldn't open that" });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// SHARE PHOTO PROXY
+//
+// The share card is drawn on a <canvas>, and a canvas that has drawn a remote
+// image without CORS headers is TAINTED — toBlob() then throws a SecurityError
+// and the export fails outright. Winner photos come from arbitrary sites via
+// image search, essentially none of which send Access-Control-Allow-Origin, so
+// exporting a card with a photo could not work from the browser alone.
+//
+// Re-serving the bytes from our own origin fixes that, and incidentally fixes
+// hotlink blocking too (which is why the <img> tags already set no-referrer).
+//
+// This is a URL-taking fetcher, so it is also an SSRF hole if left open. The
+// guards below are the point of the endpoint, not decoration.
+// ---------------------------------------------------------------------------
+
+const dns = require("dns").promises;
+const net = require("net");
+
+const SHARE_PHOTO_MAX_BYTES = 6 * 1024 * 1024;
+const SHARE_PHOTO_TIMEOUT_MS = 6000;
+
+function isPrivateAddress(ip) {
+  if (net.isIPv4(ip)) {
+    const [a, b] = ip.split(".").map(Number);
+    if (a === 10 || a === 127 || a === 0) return true;
+    if (a === 169 && b === 254) return true;         // link-local / cloud metadata
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT
+    return false;
+  }
+  const v6 = ip.toLowerCase();
+  if (v6 === "::1" || v6 === "::") return true;
+  if (v6.startsWith("fc") || v6.startsWith("fd")) return true; // unique local
+  if (v6.startsWith("fe80")) return true;                      // link-local
+  if (v6.startsWith("::ffff:")) return isPrivateAddress(v6.slice(7));
+  return false;
+}
+
+app.get("/share/photo", requireAuth, async (req, res) => {
+  try {
+    const raw = String(req.query.u || "");
+    if (!raw) return res.status(400).json({ error: "Missing url" });
+
+    let url;
+    try { url = new URL(raw); } catch { return res.status(400).json({ error: "Bad url" }); }
+    if (url.protocol !== "https:") return res.status(400).json({ error: "https only" });
+
+    // Resolve first and check every address the name maps to, so a hostname
+    // that points at 169.254.169.254 or 127.0.0.1 can't be laundered through us.
+    let addresses;
+    try {
+      addresses = await dns.lookup(url.hostname, { all: true });
+    } catch {
+      return res.status(400).json({ error: "Unresolvable host" });
+    }
+    if (addresses.some((a) => isPrivateAddress(a.address))) {
+      return res.status(400).json({ error: "Blocked host" });
+    }
+
+    const upstream = await http.get(url.toString(), {
+      responseType: "arraybuffer",
+      timeout: SHARE_PHOTO_TIMEOUT_MS,
+      maxContentLength: SHARE_PHOTO_MAX_BYTES,
+      maxRedirects: 2,
+      headers: { "User-Agent": "SavorScout/1.0", Accept: "image/*" },
+      validateStatus: (s) => s === 200,
+    });
+
+    const type = String(upstream.headers["content-type"] || "");
+    if (!type.startsWith("image/")) return res.status(415).json({ error: "Not an image" });
+
+    res.set({
+      "Content-Type": type,
+      "Cache-Control": "public, max-age=86400",
+      "Access-Control-Allow-Origin": "*",   // the entire reason this exists
+      "Cross-Origin-Resource-Policy": "cross-origin",
+    });
+    return res.send(Buffer.from(upstream.data));
+  } catch (err) {
+    // A failure here is never fatal: the card falls back to its no-photo
+    // layout, which is designed to look deliberate rather than degraded.
+    console.error("share photo proxy failed:", err.message);
+    return res.status(502).json({ error: "Couldn't fetch that image" });
   }
 });
 

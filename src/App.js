@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
+import { renderShareCard, canvasToBlob } from "./shareCard";
+
+/* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
+   producing something the OS share sheet chokes on. */
+function slugify(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) || "pick";
+}
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // optional upgrade, never required
@@ -515,6 +522,62 @@ function ReadScore({ record }) {
 }
 
 /* ===========================================================================
+   SHARE SHEET
+
+   The card is built at full 1080x1350 on an offscreen canvas and shown here
+   scaled down, so what the user previews is byte-for-byte what they post.
+
+   Failure is designed for rather than hoped against: rendering can't throw a
+   dead button at anyone, because the card composes from whatever passed its
+   gates and the no-photo layout is a first-class design. The only genuinely
+   unrecoverable case is a verdict with no name, which can't happen.
+   =========================================================================== */
+
+function ShareSheet({ state, onClose, onDownload, onShare }) {
+  if (!state) return null;
+  const { url, fields, usedPhoto, busy, error, canNativeShare } = state;
+
+  return (
+    <div className="sheet" role="dialog" aria-modal="true" aria-label="Share this verdict">
+      <div className="sheet-back" onClick={onClose} />
+      <div className="sheet-body">
+        <div className="sheet-head">
+          <span className="sheet-tag">Share</span>
+          <button className="sheet-x" onClick={onClose} aria-label="Close">×</button>
+        </div>
+
+        {error ? (
+          <p className="sheet-err">{error}</p>
+        ) : url ? (
+          <img className="sheet-preview" src={url} alt={`Share card for ${fields?.name || "your pick"}`} />
+        ) : (
+          <div className="sheet-loading"><span className="sheet-spin" />Building your card…</div>
+        )}
+
+        {url && (
+          <>
+            <div className="sheet-acts">
+              {canNativeShare && (
+                <button className="btn btn--hot" disabled={busy} onClick={onShare}>
+                  Share…
+                </button>
+              )}
+              <button className="btn btn--ghost" disabled={busy} onClick={onDownload}>
+                Save image
+              </button>
+            </div>
+            <p className="sheet-note">
+              1080×1350 — sized for Instagram, and fine on X or Threads.
+              {!usedPhoto && " No usable photo for this one, so we set the craving instead."}
+            </p>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ===========================================================================
    THE OVERNIGHT SEAL
 
    Everything else here resolves on the tap, which leaves nothing that needs
@@ -933,6 +996,12 @@ function App() {
   const [readResult, setReadResult] = useState(null);
   const [sealResult, setSealResult] = useState(null);
   const [sealBusy, setSealBusy] = useState(false);
+  const [share, setShare] = useState(null);
+  // navigator.share must be called synchronously inside the click to keep the
+  // user-gesture, so the handler reads the latest card from a ref rather than
+  // closing over state.
+  const shareRef = useRef(null);
+  useEffect(() => { shareRef.current = share; }, [share]);
   const [reveal, setReveal] = useState(null);
   const [taste, setTaste] = useState(null);
   const [tasteMap, setTasteMap] = useState(null);
@@ -1073,6 +1142,60 @@ function App() {
   /* Retire the card optimistically. Clearing the result and waiting on the
      refetch would flash the already-answered pair back onto the screen for a
      frame, which reads as the tap having failed. */
+  /* ---- share card ---- */
+
+  const openShare = useCallback(async (winner) => {
+    setShare({ busy: true });
+    track("share_open", { verdictId: winner?.id, name: winner?.name });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const { canvas, fields, usedPhoto } = await renderShareCard(winner, query, {
+        apiBase: API_BASE_URL,
+        token: session?.access_token || "",
+      });
+      const blob = await canvasToBlob(canvas);
+      const url = URL.createObjectURL(blob);
+
+      // Feature-detect file sharing properly. Chrome desktop exposes
+      // navigator.share but refuses files, so checking share alone would
+      // offer a button that always fails.
+      const file = new File([blob], `savorscout-${slugify(fields.name)}.png`, { type: "image/png" });
+      const canNativeShare = Boolean(navigator.canShare?.({ files: [file] }));
+
+      setShare({ url, blob, file, fields, usedPhoto, canNativeShare, busy: false });
+    } catch (err) {
+      console.error("share card failed:", err);
+      setShare({ busy: false, error: "Couldn't build a card for this one. Try another search." });
+    }
+  }, [query, track]);
+
+  const closeShare = useCallback(() => {
+    setShare((s) => { if (s?.url) URL.revokeObjectURL(s.url); return null; });
+  }, []);
+
+  const downloadShare = useCallback(() => {
+    setShare((s) => {
+      if (!s?.url) return s;
+      const a = document.createElement("a");
+      a.href = s.url;
+      a.download = `savorscout-${slugify(s.fields?.name || "pick")}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return s;
+    });
+    track("share_download");
+  }, [track]);
+
+  const nativeShare = useCallback(async () => {
+    const s = shareRef.current;
+    if (!s?.file) return;
+    try {
+      await navigator.share({ files: [s.file], title: s.fields?.name || "My pick" });
+      track("share_native");
+    } catch { /* user dismissed the OS sheet — not an error */ }
+  }, [track]);
+
   const openSeal = async (seal) => {
     if (sealBusy) return;
     setSealBusy(true);
@@ -1540,6 +1663,13 @@ function App() {
 
         <TraitReveal trait={reveal} onClose={() => setReveal(null)} />
 
+        <ShareSheet
+          state={share}
+          onClose={closeShare}
+          onDownload={downloadShare}
+          onShare={nativeShare}
+        />
+
         {toast && (
           <div className={`toast${toast.leveledUp ? " toast--level" : ""}`} role="status">
             <span className="toast-xp">+{toast.amount} XP</span>
@@ -1794,6 +1924,9 @@ function App() {
                             Call
                           </a>
                         )}
+                        <button className="act act--share" onClick={() => openShare(winner)}>
+                          Share
+                        </button>
                       </div>
 
                       {typeof winner.lat === "number" && (

@@ -799,7 +799,6 @@ const XP = {
 // Search XP decays within a day so grinding converges to zero.
 const SEARCH_XP_DECAY = [40, 25, 15, 5, 0];
 
-const DUELS_PER_DAY = 5;
 
 // Rank names chosen to read as competence, not cuteness. "Taster" and
 // "Connoisseur" belong on an adult product; "Food Ninja" does not.
@@ -945,28 +944,6 @@ async function awardXp(userId, amount, reason) {
   return { xp, gained: amount, leveledUp: after.level > before.level, level: after };
 }
 
-// --- Daily quest -----------------------------------------------------------
-// Directed data collection dressed as a game. We choose what gets asked, so
-// a quest is really "go label the thing our engine is currently worst at" —
-// and the user experiences it as a target, not a survey.
-
-const QUESTS = [
-  { id: "new_cuisine", label: "Search a cuisine you haven't tried", xp: 200, check: "cuisine" },
-  { id: "budget",      label: "Find something good under $15",      xp: 200, check: "budget" },
-  { id: "rate_one",    label: "Tell us if one of our picks landed", xp: 200, check: "rating" },
-  { id: "duel_sweep",  label: "Finish all five duels",              xp: 200, check: "duels" },
-  { id: "explore",     label: "Search somewhere further than usual", xp: 200, check: "distance" },
-];
-
-// Deterministic per user per day: everyone gets a stable quest they can't
-// reroll, which keeps it feeling like a fixture rather than a slot machine.
-function questForToday(userId) {
-  const seed = `${userId}:${todayStr()}`;
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  return QUESTS[hash % QUESTS.length];
-}
-
 // --- Streak milestones -----------------------------------------------------
 // Rewards at intervals long enough to mean something. Each grants a freeze,
 // so the longer the streak the more forgiving the system becomes — the
@@ -1018,161 +995,6 @@ async function stockPlacePool(places, area) {
   if (rows.length === 0) return;
   const { error } = await supabaseAdmin.from("place_pool").upsert(rows, { onConflict: "place_id" });
   if (error) console.error("place_pool upsert error:", error.message);
-}
-
-// --- Duel pairing ----------------------------------------------------------
-// The whole value of a duel is in the pairing. Two places that differ on
-// EVERYTHING teach us nothing — the choice is unattributable. Two that differ
-// on exactly ONE axis measure that axis precisely. So each pair is built to
-// isolate a single variable, and the five daily duels rotate through the
-// axes to produce a complete preference vector rather than five samples of
-// the same thing.
-
-const DUEL_AXES = ["price", "rating", "distance", "cuisine", "popularity"];
-
-function similar(a, b, key, tolerance) {
-  if (a[key] == null || b[key] == null) return false;
-  return Math.abs(a[key] - b[key]) <= tolerance;
-}
-
-function buildDuelPair(pool, axis, used) {
-  const available = pool.filter((p) => !used.has(p.place_id));
-
-  for (let i = 0; i < available.length; i += 1) {
-    for (let j = i + 1; j < available.length; j += 1) {
-      const a = available[i];
-      const b = available[j];
-
-      if (axis === "price") {
-        // Same cuisine, comparable quality, different price → measures
-        // price sensitivity in isolation.
-        if (a.category && a.category === b.category &&
-            similar(a, b, "rating", 0.3) &&
-            a.price_level != null && b.price_level != null &&
-            Math.abs(a.price_level - b.price_level) >= 1) return [a, b];
-      }
-
-      if (axis === "rating") {
-        if (a.category && a.category === b.category &&
-            a.price_level === b.price_level &&
-            a.rating != null && b.rating != null &&
-            Math.abs(a.rating - b.rating) >= 0.4) return [a, b];
-      }
-
-      if (axis === "distance") {
-        if (similar(a, b, "rating", 0.3) && a.price_level === b.price_level &&
-            a.lat != null && b.lat != null) return [a, b];
-      }
-
-      if (axis === "cuisine") {
-        // Both good, similar price, different food → measures cuisine
-        // affinity alone. Price MUST be held constant here: a $ vs $$$ pair
-        // measures budget, not taste, and would quietly corrupt the cuisine
-        // signal with price sensitivity.
-        if (a.category && b.category && a.category !== b.category &&
-            similar(a, b, "rating", 0.3) &&
-            a.price_level != null && b.price_level != null &&
-            a.price_level === b.price_level) return [a, b];
-      }
-
-      if (axis === "popularity") {
-        // Hidden gem vs crowd favourite — the "do you trust the crowd or
-        // your own nose" axis, which is genuinely predictive.
-        if (a.review_count != null && b.review_count != null &&
-            similar(a, b, "rating", 0.3) &&
-            Math.min(a.review_count, b.review_count) < 150 &&
-            Math.max(a.review_count, b.review_count) > 600) return [a, b];
-      }
-    }
-  }
-  return null;
-}
-
-// A brand-new area has no cached places, so a first-time user would meet an
-// empty Today tab — the worst possible first impression for a daily habit.
-// One Serper call seeds it, then every subsequent search keeps it stocked
-// for free.
-async function seedPlacePool(zip, area) {
-  if (!zip) return 0;
-  try {
-    const response = await http.post(
-      "https://google.serper.dev/places",
-      { q: `popular restaurants near ${zip}`, gl: "us", num: 20 },
-      {
-        headers: { "X-API-KEY": process.env.SERPER_API_KEY, "Content-Type": "application/json" },
-        timeout: SERPER_TIMEOUT_MS,
-      }
-    );
-    const places = response.data.places || [];
-    if (places.length === 0) return 0;
-    await stockPlacePool(places, area);
-    console.log(`Seeded ${places.length} places into pool area ${area}.`);
-    return places.length;
-  } catch (err) {
-    console.error("pool seed failed:", err.response?.data || err.message);
-    return 0;
-  }
-}
-
-async function generateDuels(userId, area) {
-  const { data: pool, error } = await supabaseAdmin
-    .from("place_pool")
-    .select("*")
-    .eq("zip_area", area)
-    .order("last_seen", { ascending: false })
-    .limit(120);
-
-  if (error) {
-    console.error("place_pool read error:", error.message);
-    return [];
-  }
-  if (!pool || pool.length < 4) return []; // not enough local data yet
-
-  const used = new Set();
-  const pairs = [];
-
-  for (const axis of DUEL_AXES) {
-    const pair = buildDuelPair(pool, axis, used);
-    if (!pair) continue;
-    used.add(pair[0].place_id);
-    used.add(pair[1].place_id);
-    pairs.push({ axis, left: pair[0], right: pair[1] });
-    if (pairs.length >= DUELS_PER_DAY) break;
-  }
-
-  // Backfill with random pairs only if the structured pairing came up short.
-  // These are weaker data, but an empty duel screen is worse than weak data.
-  while (pairs.length < DUELS_PER_DAY) {
-    const remaining = pool.filter((p) => !used.has(p.place_id));
-    if (remaining.length < 2) break;
-    const a = remaining[Math.floor(Math.random() * remaining.length)];
-    const b = remaining.find((p) => p.place_id !== a.place_id);
-    if (!b) break;
-    used.add(a.place_id);
-    used.add(b.place_id);
-    pairs.push({ axis: "open", left: a, right: b });
-  }
-
-  if (pairs.length === 0) return [];
-
-  const rows = pairs.map((p) => ({
-    user_id: userId,
-    duel_date: todayStr(),
-    axis: p.axis,
-    left_place: p.left,
-    right_place: p.right,
-  }));
-
-  const { data: inserted, error: insertError } = await supabaseAdmin
-    .from("duels")
-    .insert(rows)
-    .select("id, axis, left_place, right_place, chosen");
-
-  if (insertError) {
-    console.error("duel insert error:", insertError.message);
-    return [];
-  }
-  return inserted || [];
 }
 
 // --- Preference vector -----------------------------------------------------
@@ -1257,13 +1079,8 @@ async function loadPreferenceVector(userId) {
 // they're a loop.
 // ===========================================================================
 
-const CALIBRATIONS_PER_DAY = 7;
-
-// A prediction needs real evidence behind it, or "we thought you'd pick the
-// left one" is just a coin flip wearing a lab coat — and being caught
-// coin-flipping is exactly what would destroy trust in the match scores.
-const PREDICT_MIN_EVIDENCE = 4;
-const PREDICT_MIN_EDGE = 0.15;
+// Pairwise duels are gone; the daily loop is PREDICTIONS_PER_DAY single-item
+// calls, defined with the prediction engine further down.
 
 // Staleness. A preference we measured four months ago is not a preference we
 // currently know — people change, and a map that renders a stale reading at
@@ -1326,85 +1143,191 @@ async function loadNodes(userId) {
   return new Map((data || []).map((n) => [n.card_id, n]));
 }
 
-// Pairs two cards from the SAME family so the comparison is meaningful —
-// "Thai vs Sichuan" tells us something; "Thai vs counter seating" doesn't.
+// ---------------------------------------------------------------------------
+// THE PREDICTION ENGINE
 //
-// Selection is deliberately weighted toward cards we know least about. That's
-// active learning: the highest-information answer is always the one we can't
-// already guess, so the game naturally asks about exactly what it needs.
-function buildConceptPair(cards, nodes, used) {
-  const byFamily = new Map();
-  for (const c of cards) {
-    if (used.has(c.id)) continue;
-    if (!byFamily.has(c.family)) byFamily.set(c.family, []);
-    byFamily.get(c.family).push(c);
+// Replaces the pairwise duel. Instead of "which of these two", the app puts a
+// single thing in front of the user and commits, out loud, to whether they
+// will like it. They answer Match or Defy, and the guess is graded instantly.
+//
+// Why this is a better core loop than duels:
+//
+//   * A duel asks the user to do the work. A prediction makes the APP do the
+//     work and puts it at risk — the interesting question stops being "which
+//     do I prefer" and becomes "does this thing actually know me".
+//   * Both outcomes are good for the user. A hit is eerie; a miss means they
+//     are unreadable. Neither reads as losing, so there is no discouraging
+//     branch to fall out of.
+//   * The signal is cleaner. In a duel drawn from one family, a same-pole pair
+//     ("Crispy" vs "Crunchy") teaches nothing about the axis but still lands
+//     in wins/appearances. A single-item like is unambiguous: this exact card,
+//     yes or no.
+//
+// STORAGE NOTE. calibrations.chosen has a CHECK constraint permitting only
+// left/right/skip, so the two answers ride on the existing slots rather than
+// requiring a migration that would take the core loop offline until it ran:
+//
+//     LIKE = "left"   the card wins  (Match — I'd like this)
+//     PASS = "right"  the card loses (Defy  — not for me)
+//
+// left_ref holds the card. right_ref is NOT NULL in the schema, so it carries
+// an empty object rather than null.
+// ---------------------------------------------------------------------------
+
+const PREDICTIONS_PER_DAY = 5;
+
+const LIKE = "left";
+const PASS = "right";
+
+// A guess needs real grounding or it is a coin flip wearing a lab coat, and
+// being caught coin-flipping is exactly what would destroy trust in the
+// match scores this same model produces.
+const PREDICT_MIN_EDGE = 0.12;
+const PREDICT_CONFIDENCE_FLOOR = 0.55;
+const PREDICT_CONFIDENCE_CEIL = 0.92;
+
+/* Will they like this card? Three sources, most direct first.
+
+   The second one is the reason this mechanic is worth building: generalising
+   from the axes means the app can stake a claim on a dish the user has never
+   been shown, purely from the shape of their taste. That is the moment that
+   feels like being known rather than being surveyed. */
+function predictLike(card, cards, nodes, readings) {
+  const node = nodes.get(card.id);
+
+  // 1. Direct history on this exact card.
+  if (node && node.appearances >= 2) {
+    const affinity = node.wins / node.appearances;
+    const edge = Math.abs(affinity - 0.5);
+    if (edge >= 0.2) {
+      return {
+        side: affinity > 0.5 ? LIKE : PASS,
+        confidence: Math.min(PREDICT_CONFIDENCE_CEIL, 0.55 + edge * 0.7),
+        basis: "history",
+      };
+    }
   }
 
-  const families = Array.from(byFamily.entries()).filter(([, list]) => list.length >= 2);
-  if (families.length === 0) return null;
+  // 2. Generalise from the poles this card sits on.
+  const sides = poleIndex(cards).get(card.id);
+  if (sides) {
+    let sum = 0;
+    let weight = 0;
+    for (const [axisKey, side] of sides) {
+      const r = readings.get(axisKey);
+      if (!r || !r.confident) continue;
+      // How much the user leans toward the pole this card belongs to.
+      const lean = side === "high" ? r.position : 1 - r.position;
+      const w = decisiveness(r.position);
+      if (w <= 0) continue;
+      sum += lean * w;
+      weight += w;
+    }
+    if (weight > 0) {
+      const p = sum / weight;
+      const edge = Math.abs(p - 0.5);
+      if (edge >= PREDICT_MIN_EDGE) {
+        return {
+          side: p > 0.5 ? LIKE : PASS,
+          confidence: Math.min(PREDICT_CONFIDENCE_CEIL, Math.max(PREDICT_CONFIDENCE_FLOOR, 0.5 + edge * 0.85)),
+          basis: "taste",
+        };
+      }
+    }
+  }
 
-  // Score each family by how little we know about it — least-known first.
-  const scored = families.map(([family, list]) => {
-    const known = list.reduce((sum, c) => sum + (nodes.get(c.id)?.appearances || 0), 0);
-    return { family, list, ignorance: 1 / (1 + known / list.length) };
-  }).sort((a, b) => b.ignorance - a.ignorance);
-
-  // Sample from the top third so it isn't identical every day.
-  const pool = scored.slice(0, Math.max(1, Math.ceil(scored.length / 3)));
-  const chosen = pool[Math.floor(Math.random() * pool.length)];
-
-  const ranked = chosen.list
-    .map((c) => ({ c, seen: nodes.get(c.id)?.appearances || 0 }))
-    .sort((a, b) => a.seen - b.seen);
-
-  const head = ranked.slice(0, Math.max(2, Math.ceil(ranked.length / 2)));
-  const a = head[Math.floor(Math.random() * head.length)].c;
-  const b = head.filter((x) => x.c.id !== a.id)[Math.floor(Math.random() * Math.max(1, head.length - 1))]?.c;
-  if (!b || b.id === a.id) return null;
-
-  return { left: a, right: b, family: chosen.family };
+  // 3. Nothing we'd stand behind. Say nothing rather than guess.
+  return null;
 }
 
-// Predict the user's own answer. This is the upgrade over plain duels: the
-// app commits to a guess, the user's tap grades it, and BOTH outcomes are
-// valuable — a hit proves the model knows them (identity), a miss is the
-// single highest-information data point we can collect (it lands exactly
-// where the model was uncertain).
-function predictChoice(left, right, nodes) {
-  return predictWithConfidence(left, right, nodes)?.side || null;
+/* Which cards to put up today.
+
+   Weighted toward things we haven't measured, because an answer we can already
+   predict with certainty teaches us nothing — this is active learning wearing
+   a game's clothes. Families are rotated so a day covers breadth rather than
+   drilling one corner, which also makes the map light up in more places. */
+function pickPredictionCards(cards, nodes, count) {
+  const byFamily = new Map();
+  for (const c of cards) {
+    const seen = nodes.get(c.id)?.appearances || 0;
+    if (seen >= 3) continue; // well measured — leave it alone
+    if (!byFamily.has(c.family)) byFamily.set(c.family, []);
+    byFamily.get(c.family).push({ card: c, seen });
+  }
+  if (byFamily.size === 0) return cards.slice(0, count);
+
+  // Least-explored families first, then a little randomness so two days in a
+  // row don't look identical.
+  const families = Array.from(byFamily.entries())
+    .map(([family, list]) => ({
+      family,
+      list,
+      explored: list.reduce((s, x) => s + x.seen, 0) / list.length,
+    }))
+    .sort((a, b) => a.explored - b.explored || Math.random() - 0.5);
+
+  const picked = [];
+  let round = 0;
+  while (picked.length < count && round < 6) {
+    for (const f of families) {
+      if (picked.length >= count) break;
+      const pool = f.list.filter((x) => !picked.some((p) => p.id === x.card.id));
+      if (pool.length === 0) continue;
+      // Unseen first inside the family.
+      pool.sort((a, b) => a.seen - b.seen);
+      const head = pool.slice(0, Math.max(1, Math.ceil(pool.length / 3)));
+      picked.push(head[Math.floor(Math.random() * head.length)].card);
+    }
+    round += 1;
+  }
+  return picked.slice(0, count);
 }
 
-// The same inference, but carrying the number we're willing to say out loud.
-//
-// Confidence is a monotone function of the two things that actually justify a
-// guess — how far apart the affinities are, and how much evidence sits behind
-// them — and it is capped below 1. We never claim certainty, because the one
-// prediction that gets caught overclaiming costs more trust than the ninety
-// that land are worth.
-const PREDICT_CONFIDENCE_FLOOR = 0.55;
-const PREDICT_CONFIDENCE_CEIL = 0.93;
-const PREDICT_EVIDENCE_FULL = 8;
+async function generatePredictions(userId) {
+  const today = todayStr();
+  const cards = await deck();
+  if (cards.length === 0) return [];
 
-function predictWithConfidence(left, right, nodes) {
-  const ln = nodes.get(left.id);
-  const rn = nodes.get(right.id);
-  if (!ln || !rn) return null;
-  if (ln.appearances < PREDICT_MIN_EVIDENCE || rn.appearances < PREDICT_MIN_EVIDENCE) return null;
+  const nodes = await loadNodes(userId);
+  const readings = readAllAxes(cards, nodes);
+  const chosen = pickPredictionCards(cards, nodes, PREDICTIONS_PER_DAY);
 
-  const la = nodeAffinity(ln.wins, ln.appearances);
-  const ra = nodeAffinity(rn.wins, rn.appearances);
-  if (la == null || ra == null) return null;
+  const rows = chosen.map((card, slot) => {
+    const guess = predictLike(card, cards, nodes, readings);
+    return {
+      user_id: userId,
+      cal_date: today,
+      slot,
+      mode: "predict",
+      axis: card.family,
+      left_ref: { id: card.id, name: card.name, kind: card.kind, family: card.family, rarity: card.rarity || 1 },
+      right_ref: {}, // NOT NULL in schema; unused by single-item predictions
+      predicted: guess ? guess.side : null,
+    };
+  });
 
-  const gap = Math.abs(la - ra);
-  if (gap < PREDICT_MIN_EDGE) return null; // too close to call — don't pretend
+  if (rows.length === 0) return [];
 
-  const evidence = Math.min(1, Math.min(ln.appearances, rn.appearances) / PREDICT_EVIDENCE_FULL);
-  const raw = 0.5 + gap * 0.45 * evidence;
+  const { data, error } = await supabaseAdmin
+    .from("calibrations")
+    .insert(rows)
+    .select("id, slot, mode, axis, left_ref, right_ref, predicted, chosen");
 
-  return {
-    side: la > ra ? "left" : "right",
-    confidence: Math.min(PREDICT_CONFIDENCE_CEIL, Math.max(PREDICT_CONFIDENCE_FLOOR, raw)),
-  };
+  if (error) {
+    console.error("prediction insert error:", error.message);
+    return [];
+  }
+  return data || [];
+}
+
+/* The confidence attached to a stored prediction, recomputed live so the
+   number shown is the confidence we hold NOW rather than one frozen at
+   generation time and since drifted. */
+function confidenceFor(row, cards, nodes, readings) {
+  const card = row.left_ref;
+  if (!card?.id) return null;
+  const guess = predictLike(card, cards, nodes, readings);
+  return guess && guess.side === row.predicted ? guess : null;
 }
 
 // The running scoreboard. This is the spine of the Daily Read: the user is
@@ -1440,66 +1363,60 @@ async function modelRecord(userId) {
 
 // How many more answers before we can stake a claim at all.
 //
-// A prediction needs two cards in the SAME family each at PREDICT_MIN_EVIDENCE
-// appearances. Every answer in a family adds one appearance to each of its two
-// cards, so the shortfall closes at two per answer. Reporting the real number
-// rather than a decorative progress bar matters here — this message is a
-// promise, and a promise that resolves late is worse than no promise.
+// Single-item predictions need either direct history on a card or a confident
+// axis reading to generalise from, so the shortfall is measured against the
+// nearest axis rather than a family pair. Reporting the real number matters —
+// this message is a promise, and a promise that resolves late is worse than
+// no promise at all.
 function answersUntilPrediction(cards, nodes) {
-  const byFamily = new Map();
-  for (const c of cards) {
-    if (!byFamily.has(c.family)) byFamily.set(c.family, []);
-    byFamily.get(c.family).push(nodes.get(c.id)?.appearances || 0);
-  }
-
+  const readings = readAllAxes(cards, nodes);
   let best = Infinity;
-  for (const appearances of byFamily.values()) {
-    if (appearances.length < 2) continue;
-    const top2 = appearances.sort((a, b) => b - a).slice(0, 2);
-    const shortfall = top2.reduce((sum, n) => sum + Math.max(0, PREDICT_MIN_EVIDENCE - n), 0);
-    best = Math.min(best, Math.ceil(shortfall / 2));
+  for (const axis of AXES) {
+    const r = readings.get(axis.key);
+    const have = r?.evidence || 0;
+    best = Math.min(best, Math.max(0, axis.minEvidence - have));
   }
-
   return Number.isFinite(best) ? best : null;
 }
 
-// Builds the headline claim for the day: the single boldest unanswered
-// prediction we're holding. Boldest rather than first, because the Read is
-// the front door — it should be the most interesting thing we know, not
-// whatever happened to land in slot zero.
+// Builds the headline call for the day: the boldest unanswered prediction we
+// are holding. Boldest rather than first, because this is the front door — it
+// should be the most interesting thing we know, not whatever landed in slot
+// zero.
 async function buildDailyRead(userId, set, cards, nodes) {
   const record = await modelRecord(userId);
+  const readings = readAllAxes(cards, nodes);
 
   const staked = (set || [])
-    .filter((c) => !c.chosen && c.predicted && c.mode !== "place" && c.left_ref?.id && c.right_ref?.id)
+    .filter((c) => !c.chosen && c.predicted && c.left_ref?.id)
     .map((c) => {
-      const scored = predictWithConfidence(c.left_ref, c.right_ref, nodes);
+      const scored = confidenceFor(c, cards, nodes, readings);
       return scored ? { row: c, ...scored } : null;
     })
     .filter(Boolean)
     .sort((a, b) => b.confidence - a.confidence)[0];
 
   if (staked) {
-    const pickSide = staked.row.predicted;
-    const pick = pickSide === "left" ? staked.row.left_ref : staked.row.right_ref;
-    const other = pickSide === "left" ? staked.row.right_ref : staked.row.left_ref;
     return {
       state: "staked",
       id: staked.row.id,
       axis: staked.row.axis,
-      side: pickSide,
+      side: staked.row.predicted,
       confidence: staked.confidence,
-      pick: { id: pick.id, name: pick.name, kind: pick.kind, rarity: pick.rarity },
-      other: { id: other.id, name: other.name, kind: other.kind, rarity: other.rarity },
-      left: staked.row.left_ref,
-      right: staked.row.right_ref,
+      basis: staked.basis,
+      card: staked.row.left_ref,
       record,
     };
   }
 
-  // Nothing staked. Either we already spent today's call, or we haven't
-  // earned the right to make one yet — and those are very different messages.
-  const spentToday = (set || []).some((c) => c.predicted && c.chosen);
+  // An unanswered card we could not call. Still worth showing — we just say
+  // so instead of inventing a guess.
+  const blind = (set || []).find((c) => !c.chosen && c.left_ref?.id);
+  if (blind) {
+    return { state: "blind", id: blind.id, axis: blind.axis, card: blind.left_ref, record };
+  }
+
+  const spentToday = (set || []).some((c) => c.chosen);
   if (spentToday) return { state: "spent", record };
 
   return { state: "warming", need: answersUntilPrediction(cards, nodes), record };
@@ -1606,78 +1523,6 @@ async function shouldSeal(userId, row) {
   return (gradedToday || 0) > 0;
 }
 
-async function generateCalibrations(userId, area) {
-  const today = todayStr();
-  const cards = await deck();
-  if (cards.length === 0) return [];
-
-  const nodes = await loadNodes(userId);
-  const used = new Set();
-  const rows = [];
-
-  // Local place pairs are richer signal when we have them, so they lead.
-  // But they are never REQUIRED — concept cards guarantee a full set on day
-  // one in a ZIP we've never seen.
-  let placePairs = [];
-  try {
-    const { data: pool } = await supabaseAdmin
-      .from("place_pool")
-      .select("*")
-      .eq("zip_area", area)
-      .order("last_seen", { ascending: false })
-      .limit(80);
-
-    if (pool && pool.length >= 4) {
-      const pUsed = new Set();
-      for (const axis of DUEL_AXES) {
-        const pair = buildDuelPair(pool, axis, pUsed);
-        if (!pair) continue;
-        pUsed.add(pair[0].place_id);
-        pUsed.add(pair[1].place_id);
-        placePairs.push({ axis, left: pair[0], right: pair[1] });
-        if (placePairs.length >= 3) break;
-      }
-    }
-  } catch (err) {
-    console.error("place pair build failed:", err.message);
-  }
-
-  let slot = 0;
-  for (const p of placePairs) {
-    rows.push({
-      user_id: userId, cal_date: today, slot: slot++, mode: "place", axis: p.axis,
-      left_ref: p.left, right_ref: p.right, predicted: null,
-    });
-  }
-
-  while (slot < CALIBRATIONS_PER_DAY) {
-    const pair = buildConceptPair(cards, nodes, used);
-    if (!pair) break;
-    used.add(pair.left.id);
-    used.add(pair.right.id);
-    const predicted = predictChoice(pair.left, pair.right, nodes);
-    rows.push({
-      user_id: userId, cal_date: today, slot: slot++,
-      mode: predicted ? "predict" : "concept",
-      axis: pair.family,
-      left_ref: pair.left, right_ref: pair.right,
-      predicted,
-    });
-  }
-
-  if (rows.length === 0) return [];
-
-  const { data, error } = await supabaseAdmin
-    .from("calibrations")
-    .insert(rows)
-    .select("id, slot, mode, axis, left_ref, right_ref, predicted, chosen");
-
-  if (error) {
-    console.error("calibration insert error:", error.message);
-    return [];
-  }
-  return data || [];
-}
 
 // ---------------------------------------------------------------------------
 // AXES, TRAITS, ARCHETYPE
@@ -1875,27 +1720,24 @@ function readAxis(axis, cards, nodes) {
   const seen = hiApps + loApps;
   if (seen === 0) return null;
 
-  // Confidence counts INFORMATIVE evidence, not raw appearances.
+  // Under single-item predictions every answer is informative: "would you like
+  // Ghost pepper hot — yes" is direct evidence about heat, with no second card
+  // to muddy it. So evidence is raw appearances again, unlike the pairwise era
+  // where a same-pole pair contributed nothing and had to be discounted.
   //
-  // A pair drawn entirely from one pole — two rare cards, or two mild ones —
-  // says nothing about where the person sits on this axis, but it still lands
-  // in wins/appearances. Counting it made an axis look well measured on zero
-  // real comparisons: the adventure axis reported evidence 66 and "confident"
-  // for a user who had never once been shown a rare card against a common one.
-  //
-  // We can't see pair membership from taste_nodes, but a straddling pair must
-  // touch both poles, so min(hiApps, loApps) bounds how many could have
-  // existed. That's the honest ceiling, and it correctly reads zero when a
-  // pole has never appeared at all.
-  const informative = 2 * Math.min(hiApps, loApps);
+  // The one degenerate case that survives is a user who has only ever been
+  // shown one side of an axis: their position then measures how much they like
+  // that pole in isolation, which is not the same as where they sit between
+  // two. Requiring a couple of hits on each side rules that out cheaply.
+  const bothSides = Math.min(hiApps, loApps) >= 2;
 
   const toward = hiWins + (loApps - loWins);
   return {
     key: axis.key,
     position: toward / seen,
-    evidence: informative,
+    evidence: seen,
     seen,
-    confident: informative >= axis.minEvidence,
+    confident: seen >= axis.minEvidence && bothSides,
   };
 }
 
@@ -2282,9 +2124,7 @@ app.get("/game/state", requireAuth, async (req, res) => {
         freezes: state.streak_freezes,
         activeToday: state.last_active_date === today,
       },
-      duelsToday: state.duels_date === today ? state.duels_today : 0,
-      duelsPerDay: DUELS_PER_DAY,
-      quest: questForToday(req.userId),
+      predictionsPerDay: PREDICTIONS_PER_DAY,
       nextMilestone: nextMilestone(state.streak_days),
       milestones: MILESTONES.map((m) => ({ ...m, reached: state.longest_streak >= m.days })),
     });
@@ -2310,7 +2150,7 @@ app.get("/calibration/today", requireAuth, async (req, res) => {
       .order("slot", { ascending: true });
 
     let set = existing || [];
-    if (set.length === 0) set = await generateCalibrations(req.userId, area);
+    if (set.length === 0) set = await generatePredictions(req.userId);
 
     const { revealed, pending } = await refreshTraits(req.userId);
 
@@ -2325,7 +2165,7 @@ app.get("/calibration/today", requireAuth, async (req, res) => {
     return res.json({
       remaining: set.filter((c) => !c.chosen),
       completed: set.filter((c) => c.chosen).length,
-      total: set.length || CALIBRATIONS_PER_DAY,
+      total: set.length || PREDICTIONS_PER_DAY,
       pendingTraits: pending,
       justRevealed: revealed,
       read,
@@ -2361,13 +2201,21 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
       .eq("user_id", req.userId);
 
     // Move the map. This is the whole point — an answer that changes nothing
-    // visible is why plain duels go stale.
+    // visible is why plain duels went stale.
+    //
+    // A single-item prediction touches exactly ONE card: Match is a win, Defy
+    // is an appearance without one. The old pairwise branch is kept only so
+    // rows created before the switch still resolve correctly.
     let movedNodes = [];
     if (chosen !== "skip" && row.mode !== "place") {
-      const winner = chosen === "left" ? row.left_ref : row.right_ref;
-      const loser = chosen === "left" ? row.right_ref : row.left_ref;
+      const touched = row.mode === "predict"
+        ? [[row.left_ref, chosen === LIKE]]
+        : [
+            [chosen === "left" ? row.left_ref : row.right_ref, true],
+            [chosen === "left" ? row.right_ref : row.left_ref, false],
+          ];
 
-      for (const [card, isWin] of [[winner, true], [loser, false]]) {
+      for (const [card, isWin] of touched) {
         if (!card?.id) continue;
         const { data: node } = await supabaseAdmin
           .from("taste_nodes")
@@ -2387,9 +2235,11 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
         movedNodes.push({
           id: card.id,
           name: card.name,
+          family: card.family || null,
           affinity: wins / appearances,
           confidence: nodeConfidence(appearances),
           isNew: !node,
+          liked: isWin,
         });
       }
     }
@@ -2409,7 +2259,7 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
       const state = await loadGameState(req.userId);
       await touchStreak(req.userId, state);
       const streakBonus = state.last_active_date === today ? 0 : XP.STREAK_DAY;
-      const setBonus = done >= CALIBRATIONS_PER_DAY ? XP.DUEL_SET_BONUS : 0;
+      const setBonus = done >= PREDICTIONS_PER_DAY ? XP.DUEL_SET_BONUS : 0;
       award = await awardXp(req.userId, XP.DUEL + setBonus + streakBonus, "calibration");
     }
 
@@ -2439,7 +2289,7 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
     return res.json({
       ok: true,
       completed: done,
-      total: CALIBRATIONS_PER_DAY,
+      total: PREDICTIONS_PER_DAY,
       sealed,
       // Was our guess right? Both answers are good: a hit says the model knows
       // them, a miss is the most informative data point available. Withheld
@@ -2764,94 +2614,6 @@ app.get("/me/map", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("map error:", err.message);
     return res.status(500).json({ error: "Couldn't load your taste map" });
-  }
-});
-
-app.get("/duels/today", requireAuth, async (req, res) => {
-  try {
-    const zip = String(req.query.zip || "").trim();
-    const area = zipArea(zip);
-    const today = todayStr();
-
-    const { data: existing } = await supabaseAdmin
-      .from("duels")
-      .select("id, axis, left_place, right_place, chosen")
-      .eq("user_id", req.userId)
-      .eq("duel_date", today)
-      .order("created_at", { ascending: true });
-
-    let duels = existing || [];
-
-    if (duels.length === 0) {
-      duels = await generateDuels(req.userId, area);
-
-      // Nothing cached for this area yet — seed it once and retry, so a new
-      // user gets duels immediately rather than an empty tab.
-      if (duels.length === 0 && zip) {
-        const seeded = await seedPlacePool(zip, area);
-        if (seeded > 0) duels = await generateDuels(req.userId, area);
-      }
-    }
-
-    return res.json({
-      duels: duels.filter((d) => !d.chosen),
-      completed: duels.filter((d) => d.chosen).length,
-      total: duels.length,
-      // An honest empty state beats a fake one: with no local places cached
-      // yet, we say so and point at search rather than inventing pairs.
-      needsSeed: duels.length === 0,
-    });
-  } catch (err) {
-    console.error("duels error:", err.message);
-    return res.status(500).json({ error: "Couldn't load today's duels" });
-  }
-});
-
-app.post("/duels/answer", requireAuth, async (req, res) => {
-  try {
-    const { id, chosen } = req.body || {};
-    if (typeof id !== "string" || !["left", "right", "skip"].includes(chosen)) {
-      return res.status(400).json({ error: "Invalid duel answer" });
-    }
-
-    const { data, error } = await supabaseAdmin
-      .from("duels")
-      .update({ chosen, answered_at: new Date().toISOString() })
-      .eq("id", id)
-      .eq("user_id", req.userId)
-      .is("chosen", null)
-      .select("id")
-      .maybeSingle();
-
-    if (error) {
-      console.error("duel answer error:", error.message);
-      return res.status(500).json({ error: "Couldn't record that" });
-    }
-    if (!data) return res.status(404).json({ error: "Duel already answered" });
-
-    const today = todayStr();
-    const state = await loadGameState(req.userId);
-    const count = (state.duels_date === today ? state.duels_today : 0) + 1;
-
-    await supabaseAdmin
-      .from("game_state")
-      .update({ duels_today: count, duels_date: today })
-      .eq("user_id", req.userId);
-
-    // Skips record data (an ambivalence signal) but earn nothing, so
-    // skipping through five duels isn't a shortcut to the bonus.
-    let award = null;
-    if (chosen !== "skip") {
-      const bonus = count === DUELS_PER_DAY ? XP.DUEL_SET_BONUS : 0;
-      await touchStreak(req.userId, state);
-      const streakBonus = state.last_active_date === today ? 0 : XP.STREAK_DAY;
-      award = await awardXp(req.userId, XP.DUEL + bonus + streakBonus, "duel");
-    }
-
-    return res.json({ ok: true, completed: count, total: DUELS_PER_DAY, award });
-  } catch (err) {
-    console.error("duel answer error:", err.message);
-    return res.status(500).json({ error: "Couldn't record that" });
   }
 });
 

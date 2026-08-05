@@ -558,6 +558,9 @@ body {
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.005em;
+  /* Buttons never inherit page colour; without this they fall back to the
+     UA's black buttontext and vanish on this canvas. */
+  color: var(--ink);
   transition: transform 0.18s var(--spring), box-shadow 0.25s var(--ease), opacity 0.2s;
 }
 
@@ -1183,6 +1186,7 @@ body {
 
 .read-btn {
   padding: 0; border: none; background: none; cursor: pointer;
+  color: var(--ink);
   border-radius: var(--r-md);
   transition: transform 0.2s var(--spring);
   animation: pop 0.4s var(--ease) both;
@@ -1383,6 +1387,7 @@ body {
   padding: 0;
   border: none;
   background: none;
+  color: var(--ink);
   cursor: pointer;
   border-radius: var(--r-md);
   transition: transform 0.2s var(--spring);
@@ -1417,7 +1422,7 @@ body {
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink-ghost);
+  color: var(--ink-mid);
 }
 
 .face-name {
@@ -2025,10 +2030,16 @@ body {
   background: transparent;
   cursor: pointer;
   text-align: left;
+  /* A <button> does NOT inherit colour from the page — it falls back to the
+     UA's `buttontext`, which is black. On this canvas that rendered "Nearby"
+     and "Willing to drive" as invisible text on a near-black card. Setting it
+     here means both child spans inherit something legible. */
+  color: var(--ink-soft);
   transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.18s var(--spring);
 }
 
 .radius-opt:hover { transform: translateY(-2px); border-color: rgba(255, 200, 87, 0.4); }
+.radius-opt:hover .radius-name { color: var(--saffron); }
 
 .radius-opt--on {
   background: rgba(255, 200, 87, 0.1);
@@ -2041,10 +2052,12 @@ body {
   font-size: 12.5px;
   font-weight: 500;
   margin-bottom: 2px;
+  color: var(--ink);
+  transition: color 0.2s var(--ease);
 }
 .radius-opt--on .radius-name { color: var(--saffron); }
 
-.radius-hint { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-faint); }
+.radius-hint { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: var(--ink-mid); }
 
 .err {
   font-family: 'IBM Plex Mono', monospace;
@@ -2757,4 +2770,405 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .sheet-back, .sheet-body { animation: none; }
   .sheet-spin { animation-duration: 2s; }
+}
+
+/* ===========================================================================
+   THE TASTE MAP
+
+   Motion here is doing psychological work, not decoration:
+
+   BREATHING CORE      a static graphic reads as a chart; a moving one reads
+                       as a readout of something alive. The core is the user,
+                       so the user is what is alive on screen.
+   RUNNING SIGNALS     particles along the trunk edges imply the network is
+                       processing, which sustains the fiction that the map is
+                       thinking about you between visits.
+   SPARK ON ARRIVAL    a new node flares and its edge draws in, so an answer
+                       has a visible consequence. Reward has to be SEEN in the
+                       moment it is earned or it stops registering as reward.
+   FOG DRIFT           the shrouded clusters pulse slowly out of phase with
+                       each other, which keeps the eye returning to them.
+
+   Every value stays legible with animation disabled, which is exactly why
+   honouring prefers-reduced-motion at the bottom costs nothing.
+   =========================================================================== */
+
+.tm {
+  margin-bottom: 16px;
+  padding: 6px 0 14px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(58% 58% at 50% 50%, rgba(139, 92, 246, 0.08), transparent 72%),
+    linear-gradient(165deg, var(--card), var(--void) 82%);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  animation: fade 0.6s var(--ease) both;
+}
+
+.tm-svg { display: block; width: 100%; height: auto; }
+
+/* ---- the core: you ---- */
+@keyframes tmBreathe { 0%, 100% { transform: scale(0.98); } 50% { transform: scale(1.02); } }
+@keyframes tmHalo    { 0%, 100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.08); } }
+
+.tm-core {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 13px var(--ion));
+  transform-origin: center;
+  animation: tmBreathe 4s ease-in-out infinite;
+}
+.tm-core-glow { transform-origin: center; animation: tmHalo 4s ease-in-out infinite; }
+
+/* ---- trunks and running signal ---- */
+.tm-trunk { fill: none; stroke: rgba(255, 200, 87, 0.20); stroke-width: 1.4; }
+.tm-signal { fill: var(--saffron); opacity: 0.85; filter: drop-shadow(0 0 5px var(--saffron)); }
+
+.tm-branch { stroke: var(--coral); stroke-width: 0.8; }
+
+/* An edge that draws itself in, so a won node arrives rather than appears. */
+@keyframes tmDraw { from { stroke-dasharray: 0 90; } to { stroke-dasharray: 90 0; } }
+.tm-branch--new { animation: tmDraw 0.6s var(--ease) both; stroke: var(--saffron); }
+
+/* ---- nodes ---- */
+.tm-dot { fill: currentColor; }
+.tm-node--love    { color: var(--saffron); }
+.tm-node--warm    { color: var(--coral); }
+.tm-node--cool    { color: #8b7f9e; }
+.tm-node--cold    { color: #574e68; }
+.tm-node--unknown { color: #4b4459; }
+
+.tm-node { transition: opacity 0.6s var(--ease); }
+.tm-node--love .tm-dot { filter: drop-shadow(0 0 6px var(--saffron)); }
+
+/* Rarity rides a ring and glow, never a new hue — a rarity rainbow would
+   destroy the two-hue ownership rule the rest of the system depends on. */
+.tm-rare { fill: none; stroke: var(--violet); stroke-width: 1.1; opacity: 0.75; }
+
+@keyframes tmSpark {
+  0%   { transform: scale(0.2); opacity: 0; }
+  45%  { transform: scale(1.9); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+.tm-node--new { animation: tmSpark 0.75s var(--spring) both; transform-origin: center; transform-box: fill-box; }
+
+/* ---- hubs ---- */
+.tm-hub { fill: var(--ember); filter: drop-shadow(0 0 8px rgba(255, 95, 31, 0.6)); }
+.tm-hub-lock { fill: none; stroke: rgba(255, 200, 87, 0.3); stroke-width: 1; stroke-dasharray: 3 4; }
+
+.tm-hub-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ink-soft);
+}
+.tm-hub-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  fill: var(--ink-mid);
+}
+
+/* ---- fog of war ---- */
+@keyframes tmFogPulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 0.85; }
+}
+.tm-fog { animation: tmFogPulse 5.5s ease-in-out infinite; }
+.tm-fog-blob { pointer-events: none; }
+.tm-fog-ring {
+  fill: rgba(13, 11, 20, 0.55);
+  stroke: rgba(139, 92, 246, 0.34);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+.tm-ghost { fill: rgba(196, 176, 255, 0.4); }
+
+.tm-fog-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  fill: var(--ink-mid);
+}
+.tm-fog-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  fill: var(--violet);
+}
+
+/* ---- legend ---- */
+.tm-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 18px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  color: var(--ink-mid);
+}
+.tm-legend strong { color: var(--ink); font-weight: 600; }
+.tm-legend-i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 7px var(--ion); }
+.tm-legend-fog {
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1px dashed rgba(139, 92, 246, 0.7);
+}
+.tm-legend-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-ghost); }
+
+/* ---- empty ---- */
+.tm-empty {
+  padding: 60px 26px;
+  text-align: center;
+  border-radius: var(--r-lg);
+  background: radial-gradient(60% 60% at 50% 40%, rgba(46, 230, 214, 0.07), transparent 70%), var(--card);
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.tm-empty-core { display: grid; place-items: center; margin-bottom: 22px; }
+.tm-empty-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 22px var(--ion);
+  animation: tmBreathe 4s ease-in-out infinite;
+}
+.tm-empty-t { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.tm-empty-s { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-mid); }
+
+@media (max-width: 560px) {
+  .tm-hub-label { font-size: 15px; }
+  .tm-hub-count, .tm-fog-label { font-size: 13px; }
+  .tm-fog-count { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tm, .tm-core, .tm-core-glow, .tm-fog, .tm-node--new, .tm-branch--new, .tm-empty-dot { animation: none; }
+  .tm-signal { display: none; }
+}
+
+/* ===========================================================================
+   THE PREDICTION
+
+   The daily loop. The confidence is stated openly; the CALL stays sealed
+   until they answer — showing which way we leaned would anchor the answer and
+   poison the signal the guess was built from.
+
+   Match is warm and Defy is cool on purpose: the warm button accepts a thing
+   from the world, the cool one asserts something about yourself. Neither is
+   styled as the "right" answer, because a Defy is worth exactly as much data
+   as a Match and must never feel like the lesser button.
+   =========================================================================== */
+
+.pred {
+  position: relative;
+  padding: 26px;
+  margin-bottom: 16px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(85% 125% at 50% 0%, rgba(139, 92, 246, 0.14), transparent 64%),
+    linear-gradient(165deg, var(--elevated), var(--card) 74%);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  animation: slideUp 0.5s var(--ease) both;
+}
+
+.pred-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+
+.pred-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+.pred-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--ion);
+}
+
+.pred-claim {
+  font-family: 'Instrument Serif', serif;
+  font-size: 25px;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: 18px;
+  max-width: 26ch;
+}
+.pred-claim--quiet { color: var(--ink-soft); font-size: 21px; }
+
+.pred-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+.pred-sub strong { color: var(--ink); font-weight: 600; }
+
+/* the stake — a number the app has to live with, shown before the tap */
+.pred-stake { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.pred-stake-bar { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.07); overflow: hidden; }
+.pred-stake-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--violet), var(--azure));
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.5);
+  transition: width 0.9s var(--ease);
+}
+.pred-stake-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--violet);
+  white-space: nowrap;
+}
+
+/* the thing being judged */
+.pc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 26px 22px;
+  margin-bottom: 18px;
+  border-radius: var(--r-md);
+  background: linear-gradient(160deg, var(--raised), var(--card));
+  border: 1.5px solid var(--line-warm);
+}
+.pc-kind {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+}
+.pc-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 34px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.pc-rare {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #c4b0ff;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+.pred-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.pred-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 14px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  text-align: left;
+  border: 1.5px solid transparent;
+  transition: transform 0.18s var(--spring), background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.pred-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.pred-btn:hover:not(:disabled) { transform: translateY(-3px); }
+
+.pred-btn--match {
+  background: rgba(255, 200, 87, 0.09);
+  border-color: var(--line-warm);
+  color: var(--saffron);
+}
+.pred-btn--match:hover:not(:disabled) { background: rgba(255, 200, 87, 0.16); border-color: var(--saffron); }
+
+.pred-btn--defy {
+  background: rgba(46, 230, 214, 0.07);
+  border-color: var(--line-cool);
+  color: var(--ion);
+}
+.pred-btn--defy:hover:not(:disabled) { background: rgba(46, 230, 214, 0.13); border-color: var(--ion); }
+
+.pred-btn-k { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; }
+.pred-btn-s { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-mid); }
+
+.pred-skip {
+  display: block;
+  margin: 16px auto 0;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-mid);
+}
+.pred-skip:hover { color: var(--ink-soft); }
+
+/* ---- the graded frame: the only other home of the warm/cool merge ---- */
+
+.pred--done { animation: pop 0.5s var(--spring) both; }
+.pred--done::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(118deg,
+    rgba(255, 95, 31, 0.16) 0%,
+    rgba(255, 200, 87, 0.10) 32%,
+    rgba(46, 230, 214, 0.12) 72%,
+    transparent 100%);
+  background-size: 220% 100%;
+  animation: sweep 1.5s var(--ease) both;
+  pointer-events: none;
+}
+.pred--done > * { position: relative; z-index: 1; }
+
+.pred--hit  { border-color: rgba(46, 230, 214, 0.45); }
+.pred--miss { border-color: rgba(255, 200, 87, 0.45); }
+
+.pred-outcome {
+  font-family: 'Instrument Serif', serif;
+  font-size: 40px;
+  line-height: 1.05;
+  margin-bottom: 10px;
+  animation: countIn 0.5s var(--ease) 0.12s both;
+}
+.pred--hit  .pred-outcome { color: var(--ion); }
+.pred--miss .pred-outcome { color: var(--saffron); }
+
+.pred-next {
+  margin-top: 20px;
+  padding: 11px 22px;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+  animation: countIn 0.5s var(--ease) 0.3s both;
+}
+.pred-next:hover { background: rgba(255, 255, 255, 0.09); color: var(--ink); }
+
+.pred--warm, .pred--spent { border-color: var(--line); }
+.pred--warm .pred-tag, .pred--spent .pred-tag { color: var(--ink-mid); }
+
+@media (max-width: 560px) {
+  .pred { padding: 20px; }
+  .pred-claim { font-size: 21px; }
+  .pc-name { font-size: 28px; }
+  .pred-outcome { font-size: 32px; }
+  .pred-acts { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pred, .pred--done, .pred--done::before, .pred-outcome, .pred-next { animation: none; }
+  .pred-stake-fill { transition: none; }
 }

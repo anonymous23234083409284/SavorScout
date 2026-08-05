@@ -367,7 +367,8 @@ export async function renderShareCard(winner, query, { apiBase = "", token = "" 
     } else if (b.kind === "name") {
       ctx.font = '400 84px "Instrument Serif", Georgia, serif';
       ctx.fillStyle = C.ink;
-      b.lines.forEach((l, i) => ctx.fillText(l, PAD, y + 62 + i * NAME_LEADING));
+      const top = y;
+      b.lines.forEach((l, i) => ctx.fillText(l, PAD, top + 62 + i * NAME_LEADING));
     } else if (b.kind === "meta") {
       ctx.font = '500 26px "IBM Plex Mono", monospace';
       ctx.fillStyle = C.soft;
@@ -383,7 +384,8 @@ export async function renderShareCard(winner, query, { apiBase = "", token = "" 
     } else if (b.kind === "quote") {
       ctx.font = 'italic 400 34px "Instrument Serif", Georgia, serif';
       ctx.fillStyle = C.soft;
-      b.lines.forEach((l, i) => ctx.fillText(l, PAD, y + 26 + i * QUOTE_LEADING));
+      const qTop = y;
+      b.lines.forEach((l, i) => ctx.fillText(l, PAD, qTop + 26 + i * QUOTE_LEADING));
     }
     y += b.h + b.gap;
   }
@@ -425,9 +427,4 @@ export function canvasToBlob(canvas) {
       reject(err);
     }
   });
-}
-
-/* TEMP TEST HOOK — remove. */
-if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
-  window.__share = { renderShareCard, canvasToBlob, selectCardFields, gates };
 }

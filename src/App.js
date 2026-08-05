@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import "./App.css";
 import { supabase } from "./supabaseClient";
 import { renderShareCard, canvasToBlob } from "./shareCard";
+import TasteMap from "./TasteMap";
 
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
@@ -325,35 +326,7 @@ function Evidence({ evidence, reception, review, menuItems, rating, dietary, all
    and also the framing people act on.
    =========================================================================== */
 
-function ConceptFace({ card, side }) {
-  return (
-    <span className={`face face--${side} face--k-${card.kind}`}>
-      <span className="face-kind">{card.kind}</span>
-      <span className="face-name">{card.name}</span>
-      {card.rarity >= 3 && <span className="face-rare">rare</span>}
-    </span>
-  );
-}
 
-function PlaceFace({ place }) {
-  const price = place.price_level ? "$".repeat(place.price_level) : null;
-  return (
-    <span className="face face--place">
-      <span className="face-img">
-        {place.thumbnail
-          ? <img src={place.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" />
-          : <span className="face-mono">{(place.name || "?").charAt(0).toUpperCase()}</span>}
-      </span>
-      <span className="face-body">
-        <span className="face-name">{place.name}</span>
-        <span className="face-stats">
-          {typeof place.rating === "number" && <span>{place.rating.toFixed(1)}★</span>}
-          {price && <span>{price}</span>}
-        </span>
-      </span>
-    </span>
-  );
-}
 
 /* ===========================================================================
    THE SIGNATURE
@@ -653,200 +626,139 @@ function Seal({ seal, result, busy, onOpen, onDismiss }) {
   );
 }
 
-function DailyRead({ read, result, busy, onAnswer, onDismiss }) {
-  if (!read) return null;
+/* ===========================================================================
+   THE PREDICTION
 
-  /* ---- resolved: the payoff frame, and the only place the warm/cool
-          merge gradient is allowed to appear in the whole product ---- */
-  if (result) {
-    const hit = result.correct;
-    return (
-      <section className={`read read--resolved read--${hit ? "hit" : "miss"}`} role="status">
-        <div className="read-head">
-          <span className="read-tag">Today's read</span>
-          <ReadScore record={result.record} />
-        </div>
+   The daily loop. Replaces the pairwise duel entirely.
 
-        <p className="read-outcome">{hit ? "Called it." : "Missed."}</p>
-        <p className="read-outcome-sub">
-          {hit
-            ? <>We had you on <strong>{result.pickName}</strong> before you tapped.</>
-            : <>We had you on <strong>{result.pickName}</strong>. You went the other way — that's the answer that teaches us the most.</>}
-        </p>
+   The app puts ONE thing in front of the user and commits, out loud and with
+   a number on it, to whether they will like it. They answer Match or Defy and
+   the guess is graded on the spot.
 
-        <button className="read-dismiss" onClick={onDismiss}>
-          {hit ? "Unsettling. Go on." : "Good."}
-        </button>
-      </section>
-    );
-  }
+   Why this beats "which of these two":
 
-  /* ---- warming: no call earned yet. The countdown is a real number, and
-          an unfinished thing with a named finish line is the single
-          cheapest reason to come back tomorrow.
+     THE APP TAKES THE RISK. A duel asks the user to do the work of
+     introspecting. A prediction makes the machine perform, and reframes the
+     interesting question from "which do I prefer" to "does this thing
+     actually know me". That is a question people will open an app to answer.
 
-          Two distinct reasons land here and they must not share copy. Not
-          enough evidence is "we don't know you yet"; enough evidence but no
-          clear edge is "today's pairs were too close." Collapsing them would
-          have the app claim ignorance it doesn't have — a small lie, but
-          this product only sells one thing and that thing is being right
-          about what it actually knows. ---- */
-  if (read.state === "warming") {
-    const tooClose = read.need === 0;
-    return (
-      <section className="read read--warming">
-        <div className="read-head">
-          <span className="read-tag">Today's read</span>
-          <ReadScore record={read.record} />
-        </div>
-        <p className="read-claim read-claim--quiet">
-          {tooClose
-            ? "Today's pairs were too close for us to call."
-            : "We don't know you well enough to call it yet."}
-        </p>
-        <p className="read-sub">
-          {tooClose
-            ? <>We'd rather say nothing than flip a coin and dress it up. Keep answering — we'll have a call on you tomorrow.</>
-            : typeof read.need === "number" && read.need > 0
-              ? <><strong>{read.need}</strong> more {read.need === 1 ? "answer" : "answers"} before we start staking predictions on you.</>
-              : <>Answer today's calibration and we'll start staking predictions on you.</>}
-        </p>
-      </section>
-    );
-  }
+     BOTH BRANCHES FEEL GOOD. A hit is uncanny — it knows me. A miss is
+     flattering — I'm unreadable. There is no losing outcome to churn out of,
+     which is the property that makes this survivable as a daily habit where a
+     win/lose duel is not.
 
-  /* ---- spent: today's call is already resolved ---- */
-  if (read.state === "spent") {
-    return (
-      <section className="read read--spent">
-        <div className="read-head">
-          <span className="read-tag">Today's read</span>
-          <ReadScore record={read.record} />
-        </div>
-        <p className="read-claim read-claim--quiet">Today's call is settled.</p>
-        <p className="read-sub">We'll have a new one on you tomorrow morning.</p>
-      </section>
-    );
-  }
+     THE SIDE STAYS SEALED UNTIL THEY ANSWER. Showing the guess up front would
+     anchor the answer and poison the signal the guess was built from — some
+     people conform, others contrarian-pick to beat it, and neither is taste.
+     Staking the CONFIDENCE openly while hiding the CALL keeps the data clean
+     and is better theatre besides: an envelope beats a stated guess.
+   =========================================================================== */
 
-  /* ---- staked: the live call ---- */
-  const pct = Math.round((read.confidence || 0) * 100);
-
+function PredictionCard({ card }) {
+  if (!card) return null;
   return (
-    <section className="read read--staked">
-      <div className="read-head">
-        <span className="read-tag">Today's read</span>
-        <ReadScore record={read.record} />
-      </div>
-
-      <p className="read-claim">We've already made the call on this one.</p>
-
-      <div className="read-stake">
-        <div className="read-stake-bar">
-          <div className="read-stake-fill" style={{ width: `${pct}%` }} />
-        </div>
-        <span className="read-stake-n">{pct}% confident</span>
-      </div>
-
-      <p className="read-axis">{read.axis}</p>
-
-      <div className="read-pair">
-        <button className="read-btn" disabled={busy} onClick={() => onAnswer(read, "left")}>
-          <ConceptFace card={read.left} side="l" />
-        </button>
-        <span className="read-or">or</span>
-        <button className="read-btn" disabled={busy} onClick={() => onAnswer(read, "right")}>
-          <ConceptFace card={read.right} side="r" />
-        </button>
-      </div>
-
-      <p className="read-foot">Pick, and we'll show you what we'd written down.</p>
-    </section>
+    <div className="pc">
+      <span className="pc-kind">{card.family || card.kind}</span>
+      <span className="pc-name">{card.name}</span>
+      {card.rarity >= 3 && <span className="pc-rare">rare</span>}
+    </div>
   );
 }
 
-function Calibration({ item, completed, total, busy, onAnswer, lastResult, pendingTraits, onFind, needsSeed }) {
-  const pct = total ? Math.round((completed / total) * 100) : 0;
-
-  if (needsSeed) {
+function Prediction({ read, result, completed, total, busy, onAnswer, onDismiss }) {
+  /* ---- resolved: the payoff, and the only place the warm/cool merge runs ---- */
+  if (result) {
+    const hit = result.correct;
     return (
-      <section className="cal">
-        <div className="cal-head">
-          <span className="cal-tag">Daily calibration</span>
-          <span className="xp-chip">+10 XP each</span>
+      <section className={`pred pred--done pred--${hit ? "hit" : "miss"}`} role="status">
+        <div className="pred-head">
+          <span className="pred-tag">Called it</span>
+          <ReadScore record={result.record} />
         </div>
-        <p className="cal-why">Warming up — one search and these start.</p>
-        <button className="btn btn--hot" onClick={onFind}>Find somewhere to eat</button>
+        <p className="pred-outcome">{hit ? "We knew." : "You surprised us."}</p>
+        <p className="pred-sub">
+          {hit
+            ? <>We had you down for <strong>{result.said}</strong> on {result.name}.</>
+            : <>We said <strong>{result.said}</strong> on {result.name}. Noted — that's the answer that teaches us most.</>}
+        </p>
+        <button className="pred-next" disabled={busy} onClick={onDismiss}>
+          {completed >= total ? "Done for today" : "Next"}
+        </button>
       </section>
     );
   }
 
-  const done = !item;
+  if (!read) return null;
+
+  if (read.state === "warming") {
+    return (
+      <section className="pred pred--warm">
+        <div className="pred-head">
+          <span className="pred-tag">Today's call</span>
+          <ReadScore record={read.record} />
+        </div>
+        <p className="pred-claim pred-claim--quiet">We don't know you well enough to call it yet.</p>
+        <p className="pred-sub">
+          {typeof read.need === "number" && read.need > 0
+            ? <><strong>{read.need}</strong> more {read.need === 1 ? "answer" : "answers"} before we start staking predictions on you.</>
+            : <>Answer today's calls and we'll start staking predictions on you.</>}
+        </p>
+      </section>
+    );
+  }
+
+  if (read.state === "spent") {
+    return (
+      <section className="pred pred--spent">
+        <div className="pred-head">
+          <span className="pred-tag">Today's calls</span>
+          <ReadScore record={read.record} />
+        </div>
+        <p className="pred-claim pred-claim--quiet">All {total} answered.</p>
+        <p className="pred-sub">New ones tomorrow morning — and your map keeps them.</p>
+      </section>
+    );
+  }
+
+  const staked = read.state === "staked";
+  const pct = Math.round((read.confidence || 0) * 100);
 
   return (
-    <section className="cal">
-      <div className="cal-head">
-        <span className="cal-tag">Daily calibration</span>
-        <span className="cal-count">{completed}/{total}</span>
+    <section className="pred">
+      <div className="pred-head">
+        <span className="pred-tag">Today's call</span>
+        <span className="pred-count">{completed}/{total}</span>
       </div>
 
-      <p className="cal-why">
-        Every answer sharpens what we recommend. This is how the engine learns your taste —
-        not a questionnaire, just which one you'd rather.
+      <p className="pred-claim">
+        {staked ? "We've already written down whether you'll like this." : "No idea on this one. Teach us."}
       </p>
 
-      <div className="cal-track">
-        <div className="cal-fill" style={{ width: `${pct}%` }} />
+      {staked && (
+        <div className="pred-stake">
+          <div className="pred-stake-bar"><div className="pred-stake-fill" style={{ width: `${pct}%` }} /></div>
+          <span className="pred-stake-n">{pct}% sure</span>
+        </div>
+      )}
+
+      <PredictionCard card={read.card} />
+
+      <div className="pred-acts">
+        <button className="pred-btn pred-btn--match" disabled={busy}
+                onClick={() => onAnswer(read, "left")}>
+          <span className="pred-btn-k">Match</span>
+          <span className="pred-btn-s">I'd like this</span>
+        </button>
+        <button className="pred-btn pred-btn--defy" disabled={busy}
+                onClick={() => onAnswer(read, "right")}>
+          <span className="pred-btn-k">Defy</span>
+          <span className="pred-btn-s">Not for me</span>
+        </button>
       </div>
 
-      {done ? (
-        <div className="cal-done">
-          <span className="cal-done-mark">✦</span>
-          <p className="cal-done-t">Calibrated for today.</p>
-          {pendingTraits?.length > 0 && (
-            <p className="cal-done-s">
-              {pendingTraits[0].need} more {pendingTraits[0].need === 1 ? "answer" : "answers"} unlocks{" "}
-              <strong>{pendingTraits[0].label}</strong>.
-            </p>
-          )}
-        </div>
-      ) : (
-        <>
-          {/* We commit to a guess before they tap. A hit proves the model
-              knows them; a miss is the most valuable answer we can get. */}
-          {item.predicted && !lastResult && (
-            <p className="cal-predict">We think we know this one.</p>
-          )}
-
-          {lastResult?.prediction && (
-            <p className={`cal-verdict cal-verdict--${lastResult.prediction.correct ? "hit" : "miss"}`}>
-              {lastResult.prediction.correct
-                ? "Called it. We had you on that one."
-                : "We were wrong — that's the useful kind of answer."}
-            </p>
-          )}
-
-          <p className="cal-axis">{item.mode === "place" ? "Which would you rather, tonight" : item.axis}</p>
-
-          <div className="cal-pair">
-            <button className="cal-btn" disabled={busy} onClick={() => onAnswer(item.id, "left")}>
-              {item.mode === "place"
-                ? <PlaceFace place={item.left_ref} />
-                : <ConceptFace card={item.left_ref} side="l" />}
-            </button>
-            <span className="cal-or">or</span>
-            <button className="cal-btn" disabled={busy} onClick={() => onAnswer(item.id, "right")}>
-              {item.mode === "place"
-                ? <PlaceFace place={item.right_ref} />
-                : <ConceptFace card={item.right_ref} side="r" />}
-            </button>
-          </div>
-
-          <button className="cal-skip" disabled={busy} onClick={() => onAnswer(item.id, "skip")}>
-            No preference
-          </button>
-        </>
-      )}
+      <button className="pred-skip" disabled={busy} onClick={() => onAnswer(read, "skip")}>
+        Skip this one
+      </button>
     </section>
   );
 }
@@ -939,10 +851,12 @@ const RADIUS_MODES = [
 ];
 const RADIUS_FIRST_TIER = { nearby: 5, driving: 10, anywhere: 15 };
 
+/* Three tabs, not four. Map and You were showing the same thing twice, and
+   "You" is the honest name for a page that is nothing but your streak and
+   your map. */
 const TABS = [
   { id: "today", label: "Today", minLevel: 1 },
   { id: "find", label: "Find", minLevel: 1 },
-  { id: "map", label: "Map", minLevel: 1 },
   { id: "you", label: "You", minLevel: 1 },
 ];
 
@@ -986,14 +900,13 @@ function App() {
   const [onboardingError, setOnboardingError] = useState("");
 
   const [pendingVerdicts, setPendingVerdicts] = useState([]);
-  const [scoutReport, setScoutReport] = useState(null);
   const [verdictBusy, setVerdictBusy] = useState(false);
 
   const [game, setGame] = useState(null);
   const [cal, setCal] = useState({ remaining: [], completed: 0, total: 7, pendingTraits: [] });
   const [calBusy, setCalBusy] = useState(false);
-  const [lastResult, setLastResult] = useState(null);
   const [readResult, setReadResult] = useState(null);
+  const [recentNodeIds, setRecentNodeIds] = useState([]);
   const [sealResult, setSealResult] = useState(null);
   const [sealBusy, setSealBusy] = useState(false);
   const [share, setShare] = useState(null);
@@ -1003,7 +916,6 @@ function App() {
   const shareRef = useRef(null);
   useEffect(() => { shareRef.current = share; }, [share]);
   const [reveal, setReveal] = useState(null);
-  const [taste, setTaste] = useState(null);
   const [tasteMap, setTasteMap] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -1060,9 +972,8 @@ function App() {
   }, []);
 
   const refreshGame = useCallback(async () => {
-    const [state, t] = await Promise.all([authedFetch("/game/state"), authedFetch("/me/taste")]);
+    const state = await authedFetch("/game/state");
     if (state) setGame(state);
-    if (t) setTaste(t);
   }, [authedFetch]);
 
   const refreshCal = useCallback(async () => {
@@ -1077,12 +988,8 @@ function App() {
   }, [authedFetch]);
 
   const refreshLoop = useCallback(async () => {
-    const [pending, report] = await Promise.all([
-      authedFetch("/verdicts/pending"),
-      authedFetch("/me/scout-report"),
-    ]);
+    const pending = await authedFetch("/verdicts/pending");
     if (pending?.pending) setPendingVerdicts(pending.pending);
-    if (report) setScoutReport(report);
   }, [authedFetch]);
 
   useEffect(() => {
@@ -1100,16 +1007,16 @@ function App() {
     } catch { /* telemetry never surfaces an error */ }
   }, [authedFetch, flash, refreshGame]);
 
-  /* The Read resolves in its own frame rather than through the calibration
-     flow, because the reveal is the whole point of it — routing it through
-     the shared handler would clear the pair and drop the payoff. */
+  /* Answering a prediction. Resolves in its own frame because the grading
+     moment IS the mechanic — routing it through a generic handler would clear
+     the card and drop the payoff. */
   const answerRead = async (read, chosen) => {
     if (calBusy) return;
     setCalBusy(true);
     setCal((p) => ({
       ...p,
       remaining: p.remaining.filter((c) => c.id !== read.id),
-      completed: p.completed + 1,
+      completed: p.completed + (chosen === "skip" ? 0 : 1),
     }));
     try {
       const res = await authedFetch("/calibration/answer", {
@@ -1118,17 +1025,26 @@ function App() {
       });
       if (res) {
         // A withheld grade comes back as prediction:null. Coercing that to
-        // `correct: false` would print "Missed." over an answer nobody has
+        // `correct: false` would print a miss over an answer nobody has
         // graded yet, so the payoff frame only opens on a real result.
         if (res.sealed) {
           setCal((p) => ({ ...p, seal: { state: "set" } }));
         } else if (res.prediction) {
-          const pick = read.side === "left" ? read.left : read.right;
           setReadResult({
             correct: res.prediction.correct,
-            pickName: pick?.name || "that one",
+            // What we'd written down, in the user's language rather than the
+            // storage layer's left/right.
+            said: res.prediction.guessed === "left" ? "Match" : "Defy",
+            name: read.card?.name || "that one",
             record: res.record,
           });
+        }
+        // Feeds the map's spark-and-draw so the node that just moved is
+        // visibly the one they moved.
+        if (res.movedNodes?.length) {
+          const ids = res.movedNodes.map((n) => n.id);
+          setRecentNodeIds(ids);
+          setTimeout(() => setRecentNodeIds([]), 4000);
         }
         if (res.award) flash(res.award);
         if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
@@ -1224,32 +1140,6 @@ function App() {
     refreshCal().catch(() => {});
   };
 
-  const answerCal = async (id, chosen) => {
-    if (calBusy) return;
-    setCalBusy(true);
-    // Optimistic — the pair clears the instant they tap. A spinner on a
-    // one-tap decision is what turns a habit back into a chore.
-    setCal((p) => ({
-      ...p,
-      remaining: p.remaining.filter((c) => c.id !== id),
-      completed: p.completed + (chosen === "skip" ? 0 : 1),
-    }));
-    try {
-      const res = await authedFetch("/calibration/answer", { method: "POST", body: JSON.stringify({ id, chosen }) });
-      if (res) {
-        setLastResult(res);
-        setTimeout(() => setLastResult(null), 2600);
-        // Confirm the seal on the tap. Waiting for the next poll would make
-        // the deferral feel like the answer simply vanished.
-        if (res.sealed) setCal((p) => ({ ...p, seal: { state: "set" } }));
-        if (res.award) flash(res.award);
-        if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
-        if (res.pendingTraits) setCal((p) => ({ ...p, pendingTraits: res.pendingTraits }));
-      }
-      refreshGame().catch(() => {});
-      refreshMap().catch(() => {});
-    } finally { setCalBusy(false); }
-  };
 
   const answerVerdict = async (id, answer) => {
     if (verdictBusy) return;
@@ -1258,8 +1148,6 @@ function App() {
     try {
       const res = await authedFetch("/verdicts/feedback", { method: "POST", body: JSON.stringify({ id, ...answer }) });
       if (res?.award) flash(res.award);
-      const report = await authedFetch("/me/scout-report");
-      if (report) setScoutReport(report);
       refreshGame().catch(() => {});
     } finally { setVerdictBusy(false); }
   };
@@ -1322,7 +1210,7 @@ function App() {
     setSearchesRemaining(null); setOnboardingChecked(false); setNeedsOnboarding(false);
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
     setLocationInput(""); setResolvedLocation(null); setLocationError(""); setRadiusUsed(null);
-    setPendingVerdicts([]); setScoutReport(null); setGame(null); setTaste(null);
+    setPendingVerdicts([]); setGame(null);
     setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setSealResult(null); setTasteMap(null); setTab("today");
   };
 
@@ -1506,6 +1394,16 @@ function App() {
     </>
   );
 
+  /* TEMP PREVIEW — remove. */
+  if (typeof window !== "undefined" && window.location.search.includes("preview=map")) {
+    const fx = {"regions":[{"family":"Soup & Stew","total":91,"seen":9,"explored":0.0989010989010989,"nodes":[{"id":"Soup & Stew0","name":"Soup & Stew 0","kind":"dish","rarity":3,"affinity":0.15,"confidence":0.3,"staleness":0},{"id":"Soup & Stew1","name":"Soup & Stew 1","kind":"dish","rarity":1,"affinity":0.44999999999999996,"confidence":0.7285714285714285,"staleness":0},{"id":"Soup & Stew2","name":"Soup & Stew 2","kind":"dish","rarity":1,"affinity":0.75,"confidence":1,"staleness":0},{"id":"Soup & Stew3","name":"Soup & Stew 3","kind":"dish","rarity":1,"affinity":1,"confidence":0.5857142857142856,"staleness":0},{"id":"Soup & Stew4","name":"Soup & Stew 4","kind":"dish","rarity":3,"affinity":0.35,"confidence":1,"staleness":0},{"id":"Soup & Stew5","name":"Soup & Stew 5","kind":"dish","rarity":1,"affinity":0.65,"confidence":0.44285714285714284,"staleness":0},{"id":"Soup & Stew6","name":"Soup & Stew 6","kind":"dish","rarity":1,"affinity":0.9500000000000001,"confidence":0.8714285714285714,"staleness":0},{"id":"Soup & Stew7","name":"Soup & Stew 7","kind":"dish","rarity":1,"affinity":0.25,"confidence":0.3,"staleness":0},{"id":"Soup & Stew8","name":"Soup & Stew 8","kind":"dish","rarity":3,"affinity":0.55,"confidence":0.7285714285714285,"staleness":0}]},{"family":"Handheld","total":80,"seen":7,"explored":0.0875,"nodes":[{"id":"Handheld0","name":"Handheld 0","kind":"dish","rarity":3,"affinity":0.85,"confidence":0.3,"staleness":0},{"id":"Handheld1","name":"Handheld 1","kind":"dish","rarity":1,"affinity":0.15,"confidence":0.7285714285714285,"staleness":0},{"id":"Handheld2","name":"Handheld 2","kind":"dish","rarity":1,"affinity":0.44999999999999996,"confidence":1,"staleness":0},{"id":"Handheld3","name":"Handheld 3","kind":"dish","rarity":1,"affinity":0.75,"confidence":0.5857142857142856,"staleness":0},{"id":"Handheld4","name":"Handheld 4","kind":"dish","rarity":3,"affinity":1,"confidence":1,"staleness":0},{"id":"Handheld5","name":"Handheld 5","kind":"dish","rarity":1,"affinity":0.35,"confidence":0.44285714285714284,"staleness":0},{"id":"Handheld6","name":"Handheld 6","kind":"dish","rarity":1,"affinity":0.65,"confidence":0.8714285714285714,"staleness":0}]},{"family":"Noodles","total":76,"seen":8,"explored":0.10526315789473684,"nodes":[{"id":"Noodles0","name":"Noodles 0","kind":"dish","rarity":3,"affinity":0.55,"confidence":0.3,"staleness":0},{"id":"Noodles1","name":"Noodles 1","kind":"dish","rarity":1,"affinity":0.85,"confidence":0.7285714285714285,"staleness":0},{"id":"Noodles2","name":"Noodles 2","kind":"dish","rarity":1,"affinity":0.15,"confidence":1,"staleness":0},{"id":"Noodles3","name":"Noodles 3","kind":"dish","rarity":1,"affinity":0.44999999999999996,"confidence":0.5857142857142856,"staleness":0},{"id":"Noodles4","name":"Noodles 4","kind":"dish","rarity":3,"affinity":0.75,"confidence":1,"staleness":0},{"id":"Noodles5","name":"Noodles 5","kind":"dish","rarity":1,"affinity":1,"confidence":0.44285714285714284,"staleness":0},{"id":"Noodles6","name":"Noodles 6","kind":"dish","rarity":1,"affinity":0.35,"confidence":0.8714285714285714,"staleness":0},{"id":"Noodles7","name":"Noodles 7","kind":"dish","rarity":1,"affinity":0.65,"confidence":0.3,"staleness":0}]},{"family":"Heat","total":10,"seen":6,"explored":0.6,"nodes":[{"id":"Heat0","name":"Heat 0","kind":"dish","rarity":3,"affinity":0.25,"confidence":0.3,"staleness":0},{"id":"Heat1","name":"Heat 1","kind":"dish","rarity":1,"affinity":0.55,"confidence":0.7285714285714285,"staleness":0},{"id":"Heat2","name":"Heat 2","kind":"dish","rarity":1,"affinity":0.85,"confidence":1,"staleness":0},{"id":"Heat3","name":"Heat 3","kind":"dish","rarity":1,"affinity":0.15,"confidence":0.5857142857142856,"staleness":0},{"id":"Heat4","name":"Heat 4","kind":"dish","rarity":3,"affinity":0.44999999999999996,"confidence":1,"staleness":0},{"id":"Heat5","name":"Heat 5","kind":"dish","rarity":1,"affinity":0.75,"confidence":0.44285714285714284,"staleness":0}]},{"family":"Texture","total":15,"seen":5,"explored":0.3333333333333333,"nodes":[{"id":"Texture0","name":"Texture 0","kind":"dish","rarity":3,"affinity":0.9500000000000001,"confidence":0.3,"staleness":0},{"id":"Texture1","name":"Texture 1","kind":"dish","rarity":1,"affinity":0.25,"confidence":0.7285714285714285,"staleness":0},{"id":"Texture2","name":"Texture 2","kind":"dish","rarity":1,"affinity":0.55,"confidence":1,"staleness":0},{"id":"Texture3","name":"Texture 3","kind":"dish","rarity":1,"affinity":0.85,"confidence":0.5857142857142856,"staleness":0},{"id":"Texture4","name":"Texture 4","kind":"dish","rarity":3,"affinity":0.15,"confidence":1,"staleness":0}]},{"family":"Feel","total":19,"seen":4,"explored":0.21052631578947367,"nodes":[{"id":"Feel0","name":"Feel 0","kind":"dish","rarity":3,"affinity":0.65,"confidence":0.3,"staleness":0},{"id":"Feel1","name":"Feel 1","kind":"dish","rarity":1,"affinity":0.9500000000000001,"confidence":0.7285714285714285,"staleness":0},{"id":"Feel2","name":"Feel 2","kind":"dish","rarity":1,"affinity":0.25,"confidence":1,"staleness":0},{"id":"Feel3","name":"Feel 3","kind":"dish","rarity":1,"affinity":0.55,"confidence":0.5857142857142856,"staleness":0}]},{"family":"Room","total":18,"seen":3,"explored":0.16666666666666666,"nodes":[{"id":"Room0","name":"Room 0","kind":"dish","rarity":3,"affinity":0.35,"confidence":0.3,"staleness":0},{"id":"Room1","name":"Room 1","kind":"dish","rarity":1,"affinity":0.65,"confidence":0.7285714285714285,"staleness":0},{"id":"Room2","name":"Room 2","kind":"dish","rarity":1,"affinity":0.9500000000000001,"confidence":1,"staleness":0}]},{"family":"Sweet","total":75,"seen":2,"explored":0.02666666666666667,"nodes":[{"id":"Sweet0","name":"Sweet 0","kind":"dish","rarity":3,"affinity":1,"confidence":0.3,"staleness":0.6},{"id":"Sweet1","name":"Sweet 1","kind":"dish","rarity":1,"affinity":0.35,"confidence":0.7285714285714285,"staleness":0.6}]},{"family":"Rice","total":55,"seen":0,"explored":0,"nodes":[]},{"family":"Drinks","total":55,"seen":0,"explored":0,"nodes":[]},{"family":"Breakfast","total":50,"seen":0,"explored":0,"nodes":[]},{"family":"Grill & Smoke","total":49,"seen":0,"explored":0,"nodes":[]},{"family":"Fried","total":48,"seen":0,"explored":0,"nodes":[]},{"family":"Pizza","total":10,"seen":0,"explored":0,"nodes":[]},{"family":"Portion","total":9,"seen":0,"explored":0,"nodes":[]}],"discovered":44,"totalCards":1446};
+    return (<div className="app">{Ambient}<div className="shell"><main className="page">
+      <div className="page-head"><h1 className="page-title">Your <em>map</em></h1>
+      <p className="page-sub">Built from what you chose, not what you told us.</p></div>
+      <TasteMap regions={fx.regions} discovered={fx.discovered} totalCards={fx.totalCards} recentIds={["Heat0"]} />
+    </main></div></div>);
+  }
+
   if (!authChecked) {
     return <div className="app">{Ambient}<p className="center-note">Loading…</p></div>;
   }
@@ -1680,9 +1578,9 @@ function App() {
         {/* ================= TODAY ================= */}
         {tab === "today" && (
           <main className="page">
-            {/* The envelope outranks even the Read: it was already waiting
-                when they opened the app, and it's the thing that made
-                tomorrow a specific appointment rather than a vague intention. */}
+            {/* The envelope outranks the call: it was already waiting when
+                they opened the app, and it's what made tomorrow a specific
+                appointment rather than a vague intention. */}
             <Seal
               seal={cal.seal}
               result={sealResult}
@@ -1691,81 +1589,25 @@ function App() {
               onDismiss={dismissSeal}
             />
 
-            {/* The Read sits above the streak because it's the reason to
-                open the app; the flame is the reward for having done so. */}
-            <DailyRead
+            {/* The prediction sits above the streak because it's the reason
+                to open the app; the flame is the reward for having done so. */}
+            <Prediction
               read={cal.read}
               result={readResult}
+              completed={cal.completed}
+              total={cal.total}
               busy={calBusy}
               onAnswer={answerRead}
               onDismiss={dismissRead}
             />
 
-            <div className="status">
-              <Flame days={streakDays} hero />
-              <div className="status-right">
-                <div>
-                  <p className="status-tier">{tierInfo.current.name}</p>
-                  <h1 className="status-line">
-                    {game?.streak?.activeToday
-                      ? "You're set for today."
-                      : streakDays > 0
-                        ? "Keep it burning."
-                        : "Light the first one."}
-                  </h1>
-                </div>
-
-                <div className="status-stats">
-                  <div className="stat-block">
-                    <CountUp className="stat-num stat-num--cool" value={game?.xp ?? 0} />
-                    <span className="stat-key">Total XP</span>
-                  </div>
-                  <div className="stat-block">
-                    <span className="stat-num stat-num--warm">{game?.streak?.longest ?? 0}</span>
-                    <span className="stat-key">Best streak</span>
-                  </div>
-                  {game?.streak?.freezes > 0 && (
-                    <div className="stat-block">
-                      <span className="stat-num">{game.streak.freezes}</span>
-                      <span className="stat-key">Freezes</span>
-                    </div>
-                  )}
-                </div>
-
-                {tierInfo.next && (
-                  <div className="next-tier">
-                    <div className="next-tier-bar">
-                      <div className="next-tier-fill" style={{ width: `${Math.round(tierInfo.progress * 100)}%` }} />
-                    </div>
-                    <span className="next-tier-text">
-                      {tierInfo.daysToGo} day{tierInfo.daysToGo === 1 ? "" : "s"} to {tierInfo.next.name}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <Calibration
-              /* The Read is drawn from today's set, so it has to be skipped
-                 here or the same pair renders twice on one screen. */
-              item={cal.remaining?.find((c) => c.id !== cal.read?.id)}
-              completed={cal.completed}
-              total={cal.total}
-              busy={calBusy}
-              onAnswer={answerCal}
-              lastResult={lastResult}
-              pendingTraits={cal.pendingTraits}
-              needsSeed={(cal.total || 0) === 0}
-              onFind={() => setTab("find")}
-            />
-
             {/* The incompletion hook. A named, nearly-finished thing pulls
                 people back in a way a progress bar never does. */}
-            {cal.pendingTraits?.length > 0 && cal.remaining?.length === 0 && (
+            {cal.pendingTraits?.length > 0 && (
               <section className="card">
                 <div className="card-head">
                   <h2 className="card-title">Still decoding</h2>
-                  <span className="card-sub">{tasteMap?.discovered || 0} of {tasteMap?.totalCards || 1446} cards found</span>
+                  <span className="card-sub">{tasteMap?.discovered || 0} of {tasteMap?.totalCards || 1446} found</span>
                 </div>
                 {cal.pendingTraits.map((t) => (
                   <div className="pending" key={t.key}>
@@ -1773,17 +1615,6 @@ function App() {
                     <span className="pending-need">{t.need} more {t.need === 1 ? "answer" : "answers"}</span>
                   </div>
                 ))}
-              </section>
-            )}
-
-            {game?.quest && (
-              <section className="quest">
-                <span className="quest-tag">Today's quest</span>
-                <p className="quest-text">{game.quest.label}</p>
-                <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                  <button className="btn btn--ghost" onClick={() => setTab("find")}>Go do it</button>
-                  <span className="xp-chip">+{game.quest.xp} XP</span>
-                </div>
               </section>
             )}
 
@@ -2019,199 +1850,113 @@ function App() {
         )}
 
         {/* ================= MAP ================= */}
-        {tab === "map" && (
-          <main className="page">
-            <div className="page-head">
-              <h1 className="page-title">Your <em>signature</em></h1>
-              <p className="page-sub">
-                {tasteMap?.discovered || 0} of {tasteMap?.totalCards || 1446} cards met
-              </p>
-            </div>
-
-            {tasteMap?.regions?.filter((r) => r.seen > 0).length > 0 ? (
-              <>
-                <Archetype archetype={tasteMap.archetype} choices={tasteMap.choices} />
-
-                {tasteMap.axes?.length > 0 && (
-                  <section className="card">
-                    <div className="card-head">
-                      <h2 className="card-title">Where you sit</h2>
-                      <span className="card-sub">
-                        {tasteMap.axes.length} of {tasteMap.axes.length + (tasteMap.measuring?.length || 0)} known
-                      </span>
-                    </div>
-                    {tasteMap.axes.map((a) => <AxisBar key={a.key} axis={a} />)}
-                    <Measuring items={tasteMap.measuring} />
-                  </section>
-                )}
-
-                {/* Before any axis is confident there is nothing to draw, so
-                    say what's coming rather than showing an empty card. */}
-                {!tasteMap.axes?.length && tasteMap.measuring?.length > 0 && (
-                  <section className="card">
-                    <div className="card-head"><h2 className="card-title">Where you sit</h2></div>
-                    <p className="empty">
-                      Nothing measured with confidence yet — we'd rather show you nothing than a guess.
-                    </p>
-                    <Measuring items={tasteMap.measuring} />
-                  </section>
-                )}
-
-                {(tasteMap.strongest?.length > 0 || tasteMap.coldest?.length > 0) && (
-                  <section className="card card--glow">
-                    <div className="card-head">
-                      <h2 className="card-title">Your strongest signals</h2>
-                    </div>
-                    <div className="sigs">
-                      <SignalList title="You reach for" tone="love"
-                                  nodes={tasteMap.strongest} empty="Nothing decisive yet." />
-                      <SignalList title="You pass on" tone="cold"
-                                  nodes={tasteMap.coldest} empty="Nothing decisive yet." />
-                    </div>
-                  </section>
-                )}
-
-                <Collection collection={tasteMap.collection} />
-
-                {/* Named, recoverable, and specific. A region going quiet is a
-                    reason to come back that doesn't require breaking anything
-                    the user has already earned. */}
-                {tasteMap.fading?.length > 0 && (
-                  <section className="card card--fading">
-                    <div className="card-head"><h2 className="card-title">Going cold</h2></div>
-                    <p className="fading-why">
-                      We haven't tested these in a while, so we're less sure than we were.
-                      They sharpen again the moment they come back up.
-                    </p>
-                    <div className="fading-list">
-                      {tasteMap.fading.map((f) => (
-                        <span className="fading-chip" key={f.family}>{f.family}</span>
-                      ))}
-                    </div>
-                  </section>
-                )}
-              </>
-            ) : (
-              <section className="card">
-                <p className="empty">
-                  Nothing mapped yet. Answer today's calibration and this fills in — each answer
-                  moves the two cards it touched.
-                </p>
-                <button className="btn btn--hot" style={{ marginTop: 16 }} onClick={() => setTab("today")}>
-                  Start calibrating
-                </button>
-              </section>
-            )}
-          </main>
-        )}
-
-        {/* ================= YOU ================= */}
+        {/* ================= YOU =================
+            Deliberately only two things: the streak, and the map. Every other
+            stat that used to live here (hit rate, price sensitivity, crowd
+            trust) was a number ABOUT the product rather than about the
+            person, and it diluted the one screen whose whole job is to make
+            someone feel seen. */}
         {tab === "you" && (
           <main className="page">
             <div className="page-head">
-              <h1 className="page-title">Your <em>taste profile</em></h1>
-              <p className="page-sub">Built from what you picked, not what you told us.</p>
+              <h1 className="page-title">Your <em>map</em></h1>
+              <p className="page-sub">
+                Built from what you chose, not what you told us.
+              </p>
             </div>
 
-            <section className="card card--glow">
-              <div className="card-head"><h2 className="card-title">Our hit rate, for you</h2></div>
-              {scoutReport?.visitCount > 0 ? (
-                <div className="bigstat">
-                  {typeof scoutReport.accuracy === "number" ? (
-                    <>
-                      <CountUp className="bigstat-n" value={scoutReport.accuracy} />
-                      <span className="bigstat-k">% of our picks landed<br />{scoutReport.hitCount} of {scoutReport.visitCount} rated visits</span>
-                    </>
-                  ) : (
-                    <span className="bigstat-k">
-                      {scoutReport.visitCount} visit{scoutReport.visitCount === 1 ? "" : "s"} rated — a few more and we'll show how often we're right.
-                    </span>
+            <div className="status">
+              <Flame days={streakDays} hero />
+              <div className="status-right">
+                <div>
+                  <p className="status-tier">{tierInfo.current.name}</p>
+                  <h1 className="status-line">
+                    {game?.streak?.activeToday
+                      ? "You're set for today."
+                      : streakDays > 0
+                        ? "Keep it burning."
+                        : "Light the first one."}
+                  </h1>
+                </div>
+
+                <div className="status-stats">
+                  <div className="stat-block">
+                    <CountUp className="stat-num stat-num--cool" value={game?.xp ?? 0} />
+                    <span className="stat-key">Total XP</span>
+                  </div>
+                  <div className="stat-block">
+                    <span className="stat-num stat-num--warm">{game?.streak?.longest ?? 0}</span>
+                    <span className="stat-key">Best streak</span>
+                  </div>
+                  {game?.streak?.freezes > 0 && (
+                    <div className="stat-block">
+                      <span className="stat-num">{game.streak.freezes}</span>
+                      <span className="stat-key">Freezes</span>
+                    </div>
                   )}
                 </div>
-              ) : (
-                <p className="empty">Rate a verdict and this becomes the number that tells you whether to trust us.</p>
-              )}
-            </section>
 
-            <section className="card">
-              <div className="card-head"><h2 className="card-title">How you choose</h2></div>
-              {taste?.vector?.sampleSize > 0 ? (
-                <>
-                  {typeof taste.vector.priceSensitivity === "number" && (
-                    <div className="vrow">
-                      <div className="vrow-head">
-                        <span className="vrow-key">Price sensitivity</span>
-                        <span className="vrow-val">{Math.round(taste.vector.priceSensitivity * 100)}%</span>
-                      </div>
-                      <div className="vrow-bar"><div className="vrow-fill" style={{ width: `${Math.round(taste.vector.priceSensitivity * 100)}%` }} /></div>
-                      <span className="vrow-read">{taste.vector.priceSensitivity > 0.6 ? "You take the cheaper option" : "You'll pay up for quality"}</span>
+                {tierInfo.next && (
+                  <div className="next-tier">
+                    <div className="next-tier-bar">
+                      <div className="next-tier-fill" style={{ width: `${Math.round(tierInfo.progress * 100)}%` }} />
                     </div>
-                  )}
-                  {typeof taste.vector.crowdTrust === "number" && (
-                    <div className="vrow">
-                      <div className="vrow-head">
-                        <span className="vrow-key">Crowd trust</span>
-                        <span className="vrow-val">{Math.round(taste.vector.crowdTrust * 100)}%</span>
-                      </div>
-                      <div className="vrow-bar"><div className="vrow-fill" style={{ width: `${Math.round(taste.vector.crowdTrust * 100)}%` }} /></div>
-                      <span className="vrow-read">{taste.vector.crowdTrust > 0.6 ? "You trust the crowd" : "You back hidden gems"}</span>
-                    </div>
-                  )}
-                  {taste.vector.cuisineAffinity?.length > 0 && (
-                    <div className="aff">
-                      {taste.vector.cuisineAffinity.map((c) => (
-                        <div className="aff-row" key={c.cuisine}>
-                          <span className="aff-name">{c.cuisine}</span>
-                          <span className="aff-bar"><span className="aff-fill" style={{ width: `${Math.round(c.winRate * 100)}%` }} /></span>
-                          <span className="aff-pct">{Math.round(c.winRate * 100)}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <p className="vrow-read" style={{ marginTop: 14 }}>From {taste.vector.sampleSize} duel{taste.vector.sampleSize === 1 ? "" : "s"}.</p>
-                </>
-              ) : (
-                <p className="empty">Answer a few duels and your profile builds itself here — no questionnaire.</p>
-              )}
-            </section>
+                    <span className="next-tier-text">
+                      {tierInfo.daysToGo} day{tierInfo.daysToGo === 1 ? "" : "s"} to {tierInfo.next.name}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
 
-            {game?.milestones && (
+            <TasteMap
+              regions={tasteMap?.regions}
+              discovered={tasteMap?.discovered || 0}
+              totalCards={tasteMap?.totalCards || 1446}
+              recentIds={recentNodeIds}
+            />
+
+            <Archetype archetype={tasteMap?.archetype} choices={tasteMap?.choices} />
+
+            {tasteMap?.axes?.length > 0 && (
               <section className="card">
                 <div className="card-head">
-                  <h2 className="card-title">Streak milestones</h2>
+                  <h2 className="card-title">Where you sit</h2>
                   <span className="card-sub">
-                    {game.nextMilestone
-                      ? `${game.nextMilestone.days - streakDays} day${game.nextMilestone.days - streakDays === 1 ? "" : "s"} to ${game.nextMilestone.label}`
-                      : "All reached"}
+                    {tasteMap.axes.length} of {tasteMap.axes.length + (tasteMap.measuring?.length || 0)} known
                   </span>
                 </div>
-                <div className="mstones">
-                  {game.milestones.map((m) => (
-                    <div className={`mstone${m.reached ? " mstone--on" : ""}`} key={m.days}>
-                      <span className="mstone-d">{m.days}</span>
-                      <span className="mstone-n">{m.label}</span>
-                      <span className="mstone-r">+{m.xp.toLocaleString()} XP{m.freezes > 0 ? ` · ${m.freezes} freeze` : ""}</span>
-                    </div>
-                  ))}
+                {tasteMap.axes.map((a) => <AxisBar key={a.key} axis={a} />)}
+                <Measuring items={tasteMap.measuring} />
+              </section>
+            )}
+
+            {(tasteMap?.strongest?.length > 0 || tasteMap?.coldest?.length > 0) && (
+              <section className="card card--glow">
+                <div className="card-head"><h2 className="card-title">Your strongest signals</h2></div>
+                <div className="sigs">
+                  <SignalList title="You reach for" tone="love"
+                              nodes={tasteMap.strongest} empty="Nothing decisive yet." />
+                  <SignalList title="You pass on" tone="cold"
+                              nodes={tasteMap.coldest} empty="Nothing decisive yet." />
                 </div>
               </section>
             )}
 
-            {game?.unlocks && (
-              <section className="card">
-                <div className="card-head">
-                  <h2 className="card-title">Unlocks</h2>
-                  <span className="card-sub">
-                    {game.xp?.toLocaleString()} XP{level?.nextRank ? ` · ${level.xpToNext.toLocaleString()} to ${level.nextRank}` : ""}
-                  </span>
-                </div>
-                <div className="ladder">
-                  {game.unlocks.map((u) => (
-                    <div className={`rung${u.unlocked ? " rung--on" : ""}`} key={u.key}>
-                      <span className="rung-lv">Lv{u.level}</span>
-                      <span className="rung-name">{u.label}</span>
-                      <span className="rung-state">{u.unlocked ? "open" : `${u.level - (level?.level ?? 1)} to go`}</span>
-                    </div>
+            <Collection collection={tasteMap?.collection} />
+
+            {/* Named, recoverable, specific. A region going quiet is a reason
+                to come back that doesn't require breaking anything earned. */}
+            {tasteMap?.fading?.length > 0 && (
+              <section className="card card--fading">
+                <div className="card-head"><h2 className="card-title">Going cold</h2></div>
+                <p className="fading-why">
+                  We haven't tested these in a while, so we're less sure than we were.
+                  They sharpen again the moment they come back up.
+                </p>
+                <div className="fading-list">
+                  {tasteMap.fading.map((f) => (
+                    <span className="fading-chip" key={f.family}>{f.family}</span>
                   ))}
                 </div>
               </section>

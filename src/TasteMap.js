@@ -1,50 +1,57 @@
 import React, { useMemo } from "react";
+import { familyLabel } from "./labels";
 
 /* ===========================================================================
    THE CLIMB — daylight ascent
 
-   Built to the brief, point by point.
+   WORDS. Every label on this map is the phrase a person would actually say.
+   The deck's own family names are an internal taxonomy — "Handheld", "Feel",
+   "Room", "Constraint" — and a map covered in words the reader has to decode
+   is a quiz, not a map. Names come from labels.js so the map, the collection
+   strip and the measuring line can never drift apart.
 
-   WHOLE MOUNTAIN, ONE SCREEN. No scrolling. The trail is a fixed canvas and
-   the stops distribute along it, so a beginner and a veteran both see their
-   entire climb at a glance. You cannot feel ownership over something you have
-   to scroll to assemble in your head.
+   LAYOUT. Markers carry a CARD, not floating text: name, count, and a filled
+   bar showing how far into that region you are. Floating text left the canvas
+   mostly air and said very little per pixel; a card has visual mass, fills
+   the width the trail leaves empty, and shows progress per region instead of
+   just naming it.
 
-   LIGHT, NOT DARK. Dark fog is a contradiction — real mist is bright, and on
-   a dark canvas "hidden" and "empty" look identical. On a luminous sky, fog
-   becomes the most visible object on screen, which is exactly right: it is
-   the thing meant to nag at you.
+   ONE SCREEN, NO SCROLLING. A beginner and a veteran both see their whole
+   climb at once. You cannot feel ownership over something you have to scroll
+   to assemble in your head.
+
+   LIGHT, NOT DARK. Real mist is bright. On a dark canvas "shrouded" and
+   "empty" render identically, which made the one object meant to nag at you
+   the hardest thing to see.
 
    TWO GRADIENTS, NO MORE.
-     INDIGO -> CYAN   is you. The climber, and the rings breathing off it.
-     MAGENTA -> EMBER is the world you have crossed: trail and earned markers.
-   Nothing else gets a hue. Flat fills, neon, and a third gradient are all
-   ways to make a screen louder and less legible at the same time.
+     INDIGO -> CYAN    you. The climber, and the rings breathing off it.
+     MAGENTA -> EMBER  the world you crossed: trail and earned markers.
+   Everything else is desaturated atmosphere.
 
-   SELF-EXPLANATORY. Nothing here needs a key: "YOU ARE HERE" is written on
-   the climber, the fog says UNDISCOVERED across it, the base says where you
-   started, and the summit is drawn as a peak. Up is progress — the one
-   spatial metaphor nobody has to be taught.
-
-   MOTION AS DOPAMINE, per the brief: the climber breathes 98%-102%, rings
-   pulse outward off it, a spark runs the earned trail, the next marker
-   glows because near-completion is the strongest pull in the stack, and the
-   mist drifts so the hidden regions keep catching the eye.
+   MOTION IS THE DOPAMINE LAYER: the climber breathes 98%-102%, rings pulse
+   outward, a spark runs the earned trail, the next marker pings because
+   near-completion pulls hardest, and the mist drifts so hidden regions keep
+   re-catching the eye.
    =========================================================================== */
 
 const W = 380;
-const H = 560;
-const TOP = 128;      // first stop sits clear of the summit signage
-const BASE = 508;     // where the trail starts
-const SWAY = 66;
+const H = 540;
+const TOP = 130;      // clears the summit signage; cards used to sit on it
+const BASE = 484;
+const NODE_DX = 24;   // gentler switchback buys width for the cards
+const CARD_W = 142;   // leaves a 12px margin each side of the canvas
+const CARD_H = 38;
 
+/* Named bands of the ascent. The label carries the flavour; the note is plain
+   so it explains rather than decorates. */
 const ZONES = [
-  { at: 0,   name: "Base camp",    note: "You've barely started." },
-  { at: 12,  name: "The treeline", note: "Shapes are appearing." },
-  { at: 40,  name: "The ridge",    note: "Your outline is holding." },
-  { at: 90,  name: "The fog line", note: "This is where it gets interesting." },
-  { at: 180, name: "High ground",  note: "Few people get this far." },
-  { at: 320, name: "The summit",   note: "Almost nothing left hidden." },
+  { at: 0,   name: "Base camp",    note: "Just getting started." },
+  { at: 12,  name: "The treeline", note: "We're learning your taste." },
+  { at: 40,  name: "The ridge",    note: "Your taste is taking shape." },
+  { at: 90,  name: "The fog line", note: "We know you pretty well now." },
+  { at: 180, name: "High ground",  note: "Few people map this much." },
+  { at: 320, name: "The summit",   note: "Almost nothing left to learn." },
 ];
 
 export function zoneFor(discovered) {
@@ -52,7 +59,6 @@ export function zoneFor(discovered) {
   for (const c of ZONES) if (discovered >= c.at) z = c;
   return z;
 }
-export const metresFor = (d) => Math.round((d || 0) * 40);
 
 function hashUnit(str) {
   let h = 2166136261;
@@ -61,10 +67,10 @@ function hashUnit(str) {
   return ((h >>> 0) % 100000) / 100000;
 }
 
+const clip = (s, n) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
+
 /* Everything fits one canvas, so the list is capped and the remainder is
-   summarised at the base rather than silently dropped.
-   Eleven stops crammed into the canvas put ~37 units between markers and
-   produced eleven overlapping labels; eight leaves ~59 and reads cleanly. */
+   summarised at the base rather than silently dropped. */
 const MAX_CLIMBED = 5;
 const MAX_FOG = 3;
 
@@ -86,31 +92,28 @@ function buildTrail(regions) {
   const n = Math.max(1, stops.length);
   const gap = n > 1 ? (BASE - TOP) / (n - 1) : 0;
 
-  /* A strict zigzag, not a sine wave. A sine with any period can put two
-     consecutive stops on the same side, and two labels stacked on one side is
-     exactly where they collided. Alternating guarantees a label never has a
-     neighbour on its own side — and switchbacks are what a real mountain
-     trail looks like anyway. */
+  /* A strict zigzag rather than a sine wave. A sine of any period can put two
+     consecutive stops on the same side, and two cards stacked on one side is
+     exactly where they collided. Switchbacks are also what a real trail on a
+     steep face looks like. */
   const placed = stops.map((s, i) => {
-    const y = BASE - i * gap;
-    const lean = 0.72 + hashUnit(s.family) * 0.42;
     const right = i % 2 === 0;
+    const y = BASE - i * gap;
     return {
       ...s, i, y,
-      x: W / 2 + (right ? SWAY : -SWAY) * lean,
+      x: W / 2 + (right ? NODE_DX : -NODE_DX),
       side: right ? "right" : "left",
+      cardX: right ? W / 2 + NODE_DX + 12 : W / 2 - NODE_DX - 12 - CARD_W,
+      jitter: hashUnit(s.family),
     };
   });
 
   const climbedCount = climbed.length;
 
-  /* On day one there is nothing climbed, and Math.max(0, -1) put the climber
-     on placed[0] — which in that case is a FOGGED stop, so a brand-new user
-     saw themselves standing inside locked ground. With nothing earned the
-     climber belongs at the trailhead. */
-  const you = climbedCount > 0
-    ? placed[climbedCount - 1]
-    : { x: W / 2, y: BASE + 14 };
+  /* On day one nothing is climbed, and Math.max(0, -1) resolved to placed[0]
+     — which is then a FOGGED stop, so a new user stood inside locked ground.
+     With nothing earned the climber belongs at the trailhead. */
+  const you = climbedCount > 0 ? placed[climbedCount - 1] : { x: W / 2, y: BASE + 16 };
   const fogEdge = placed[climbedCount] ? (placed[climbedCount].y + you.y) / 2 : you.y - 26;
 
   return { placed, you, fogEdge, climbedCount, belowCount, hiddenTotal, hiddenRegions: hiddenAll.length };
@@ -118,7 +121,7 @@ function buildTrail(regions) {
 
 function pathThrough(pts, fromBase) {
   if (!pts.length) return "";
-  let d = fromBase ? `M ${W / 2} ${BASE + 14} L ${pts[0].x} ${pts[0].y}` : `M ${pts[0].x} ${pts[0].y}`;
+  let d = fromBase ? `M ${W / 2} ${BASE + 22} L ${pts[0].x} ${pts[0].y}` : `M ${pts[0].x} ${pts[0].y}`;
   for (let i = 1; i < pts.length; i += 1) {
     const a = pts[i - 1], b = pts[i];
     const my = (a.y + b.y) / 2;
@@ -126,6 +129,14 @@ function pathThrough(pts, fromBase) {
   }
   return d;
 }
+
+/* Tiny conifers on the near ridge. Pure scale cue — they make the terrain
+   read as land rather than as an abstract band, and they occupy width the
+   trail leaves empty. Same desaturated indigo as the ridge so they never
+   compete with the two real gradients. */
+const TREES = [22, 54, 78, 112, 268, 300, 322, 352].map((x, i) => ({
+  x, h: 13 + (i % 3) * 4, y: 432 + ((i * 7) % 11),
+}));
 
 export default function TasteMap({ regions, discovered = 0, totalCards = 1446, recentIds = [] }) {
   const { placed, you, fogEdge, climbedCount, belowCount, hiddenTotal, hiddenRegions } =
@@ -144,16 +155,15 @@ export default function TasteMap({ regions, discovered = 0, totalCards = 1446, r
           <span className="climb-zone">{zone.name}</span>
           <span className="climb-note">{zone.note}</span>
         </div>
-        <div className="climb-elev">
-          <span className="climb-elev-n">{metresFor(discovered).toLocaleString()}</span>
-          <span className="climb-elev-u">m</span>
+        <div className="climb-score">
+          <span className="climb-score-n">{discovered.toLocaleString()}</span>
+          <span className="climb-score-k">foods rated</span>
         </div>
       </div>
 
       <svg className="climb-svg" viewBox={`0 0 ${W} ${H}`} role="img"
-           aria-label={`Your climb: ${discovered} of ${totalCards} mapped, currently at ${zone.name}. ${hiddenRegions} regions still hidden in fog.`}>
+           aria-label={`Your climb: ${discovered} of ${totalCards} foods rated, currently at ${zone.name}. ${hiddenRegions} areas still hidden.`}>
         <defs>
-          {/* daylight sky: cool at altitude, warm where you've been */}
           <linearGradient id="clSky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#dbe6fb" />
             <stop offset="46%" stopColor="#eaeefb" />
@@ -173,7 +183,11 @@ export default function TasteMap({ regions, discovered = 0, totalCards = 1446, r
           </radialGradient>
 
           {/* GRADIENT 2 — magenta to ember. The world you crossed. */}
-          <linearGradient id="clPath" x1="0" y1="1" x2="0" y2="0" gradientUnits="objectBoundingBox">
+          <linearGradient id="clPath" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="#ff2e88" />
+            <stop offset="100%" stopColor="#ff7a2f" />
+          </linearGradient>
+          <linearGradient id="clBar" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="#ff2e88" />
             <stop offset="100%" stopColor="#ff7a2f" />
           </linearGradient>
@@ -187,11 +201,10 @@ export default function TasteMap({ regions, discovered = 0, totalCards = 1446, r
             <stop offset="100%" stopColor="#ff2e88" stopOpacity="0" />
           </radialGradient>
 
-          {/* the mist: bright, and the most visible thing on the canvas */}
           <linearGradient id="clFog" x1="0" y1="1" x2="0" y2="0">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="22%" stopColor="#fbfcff" stopOpacity="0.78" />
-            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.93" />
+            <stop offset="22%" stopColor="#fbfcff" stopOpacity="0.8" />
+            <stop offset="55%" stopColor="#ffffff" stopOpacity="0.94" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0.97" />
           </linearGradient>
           <radialGradient id="clPuff">
@@ -204,52 +217,63 @@ export default function TasteMap({ regions, discovered = 0, totalCards = 1446, r
         <rect x="0" y="0" width={W} height={H} fill="url(#clSky)" />
 
         {/* ---- layered ridges, far to near ---- */}
-        <path className="climb-ridge" d={`M -20 ${H} L -20 250 C 60 190, 110 268, 170 214 C 232 158, 300 250, 400 196 L 400 ${H} Z`}
+        <path className="climb-ridge" d="M -20 540 L -20 236 C 62 176, 112 254, 172 200 C 234 144, 302 236, 400 182 L 400 540 Z"
               fill="#c5d0ec" opacity="0.55" />
-        <path className="climb-ridge" d={`M -20 ${H} L -20 320 C 70 258, 128 330, 196 286 C 268 238, 330 322, 400 272 L 400 ${H} Z`}
+        <path className="climb-ridge" d="M -20 540 L -20 312 C 72 250, 130 322, 198 278 C 270 230, 332 314, 400 264 L 400 540 Z"
               fill="#aebbe0" opacity="0.6" />
-        <path className="climb-ridge" d={`M -20 ${H} L -20 402 C 80 350, 150 414, 214 380 C 288 342, 336 404, 400 372 L 400 ${H} Z`}
+        <path className="climb-ridge" d="M -20 540 L -20 424 C 82 372, 152 436, 216 402 C 290 364, 338 426, 400 394 L 400 540 Z"
               fill="#94a3d1" opacity="0.55" />
 
-        {/* ---- trail ahead: faint, dashed, unearned ---- */}
-        <path className="climb-ahead" d={pathThrough(aheadPts, false)} />
+        {TREES.map((t, i) => (
+          <path key={i} className="climb-tree"
+                d={`M ${t.x} ${t.y} L ${t.x + t.h * 0.42} ${t.y + t.h} L ${t.x - t.h * 0.42} ${t.y + t.h} Z`} />
+        ))}
 
-        {/* ---- trail earned: the magenta-to-ember gradient ---- */}
+        {/* ---- trail ---- */}
+        <path className="climb-ahead" d={pathThrough(aheadPts, false)} />
         <path className="climb-earned" d={pathThrough(climbedPts, true)} />
         <path id="clEarned" d={pathThrough(climbedPts, true)} fill="none" stroke="none" />
         {climbedCount > 1 && (
-          <circle className="climb-spark" r="3.4">
-            <animateMotion dur="5.5s" repeatCount="indefinite">
-              <mpath href="#clEarned" />
-            </animateMotion>
+          <circle className="climb-spark" r="3.2">
+            <animateMotion dur="5.5s" repeatCount="indefinite"><mpath href="#clEarned" /></animateMotion>
           </circle>
         )}
 
-        {/* ---- earned markers ---- */}
+        {/* ---- earned stops: marker + card ---- */}
         {placed.filter((s) => s.state === "climbed").map((s) => {
           const isNew = s.nodes?.some((n) => recent.has(n.id));
-          const dx = s.side === "right" ? 26 : -26;
+          const cy = s.y - CARD_H / 2;
+          const pct = s.total ? Math.min(1, s.seen / s.total) : 0;
           return (
             <g className={`climb-stop${isNew ? " climb-stop--new" : ""}`} key={s.family}>
-              <circle className="climb-node-glow" cx={s.x} cy={s.y} r="26" fill="url(#clNodeGlow)" />
-              <circle className="climb-node" cx={s.x} cy={s.y} r="10" fill="url(#clNode)" />
-              <circle className="climb-node-ring" cx={s.x} cy={s.y} r="15" />
-              <text className="climb-name" x={s.x + dx} y={s.y - 1}
-                    textAnchor={s.side === "right" ? "start" : "end"}>{s.family}</text>
-              <text className="climb-sub" x={s.x + dx} y={s.y + 17}
-                    textAnchor={s.side === "right" ? "start" : "end"}>{s.seen} of {s.total}</text>
+              <line className="climb-tick" x1={s.x} y1={s.y}
+                    x2={s.side === "right" ? s.cardX : s.cardX + CARD_W} y2={s.y} />
+              <rect className="climb-card" x={s.cardX} y={cy} width={CARD_W} height={CARD_H} rx="9" />
+              <text className="climb-card-name" x={s.cardX + 10} y={cy + 15}>
+                {clip(familyLabel(s.family), 21)}
+              </text>
+              <rect className="climb-bar-bg" x={s.cardX + 10} y={cy + 23} width={CARD_W - 56} height="4" rx="2" />
+              <rect className="climb-bar" x={s.cardX + 10} y={cy + 23}
+                    width={Math.max(3, (CARD_W - 56) * pct)} height="4" rx="2" />
+              <text className="climb-card-n" x={s.cardX + CARD_W - 10} y={cy + 28} textAnchor="end">
+                {s.seen}/{s.total}
+              </text>
+
+              <circle className="climb-node-glow" cx={s.x} cy={s.y} r="24" fill="url(#clNodeGlow)" />
+              <circle className="climb-node" cx={s.x} cy={s.y} r="9" fill="url(#clNode)" />
+              <circle className="climb-node-ring" cx={s.x} cy={s.y} r="14" />
             </g>
           );
         })}
 
-        {/* ---- the mist sheet, plus drifting puffs so it reads as weather ---- */}
+        {/* ---- mist, with drifting puffs so it reads as weather ---- */}
         <g className="climb-mist">
           <rect x="0" y="0" width={W} height={Math.max(0, fogEdge)} fill="url(#clFog)" />
           {[
-            { cx: 90,  cy: 0.34, r: 76, d: "0s",   dur: "17s" },
-            { cx: 280, cy: 0.5,  r: 92, d: "-6s",  dur: "21s" },
-            { cx: 180, cy: 0.68, r: 68, d: "-11s", dur: "15s" },
-            { cx: 320, cy: 0.2,  r: 60, d: "-3s",  dur: "19s" },
+            { cx: 84,  cy: 0.34, r: 74, d: "0s",   dur: "17s" },
+            { cx: 288, cy: 0.5,  r: 90, d: "-6s",  dur: "21s" },
+            { cx: 176, cy: 0.7,  r: 66, d: "-11s", dur: "15s" },
+            { cx: 320, cy: 0.18, r: 58, d: "-3s",  dur: "19s" },
           ].map((p, i) => (
             <circle key={i} className="climb-puff" cx={p.cx} cy={Math.max(0, fogEdge) * p.cy}
                     r={p.r} fill="url(#clPuff)"
@@ -257,71 +281,78 @@ export default function TasteMap({ regions, discovered = 0, totalCards = 1446, r
           ))}
         </g>
 
-        {/* ---- locked regions: drawn ON the mist so they stay readable ---- */}
+        {/* ---- locked stops: drawn ON the mist so they stay readable ---- */}
         {placed.filter((s) => s.state === "fog").map((s) => {
-          const dx = s.side === "right" ? 26 : -26;
+          const cy = s.y - CARD_H / 2;
           return (
             <g className="climb-locked" key={s.family} style={{ animationDelay: `${(s.i % 3) * 0.9}s` }}>
-              <circle className="climb-locked-halo" cx={s.x} cy={s.y} r="21" />
-              <circle className="climb-locked-ring" cx={s.x} cy={s.y} r="13" />
-              <text className="climb-q" x={s.x} y={s.y + 5} textAnchor="middle">?</text>
-              <text className="climb-name climb-name--locked" x={s.x + dx} y={s.y - 1}
-                    textAnchor={s.side === "right" ? "start" : "end"}>{s.family}</text>
-              <text className="climb-sub climb-sub--locked" x={s.x + dx} y={s.y + 17}
-                    textAnchor={s.side === "right" ? "start" : "end"}>{s.total} hidden</text>
+              <line className="climb-tick climb-tick--locked" x1={s.x} y1={s.y}
+                    x2={s.side === "right" ? s.cardX : s.cardX + CARD_W} y2={s.y} />
+              <rect className="climb-card climb-card--locked" x={s.cardX} y={cy} width={CARD_W} height={CARD_H} rx="9" />
+              <text className="climb-card-name climb-card-name--locked" x={s.cardX + 10} y={cy + 15}>
+                {clip(familyLabel(s.family), 21)}
+              </text>
+              <rect className="climb-bar-locked" x={s.cardX + 10} y={cy + 23} width={CARD_W - 56} height="4" rx="2" />
+              <text className="climb-card-n climb-card-n--locked" x={s.cardX + CARD_W - 10} y={cy + 28} textAnchor="end">
+                0/{s.total}
+              </text>
+
+              <circle className="climb-locked-halo" cx={s.x} cy={s.y} r="17" />
+              <circle className="climb-locked-ring" cx={s.x} cy={s.y} r="11" />
+              <text className="climb-lock" x={s.x} y={s.y + 4} textAnchor="middle">?</text>
             </g>
           );
         })}
 
-        {/* ---- the summit, drawn ON the mist so it breaks through the
-             cloud rather than being buried by it. A visible goal above the
-             weather is worth more than a peak nobody ever sees. ---- */}
-        <path className="climb-peak"
-              d={`M ${W / 2} 12 L ${W / 2 + 48} 60 L ${W / 2 - 48} 60 Z`} />
+        {/* ---- the summit, drawn ON the mist so it breaks through the cloud
+             rather than being buried by it ---- */}
+        <path className="climb-peak" d={`M ${W / 2} 10 L ${W / 2 + 50} 58 L ${W / 2 - 50} 58 Z`} />
         <path className="climb-peak-cap"
-              d={`M ${W / 2} 12 L ${W / 2 + 18} 30 L ${W / 2 + 7} 24 L ${W / 2 - 9} 34 L ${W / 2 - 18} 30 Z`} />
+              d={`M ${W / 2} 10 L ${W / 2 + 19} 29 L ${W / 2 + 7} 23 L ${W / 2 - 9} 33 L ${W / 2 - 19} 29 Z`} />
 
-        {/* ---- signposting, so nothing needs a legend ---- */}
-        <text className="climb-tag climb-tag--fog" x={W / 2} y={80} textAnchor="middle">UNDISCOVERED</text>
+        {/* ---- signposts, so nothing needs a legend ---- */}
+        <text className="climb-tag climb-tag--fog" x={W / 2} y={76} textAnchor="middle">
+          HAVEN&apos;T TRIED THESE YET
+        </text>
         {hiddenTotal > 0 && (
-          <text className="climb-tag-sub" x={W / 2} y={96} textAnchor="middle">
-            {hiddenTotal.toLocaleString()} still hidden up here
+          <text className="climb-tag-sub" x={W / 2} y={92} textAnchor="middle">
+            {hiddenTotal.toLocaleString()} foods waiting up here
           </text>
         )}
-        <text className="climb-tag climb-tag--base" x={W / 2} y={H - 6} textAnchor="middle">
-          {belowCount > 0 ? `WHERE YOU STARTED · +${belowCount} more below` : "WHERE YOU STARTED"}
+        <text className="climb-tag climb-tag--base" x={W / 2} y={H - 8} textAnchor="middle">
+          {belowCount > 0 ? `WHERE YOU BEGAN · ${belowCount} more behind you` : "WHERE YOU BEGAN"}
         </text>
 
-        {/* ---- next marker pulses: near-completion is the strongest pull ---- */}
+        {/* ---- the next marker pings: near-completion pulls hardest ---- */}
         {nextStop && nextStop.state === "climbed" && (
-          <circle className="climb-next-ping" cx={nextStop.x} cy={nextStop.y} r="18" />
+          <circle className="climb-next-ping" cx={nextStop.x} cy={nextStop.y} r="16" />
         )}
 
         {/* ---- the climber, last so nothing covers you ---- */}
         <g className="climb-you">
-          <circle cx={you.x} cy={you.y} r="42" fill="url(#clYouGlow)" />
-          <circle className="climb-ping" cx={you.x} cy={you.y} r="16" />
-          <circle className="climb-ping climb-ping--b" cx={you.x} cy={you.y} r="16" />
-          <circle className="climb-you-core" cx={you.x} cy={you.y} r="11" fill="url(#clYou)" />
-          <text className="climb-youtag" x={you.x} y={you.y - 26} textAnchor="middle">YOU ARE HERE</text>
+          <circle cx={you.x} cy={you.y} r="38" fill="url(#clYouGlow)" />
+          <circle className="climb-ping" cx={you.x} cy={you.y} r="15" />
+          <circle className="climb-ping climb-ping--b" cx={you.x} cy={you.y} r="15" />
+          <circle className="climb-you-core" cx={you.x} cy={you.y} r="10" fill="url(#clYou)" />
+          <text className="climb-youtag" x={you.x} y={you.y - 24} textAnchor="middle">YOU&apos;RE HERE</text>
         </g>
       </svg>
 
       <div className="climb-foot">
         <p className="climb-next">
           {nextStop
-            ? <>Next: <strong>{nextStop.family}</strong>{nextStop.state === "fog"
-                ? " — locked in the fog" : ` — ${nextStop.total - nextStop.seen} to go`}</>
-            : <>Everything in range is mapped.</>}
+            ? <>Up next: <strong>{familyLabel(nextStop.family)}</strong>{nextStop.state === "fog"
+                ? " — nothing rated here yet" : ` — ${nextStop.total - nextStop.seen} left to try`}</>
+            : <>You&apos;ve rated something in every area.</>}
         </p>
         <p className="climb-legend">
           <span className="climb-legend-you" /> you
           <span className="climb-legend-sep" />
-          <span className="climb-legend-done" /> climbed
+          <span className="climb-legend-done" /> rated
           <span className="climb-legend-sep" />
-          <span className="climb-legend-fog" /> hidden
+          <span className="climb-legend-fog" /> not yet
           <span className="climb-legend-sep" />
-          <strong>{discovered}</strong> of {totalCards}
+          <strong>{discovered}</strong> of {totalCards.toLocaleString()}
         </p>
       </div>
     </div>

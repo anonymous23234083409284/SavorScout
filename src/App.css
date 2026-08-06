@@ -3011,27 +3011,26 @@ body {
 /* ===========================================================================
    THE CLIMB — daylight ascent
 
-   A deliberately LIGHT panel inside a dark product. Two reasons, both load
-   bearing:
+   A deliberately LIGHT panel inside a dark product, for two load-bearing
+   reasons. Fog only works if it is bright: on a dark canvas "shrouded" and
+   "empty" render identically, so the one object meant to nag was the hardest
+   to see. And the map is the star — being the single bright surface makes it
+   read as a window rather than as another card.
 
-   1. Fog only works if it is bright. On a dark canvas "shrouded" and "empty"
-      render identically, so the single most important object on the map — the
-      part that is meant to nag — was the part hardest to see. White mist on a
-      luminous sky is the most visible thing here, which is correct.
+   Markers carry CARDS rather than floating text. Floating labels left the
+   canvas mostly air and said very little per pixel; a card has visual mass,
+   occupies the width the switchback trail leaves empty, and shows how far
+   into each area you are instead of merely naming it.
 
-   2. The map is the star. Making it the one bright surface in the app means
-      it reads as a window rather than as another card.
-
-   Exactly two gradients carry everything, per the brief:
+   Exactly two gradients, per the brief:
      INDIGO -> CYAN    the climber. You. Nothing else may use it.
-     MAGENTA -> EMBER  the trail and earned markers. The world you crossed.
-   No third hue, no flat neon. Every other tone is atmosphere: desaturated
-   indigo ridges and near-black type.
+     MAGENTA -> EMBER  the trail, the earned markers, the progress bars.
+   Everything else is desaturated atmosphere: indigo ridges, near-black type.
 
-   Motion is the dopamine layer, and is specified rather than decorative:
-   breathing climber (98%-102%), rings pulsing outward off it, a spark running
-   the earned trail, a ping on the next marker because near-completion pulls
-   hardest, and drifting mist so hidden regions keep re-catching the eye.
+   Motion is the dopamine layer and is specified, not decorative: breathing
+   climber (98%-102%), rings pulsing outward, a spark running the earned
+   trail, a ping on the next marker because near-completion pulls hardest,
+   and drifting mist so hidden areas keep re-catching the eye.
    =========================================================================== */
 
 .climb {
@@ -3069,33 +3068,44 @@ body {
   font-size: 10.5px;
   color: #616a90;
 }
-.climb-elev { display: flex; align-items: baseline; gap: 3px; flex-shrink: 0; }
-.climb-elev-n {
+
+/* The hero number is the real count of foods rated. An invented "elevation"
+   in metres was a number nobody could act on or sanity-check. */
+.climb-score { text-align: right; flex-shrink: 0; }
+.climb-score-n {
+  display: block;
   font-family: 'IBM Plex Mono', monospace;
   font-variant-numeric: tabular-nums;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 600;
+  line-height: 1;
   background: linear-gradient(120deg, #ff2e88, #ff7a2f);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.climb-elev-u { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #616a90; }
+.climb-score-k {
+  display: block;
+  margin-top: 3px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: #616a90;
+}
 
 /* ---- canvas: the whole mountain, no scrolling ----
-   Capped in WIDTH rather than height. The canvas is portrait (380:560), so a
-   full-bleed 730px card rendered it 1076px tall — taller than the viewport,
-   which defeats the entire point of fitting on one screen. Constraining width
-   and centring keeps the true aspect with no letterboxing. */
+   Capped in WIDTH, not height. The canvas is portrait, so a full-bleed card
+   rendered it taller than the viewport, defeating the point of one screen. */
 .climb-svg {
   display: block;
   width: 100%;
-  max-width: 366px;
+  max-width: 372px;
   height: auto;
   margin: 0 auto;
 }
 
-.climb-ridge { pointer-events: none; }
+.climb-ridge, .climb-tree { pointer-events: none; }
+.climb-tree { fill: #8496c6; opacity: 0.45; }
 .climb-peak { fill: #8e9ccb; opacity: 0.55; }
 .climb-peak-cap { fill: #ffffff; opacity: 0.9; }
 
@@ -3111,9 +3121,9 @@ body {
 .climb-earned {
   fill: none;
   stroke: url(#clPath);
-  stroke-width: 3.4;
+  stroke-width: 3.2;
   stroke-linecap: round;
-  filter: drop-shadow(0 2px 5px rgba(255, 46, 136, 0.32));
+  filter: drop-shadow(0 2px 5px rgba(255, 46, 136, 0.3));
 }
 .climb-spark {
   fill: #fff3e2;
@@ -3122,26 +3132,42 @@ body {
   filter: drop-shadow(0 0 6px rgba(255, 95, 31, 0.85));
 }
 
-/* ---- earned markers ---- */
-.climb-node { filter: drop-shadow(0 3px 7px rgba(255, 46, 136, 0.42)); }
-.climb-node-ring { fill: none; stroke: #ff5f1f; stroke-width: 1.3; opacity: 0.42; }
-.climb-node-glow { pointer-events: none; }
+/* ---- cards ---- */
+.climb-tick { stroke: #b3bfdf; stroke-width: 1.2; }
+.climb-tick--locked { stroke: #c3b6e4; stroke-dasharray: 3 3; }
 
-.climb-name {
+.climb-card {
+  fill: #ffffff;
+  stroke: rgba(120, 134, 190, 0.32);
+  stroke-width: 1;
+  filter: drop-shadow(0 3px 8px rgba(43, 54, 100, 0.14));
+}
+.climb-card--locked { fill: #fdfcff; stroke: rgba(124, 80, 201, 0.34); stroke-dasharray: 5 4; }
+
+.climb-card-name {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   fill: #1c2036;
 }
-.climb-sub {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  fill: #616a90;
-}
-.climb-name--locked { fill: #3b4468; }
-.climb-sub--locked { fill: #7c50c9; font-weight: 500; }
+.climb-card-name--locked { fill: #4a4270; }
 
-/* a marker won just now lands rather than appears */
+.climb-card-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  fill: #6b7499;
+}
+.climb-card-n--locked { fill: #7c50c9; }
+
+.climb-bar-bg { fill: #e4e9f6; }
+.climb-bar { fill: url(#clBar); }
+.climb-bar-locked { fill: #ece7f8; }
+
+/* ---- earned markers ---- */
+.climb-node { filter: drop-shadow(0 3px 7px rgba(255, 46, 136, 0.42)); }
+.climb-node-ring { fill: none; stroke: #ff5f1f; stroke-width: 1.3; opacity: 0.4; }
+.climb-node-glow { pointer-events: none; }
+
 @keyframes clLand {
   0%   { transform: scale(0.25); opacity: 0; }
   55%  { transform: scale(1.75); opacity: 1; }
@@ -3168,35 +3194,30 @@ body {
   animation-iteration-count: infinite;
 }
 
-/* Locked regions sit ON the mist and stay fully legible. The point of fog of
-   war is that you can see there IS something, but not what. */
-@keyframes clLockPulse {
-  0%, 100% { opacity: 0.75; }
-  50%      { opacity: 1; }
-}
+@keyframes clLockPulse { 0%, 100% { opacity: 0.78; } 50% { opacity: 1; } }
 .climb-locked { animation: clLockPulse 4.5s ease-in-out infinite; }
-.climb-locked-halo { fill: #ffffff; opacity: 0.92; }
+.climb-locked-halo { fill: #ffffff; opacity: 0.94; }
 .climb-locked-ring {
   fill: #f4f2ff;
   stroke: #7c50c9;
   stroke-width: 1.6;
   stroke-dasharray: 4 4;
 }
-.climb-q {
+.climb-lock {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   fill: #7c50c9;
 }
 
-/* ---- signposts, so nothing needs a legend ---- */
+/* ---- signposts ---- */
 .climb-tag {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   font-weight: 600;
 }
-.climb-tag--fog { fill: #6a5aa8; opacity: 0.8; }
+.climb-tag--fog { fill: #6a5aa8; opacity: 0.82; }
 .climb-tag--base { fill: #6f79a0; opacity: 0.85; }
 .climb-tag-sub {
   font-family: 'IBM Plex Mono', monospace;
@@ -3205,10 +3226,9 @@ body {
   opacity: 0.9;
 }
 
-/* ---- the next marker pings ---- */
 @keyframes clNextPing {
-  0%   { r: 15; opacity: 0.55; }
-  100% { r: 30; opacity: 0; }
+  0%   { r: 14; opacity: 0.55; }
+  100% { r: 28; opacity: 0; }
 }
 .climb-next-ping {
   fill: none;
@@ -3220,8 +3240,8 @@ body {
 /* ---- the climber ---- */
 @keyframes clBreathe { 0%, 100% { transform: scale(0.98); } 50% { transform: scale(1.02); } }
 @keyframes clPing {
-  0%   { r: 13; opacity: 0.5; }
-  100% { r: 40; opacity: 0; }
+  0%   { r: 12; opacity: 0.5; }
+  100% { r: 37; opacity: 0; }
 }
 .climb-you { pointer-events: none; }
 .climb-you-core {
@@ -3240,7 +3260,7 @@ body {
 .climb-youtag {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9.5px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   font-weight: 600;
   fill: #4338ca;
 }
@@ -3280,9 +3300,9 @@ body {
 .climb-legend-sep { width: 3px; height: 3px; border-radius: 50%; background: #b3bcd8; }
 
 @media (max-width: 560px) {
-  .climb-name { font-size: 15px; }
-  .climb-sub, .climb-q { font-size: 12.5px; }
-  .climb-tag, .climb-youtag { font-size: 11px; }
+  .climb-card-name { font-size: 13.5px; }
+  .climb-card-n, .climb-lock { font-size: 12px; }
+  .climb-tag, .climb-youtag, .climb-tag-sub { font-size: 11.5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

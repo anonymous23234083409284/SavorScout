@@ -3,6 +3,7 @@ import "./App.css";
 import { supabase } from "./supabaseClient";
 import { renderShareCard, canvasToBlob } from "./shareCard";
 import TasteMap from "./TasteMap";
+import { familyLabel } from "./labels";
 
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
@@ -438,7 +439,7 @@ function Collection({ collection }) {
     <section className="card">
       <div className="card-head">
         <h2 className="card-title">Closest to complete</h2>
-        <span className="card-sub">{collection.family} · {collection.seen} of {collection.total}</span>
+        <span className="card-sub">{familyLabel(collection.family)} · {collection.seen} of {collection.total}</span>
       </div>
       <div className="coll">
         {collection.found.map((c) => (
@@ -1946,7 +1947,7 @@ function App() {
                 </p>
                 <div className="fading-list">
                   {tasteMap.fading.map((f) => (
-                    <span className="fading-chip" key={f.family}>{f.family}</span>
+                    <span className="fading-chip" key={f.family}>{familyLabel(f.family)}</span>
                   ))}
                 </div>
               </section>

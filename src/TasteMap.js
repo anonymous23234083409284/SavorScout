@@ -89,12 +89,13 @@ function layout(regions) {
     const hx = C + Math.cos(angle) * HUB_R;
     const hy = C + Math.sin(angle) * HUB_R;
 
-    // Members fan out around their hub, biased outward so the web reads as
-    // growing away from the centre rather than crowding it.
+    // Members ring their own hub rather than fanning outward from it. Fanning
+    // scattered them up to 243px from centre, which smeared clusters into each
+    // other and put nine labels underneath stray dots. A closed ring keeps a
+    // family readable as one object and leaves clean space for its label.
     const members = region.nodes.slice(0, 9).map((n, j, arr) => {
-      const spread = 1.5;
-      const a = angle + ((j - (arr.length - 1) / 2) / Math.max(1, arr.length)) * spread;
-      const dist = 42 + hashUnit(n.id) * 34;
+      const a = (j / arr.length) * Math.PI * 2 + hashUnit(region.family) * Math.PI;
+      const dist = MEMBER_MIN + hashUnit(n.id) * (MEMBER_MAX - MEMBER_MIN);
       return {
         ...n,
         x: hx + Math.cos(a) * dist,
@@ -103,20 +104,28 @@ function layout(regions) {
       };
     });
 
+    // Radially outward, clear of the member ring.
+    const lx = hx + Math.cos(angle) * LABEL_OUT;
+    const ly = hy + Math.sin(angle) * LABEL_OUT;
+
     return {
       family: region.family,
       seen: region.seen,
       total: region.total,
       explored: region.explored,
       hidden: Math.max(0, region.total - region.seen),
-      angle, hx, hy, members,
+      angle, hx, hy, members, lx, ly,
       labelAnchor: Math.cos(angle) > 0.3 ? "start" : Math.cos(angle) < -0.3 ? "end" : "middle",
     };
   });
 
-  const lockStep = (Math.PI * 2) / Math.max(1, locked.length);
+  // Fog goes in the GAPS between hubs, never on the same spoke. Sharing an
+  // angle put "Drinks — 55 hidden" straight through the "Handheld" label,
+  // because both labels run outward along the same line.
   const fog = locked.map((region, i) => {
-    const angle = i * lockStep - Math.PI / 2 + 0.42;
+    const angle = clusters.length
+      ? (Math.floor((i * clusters.length) / Math.max(1, locked.length)) * step) - Math.PI / 2 + step / 2
+      : (i / Math.max(1, locked.length)) * Math.PI * 2 - Math.PI / 2;
     return {
       family: region.family,
       total: region.total,
@@ -231,12 +240,10 @@ export default function TasteMap({ regions, discovered = 0, totalCards = 1446, r
             {cl.hidden > 0 && (
               <circle className="tm-hub-lock" cx={cl.hx} cy={cl.hy} r={12} />
             )}
-            <text className="tm-hub-label" x={cl.hx + (cl.labelAnchor === "end" ? -16 : cl.labelAnchor === "start" ? 16 : 0)}
-                  y={cl.hy - 16} textAnchor={cl.labelAnchor}>
+            <text className="tm-hub-label" x={cl.lx} y={cl.ly} textAnchor={cl.labelAnchor}>
               {cl.family}
             </text>
-            <text className="tm-hub-count" x={cl.hx + (cl.labelAnchor === "end" ? -16 : cl.labelAnchor === "start" ? 16 : 0)}
-                  y={cl.hy - 2} textAnchor={cl.labelAnchor}>
+            <text className="tm-hub-count" x={cl.lx} y={cl.ly + 15} textAnchor={cl.labelAnchor}>
               {cl.seen}/{cl.total}
             </text>
           </g>

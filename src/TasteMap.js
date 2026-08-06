@@ -1,265 +1,310 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 
 /* ===========================================================================
-   THE TASTE MAP — a living identity network, not geography
+   THE CLIMB — the star of the app
 
-   Design brief, and the reasoning behind each part.
+   A vertical ascent, not a constellation. The change is not cosmetic; it is
+   the difference between a picture that needs decoding and one that needs
+   none.
 
-   FOG OF WAR.
-   Unexplored families are not omitted, they are SHROUDED — named, counted,
-   and visibly locked. That distinction is the whole mechanic. An absent
-   thing creates no tension; a named thing you cannot see inside creates a
-   great deal of it. This is the Zeigarnik effect pointed at the self: people
-   tolerate an unfinished task poorly, and an unfinished picture OF THEMSELVES
-   worst of all. "Raw & Cold — 13 hidden" is a far stronger reason to come
-   back tomorrow than any progress bar, because the missing information is
-   about them.
+   WHY VERTICAL BEATS RADIAL HERE
 
-   Crucially the labels are honest. The fog hides real families from the real
-   deck with real counts. Inventing a mysterious cluster to bait curiosity
-   would work exactly once, and would poison the one thing this product sells.
+   A node web asks two questions before it says anything: what does a line
+   mean, and where am I supposed to look? A trail going up answers both before
+   you have finished looking at it. Up is progress. Fog is unknown. The
+   pulsing dot is you. Nobody has ever needed that explained.
 
-   CONSTELLATION GROWTH.
-   Nodes attach to family hubs, hubs attach to the core, and the core is the
-   user. Every answer adds a vertex and an edge, so density IS progression:
-   a day-one map is three lonely dots, a month-in map is an illuminated web.
-   That accumulated structure is what makes leaving expensive — not because a
-   streak counter punishes you, but because you can SEE what you built. The
-   IKEA effect: we value what we assemble ourselves far beyond its objective
-   worth.
+   It also recruits something a constellation cannot: GRAVITY. Height is a
+   possession. Stopping does not merely pause a counter, it abandons a climb —
+   and losses loom about twice as large as equivalent gains (Kahneman &
+   Tversky, 1979). This is the same reason a Duolingo path outperforms a bare
+   streak number: the progress is spatial, so quitting has a direction.
 
-   LIVING MOTION.
-   The core breathes (98%–102%), signal particles run the hub edges, and a
-   freshly-won node sparks and draws its edge in rather than appearing. Motion
-   is what separates "a chart of my data" from "a readout of me". It is also
-   strictly ornamental to comprehension — every value here is legible with
-   animation disabled, which is what makes honouring prefers-reduced-motion
-   costless.
+   FOG OF WAR carries the curiosity load. Unclimbed ground is not omitted, it
+   is shrouded, named, and counted — "Raw & Cold, 13 hidden". An absent thing
+   creates no tension; a named thing you cannot see inside creates a lot, and
+   pointed at the self it creates the most. The labels stay honest: real
+   families, real counts. Inventing a mysterious zone would work exactly once.
 
-   HUE follows the house rule without exception: the core is COOL because the
-   core is you; everything orbiting is WARM because it is the world. Affinity
-   is encoded as warmth and brightness, confidence as size, and recency as
-   opacity — three independent channels, no legend required.
+   DENSITY IS THE RECEIPT. A day-one climber sits at base camp with one lit
+   marker. A month-in climber has a trail of them running off the bottom of
+   the screen. That accumulated distance is what makes leaving expensive — not
+   a punishment, but the IKEA effect: we overvalue what we assembled.
+
+   COLOUR follows the house rule exactly. The climber is COOL because the
+   climber is you. The trail, the markers, the terrain are WARM because they
+   are the world you moved through. Fog is a desaturated violet-black so it
+   reads as absence of information rather than as another material.
    =========================================================================== */
 
-const SIZE = 720;
-const C = SIZE / 2;
-const HUB_R = 162;        // ring the explored family hubs sit on
-const MEMBER_MIN = 26;    // members ring their own hub, tightly, so each
-const MEMBER_MAX = 46;    // cluster reads as one object rather than a smear
-const LABEL_OUT = 66;     // label sits beyond the member ring, radially out
-const LOCK_R = 288;       // ring the fogged clusters sit on
-const MAX_CLUSTERS = 8;   // beyond this the web turns to soup
-const MAX_LOCKED = 7;
+const W = 360;                 // viewBox width; height is derived from stops
+const STEP = 118;              // vertical distance between markers
+const BOTTOM_PAD = 90;
+const TOP_PAD = 150;
+const SWAY = 74;               // how far the trail wanders off centre
+
+/* Named bands of the ascent. Thresholds are counts of cards actually mapped,
+   so the label is a description rather than a flourish. */
+const ZONES = [
+  { at: 0,   name: "Base camp",     note: "You've barely started." },
+  { at: 12,  name: "The treeline",  note: "Shapes are appearing." },
+  { at: 40,  name: "The ridge",     note: "Your outline is holding." },
+  { at: 90,  name: "The fog line",  note: "This is where it gets interesting." },
+  { at: 180, name: "High ground",   note: "Few people get here." },
+  { at: 320, name: "The summit",    note: "Almost nothing left hidden." },
+];
+
+export function zoneFor(discovered) {
+  let z = ZONES[0];
+  for (const cand of ZONES) if (discovered >= cand.at) z = cand;
+  return z;
+}
+
+/* Elevation is a presentation of real progress, not an invented number:
+   forty metres per card actually mapped. */
+export const metresFor = (discovered) => Math.round((discovered || 0) * 40);
 
 function hashUnit(str) {
   let h = 2166136261;
-  for (let i = 0; i < str.length; i += 1) {
-    h ^= str.charCodeAt(i);
+  for (let i = 0; i < String(str).length; i += 1) {
+    h ^= String(str).charCodeAt(i);
     h = Math.imul(h, 16777619);
   }
   return ((h >>> 0) % 100000) / 100000;
 }
 
-function tone(affinity) {
-  if (affinity == null) return "unknown";
-  if (affinity >= 0.7) return "love";
-  if (affinity >= 0.5) return "warm";
-  if (affinity >= 0.3) return "cool";
-  return "cold";
-}
-
-/* Deterministic layout. A map that reshuffles between visits is a screensaver,
-   not a map — and nothing that rearranges itself can ever feel like yours. */
-function layout(regions) {
-  const explored = (regions || [])
-    .filter((r) => r.seen > 0 && r.nodes?.length)
-    .sort((a, b) => b.seen - a.seen)
-    .slice(0, MAX_CLUSTERS);
-
-  const locked = (regions || [])
+/* Markers run bottom-to-top: climbed ground below, the live one at the
+   climber, fogged ground above. */
+function buildTrail(regions) {
+  const all = regions || [];
+  const climbed = all
+    .filter((r) => r.seen > 0)
+    .sort((a, b) => a.seen - b.seen);          // least explored nearest the top
+  const locked = all
     .filter((r) => r.seen === 0 && r.total > 0)
     .sort((a, b) => b.total - a.total)
-    .slice(0, MAX_LOCKED);
+    .slice(0, 5);
 
-  const step = (Math.PI * 2) / Math.max(1, explored.length);
+  const stops = [
+    ...climbed.map((r) => ({ ...r, state: "climbed" })),
+    ...locked.map((r) => ({ ...r, state: "fogged" })),
+  ];
 
-  const clusters = explored.map((region, i) => {
-    const angle = i * step - Math.PI / 2 + (hashUnit(region.family) - 0.5) * 0.18;
-    const hx = C + Math.cos(angle) * HUB_R;
-    const hy = C + Math.sin(angle) * HUB_R;
+  const height = BOTTOM_PAD + TOP_PAD + Math.max(1, stops.length - 1) * STEP;
 
-    // Members ring their own hub rather than fanning outward from it. Fanning
-    // scattered them up to 243px from centre, which smeared clusters into each
-    // other and put nine labels underneath stray dots. A closed ring keeps a
-    // family readable as one object and leaves clean space for its label.
-    const members = region.nodes.slice(0, 9).map((n, j, arr) => {
-      const a = (j / arr.length) * Math.PI * 2 + hashUnit(region.family) * Math.PI;
-      const dist = MEMBER_MIN + hashUnit(n.id) * (MEMBER_MAX - MEMBER_MIN);
-      return {
-        ...n,
-        x: hx + Math.cos(a) * dist,
-        y: hy + Math.sin(a) * dist,
-        r: 3 + (n.confidence || 0) * 4,
-      };
-    });
-
-    // Radially outward, clear of the member ring.
-    const lx = hx + Math.cos(angle) * LABEL_OUT;
-    const ly = hy + Math.sin(angle) * LABEL_OUT;
-
-    return {
-      family: region.family,
-      seen: region.seen,
-      total: region.total,
-      explored: region.explored,
-      hidden: Math.max(0, region.total - region.seen),
-      angle, hx, hy, members, lx, ly,
-      labelAnchor: Math.cos(angle) > 0.3 ? "start" : Math.cos(angle) < -0.3 ? "end" : "middle",
-    };
+  const placed = stops.map((s, i) => {
+    const y = height - BOTTOM_PAD - i * STEP;
+    // A steady serpentine, nudged per-family so it never looks machined.
+    const x = W / 2 + Math.sin(i * 0.85) * SWAY * (0.72 + hashUnit(s.family) * 0.4);
+    return { ...s, x, y, i };
   });
 
-  // Fog goes in the GAPS between hubs, never on the same spoke. Sharing an
-  // angle put "Drinks — 55 hidden" straight through the "Handheld" label,
-  // because both labels run outward along the same line.
-  const fog = locked.map((region, i) => {
-    const angle = clusters.length
-      ? (Math.floor((i * clusters.length) / Math.max(1, locked.length)) * step) - Math.PI / 2 + step / 2
-      : (i / Math.max(1, locked.length)) * Math.PI * 2 - Math.PI / 2;
-    return {
-      family: region.family,
-      total: region.total,
-      x: C + Math.cos(angle) * LOCK_R,
-      y: C + Math.sin(angle) * LOCK_R,
-      anchor: Math.cos(angle) > 0.3 ? "start" : Math.cos(angle) < -0.3 ? "end" : "middle",
-      delay: (i * 0.7).toFixed(2),
-    };
-  });
+  // The climber stands on the last climbed marker.
+  const climbedCount = climbed.length;
+  const you = placed[Math.max(0, climbedCount - 1)] || { x: W / 2, y: height - BOTTOM_PAD };
+  const fogTop = placed[climbedCount] ? placed[climbedCount].y + STEP * 0.55 : you.y - 40;
 
-  return { clusters, fog };
+  return { placed, height, you, fogTop, climbedCount };
+}
+
+/* Smooth serpentine through the markers. Straight segments read as a chart;
+   a curve reads as terrain. */
+function trailPath(placed, height) {
+  if (placed.length === 0) return "";
+  let d = `M ${W / 2} ${height - 20} L ${placed[0].x} ${placed[0].y}`;
+  for (let i = 1; i < placed.length; i += 1) {
+    const a = placed[i - 1];
+    const b = placed[i];
+    const my = (a.y + b.y) / 2;
+    d += ` C ${a.x} ${my}, ${b.x} ${my}, ${b.x} ${b.y}`;
+  }
+  return d;
 }
 
 export default function TasteMap({ regions, discovered = 0, totalCards = 1446, recentIds = [] }) {
-  const { clusters, fog } = useMemo(() => layout(regions), [regions]);
+  const scroller = useRef(null);
+  const { placed, height, you, fogTop, climbedCount } = useMemo(() => buildTrail(regions), [regions]);
   const recent = useMemo(() => new Set(recentIds || []), [recentIds]);
+  const zone = zoneFor(discovered);
 
-  if (clusters.length === 0) {
+  /* Open on the climber, the way a map app opens on your position. Seeing the
+     ground you already covered running off the bottom of the screen is the
+     whole reward. */
+  /* The SVG scales to the container width, so its laid-out height is not known
+     on the first commit. A fixed retry window guessed wrong — the height
+     settled after the retries had expired and the view stayed pinned to the
+     top, which is the one place the climber never is. Observing the element
+     removes the guess: reposition whenever it actually gets a height, then
+     stop watching.
+
+     Note the assignment is direct. scrollTo({behavior:"smooth"}) is silently a
+     no-op in some engines, and a CSS scroll-behavior of smooth on the
+     container swallows the assignment the same way. Opening straight at your
+     position is the right behaviour regardless — map apps do not animate to
+     your location, they start there. */
+  useEffect(() => {
+    const box = scroller.current;
+    if (!box) return undefined;
+
+    let done = false;
+    const place = () => {
+      if (done || !scroller.current) return;
+      const el = scroller.current;
+      if (el.scrollHeight <= el.clientHeight + 4) return;
+      el.scrollTop = Math.max(0, (you.y / height) * el.scrollHeight - el.clientHeight * 0.58);
+      done = true;
+      observer?.disconnect();
+    };
+
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(place) : null;
+    observer?.observe(box);
+    place();
+    const t = setTimeout(place, 400); // belt and braces where RO is unavailable
+
+    return () => { clearTimeout(t); observer?.disconnect(); };
+  }, [you.y, height, climbedCount]);
+
+  if (placed.length === 0) {
     return (
-      <div className="tm-empty">
-        <div className="tm-empty-core"><span className="tm-empty-dot" /></div>
-        <p className="tm-empty-t">Nothing mapped yet.</p>
-        <p className="tm-empty-s">Every call you answer lights a node and pulls back the fog.</p>
+      <div className="climb climb--empty">
+        <span className="climb-you-dot" />
+        <p className="climb-empty-t">Base camp.</p>
+        <p className="climb-empty-s">Answer today's call and the trail starts.</p>
       </div>
     );
   }
 
-  const pct = totalCards ? Math.round((discovered / totalCards) * 100) : 0;
+  const nextStop = placed[climbedCount];
 
   return (
-    <div className="tm">
-      <svg className="tm-svg" viewBox={`0 0 ${SIZE} ${SIZE}`} role="img"
-           aria-label={`Taste map: ${discovered} of ${totalCards} discovered across ${clusters.length} regions, ${fog.length} still fogged`}>
-        <defs>
-          <radialGradient id="tmCore">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="40%" stopColor="#7ef5df" />
-            <stop offset="100%" stopColor="#2ee6d6" stopOpacity="0" />
-          </radialGradient>
-          <radialGradient id="tmHaze">
-            <stop offset="0%" stopColor="#2ee6d6" stopOpacity="0.09" />
-            <stop offset="65%" stopColor="#8b5cf6" stopOpacity="0.05" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
-          </radialGradient>
-          {/* The fog itself — dense at the rim, thinning toward explored space */}
-          <radialGradient id="tmFog">
-            <stop offset="0%" stopColor="#0d0b14" stopOpacity="0.92" />
-            <stop offset="60%" stopColor="#0d0b14" stopOpacity="0.66" />
-            <stop offset="100%" stopColor="#0d0b14" stopOpacity="0" />
-          </radialGradient>
-        </defs>
+    <div className="climb">
+      <div className="climb-hud">
+        <div>
+          <span className="climb-zone">{zone.name}</span>
+          <span className="climb-note">{zone.note}</span>
+        </div>
+        <div className="climb-elev">
+          <span className="climb-elev-n">{metresFor(discovered).toLocaleString()}</span>
+          <span className="climb-elev-u">m</span>
+        </div>
+      </div>
 
-        <circle cx={C} cy={C} r={LOCK_R + 14} fill="url(#tmHaze)" />
+      <div className="climb-scroll" ref={scroller}>
+        <svg className="climb-svg" viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="xMidYMin meet"
+             role="img" aria-label={`Climb: ${discovered} of ${totalCards} mapped, at ${zone.name}, ${placed.length - climbedCount} regions still in fog`}>
+          <defs>
+            <linearGradient id="clSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#140f1e" />
+              <stop offset="55%" stopColor="#0f0b16" />
+              <stop offset="100%" stopColor="#0a0810" />
+            </linearGradient>
+            <linearGradient id="clFog" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="#0d0b14" stopOpacity="0" />
+              <stop offset="26%" stopColor="#0d0b14" stopOpacity="0.72" />
+              <stop offset="60%" stopColor="#0d0b14" stopOpacity="0.93" />
+              <stop offset="100%" stopColor="#0d0b14" stopOpacity="0.985" />
+            </linearGradient>
+            <radialGradient id="clGlow">
+              <stop offset="0%" stopColor="#7ef5df" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#2ee6d6" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="clWarm">
+              <stop offset="0%" stopColor="#ff8a3d" stopOpacity="0.30" />
+              <stop offset="100%" stopColor="#ff5f1f" stopOpacity="0" />
+            </radialGradient>
+          </defs>
 
-        {/* ---- fogged clusters: named, counted, and out of reach ---- */}
-        {fog.map((f) => (
-          <g className="tm-fog" key={f.family} style={{ animationDelay: `${f.delay}s` }}>
-            <circle className="tm-fog-blob" cx={f.x} cy={f.y} r={46} fill="url(#tmFog)" />
-            <circle className="tm-fog-ring" cx={f.x} cy={f.y} r={26} />
-            {/* unresolved outline nodes beneath the mist */}
-            {[0, 1, 2].map((k) => {
-              const a = (k / 3) * Math.PI * 2 + hashUnit(f.family) * 3;
-              return (
-                <circle key={k} className="tm-ghost"
-                        cx={f.x + Math.cos(a) * 13} cy={f.y + Math.sin(a) * 13} r={2.4} />
-              );
-            })}
-            <text className="tm-fog-label" x={f.x} y={f.y + 44} textAnchor="middle">
-              {f.family}
-            </text>
-            <text className="tm-fog-count" x={f.x} y={f.y + 60} textAnchor="middle">
-              {f.total} hidden
-            </text>
-          </g>
-        ))}
+          <rect x="0" y="0" width={W} height={height} fill="url(#clSky)" />
 
-        {/* ---- trunk edges: core to each family hub, with running signal ---- */}
-        {clusters.map((cl) => {
-          const id = `tmp-${cl.family.replace(/\W/g, "")}`;
-          return (
-            <g key={`edge-${cl.family}`}>
-              <path id={id} className="tm-trunk" d={`M ${C} ${C} L ${cl.hx} ${cl.hy}`} />
-              <circle className="tm-signal" r="2.6">
-                <animateMotion dur={`${3.2 + hashUnit(cl.family) * 2.4}s`} repeatCount="indefinite">
-                  <mpath href={`#${id}`} />
+          {/* ---- terrain: three silhouette layers, far to near ---- */}
+          {[
+            { op: 0.16, amp: 46, freq: 0.9, off: 0, fill: "#211a2e" },
+            { op: 0.26, amp: 66, freq: 0.62, off: 40, fill: "#1a1426" },
+            { op: 0.4,  amp: 92, freq: 0.44, off: 96, fill: "#141020" },
+          ].map((layer, li) => {
+            const pts = [];
+            const rows = Math.ceil(height / 60) + 2;
+            for (let i = 0; i <= rows; i += 1) {
+              const y = height - i * 60;
+              const x = (li % 2 ? 1 : -1) * Math.sin(i * layer.freq + li) * layer.amp
+                + (li === 0 ? W * 0.28 : li === 1 ? W * 0.74 : W * 0.14) + layer.off * 0.2;
+              pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+            }
+            const edge = li === 1 ? W + 60 : -60;
+            return (
+              <polygon key={li} className="climb-ridge"
+                       points={`${edge},${height} ${pts.join(" ")} ${edge},0`}
+                       fill={layer.fill} opacity={layer.op} />
+            );
+          })}
+
+          {/* ---- the trail ---- */}
+          <path className="climb-trail" d={trailPath(placed, height)} />
+          <path className="climb-trail-lit" d={trailPath(placed.slice(0, climbedCount), height)} />
+
+          {/* a signal running the climbed section, so the path reads as live */}
+          {climbedCount > 1 && (
+            <>
+              <path id="clLit" d={trailPath(placed.slice(0, climbedCount), height)} fill="none" />
+              <circle className="climb-spark" r="3">
+                <animateMotion dur="6s" repeatCount="indefinite">
+                  <mpath href="#clLit" />
                 </animateMotion>
               </circle>
-            </g>
-          );
-        })}
+            </>
+          )}
 
-        {/* ---- branches + member nodes ---- */}
-        {clusters.map((cl) => (
-          <g key={`cl-${cl.family}`}>
-            {cl.members.map((m) => (
-              <line key={`b-${m.id}`} className={`tm-branch${recent.has(m.id) ? " tm-branch--new" : ""}`}
-                    x1={cl.hx} y1={cl.hy} x2={m.x} y2={m.y}
-                    style={{ opacity: 0.10 + (1 - (m.staleness || 0)) * 0.22 }} />
-            ))}
-
-            {cl.members.map((m) => (
-              <g key={m.id}
-                 className={`tm-node tm-node--${tone(m.affinity)}${recent.has(m.id) ? " tm-node--new" : ""}`}
-                 style={{ opacity: 0.34 + (1 - (m.staleness || 0)) * 0.66 }}>
-                <title>{`${m.name} — ${Math.round((m.affinity ?? 0) * 100)}% affinity`}</title>
-                {m.rarity >= 3 && <circle className="tm-rare" cx={m.x} cy={m.y} r={m.r + 4} />}
-                <circle className="tm-dot" cx={m.x} cy={m.y} r={m.r} />
+          {/* ---- markers ---- */}
+          {placed.map((s) => {
+            const isNext = s.i === climbedCount;
+            const isNew = s.nodes?.some((n) => recent.has(n.id));
+            if (s.state === "fogged") {
+              return (
+                <g className="climb-stop climb-stop--fog" key={s.family}
+                   style={{ animationDelay: `${(s.i % 4) * 0.8}s` }}>
+                  <circle className="climb-ring-fog" cx={s.x} cy={s.y} r="17" />
+                  <text className="climb-q" x={s.x} y={s.y + 5} textAnchor="middle">?</text>
+                  <text className="climb-name climb-name--fog" x={s.x} y={s.y + 36} textAnchor="middle">{s.family}</text>
+                  <text className="climb-sub climb-sub--fog" x={s.x} y={s.y + 52} textAnchor="middle">{s.total} hidden</text>
+                </g>
+              );
+            }
+            return (
+              <g className={`climb-stop${isNext ? " climb-stop--next" : ""}${isNew ? " climb-stop--new" : ""}`} key={s.family}>
+                <circle className="climb-halo" cx={s.x} cy={s.y} r="30" fill="url(#clWarm)" />
+                <circle className="climb-ring" cx={s.x} cy={s.y} r="15" />
+                <circle className="climb-core" cx={s.x} cy={s.y} r="6" />
+                <text className="climb-name" x={s.x} y={s.y + 34} textAnchor="middle">{s.family}</text>
+                <text className="climb-sub" x={s.x} y={s.y + 50} textAnchor="middle">{s.seen}/{s.total}</text>
               </g>
-            ))}
+            );
+          })}
 
-            <circle className="tm-hub" cx={cl.hx} cy={cl.hy} r={7} />
-            {cl.hidden > 0 && (
-              <circle className="tm-hub-lock" cx={cl.hx} cy={cl.hy} r={12} />
-            )}
-            <text className="tm-hub-label" x={cl.lx} y={cl.ly} textAnchor={cl.labelAnchor}>
-              {cl.family}
-            </text>
-            <text className="tm-hub-count" x={cl.lx} y={cl.ly + 15} textAnchor={cl.labelAnchor}>
-              {cl.seen}/{cl.total}
-            </text>
+          {/* ---- fog sheet over everything not yet climbed ---- */}
+          <rect className="climb-fog" x="0" y="0" width={W} height={Math.max(0, fogTop)} fill="url(#clFog)" />
+
+          {/* ---- the climber, drawn last so nothing covers you ---- */}
+          <g className="climb-you">
+            <circle cx={you.x} cy={you.y} r="34" fill="url(#clGlow)" />
+            <circle className="climb-you-core" cx={you.x} cy={you.y} r="8" />
           </g>
-        ))}
+        </svg>
+      </div>
 
-        {/* ---- the core is you, and is drawn last so nothing covers it ---- */}
-        <circle className="tm-core-glow" cx={C} cy={C} r={46} fill="url(#tmCore)" />
-        <circle className="tm-core" cx={C} cy={C} r={8} />
-      </svg>
-
-      <div className="tm-legend">
-        <span className="tm-legend-i" /> you
-        <span className="tm-legend-sep" />
-        <strong>{discovered}</strong> of {totalCards} mapped ({pct}%)
-        <span className="tm-legend-sep" />
-        <span className="tm-legend-fog" /> {fog.length} regions still fogged
+      <div className="climb-foot">
+        {nextStop ? (
+          <p className="climb-next">
+            Next: <strong>{nextStop.family}</strong>
+            {nextStop.state === "fogged" ? " — still in the fog" : ` — ${nextStop.total - nextStop.seen} left`}
+          </p>
+        ) : (
+          <p className="climb-next">Everything in range is mapped.</p>
+        )}
+        <p className="climb-legend">
+          <span className="climb-legend-i" /> you
+          <span className="climb-legend-sep" />
+          <strong>{discovered}</strong> of {totalCards} mapped
+        </p>
       </div>
     </div>
   );

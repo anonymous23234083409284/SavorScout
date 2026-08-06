@@ -852,6 +852,18 @@ const RADIUS_MODES = [
 ];
 const RADIUS_FIRST_TIER = { nearby: 5, driving: 10, anywhere: 15 };
 
+/* Where the app opens.
+
+   A first-time visitor has nothing to look at, so they land on Today and do
+   the thing that fills the map. From the second visit onward the map IS the
+   reason to open the app — it holds what they built — so that's what they
+   see. Read synchronously from storage so there is no flash of the wrong tab
+   before an effect can correct it. */
+function defaultTab() {
+  try { return window.localStorage.getItem("ss_returning") ? "you" : "today"; }
+  catch { return "today"; }
+}
+
 /* Three tabs, not four. Map and You were showing the same thing twice, and
    "You" is the honest name for a page that is nothing but your streak and
    your map. */
@@ -866,7 +878,7 @@ const TABS = [
    =========================================================================== */
 
 function App() {
-  const [tab, setTab] = useState("today");
+  const [tab, setTab] = useState(defaultTab);
 
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
@@ -995,6 +1007,9 @@ function App() {
 
   useEffect(() => {
     if (!user || needsOnboarding || !onboardingChecked) return;
+    // Mark them as having been here, so the next visit opens on the map.
+    // Set after onboarding clears, or a half-finished signup would count.
+    try { window.localStorage.setItem("ss_returning", "1"); } catch { /* private mode */ }
     refreshLoop().catch(() => {});
     refreshGame().catch(() => {});
     refreshCal().catch(() => {});
@@ -1212,7 +1227,10 @@ function App() {
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
     setLocationInput(""); setResolvedLocation(null); setLocationError(""); setRadiusUsed(null);
     setPendingVerdicts([]); setGame(null);
-    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setSealResult(null); setTasteMap(null); setTab("today");
+    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setSealResult(null); setTasteMap(null);
+    // Signing back in should land where a returning visitor belongs — the map
+    // — rather than being pinned to Today by the sign-out reset.
+    setTab(defaultTab());
   };
 
   const handleSaveOnboarding = async () => {

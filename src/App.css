@@ -3448,3 +3448,15 @@ body {
   .hist-row { gap: 10px; }
   .hist-name { font-size: 14px; }
 }
+
+/* The line under the wall headline. States what signing in actually buys,
+   because "create an account" on its own is a cost with no stated benefit. */
+.gate-why {
+  max-width: 34ch;
+  margin: 0 auto 22px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-mid);
+  text-align: center;
+}

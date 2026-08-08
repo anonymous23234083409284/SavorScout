@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import "./App.css";
 import { supabase } from "./supabaseClient";
 import { renderShareCard, canvasToBlob, buildCaption } from "./shareCard";
-import TasteMap from "./TasteMap";
-import { familyLabel } from "./labels";
 
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
@@ -358,102 +356,10 @@ function Evidence({ evidence, reception, review, menuItems, rating, dietary, all
         pull with none of the interpretation cost.
    =========================================================================== */
 
-function Archetype({ archetype, choices }) {
-  if (!archetype) return null;
-  const share = archetype.share;
-  return (
-    <section className="arch">
-      {share != null && share <= 0.25 && (
-        <span className="arch-rare">{Math.max(1, Math.round(share * 100))}% of people</span>
-      )}
-      <span className="arch-tag">Your type</span>
-      <h2 className="arch-name">{archetype.name}</h2>
-      <p className="arch-line">{archetype.line}</p>
-      {choices > 0 && (
-        <p className="arch-from">From {choices.toLocaleString()} choices — you never answered a question about yourself.</p>
-      )}
-    </section>
-  );
-}
 
-function AxisBar({ axis }) {
-  const pct = Math.round(axis.position * 100);
-  return (
-    <div className="ax">
-      <div className="ax-poles">
-        <span className={pct < 45 ? "on" : ""}>{axis.left}</span>
-        <span className={pct > 55 ? "on" : ""}>{axis.right}</span>
-      </div>
-      <div className="ax-rail">
-        <div className="ax-track" />
-        <div className="ax-dot" style={{ left: `${pct}%` }} />
-      </div>
-      <p className="ax-say">
-        {axis.say}
-        {axis.compare && <span className="ax-cmp"> {axis.compare}</span>}
-      </p>
-    </div>
-  );
-}
 
-/* The open loop, in one line. Naming three specific unfinished things pulls
-   harder than a progress bar, and costs the reader nothing to parse. */
-function Measuring({ items }) {
-  if (!items?.length) return null;
-  const shown = items.slice(0, 3);
-  const list = shown.length === 1
-    ? shown[0]
-    : `${shown.slice(0, -1).join(", ")} and ${shown[shown.length - 1]}`;
-  return (
-    <p className="soon">
-      Still measuring — <b>{list}</b>. They appear here once we're sure.
-    </p>
-  );
-}
 
-function SignalList({ title, tone, nodes, empty }) {
-  return (
-    <div className="sig">
-      <span className="sig-title">{title}</span>
-      {nodes?.length ? (
-        <ul className="sig-list">
-          {nodes.map((n) => (
-            <li className={`sig-item sig-item--${tone}`} key={n.id}>
-              <span className="sig-name">{n.name}</span>
-              <span className="sig-pct">{Math.round((n.affinity ?? 0) * 100)}%</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="sig-empty">{empty}</p>
-      )}
-    </div>
-  );
-}
 
-/* Visible, countable gaps. Panini built a business on the fact that an empty
-   slot you can point at pulls harder than "23% complete" ever will. */
-function Collection({ collection }) {
-  if (!collection?.found?.length) return null;
-  return (
-    <section className="card">
-      <div className="card-head">
-        <h2 className="card-title">Closest to complete</h2>
-        <span className="card-sub">{familyLabel(collection.family)} · {collection.seen} of {collection.total}</span>
-      </div>
-      <div className="coll">
-        {collection.found.map((c) => (
-          <span className={`slot${c.rarity >= 3 ? " slot--rare" : " slot--got"}`} key={c.id}>
-            {c.name}
-          </span>
-        ))}
-        {Array.from({ length: collection.missing }).map((_, i) => (
-          <span className="slot slot--fog" key={`f${i}`}>?</span>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 /* ===========================================================================
    THE DAILY READ
@@ -478,22 +384,6 @@ function Collection({ collection }) {
       win/lose duel is not.
    =========================================================================== */
 
-function ReadScore({ record }) {
-  if (!record?.total) return null;
-  return (
-    <span className="read-score" title={`${record.total} calls resolved`}>
-      <span className="read-score-side">
-        <span className="read-score-k">Model</span>
-        <span className="read-score-n read-score-n--world">{record.model}</span>
-      </span>
-      <span className="read-score-div" />
-      <span className="read-score-side">
-        <span className="read-score-k">You</span>
-        <span className="read-score-n read-score-n--you">{record.you}</span>
-      </span>
-    </span>
-  );
-}
 
 /* ===========================================================================
    SHARE SHEET
@@ -583,64 +473,6 @@ function ShareSheet({ state, onClose, onDownload, onShare, onCopy, copied }) {
    win back.
    =========================================================================== */
 
-function Seal({ seal, result, busy, onOpen, onDismiss }) {
-  if (result) {
-    const hit = result.correct;
-    return (
-      <section className={`seal seal--open seal--${hit ? "hit" : "miss"}`} role="status">
-        <div className="seal-head">
-          <span className="seal-tag">Last night's call</span>
-          <ReadScore record={result.record} />
-        </div>
-        <p className="seal-outcome">{hit ? "We had you." : "You beat it."}</p>
-        <p className="seal-sub">
-          {hit
-            ? <>Sealed yesterday, before you picked: <strong>{result.pickName}</strong>.</>
-            : <>We'd written down <strong>{result.pickName}</strong>. You went the other way.</>}
-        </p>
-        <button className="seal-done" onClick={onDismiss}>{hit ? "Unsettling." : "Good."}</button>
-      </section>
-    );
-  }
-
-  if (!seal) return null;
-
-  if (seal.state === "set") {
-    return (
-      <section className="seal seal--set">
-        <span className="seal-wax" aria-hidden="true">✦</span>
-        <div>
-          <p className="seal-set-t">Sealed for tonight.</p>
-          <p className="seal-set-s">What it said about you opens tomorrow morning.</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (seal.state !== "ready") return null;
-
-  return (
-    <section className="seal seal--ready">
-      <div className="seal-head">
-        <span className="seal-tag">Sealed {seal.sealedOn}</span>
-      </div>
-      <p className="seal-claim">We wrote down what you'd pick — before you picked it.</p>
-      <div className="seal-pair">
-        <span className={`seal-face${seal.chose === "left" ? " seal-face--yours" : ""}`}>
-          {seal.left?.name}
-        </span>
-        <span className="seal-vs">vs</span>
-        <span className={`seal-face${seal.chose === "right" ? " seal-face--yours" : ""}`}>
-          {seal.right?.name}
-        </span>
-      </div>
-      <p className="seal-chose">You took {seal.chose === "left" ? seal.left?.name : seal.right?.name}.</p>
-      <button className="btn btn--hot seal-open" disabled={busy} onClick={() => onOpen(seal)}>
-        {busy ? "Opening…" : "Open it"}
-      </button>
-    </section>
-  );
-}
 
 /* ===========================================================================
    THE PREDICTION
@@ -670,145 +502,10 @@ function Seal({ seal, result, busy, onOpen, onDismiss }) {
      and is better theatre besides: an envelope beats a stated guess.
    =========================================================================== */
 
-function PredictionCard({ card }) {
-  if (!card) return null;
-  return (
-    <div className="pc">
-      {/* The raw family is internal taxonomy — "Handheld", "Constraint". */}
-      <span className="pc-kind">{familyLabel(card.family) || card.kind}</span>
-      <span className="pc-name">{card.name}</span>
-      {card.rarity >= 3 && <span className="pc-rare">worth trying</span>}
-    </div>
-  );
-}
 
-function Prediction({ read, result, completed, total, busy, onAnswer, onDismiss }) {
-  /* ---- resolved: the payoff, and the only place the warm/cool merge runs ---- */
-  if (result) {
-    const hit = result.correct;
-    return (
-      <section className={`pred pred--done pred--${hit ? "hit" : "miss"}`} role="status">
-        <div className="pred-head">
-          <span className="pred-tag">Called it</span>
-          <ReadScore record={result.record} />
-        </div>
-        <p className="pred-outcome">{hit ? "We knew." : "You surprised us."}</p>
-        <p className="pred-sub">
-          {hit
-            ? <>We had you down for <strong>{result.said}</strong> on {result.name}.</>
-            : <>We said <strong>{result.said}</strong> on {result.name}. Noted — that's the answer that teaches us most.</>}
-        </p>
-        <button className="pred-next" disabled={busy} onClick={onDismiss}>
-          {completed >= total ? "Done for today" : "Next"}
-        </button>
-      </section>
-    );
-  }
-
-  if (!read) return null;
-
-  if (read.state === "warming") {
-    return (
-      <section className="pred pred--warm">
-        <div className="pred-head">
-          <span className="pred-tag">Today's call</span>
-          <ReadScore record={read.record} />
-        </div>
-        <p className="pred-claim pred-claim--quiet">We don't know you well enough to call it yet.</p>
-        <p className="pred-sub">
-          {typeof read.need === "number" && read.need > 0
-            ? <><strong>{read.need}</strong> more {read.need === 1 ? "answer" : "answers"} before we start staking predictions on you.</>
-            : <>Answer today's calls and we'll start staking predictions on you.</>}
-        </p>
-      </section>
-    );
-  }
-
-  if (read.state === "spent") {
-    return (
-      <section className="pred pred--spent">
-        <div className="pred-head">
-          <span className="pred-tag">Today's calls</span>
-          <ReadScore record={read.record} />
-        </div>
-        <p className="pred-claim pred-claim--quiet">All {total} answered.</p>
-        <p className="pred-sub">New ones tomorrow morning — and your map keeps them.</p>
-      </section>
-    );
-  }
-
-  const staked = read.state === "staked";
-  const pct = Math.round((read.confidence || 0) * 100);
-
-  return (
-    <section className="pred">
-      <div className="pred-head">
-        <span className="pred-tag">Today's call</span>
-        <span className="pred-count">{completed}/{total}</span>
-      </div>
-
-      <p className="pred-claim">
-        {staked ? "We've already written down whether you'll like this." : "No idea on this one. Teach us."}
-      </p>
-
-      {staked && (
-        <div className="pred-stake">
-          <div className="pred-stake-bar"><div className="pred-stake-fill" style={{ width: `${pct}%` }} /></div>
-          <span className="pred-stake-n">{pct}% sure</span>
-        </div>
-      )}
-
-      <PredictionCard card={read.card} />
-
-      <div className="pred-acts">
-        <button className="pred-btn pred-btn--match" disabled={busy}
-                onClick={() => onAnswer(read, "left")}>
-          <span className="pred-btn-k">Match</span>
-          <span className="pred-btn-s">I'd like this</span>
-        </button>
-        <button className="pred-btn pred-btn--defy" disabled={busy}
-                onClick={() => onAnswer(read, "right")}>
-          <span className="pred-btn-k">Defy</span>
-          <span className="pred-btn-s">Not for me</span>
-        </button>
-      </div>
-
-      <button className="pred-skip" disabled={busy} onClick={() => onAnswer(read, "skip")}>
-        Skip this one
-      </button>
-
-      {/* Stated plainly, every time. People give better answers when they know
-          what the answer is for, and a mechanic that looks like a game but is
-          quietly collecting data is the kind of thing that costs trust once
-          someone works it out. Saying it costs nothing and buys the benefit
-          of the doubt. */}
-      <p className="pred-why">
-        This is how we learn your taste — every answer makes the places we find you more personal.
-      </p>
-    </section>
-  );
-}
 
 /* A revealed trait is the payoff moment. It only ever fires on real evidence
    — a fabricated "you're an adventurous eater" would undercut the exact
-   thing this product sells. */
-function TraitReveal({ trait, onClose }) {
-  if (!trait) return null;
-  return (
-    <div className="reveal" role="status">
-      <div className="reveal-card">
-        <span className="reveal-tag">Something new about you</span>
-        <h3 className="reveal-title">{trait.label}</h3>
-        <p className="reveal-detail">{trait.detail}</p>
-        <div className="reveal-conf">
-          <div className="reveal-conf-bar"><div className="reveal-conf-fill" style={{ width: `${Math.round((trait.confidence || 0) * 100)}%` }} /></div>
-          <span className="reveal-conf-n">{Math.round((trait.confidence || 0) * 100)}% confidence</span>
-        </div>
-        <button className="btn btn--cool" onClick={onClose}>Got it</button>
-      </div>
-    </div>
-  );
-}
 
 /* ===========================================================================
    VERDICT PROMPT
@@ -877,23 +574,26 @@ const RADIUS_MODES = [
 ];
 const RADIUS_FIRST_TIER = { nearby: 5, driving: 10, anywhere: 15 };
 
-/* Where the app opens.
-
-   A first-time visitor has nothing to look at, so they land on Today and do
-   the thing that fills the map. From the second visit onward the map IS the
-   reason to open the app — it holds what they built — so that's what they
-   see. Read synchronously from storage so there is no flash of the wrong tab
-   before an effect can correct it. */
-function defaultTab() {
-  try { return window.localStorage.getItem("ss_returning") ? "you" : "today"; }
-  catch { return "today"; }
+/* How a past pick reads in the history list. "Not rated" is deliberately a
+   live state rather than a blank — it's the one thing the page wants back
+   from you, so it should look unfinished. */
+function verdictWord(h) {
+  if (h.visited === null || h.visited === undefined) return "Not rated";
+  if (!h.visited) return "Didn't go";
+  if (h.outcome === "better") return "Loved it";
+  if (h.outcome === "expected") return "Liked it";
+  return "Not for me";
 }
 
-/* Three tabs, not four. Map and You were showing the same thing twice, and
-   "You" is the honest name for a page that is nothing but your streak and
-   your map. */
+function verdictTone(h) {
+  if (h.visited === null || h.visited === undefined) return "open";
+  if (!h.visited) return "skip";
+  return h.outcome === "worse" ? "bad" : "good";
+}
+
+/* Two tabs. Search is the product, so search is the front door on every
+   visit; You is where the picks land and get graded. */
 const TABS = [
-  { id: "today", label: "Today", minLevel: 1 },
   { id: "find", label: "Find", minLevel: 1 },
   { id: "you", label: "You", minLevel: 1 },
 ];
@@ -903,7 +603,7 @@ const TABS = [
    =========================================================================== */
 
 function App() {
-  const [tab, setTab] = useState(defaultTab);
+  const [tab, setTab] = useState("find");
 
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
@@ -941,12 +641,7 @@ function App() {
   const [verdictBusy, setVerdictBusy] = useState(false);
 
   const [game, setGame] = useState(null);
-  const [cal, setCal] = useState({ remaining: [], completed: 0, total: 7, pendingTraits: [] });
-  const [calBusy, setCalBusy] = useState(false);
-  const [readResult, setReadResult] = useState(null);
-  const [recentNodeIds, setRecentNodeIds] = useState([]);
-  const [sealResult, setSealResult] = useState(null);
-  const [sealBusy, setSealBusy] = useState(false);
+  const [history, setHistory] = useState({ history: [], stats: null });
   const [share, setShare] = useState(null);
   const [captionCopied, setCaptionCopied] = useState(false);
   // navigator.share must be called synchronously inside the click to keep the
@@ -954,8 +649,6 @@ function App() {
   // closing over state.
   const shareRef = useRef(null);
   useEffect(() => { shareRef.current = share; }, [share]);
-  const [reveal, setReveal] = useState(null);
-  const [tasteMap, setTasteMap] = useState(null);
   const [toast, setToast] = useState(null);
 
   const [showMetrics, setShowMetrics] = useState(false);
@@ -1015,15 +708,11 @@ function App() {
     if (state) setGame(state);
   }, [authedFetch]);
 
-  const refreshCal = useCallback(async () => {
-    const zip = resolvedLocation?.zip || getZip();
-    const data = await authedFetch(`/calibration/today?zip=${encodeURIComponent(zip)}`);
-    if (data) setCal(data);
-  }, [authedFetch, resolvedLocation]);
-
-  const refreshMap = useCallback(async () => {
-    const data = await authedFetch("/me/map");
-    if (data) setTasteMap(data);
+  /* Every search already writes a verdict row, so the history is that table
+     read back — no second store to drift out of sync with it. */
+  const refreshHistory = useCallback(async () => {
+    const data = await authedFetch("/verdicts/history");
+    if (data) setHistory(data);
   }, [authedFetch]);
 
   const refreshLoop = useCallback(async () => {
@@ -1038,9 +727,8 @@ function App() {
     try { window.localStorage.setItem("ss_returning", "1"); } catch { /* private mode */ }
     refreshLoop().catch(() => {});
     refreshGame().catch(() => {});
-    refreshCal().catch(() => {});
-    refreshMap().catch(() => {});
-  }, [user, needsOnboarding, onboardingChecked, refreshLoop, refreshGame, refreshCal, refreshMap]);
+    refreshHistory().catch(() => {});
+  }, [user, needsOnboarding, onboardingChecked, refreshLoop, refreshGame, refreshHistory]);
 
   const track = useCallback(async (kind, payload) => {
     try {
@@ -1051,62 +739,6 @@ function App() {
 
   /* Answering a prediction. Resolves in its own frame because the grading
      moment IS the mechanic — routing it through a generic handler would clear
-     the card and drop the payoff. */
-  const answerRead = async (read, chosen) => {
-    if (calBusy) return;
-    setCalBusy(true);
-    setCal((p) => ({
-      ...p,
-      remaining: p.remaining.filter((c) => c.id !== read.id),
-      completed: p.completed + (chosen === "skip" ? 0 : 1),
-    }));
-    try {
-      const res = await authedFetch("/calibration/answer", {
-        method: "POST",
-        body: JSON.stringify({ id: read.id, chosen }),
-      });
-      if (res) {
-        // A withheld grade comes back as prediction:null. Coercing that to
-        // `correct: false` would print a miss over an answer nobody has
-        // graded yet, so the payoff frame only opens on a real result.
-        if (res.sealed) {
-          setCal((p) => ({ ...p, seal: { state: "set" } }));
-        } else if (res.prediction) {
-          setReadResult({
-            correct: res.prediction.correct,
-            // What we'd written down, in the user's language rather than the
-            // storage layer's left/right.
-            said: res.prediction.guessed === "left" ? "Match" : "Defy",
-            name: read.card?.name || "that one",
-            record: res.record,
-          });
-        }
-        // Feeds the map's spark-and-draw so the node that just moved is
-        // visibly the one they moved.
-        if (res.movedNodes?.length) {
-          const ids = res.movedNodes.map((n) => n.id);
-          setRecentNodeIds(ids);
-          setTimeout(() => setRecentNodeIds([]), 4000);
-        }
-        if (res.award) flash(res.award);
-        if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
-      }
-
-      /* Pull the next card. This is what actually advances the deck: the
-         component renders cal.read, and nothing here was ever updating it.
-         Filtering cal.remaining only changed a list nothing was reading.
-         It LOOKED fine for a staked card because the result frame covered the
-         stale one and the dismiss handler refreshed on the way out — but a
-         card with no prediction shows no result frame, so the very same card
-         re-rendered. And predictLike returns null until it has evidence, so
-         for a new user every card is that case: permanently stuck on card
-         one. Awaited so the next card is present the moment the buttons
-         re-enable, which also blocks double-answering. */
-      await refreshCal().catch(() => {});
-      refreshGame().catch(() => {});
-      refreshMap().catch(() => {});
-    } finally { setCalBusy(false); }
-  };
 
   /* Retire the card optimistically. Clearing the result and waiting on the
      refetch would flash the already-answered pair back onto the screen for a
@@ -1193,32 +825,6 @@ function App() {
     } catch { /* user dismissed the OS sheet — not an error */ }
   }, [track]);
 
-  const openSeal = async (seal) => {
-    if (sealBusy) return;
-    setSealBusy(true);
-    try {
-      const res = await authedFetch("/calibration/reveal", {
-        method: "POST",
-        body: JSON.stringify({ id: seal.id }),
-      });
-      if (res?.ok) {
-        setSealResult({ correct: res.correct, pickName: res.pickName, record: res.record });
-        if (res.award) flash(res.award);
-        refreshGame().catch(() => {});
-      }
-    } finally { setSealBusy(false); }
-  };
-
-  const dismissSeal = () => {
-    setCal((p) => ({ ...p, seal: null }));
-    setSealResult(null);
-    refreshCal().catch(() => {});
-  };
-
-  /* Closing the result frame only closes the result frame. The next card was
-     already fetched when the answer was recorded, so forcing "spent" here
-     would blank it and briefly claim the day was finished. */
-  const dismissRead = () => setReadResult(null);
 
 
   const answerVerdict = async (id, answer) => {
@@ -1291,10 +897,8 @@ function App() {
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
     setLocationInput(""); setResolvedLocation(null); setLocationError(""); setRadiusUsed(null);
     setPendingVerdicts([]); setGame(null);
-    setCal({ remaining: [], completed: 0, total: 7, pendingTraits: [] }); setReadResult(null); setSealResult(null); setTasteMap(null);
-    // Signing back in should land where a returning visitor belongs — the map
-    // — rather than being pinned to Today by the sign-out reset.
-    setTab(defaultTab());
+    setHistory({ history: [], stats: null });
+    setTab("find");
   };
 
   const handleSaveOnboarding = async () => {
@@ -1390,7 +994,6 @@ function App() {
       setResolvedLocation({ ...result.location, zip });
       setLocationInput("");
       setZip(zip);
-      refreshCal().catch(() => {});
     } finally { setResolvingLocation(false); }
   };
 
@@ -1449,7 +1052,7 @@ function App() {
         setRadiusUsed(typeof data.radiusUsed === "number" ? data.radiusUsed : null);
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
         refreshGame().catch(() => {});
-        refreshCal().catch(() => {});
+        refreshHistory().catch(() => {});
       }
     } catch (error) {
       if (error.name === "AbortError") return;
@@ -1597,7 +1200,8 @@ function App() {
 
   const level = game?.level;
   const visibleTabs = TABS.filter((t) => (level?.level ?? 1) >= t.minLevel);
-  const openWork = pendingVerdicts.length + (cal.remaining?.length || 0);
+  // The only outstanding thing left is an ungraded pick.
+  const openWork = pendingVerdicts.length;
 
   return (
     <div className="app">
@@ -1632,7 +1236,6 @@ function App() {
           </div>
         </header>
 
-        <TraitReveal trait={reveal} onClose={() => setReveal(null)} />
 
         <ShareSheet
           state={share}
@@ -1651,68 +1254,6 @@ function App() {
         )}
 
         {/* ================= TODAY ================= */}
-        {tab === "today" && (
-          <main className="page">
-            {/* The envelope outranks the call: it was already waiting when
-                they opened the app, and it's what made tomorrow a specific
-                appointment rather than a vague intention. */}
-            <Seal
-              seal={cal.seal}
-              result={sealResult}
-              busy={sealBusy}
-              onOpen={openSeal}
-              onDismiss={dismissSeal}
-            />
-
-            {/* The prediction sits above the streak because it's the reason
-                to open the app; the flame is the reward for having done so. */}
-            <Prediction
-              read={cal.read}
-              result={readResult}
-              completed={cal.completed}
-              total={cal.total}
-              busy={calBusy}
-              onAnswer={answerRead}
-              onDismiss={dismissRead}
-            />
-
-            {/* The incompletion hook. A named, nearly-finished thing pulls
-                people back in a way a progress bar never does. */}
-            {cal.pendingTraits?.length > 0 && (
-              <section className="card">
-                <div className="card-head">
-                  <h2 className="card-title">Still decoding</h2>
-                  <span className="card-sub">{tasteMap?.discovered || 0} of {tasteMap?.totalCards || 1446} found</span>
-                </div>
-                {cal.pendingTraits.map((t) => (
-                  <div className="pending" key={t.key}>
-                    <span className="pending-name">{t.label}</span>
-                    <span className="pending-need">{t.need} more {t.need === 1 ? "answer" : "answers"}</span>
-                  </div>
-                ))}
-              </section>
-            )}
-
-            {pendingVerdicts.length > 0 && (
-              <section className="card">
-                <div className="card-head">
-                  <h2 className="card-title">Open verdicts</h2>
-                  <span className="xp-chip">+100 XP each</span>
-                </div>
-                {pendingVerdicts.map((v) => (
-                  <Ask key={v.id} verdict={v} onAnswer={answerVerdict} busy={verdictBusy} />
-                ))}
-              </section>
-            )}
-
-            <section className="card">
-              <div className="card-head"><h2 className="card-title">Hungry now?</h2></div>
-              <button className="btn btn--hot" onClick={() => setTab("find")}>Find my one</button>
-            </section>
-          </main>
-        )}
-
-        {/* ================= FIND ================= */}
         {tab === "find" && (
           <main className="page page--wide">
             <div className="hero-search">
@@ -1931,13 +1472,15 @@ function App() {
             trust) was a number ABOUT the product rather than about the
             person, and it diluted the one screen whose whole job is to make
             someone feel seen. */}
+        {/* ================= YOU =================
+            Two things only: the places we've sent you, and whether we were
+            right. The second is the whole reason the first is worth keeping —
+            a history you never grade is a log, and a log teaches us nothing. */}
         {tab === "you" && (
           <main className="page">
             <div className="page-head">
-              <h1 className="page-title">Your <em>map</em></h1>
-              <p className="page-sub">
-                Built from what you chose, not what you told us.
-              </p>
+              <h1 className="page-title">Where we <em>sent you</em></h1>
+              <p className="page-sub">Every pick, and whether it landed.</p>
             </div>
 
             <div className="status">
@@ -1946,96 +1489,79 @@ function App() {
                 <div>
                   <p className="status-tier">{tierInfo.current.name}</p>
                   <h1 className="status-line">
-                    {game?.streak?.activeToday
-                      ? "You're set for today."
-                      : streakDays > 0
-                        ? "Keep it burning."
-                        : "Light the first one."}
+                    {streakDays > 0 ? "Keep it burning." : "Light the first one."}
                   </h1>
                 </div>
 
                 <div className="status-stats">
                   <div className="stat-block">
-                    <CountUp className="stat-num stat-num--cool" value={game?.xp ?? 0} />
-                    <span className="stat-key">Total XP</span>
+                    <CountUp className="stat-num stat-num--cool" value={history.stats?.searches || 0} />
+                    <span className="stat-key">Searches</span>
                   </div>
                   <div className="stat-block">
                     <span className="stat-num stat-num--warm">{game?.streak?.longest ?? 0}</span>
                     <span className="stat-key">Best streak</span>
                   </div>
-                  {game?.streak?.freezes > 0 && (
+                  {history.stats?.likedRate != null && (
                     <div className="stat-block">
-                      <span className="stat-num">{game.streak.freezes}</span>
-                      <span className="stat-key">Freezes</span>
+                      <span className="stat-num">{history.stats.likedRate}%</span>
+                      <span className="stat-key">You liked</span>
                     </div>
                   )}
                 </div>
-
-                {tierInfo.next && (
-                  <div className="next-tier">
-                    <div className="next-tier-bar">
-                      <div className="next-tier-fill" style={{ width: `${Math.round(tierInfo.progress * 100)}%` }} />
-                    </div>
-                    <span className="next-tier-text">
-                      {tierInfo.daysToGo} day{tierInfo.daysToGo === 1 ? "" : "s"} to {tierInfo.next.name}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
 
-            <TasteMap
-              regions={tasteMap?.regions}
-              discovered={tasteMap?.discovered || 0}
-              totalCards={tasteMap?.totalCards || 1446}
-              recentIds={recentNodeIds}
-            />
-
-            <Archetype archetype={tasteMap?.archetype} choices={tasteMap?.choices} />
-
-            {tasteMap?.axes?.length > 0 && (
-              <section className="card">
-                <div className="card-head">
-                  <h2 className="card-title">Where you sit</h2>
-                  <span className="card-sub">
-                    {tasteMap.axes.length} of {tasteMap.axes.length + (tasteMap.measuring?.length || 0)} known
-                  </span>
-                </div>
-                {tasteMap.axes.map((a) => <AxisBar key={a.key} axis={a} />)}
-                <Measuring items={tasteMap.measuring} />
-              </section>
-            )}
-
-            {(tasteMap?.strongest?.length > 0 || tasteMap?.coldest?.length > 0) && (
+            {/* The open loop. Shown first because it's the only thing on this
+                page that asks anything of anyone. */}
+            {pendingVerdicts.length > 0 && (
               <section className="card card--glow">
-                <div className="card-head"><h2 className="card-title">Your strongest signals</h2></div>
-                <div className="sigs">
-                  <SignalList title="You reach for" tone="love"
-                              nodes={tasteMap.strongest} empty="Nothing decisive yet." />
-                  <SignalList title="You pass on" tone="cold"
-                              nodes={tasteMap.coldest} empty="Nothing decisive yet." />
+                <div className="card-head">
+                  <h2 className="card-title">Did you go?</h2>
+                  <span className="card-sub">tell us and we get sharper</span>
                 </div>
+                {pendingVerdicts.map((v) => (
+                  <Ask key={v.id} verdict={v} onAnswer={answerVerdict} busy={verdictBusy} />
+                ))}
               </section>
             )}
 
-            <Collection collection={tasteMap?.collection} />
+            <section className="card">
+              <div className="card-head">
+                <h2 className="card-title">Search history</h2>
+                {history.stats?.searches > 0 && (
+                  <span className="card-sub">
+                    {history.stats.rated} of {history.stats.searches} rated
+                  </span>
+                )}
+              </div>
 
-            {/* Named, recoverable, specific. A region going quiet is a reason
-                to come back that doesn't require breaking anything earned. */}
-            {tasteMap?.fading?.length > 0 && (
-              <section className="card card--fading">
-                <div className="card-head"><h2 className="card-title">Going cold</h2></div>
-                <p className="fading-why">
-                  We haven't tested these in a while, so we're less sure than we were.
-                  They sharpen again the moment they come back up.
-                </p>
-                <div className="fading-list">
-                  {tasteMap.fading.map((f) => (
-                    <span className="fading-chip" key={f.family}>{familyLabel(f.family)}</span>
+              {history.history?.length > 0 ? (
+                <ul className="hist">
+                  {history.history.map((h) => (
+                    <li className="hist-row" key={h.id}>
+                      <div className="hist-main">
+                        <span className="hist-name">{h.name}</span>
+                        <span className="hist-meta">
+                          {h.query && <span className="hist-q">“{h.query}”</span>}
+                          {typeof h.distance_mi === "number" && <> · {h.distance_mi} mi</>}
+                          {typeof h.match_score === "number" && <> · {h.match_score}% match</>}
+                        </span>
+                      </div>
+                      <span className={`hist-tag hist-tag--${verdictTone(h)}`}>{verdictWord(h)}</span>
+                    </li>
                   ))}
-                </div>
-              </section>
-            )}
+                </ul>
+              ) : (
+                <p className="empty">
+                  Nothing yet. Search for something and it lands here.
+                </p>
+              )}
+
+              <button className="btn btn--hot" style={{ marginTop: 18 }} onClick={() => setTab("find")}>
+                Find somewhere
+              </button>
+            </section>
           </main>
         )}
 

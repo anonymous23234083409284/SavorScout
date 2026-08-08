@@ -2767,6 +2767,47 @@ app.get("/verdicts/pending", requireAuth, async (req, res) => {
   }
 });
 
+// Every search already writes a verdict row, so the search history is just
+// that table read back. Answered and unanswered both come through — an entry
+// you haven't rated yet is exactly the one worth showing, since rating it is
+// the only thing the page asks of anyone.
+app.get("/verdicts/history", requireAuth, async (req, res) => {
+  try {
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 50));
+
+    const { data, error } = await supabaseAdmin
+      .from("verdicts")
+      .select("id, name, address, category, query, match_score, distance_mi, rating, lat, lng, visited, outcome, created_at, responded_at")
+      .eq("user_id", req.userId)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error("verdict history error:", error.message);
+      return res.status(500).json({ error: "Couldn't load your history" });
+    }
+
+    const rows = data || [];
+    const rated = rows.filter((r) => r.visited !== null);
+    const went = rated.filter((r) => r.visited);
+    const liked = went.filter((r) => r.outcome === "better" || r.outcome === "expected");
+
+    return res.json({
+      history: rows,
+      stats: {
+        searches: rows.length,
+        rated: rated.length,
+        visited: went.length,
+        // Only stated once there's enough behind it to mean anything.
+        likedRate: went.length >= 3 ? Math.round((liked.length / went.length) * 100) : null,
+      },
+    });
+  } catch (err) {
+    console.error("verdict history error:", err.message);
+    return res.status(500).json({ error: "Couldn't load your history" });
+  }
+});
+
 app.post("/verdicts/feedback", requireAuth, async (req, res) => {
   try {
     const { id, visited, outcome } = req.body || {};

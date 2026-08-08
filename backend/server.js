@@ -2354,7 +2354,10 @@ app.post("/calibration/answer", requireAuth, async (req, res) => {
       // Was our guess right? Both answers are good: a hit says the model knows
       // them, a miss is the most informative data point available. Withheld
       // entirely when sealed — the client must not be able to peek.
-      prediction: row.predicted && !sealed
+      // A skip is not an answer, so it cannot grade the guess. Comparing
+      // predicted against "skip" always failed, which reported every skipped
+      // card as a miss and quietly moved the scoreboard against us.
+      prediction: row.predicted && !sealed && chosen !== "skip"
         ? { guessed: row.predicted, correct: row.predicted === chosen }
         : null,
       record,

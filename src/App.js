@@ -1090,8 +1090,19 @@ function App() {
         }
         if (res.award) flash(res.award);
         if (res.justRevealed?.length) setReveal(res.justRevealed[0]);
-        if (res.pendingTraits) setCal((p) => ({ ...p, pendingTraits: res.pendingTraits }));
       }
+
+      /* Pull the next card. This is what actually advances the deck: the
+         component renders cal.read, and nothing here was ever updating it.
+         Filtering cal.remaining only changed a list nothing was reading.
+         It LOOKED fine for a staked card because the result frame covered the
+         stale one and the dismiss handler refreshed on the way out — but a
+         card with no prediction shows no result frame, so the very same card
+         re-rendered. And predictLike returns null until it has evidence, so
+         for a new user every card is that case: permanently stuck on card
+         one. Awaited so the next card is present the moment the buttons
+         re-enable, which also blocks double-answering. */
+      await refreshCal().catch(() => {});
       refreshGame().catch(() => {});
       refreshMap().catch(() => {});
     } finally { setCalBusy(false); }
@@ -1204,11 +1215,10 @@ function App() {
     refreshCal().catch(() => {});
   };
 
-  const dismissRead = () => {
-    setCal((p) => ({ ...p, read: { state: "spent", record: readResult?.record || p.read?.record } }));
-    setReadResult(null);
-    refreshCal().catch(() => {});
-  };
+  /* Closing the result frame only closes the result frame. The next card was
+     already fetched when the answer was recorded, so forcing "spent" here
+     would blank it and briefly claim the day was finished. */
+  const dismissRead = () => setReadResult(null);
 
 
   const answerVerdict = async (id, answer) => {

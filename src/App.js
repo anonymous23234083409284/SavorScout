@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import "./App.css";
 import { supabase } from "./supabaseClient";
-import { renderShareCard, canvasToBlob } from "./shareCard";
+import { renderShareCard, canvasToBlob, buildCaption } from "./shareCard";
 import TasteMap from "./TasteMap";
 import { familyLabel } from "./labels";
 
@@ -507,9 +507,9 @@ function ReadScore({ record }) {
    unrecoverable case is a verdict with no name, which can't happen.
    =========================================================================== */
 
-function ShareSheet({ state, onClose, onDownload, onShare }) {
+function ShareSheet({ state, onClose, onDownload, onShare, onCopy, copied }) {
   if (!state) return null;
-  const { url, fields, usedPhoto, busy, error, canNativeShare } = state;
+  const { url, fields, usedPhoto, busy, error, canNativeShare, caption } = state;
 
   return (
     <div className="sheet" role="dialog" aria-modal="true" aria-label="Share this verdict">
@@ -530,6 +530,21 @@ function ShareSheet({ state, onClose, onDownload, onShare }) {
 
         {url && (
           <>
+            {/* The written half of the share. The friction in posting is almost
+                never the picture — it's composing words while the impulse
+                fades. Handing over a finished sentence removes that. */}
+            {caption && (
+              <div className="sheet-cap">
+                <div className="sheet-cap-head">
+                  <span className="sheet-cap-tag">Caption</span>
+                  <button className="sheet-copy" onClick={onCopy}>
+                    {copied ? "Copied ✓" : "Copy"}
+                  </button>
+                </div>
+                <p className="sheet-cap-text">{caption}</p>
+              </div>
+            )}
+
             <div className="sheet-acts">
               {canNativeShare && (
                 <button className="btn btn--hot" disabled={busy} onClick={onShare}>
@@ -659,9 +674,10 @@ function PredictionCard({ card }) {
   if (!card) return null;
   return (
     <div className="pc">
-      <span className="pc-kind">{card.family || card.kind}</span>
+      {/* The raw family is internal taxonomy — "Handheld", "Constraint". */}
+      <span className="pc-kind">{familyLabel(card.family) || card.kind}</span>
       <span className="pc-name">{card.name}</span>
-      {card.rarity >= 3 && <span className="pc-rare">rare</span>}
+      {card.rarity >= 3 && <span className="pc-rare">worth trying</span>}
     </div>
   );
 }
@@ -760,6 +776,15 @@ function Prediction({ read, result, completed, total, busy, onAnswer, onDismiss 
       <button className="pred-skip" disabled={busy} onClick={() => onAnswer(read, "skip")}>
         Skip this one
       </button>
+
+      {/* Stated plainly, every time. People give better answers when they know
+          what the answer is for, and a mechanic that looks like a game but is
+          quietly collecting data is the kind of thing that costs trust once
+          someone works it out. Saying it costs nothing and buys the benefit
+          of the doubt. */}
+      <p className="pred-why">
+        This is how we learn your taste — every answer makes the places we find you more personal.
+      </p>
     </section>
   );
 }
@@ -923,6 +948,7 @@ function App() {
   const [sealResult, setSealResult] = useState(null);
   const [sealBusy, setSealBusy] = useState(false);
   const [share, setShare] = useState(null);
+  const [captionCopied, setCaptionCopied] = useState(false);
   // navigator.share must be called synchronously inside the click to keep the
   // user-gesture, so the handler reads the latest card from a ref rather than
   // closing over state.
@@ -1094,7 +1120,7 @@ function App() {
       const file = new File([blob], `savorscout-${slugify(fields.name)}.png`, { type: "image/png" });
       const canNativeShare = Boolean(navigator.canShare?.({ files: [file] }));
 
-      setShare({ url, blob, file, fields, usedPhoto, canNativeShare, busy: false });
+      setShare({ url, blob, file, fields, usedPhoto, canNativeShare, busy: false, caption: buildCaption(fields) });
     } catch (err) {
       console.error("share card failed:", err);
       setShare({ busy: false, error: "Couldn't build a card for this one. Try another search." });
@@ -1119,11 +1145,39 @@ function App() {
     track("share_download");
   }, [track]);
 
+  /* Instagram strips text from a file share, so on the platform this card is
+     sized for, Copy is the only route the caption can actually take. */
+  const copyCaption = useCallback(async () => {
+    const s = shareRef.current;
+    if (!s?.caption) return;
+    try {
+      await navigator.clipboard.writeText(s.caption);
+    } catch {
+      // Older Safari and any non-secure origin reject the async clipboard.
+      const ta = document.createElement("textarea");
+      ta.value = s.caption;
+      ta.style.cssText = "position:fixed;opacity:0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch { /* nothing more to try */ }
+      ta.remove();
+    }
+    setCaptionCopied(true);
+    setTimeout(() => setCaptionCopied(false), 2000);
+    track("share_caption_copy");
+  }, [track]);
+
   const nativeShare = useCallback(async () => {
     const s = shareRef.current;
     if (!s?.file) return;
     try {
-      await navigator.share({ files: [s.file], title: s.fields?.name || "My pick" });
+      // The caption travels with the image. Instagram ignores text on a
+      // file share, which is exactly why Copy caption exists beside this.
+      await navigator.share({
+        files: [s.file],
+        title: s.fields?.name || "My pick",
+        text: s.caption || "",
+      });
       track("share_native");
     } catch { /* user dismissed the OS sheet — not an error */ }
   }, [track]);
@@ -1575,6 +1629,8 @@ function App() {
           onClose={closeShare}
           onDownload={downloadShare}
           onShare={nativeShare}
+          onCopy={copyCaption}
+          copied={captionCopied}
         />
 
         {toast && (

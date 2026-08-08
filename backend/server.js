@@ -1113,13 +1113,31 @@ function nodeAffinity(wins, appearances) {
   return wins / appearances;
 }
 
+// PostgREST caps an unbounded select at 1000 rows and reports no error, so
+// this quietly returned 1000 of 1446 cards — 446 were invisible to the whole
+// product: never shown in a prediction, never mappable, never counted in a
+// region total. Paginating is not an optimisation here, it is the difference
+// between the deck existing and a third of it not.
+const DECK_PAGE = 1000;
+
 async function loadDeck() {
-  const { data, error } = await supabaseAdmin.from("taste_cards").select("id, name, kind, family, rarity");
-  if (error) {
-    console.error("deck load error:", error.message);
-    return [];
+  const all = [];
+  for (let from = 0; ; from += DECK_PAGE) {
+    const { data, error } = await supabaseAdmin
+      .from("taste_cards")
+      .select("id, name, kind, family, rarity")
+      .order("id", { ascending: true })
+      .range(from, from + DECK_PAGE - 1);
+
+    if (error) {
+      console.error("deck load error:", error.message);
+      return all;
+    }
+    all.push(...(data || []));
+    if (!data || data.length < DECK_PAGE) break;
   }
-  return data || [];
+  console.log(`deck loaded: ${all.length} cards`);
+  return all;
 }
 
 let DECK_CACHE = null;
@@ -1131,16 +1149,27 @@ async function deck() {
   return DECK_CACHE;
 }
 
+// Paginated for the same reason as the deck: a user who has rated more than
+// 1000 cards would otherwise have the rest silently dropped from their own
+// map and axes. Unreachable at 1446 cards, entirely reachable at 5000.
 async function loadNodes(userId) {
-  const { data, error } = await supabaseAdmin
-    .from("taste_nodes")
-    .select("card_id, wins, appearances, last_seen")
-    .eq("user_id", userId);
-  if (error) {
-    console.error("nodes load error:", error.message);
-    return new Map();
+  const out = new Map();
+  for (let from = 0; ; from += DECK_PAGE) {
+    const { data, error } = await supabaseAdmin
+      .from("taste_nodes")
+      .select("card_id, wins, appearances, last_seen")
+      .eq("user_id", userId)
+      .order("card_id", { ascending: true })
+      .range(from, from + DECK_PAGE - 1);
+
+    if (error) {
+      console.error("nodes load error:", error.message);
+      return out;
+    }
+    for (const n of data || []) out.set(n.card_id, n);
+    if (!data || data.length < DECK_PAGE) break;
   }
-  return new Map((data || []).map((n) => [n.card_id, n]));
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -1246,9 +1275,24 @@ function predictLike(card, cards, nodes, readings) {
    predict with certainty teaches us nothing — this is active learning wearing
    a game's clothes. Families are rotated so a day covers breadth rather than
    drilling one corner, which also makes the map light up in more places. */
+// "Would you like this?" only works if the reader instantly pictures the
+// thing. A dish or a cuisine passes that test; "Umami bomb", "Elevated
+// casual" and "Under 15 dollars" do not — they are attributes of a meal, not
+// a meal. Those made up 42% of the deck and so 42% of what people were shown,
+// which is most of why the cards felt wrong to answer.
+//
+// The abstract families still matter (they carry several taste axes), so they
+// are not banned — just rationed to roughly one slot in five.
+const ASKABLE_KINDS = new Set(["dish", "cuisine"]);
+const ABSTRACT_SHARE = 0.2;
+
 function pickPredictionCards(cards, nodes, count) {
+  const concrete = cards.filter((c) => ASKABLE_KINDS.has(c.kind));
+  const abstractSlots = Math.max(0, Math.round(count * ABSTRACT_SHARE));
+  const pool = concrete.length >= count - abstractSlots ? concrete : cards;
+
   const byFamily = new Map();
-  for (const c of cards) {
+  for (const c of pool) {
     const seen = nodes.get(c.id)?.appearances || 0;
     if (seen >= 3) continue; // well measured — leave it alone
     if (!byFamily.has(c.family)) byFamily.set(c.family, []);
@@ -1266,20 +1310,36 @@ function pickPredictionCards(cards, nodes, count) {
     }))
     .sort((a, b) => a.explored - b.explored || Math.random() - 0.5);
 
+  const target = pool === concrete ? count - abstractSlots : count;
   const picked = [];
   let round = 0;
-  while (picked.length < count && round < 6) {
+  while (picked.length < target && round < 6) {
     for (const f of families) {
-      if (picked.length >= count) break;
-      const pool = f.list.filter((x) => !picked.some((p) => p.id === x.card.id));
-      if (pool.length === 0) continue;
+      if (picked.length >= target) break;
+      const inFamily = f.list.filter((x) => !picked.some((p) => p.id === x.card.id));
+      if (inFamily.length === 0) continue;
       // Unseen first inside the family.
-      pool.sort((a, b) => a.seen - b.seen);
-      const head = pool.slice(0, Math.max(1, Math.ceil(pool.length / 3)));
+      inFamily.sort((a, b) => a.seen - b.seen);
+      const head = inFamily.slice(0, Math.max(1, Math.ceil(inFamily.length / 3)));
       picked.push(head[Math.floor(Math.random() * head.length)].card);
     }
     round += 1;
   }
+
+  // Top up the remaining slot(s) with the abstract cards that carry the taste
+  // axes — least-measured first, so they still earn their place.
+  if (picked.length < count) {
+    const rest = cards
+      .filter((c) => !ASKABLE_KINDS.has(c.kind) && !picked.some((p) => p.id === c.id))
+      .map((c) => ({ c, seen: nodes.get(c.id)?.appearances || 0 }))
+      .filter((x) => x.seen < 3)
+      .sort((a, b) => a.seen - b.seen || Math.random() - 0.5);
+    for (const x of rest) {
+      if (picked.length >= count) break;
+      picked.push(x.c);
+    }
+  }
+
   return picked.slice(0, count);
 }
 

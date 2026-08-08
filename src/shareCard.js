@@ -105,6 +105,55 @@ export function selectCardFields(winner, query) {
   };
 }
 
+/* ---------------------------------------------------------------------------
+   THE CAPTION
+
+   Crossy Road's share doesn't hand you a bare image, it hands you a sentence
+   you would have had to write yourself. That is the whole trick: the friction
+   in sharing is almost never the picture, it is composing the words while the
+   impulse fades.
+
+   So the caption states the RESULT first — the concrete, brag-worthy fact —
+   and only then names the app, because a post that opens with a product name
+   reads as an advert and a post that opens with "94% match on chicken wings"
+   reads as a person. Every clause is drawn from the verdict, so it is true
+   for this share and no other.
+   --------------------------------------------------------------------------- */
+
+const OPENERS = [
+  "Asked for {q}. Got sent here.",
+  "Said {q}. This came back.",
+  "Wanted {q} — this won.",
+];
+
+export function buildCaption(fields) {
+  if (!fields) return "";
+
+  const bits = [];
+  const q = fields.query ? `“${fields.query}”` : "something good";
+  bits.push(OPENERS[Math.abs(hashInt(fields.name)) % OPENERS.length].replace("{q}", q));
+
+  // The result, stated concretely. A middling match score is gated out as a
+  // brag — but the rating and distance that survived their own gates are
+  // still true and still worth saying, so the line falls back to those rather
+  // than shrinking to a bare name with nothing to recommend it.
+  const stat = [];
+  if (fields.score != null) stat.push(`${fields.score}% match`);
+  if (fields.claim) stat.push(fields.claim.toLowerCase());
+  if (stat.length === 0 && fields.meta.length) stat.push(...fields.meta.slice(0, 2));
+  bits.push(stat.length ? `${fields.name} — ${stat.join(", ")}.` : `${fields.name}.`);
+
+  // The app, last, and only as the reason the result is trustworthy.
+  bits.push("SavorScout picks one place instead of a list of forty. It's unreasonably good at it.");
+  return bits.join("\n\n");
+}
+
+function hashInt(str) {
+  let h = 0;
+  for (let i = 0; i < String(str).length; i += 1) h = (h * 31 + String(str).charCodeAt(i)) | 0;
+  return h;
+}
+
 /* --- text helpers --------------------------------------------------------- */
 
 function wrap(ctx, text, maxWidth, maxLines) {

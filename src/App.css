@@ -2166,35 +2166,42 @@ body {
   text-decoration: none;
 }
 
+/* A 76px disc around a 19px number is mostly empty disc. The number is the
+   only reason the badge exists, so it gets the space: ~46% of the diameter,
+   which is where a numeral stops floating and starts filling its container. */
 .score {
   position: absolute;
   right: 16px; bottom: 16px;
   display: grid;
   place-items: center;
-  width: 76px; height: 76px;
+  width: 68px; height: 68px;
   border-radius: 50%;
   background: rgba(7, 5, 11, 0.86);
   border: 2px solid var(--magenta);
   box-shadow: 0 0 26px rgba(255, 46, 136, 0.5);
   backdrop-filter: blur(8px);
   animation: pop 0.55s var(--spring) both;
+  line-height: 1;
 }
 
 .score-n {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Space Grotesk', sans-serif;
   font-variant-numeric: tabular-nums;
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 31px;
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--ink);
 }
 
 .score-k {
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 0.1em;
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-faint);
-  margin-top: 2px;
+  color: var(--magenta);
+  margin-top: 1px;
 }
 
 .verdict-line {
@@ -3317,4 +3324,61 @@ body {
   .climb, .climb-you-core, .climb-ping, .climb-puff,
   .climb-locked, .climb-next-ping, .climb-stop--new .climb-node { animation: none; }
   .climb-spark { display: none; }
+}
+
+/* ---- share caption -------------------------------------------------------
+   The written half of the share. Instagram strips text from a file share, so
+   on the platform this card is sized for, Copy is the only route the words
+   can actually take — which is why it sits next to the caption rather than
+   being left to the OS sheet. */
+
+.sheet-cap {
+  margin-top: 16px;
+  padding: 13px 14px;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+.sheet-cap-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.sheet-cap-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+}
+.sheet-copy {
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  background: rgba(255, 200, 87, 0.1);
+  border: 1px solid var(--line-warm);
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--saffron);
+  transition: background 0.2s var(--ease);
+}
+.sheet-copy:hover { background: rgba(255, 200, 87, 0.2); }
+.sheet-cap-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  white-space: pre-line;
+}
+
+/* ---- why we're asking ----------------------------------------------------
+   Said every time, not buried in an onboarding screen nobody reads. A game
+   that is quietly collecting data costs trust the moment someone works it
+   out; saying so costs nothing. */
+.pred-why {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  line-height: 1.65;
+  color: var(--ink-mid);
+  text-align: center;
 }

@@ -643,14 +643,6 @@ function App() {
   const [game, setGame] = useState(null);
   const [history, setHistory] = useState({ history: [], stats: null });
 
-  /* Whether the free search has been used. This is presentation only — the
-     server owns the wall and will refuse a second anonymous search whatever
-     this says. Persisted so a reload does not dangle a search box that is
-     going to be rejected. */
-  const [trialSpent, setTrialSpent] = useState(() => {
-    try { return Boolean(window.localStorage.getItem("ss_trial_spent")); }
-    catch { return false; }
-  });
   const [share, setShare] = useState(null);
   const [captionCopied, setCaptionCopied] = useState(false);
   // navigator.share must be called synchronously inside the click to keep the
@@ -1008,23 +1000,17 @@ function App() {
 
   /* ---- search ---- */
 
-  const spendTrial = useCallback(() => {
-    setTrialSpent(true);
-    try { window.localStorage.setItem("ss_trial_spent", "1"); } catch { /* private mode */ }
-  }, []);
-
   const handleSearch = async () => {
-    if (loading || !query.trim()) return;
+    if (loading || !query.trim() || !user) return;
     if (!resolvedLocation) { setErrorMsg("Set your ZIP code first."); return; }
 
     setErrorMsg(""); setLoading(true);
     setShowMetrics(false); setShowCompare(false); setShowMap(false);
 
     try {
-      // Signed out is a legitimate state here: the first search is free.
-      // The header is simply omitted, and the server decides.
       const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token || null;
+      const token = session?.access_token;
+      if (!token) { setErrorMsg("Your session expired — please sign in again."); return; }
 
       searchAbortRef.current?.abort();
       const controller = new AbortController();
@@ -1033,10 +1019,7 @@ function App() {
       const trimmed = query.trim();
       const response = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           query: trimmed,
           lat: resolvedLocation.lat,
@@ -1055,8 +1038,6 @@ function App() {
         setErrorMsg(data.error || "You've hit your search limit for today.");
         setSearchesRemaining(0); setResults([]);
       } else if (response.status === 401) {
-        // The server is the gate. This branch only mirrors its verdict.
-        if (data.requiresAuth) spendTrial();
         setErrorMsg(data.error || "Please sign in again."); setResults([]);
       } else if (!response.ok) {
         setErrorMsg(data.error || `Something went wrong (${response.status}).`); setResults([]);
@@ -1071,7 +1052,6 @@ function App() {
         setSubmittedQuery(trimmed);
         setRadiusUsed(typeof data.radiusUsed === "number" ? data.radiusUsed : null);
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
-        if (data.trialUsed) spendTrial();
         refreshGame().catch(() => {});
         refreshHistory().catch(() => {});
       }
@@ -1105,18 +1085,9 @@ function App() {
     return <div className="app">{Ambient}<p className="center-note">Loading…</p></div>;
   }
 
-  /* ---- the wall ----
+  /* ---- signed out ---- */
 
-     Only raised once the free search has actually been spent. Before that a
-     signed-out visitor gets the real product: nobody signs up for a form,
-     they sign up because the thing worked once.
-
-     This is the presentation of the wall, not the wall itself. The server
-     refuses a second anonymous search regardless of what happens here, so
-     clearing storage gets you this screen skipped and the request rejected
-     instead — which is the right way round. */
-
-  if (!user && trialSpent) {
+  if (!user) {
     return (
       <div className="app">
         {Ambient}
@@ -1129,11 +1100,8 @@ function App() {
           </header>
 
           <section className="gate">
-            <p className="hero-kicker">That was your free search</p>
-            <h1 className="hero-title">Liked it?<em>Keep going.</em></h1>
-            <p className="gate-why">
-              Five searches a day, your history, and we learn what you actually like.
-            </p>
+            <p className="hero-kicker">Sign in to find your one</p>
+            <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>
 
             <form onSubmit={handleAuthSubmit} className="gate-form">
               <input type="email" placeholder="Email" value={email} autoComplete="email" onChange={(e) => setEmail(e.target.value)} />
@@ -1232,12 +1200,7 @@ function App() {
   /* ---- main ---- */
 
   const level = game?.level;
-  // A signed-out visitor gets Find and nothing else — "You" is an account's
-  // history and there is no account yet, so offering the tab would only lead
-  // to an empty page and a second sign-in prompt.
-  const visibleTabs = TABS.filter(
-    (t) => (level?.level ?? 1) >= t.minLevel && (user || t.id === "find")
-  );
+  const visibleTabs = TABS.filter((t) => (level?.level ?? 1) >= t.minLevel);
   // The only outstanding thing left is an ungraded pick.
   const openWork = pendingVerdicts.length;
 
@@ -1268,17 +1231,9 @@ function App() {
           </nav>
 
           <div className="topbar-right">
-            {user ? (
-              <>
-                <Flame days={streakDays} />
-                <LevelRing level={level} />
-                <button className="signout" onClick={handleSignOut}>Sign out</button>
-              </>
-            ) : (
-              // Nothing to show a stranger but the way in. No streak, no
-              // level — those belong to an account they don't have yet.
-              <button className="signout" onClick={() => spendTrial()}>Sign in</button>
-            )}
+            <Flame days={streakDays} />
+            <LevelRing level={level} />
+            <button className="signout" onClick={handleSignOut}>Sign out</button>
           </div>
         </header>
 
@@ -1522,7 +1477,7 @@ function App() {
             Two things only: the places we've sent you, and whether we were
             right. The second is the whole reason the first is worth keeping —
             a history you never grade is a log, and a log teaches us nothing. */}
-        {tab === "you" && user && (
+        {tab === "you" && (
           <main className="page">
             <div className="page-head">
               <h1 className="page-title">Where we <em>sent you</em></h1>

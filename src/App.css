@@ -207,26 +207,78 @@ body {
 .topbar > .nav { justify-self: center; }
 .topbar > .topbar-right { justify-self: end; }
 
-.logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.logo { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
+/* Deep ember tile, and the depth is the whole point.
+
+   The mark is warm-only, so hue can no longer do any separating — gold ink on
+   an orange ground is the exact mud that sank the first flame. Lightness has to
+   carry it instead, which means the tile must sit well below the artwork's
+   bright end. Measured at 4x the shipping size, against the flame's own pixels:
+
+     ff5f1f -> ff2e88 (the old tile)   mean contrast 1.75, 42.2% of ink under 1.5:1
+     ff6a1f -> e0143c                  mean 1.88, 35.3%
+     f2551a -> b81032                  mean 2.17, 25.5%
+     e04a16 -> 990d2b (this one)       mean 2.56, 21.4%
+
+   Going deeper halves the amount of flame that dissolves into its own tile. */
 .logo-mark {
+  position: relative;
   display: grid;
+  /* Pin the single track to the tile. Left implicit, the row auto-sizes to the
+     artwork's intrinsic 256px and .logo-flame's height:88% resolves against
+     THAT — the mark renders 256px tall and spills across the page. An inline
+     SVG has no intrinsic pixel height, so this only bites once the mark is a
+     real image. overflow + max-* below are the belt to this rule's braces. */
+  grid-template: 100% / 100%;
   place-items: center;
-  width: 34px; height: 34px;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
   border-radius: var(--r-sm);
-  background: linear-gradient(140deg, var(--ember), var(--magenta));
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--void);
-  box-shadow: 0 0 22px rgba(255, 95, 31, 0.42);
+  background: linear-gradient(140deg, #e04a16, #990d2b);
+  /* The bloom stays bright even though the tile darkened — it is what reads as
+     heat coming off the mark, and it keeps the darker tile from going inert
+     against the near-black page. */
+  box-shadow:
+    0 0 26px rgba(255, 95, 31, 0.42),
+    0 4px 14px rgba(7, 5, 11, 0.45);
+  overflow: hidden;
+}
+
+.logo-flame {
+  /* The keyed artwork is 182 × 256 — taller than wide — so size by HEIGHT and
+     let the width follow, or the flame squashes. */
+  width: auto;
+  height: 88%;
+  /* Hard ceiling. If the percentage above ever fails to resolve against the
+     tile again, this clamps the image to the tile instead of letting it render
+     at its natural 256px. */
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  /* Grounds the flame on the tile instead of floating it in the middle. */
+  transform: translateY(1px);
+  /* Warm ink on a warm tile still meets itself in the midtones, so the ~21% of
+     the mark that lands near the tile's own lightness needs an edge. A dark
+     shadow gives it one; a glow would only smear it. */
+  filter: drop-shadow(0 1px 3px rgba(48, 3, 14, 0.55));
+  transition: transform 0.35s var(--ease), filter 0.35s var(--ease);
+}
+
+/* Sits still by default — a logo that animates on every screen is noise.
+   It lifts only on hover, so the mark feels alive when touched. */
+.logo:hover .logo-flame { transform: translateY(0) scale(1.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-flame, .logo:hover .logo-flame { transition: none; transform: translateY(1px); }
 }
 
 .logo-word {
   font-family: 'Space Grotesk', sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
 }
 
 /* ---- tabs ---- */

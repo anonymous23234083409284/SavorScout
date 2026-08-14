@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import "./App.css";
 import { supabase } from "./supabaseClient";
 import { renderShareCard, canvasToBlob, buildCaption } from "./shareCard";
+import logoFlame from "./assets/logo-flame.png";
 
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
@@ -33,6 +34,56 @@ const FLAME_TIERS = [
   { id: 6, name: "Spectral", core: "#ffffff", mid: "#ffb3d5", outer: "#ff2e88", spark: "#ff85bb", min: 25 },
   { id: 7, name: "Eternal",  core: "#ffffff", mid: "#fff4d6", outer: "#ffd76a", spark: "#ffffff", min: 30 },
 ];
+
+/* ===========================================================================
+   THE MARK
+
+   The ribbon flame artwork, alpha-keyed, mapped to a warm-only palette, and
+   set on the deep ember tile. An earlier version redrew it as SVG paths and
+   lost the diagonal lean that makes it read as fire — straightened up, it
+   looked like an acorn. So this uses the real pixels.
+
+   The recolour is a luminance gradient map, not a hue rotation. The original
+   is a rainbow: 37% warm, 20% teal, 16% purple, 19% pink. Rotating those hues
+   into a warm arc would have crushed four distinct ribbons into one orange
+   smear, because it is hue that separates them there. What actually carries
+   the artwork's form is its shading — luminance runs the full 0.11 to 0.97 —
+   so each pixel's brightness is used to index a warm ramp instead: crimson
+   through ember, orange, amber, gold, to ivory. Every ribbon keeps its place
+   in the tonal order it already had; only the hue changes. The dark purple
+   dome becomes the deep crimson mass, the bright cyan tip becomes the ivory
+   highlight, and the mark reads as molten rather than repainted.
+
+   One correction on top: ribbons that shared a luminance but differed in hue
+   would have merged once hue stopped distinguishing them, so cool-hued pixels
+   sink slightly on the ramp and warm-hued ones lift, scaled by saturation so
+   the shift fades out in the greys and never bands mid-gradient.
+
+   How the keying works, since the asset is generated and not hand-made:
+
+   The art is drawn on paper that measures #f0f0f0, while its own white ribbons
+   run 249-255. That gap is what makes this separable at all. A flood fill runs
+   inward from the border and takes every near-neutral pixel it can reach, so
+   the paper goes transparent and the tile gradient shows through. The artwork's
+   white channels are reachable too — they open onto the page rather than being
+   enclosed — so they also turn transparent and read as red channels on the
+   tile. That is the correct result: on white paper those channels ARE the
+   background, so making the background red should make them red.
+
+   Two details that matter. The fill is topological rather than a flat colour
+   threshold, so anything genuinely enclosed by ribbons would survive. And the
+   mask is built at full 1538x2000 resolution and only then downscaled — canvas
+   averages premultiplied alpha, so the downscale anti-aliases the cut edge for
+   free and leaves no pale halo, which a threshold at final size would.
+   =========================================================================== */
+
+function LogoMark({ size = 46 }) {
+  return (
+    <span className="logo-mark" style={{ width: size, height: size }} aria-hidden="true">
+      <img src={logoFlame} className="logo-flame" alt="" draggable="false" />
+    </span>
+  );
+}
 
 function tierForStreak(days) {
   if (!days || days < 1) return FLAME_TIERS[0];
@@ -1094,7 +1145,7 @@ function App() {
         <div className="shell">
           <header className="topbar">
             <div className="logo">
-              <span className="logo-mark">SS</span>
+              <LogoMark />
               <span className="logo-word">SavorScout</span>
             </div>
           </header>
@@ -1160,7 +1211,7 @@ function App() {
         <div className="shell">
           <header className="topbar">
             <div className="logo">
-              <span className="logo-mark">SS</span>
+              <LogoMark />
               <span className="logo-word">SavorScout</span>
             </div>
           </header>
@@ -1211,7 +1262,7 @@ function App() {
       <div className="shell">
         <header className="topbar">
           <div className="logo">
-            <span className="logo-mark">SS</span>
+            <LogoMark />
             <span className="logo-word">SavorScout</span>
           </div>
 

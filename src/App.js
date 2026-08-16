@@ -650,6 +650,65 @@ const TABS = [
 ];
 
 /* ===========================================================================
+   ANALYTICS CONSENT
+
+   The tag in index.html sets Consent Mode defaults — denied across the EEA, UK
+   and Switzerland, granted elsewhere — and replays any stored answer before the
+   first hit. This is only the part that needs a user: writing a new answer and
+   telling the already-loaded tag about it.
+
+   Storage is the same 'ss_consent' key index.html reads on boot, so a choice
+   made here survives reload and is applied before anything is measured.
+   =========================================================================== */
+
+const CONSENT_KEY = "ss_consent";
+
+function readConsent() {
+  try {
+    const v = localStorage.getItem(CONSENT_KEY);
+    return v === "granted" || v === "denied" ? v : null;
+  } catch { return null; }
+}
+
+function writeConsent(value) {
+  try { localStorage.setItem(CONSENT_KEY, value); } catch { /* private mode */ }
+  if (typeof window.gtag === "function") {
+    window.gtag("consent", "update", {
+      ad_storage: value,
+      ad_user_data: value,
+      ad_personalization: value,
+      analytics_storage: value,
+    });
+  }
+}
+
+function ConsentBanner() {
+  const [choice, setChoice] = useState(readConsent);
+  if (choice) return null;
+  const answer = (v) => { writeConsent(v); setChoice(v); };
+  return (
+    <div className="consent" role="region" aria-label="Cookie choices">
+      <p className="consent-copy">
+        We use cookies to measure how SavorScout gets used, which is how the
+        picks get sharper. Declining leaves everything working.
+      </p>
+      <div className="consent-actions">
+        <button type="button" className="btn btn--ghost consent-btn" onClick={() => answer("denied")}>
+          Decline
+        </button>
+        <button type="button" className="btn btn--hot consent-btn" onClick={() => answer("granted")}>
+          Accept
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Names for the two tabs plus the signed-out screen, used for both the document
+   title and the GA page_path. Keyed by the same ids TABS uses. */
+const VIEW_LABELS = { find: "Find", you: "You", "sign-in": "Sign in" };
+
+/* ===========================================================================
    APP
    =========================================================================== */
 
@@ -678,6 +737,34 @@ function App() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authMode, setAuthMode] = useState("signin");
   const [resetSent, setResetSent] = useState(false);
+
+  /* ---- analytics: one page_view per view ----
+
+     This app navigates by state, not by URL, so the address bar never changes
+     and gtag's automatic hit would report a single page_view per session with
+     no idea that Find and You are different screens. Each view is therefore
+     also sent from here.
+
+     The first one is skipped: gtag.js already sent a page_view for the landing
+     view, and firing again here would double count entry. Held until
+     authChecked so the boot flash of the signed-out shell is not reported. */
+  const viewKey = user ? tab : "sign-in";
+  const firstViewSent = useRef(false);
+  useEffect(() => {
+    if (!authChecked) return;
+    const label = VIEW_LABELS[viewKey] || viewKey;
+    const title = `SavorScout — ${label}`;
+    document.title = title;
+    if (!firstViewSent.current) { firstViewSent.current = true; return; }
+    if (typeof window.gtag !== "function") return;
+    window.gtag("event", "page_view", {
+      page_title: title,
+      /* Synthetic paths. The URL genuinely never changes, so these exist to
+         give the reports something to separate the views by. */
+      page_location: `${window.location.origin}/${viewKey}`,
+      page_path: `/${viewKey}`,
+    });
+  }, [viewKey, authChecked]);
 
   const [searchesRemaining, setSearchesRemaining] = useState(null);
 
@@ -1623,4 +1710,16 @@ function App() {
   );
 }
 
-export default App;
+/* App returns early for the loading and signed-out states, so the banner is
+   mounted alongside it rather than inside it — one place, present on every
+   screen, and no change to the existing render branches. */
+function AppRoot() {
+  return (
+    <>
+      <App />
+      <ConsentBanner />
+    </>
+  );
+}
+
+export default AppRoot;

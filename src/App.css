@@ -3500,3 +3500,58 @@ body {
   .hist-row { gap: 10px; }
   .hist-name { font-size: 14px; }
 }
+
+/* ===========================================================================
+   CONSENT BANNER
+
+   Deliberately quiet. It is a legal requirement, not a feature, so it sits at
+   the bottom, states the trade in one line and leaves. Decline is given equal
+   visual weight to Accept — a decline styled as the lesser option is a dark
+   pattern, and it is also the thing that makes the consent record worth having.
+   =========================================================================== */
+
+.consent {
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: min(560px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: rgba(14, 10, 20, 0.92);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: 0 12px 40px rgba(7, 5, 11, 0.6);
+}
+
+.consent-copy {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.consent-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* Overrides .btn's block sizing — these are chips, not page actions. */
+.consent-btn {
+  padding: 9px 16px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .consent { flex-direction: column; align-items: stretch; gap: 12px; }
+  /* 44px is the touch-target floor; the desktop chip height of 35 is fine for
+     a cursor but too small for a thumb. */
+  .consent-actions > .consent-btn { flex: 1; min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consent { transition: none; }
+}

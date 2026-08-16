@@ -1,13 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js), with Consent Mode v2.
+
+         The <script src> below is deliberately STATIC. An earlier version built
+         it with document.createElement so it could be withheld in development,
+         which worked but made the tag invisible to GA's own detector — that
+         reads the served HTML and does not run our JS, so it reported "tag not
+         detected" no matter what the browser actually did. Dev traffic is now
+         excluded with Google's ga-disable flag instead, which suppresses
+         measurement while leaving the tag exactly where a crawler expects it.
+
+         Everything in this first block is queued BEFORE gtag.js executes. That
+         ordering is the point: consent defaults set after the tag loads arrive
+         too late, because it has already decided whether it may use storage. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+
+      /* Google's documented opt-out flag, honoured by gtag.js at load time.
+         Localhost, .local hostnames and private LAN ranges are all excluded, so
+         neither the dev server nor a phone testing against it over wifi lands
+         in the reports. */
+      (function () {
+        var h = location.hostname;
+        if (h === 'localhost' || h === '127.0.0.1' || h === '[::1]' ||
+            /\.local$/.test(h) ||
+            /^10\./.test(h) ||
+            /^192\.168\./.test(h) ||
+            /^172\.(1[6-9]|2[0-9]|3[01])\./.test(h)) {
+          window['ga-disable-G-YYT8CPXNXS'] = true;
+        }
+      })();
+
+      /* Region-specific defaults are declared first. Google resolves the most
+         specific region match, so the blanket default below applies only to
+         visitors the list above does not name. EEA + UK + Switzerland start
+         denied; everywhere else starts granted and can opt out via the banner.
+         wait_for_update holds hits briefly so a fast click is not missed. */
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500,
+        region: [
+          'AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU',
+          'IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES',
+          'SE','IS','LI','NO','GB','CH'
+        ]
+      });
+      gtag('consent', 'default', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted',
+        analytics_storage: 'granted'
+      });
+
+      /* Replay a stored choice before the first hit, so a returning visitor is
+         never measured under a default they already overrode. */
+      try {
+        var ssConsent = localStorage.getItem('ss_consent');
+        if (ssConsent === 'granted' || ssConsent === 'denied') {
+          gtag('consent', 'update', {
+            ad_storage: ssConsent,
+            ad_user_data: ssConsent,
+            ad_personalization: ssConsent,
+            analytics_storage: ssConsent
+          });
+        }
+      } catch (e) { /* private mode: fall through to the defaults above */ }
+
+      gtag('js', new Date());
+      /* The automatic page_view is left ON, unlike an earlier revision that
+         disabled it. It fires from gtag.js itself, so a hit lands even if the
+         React bundle fails to boot — which is what GA's setup check and Realtime
+         look for. App.js then sends a page_view for each subsequent view and
+         skips the first, so the two never double count. */
+      gtag('config', 'G-YYT8CPXNXS');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYT8CPXNXS"></script>
+
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="Tell SavorScout what you're hungry for and it comes back with one place worth going — not a list to sift through."
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
@@ -24,7 +105,9 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <!-- App.js rewrites this per view, so GA reports a real page_title instead
+         of one value for the whole site. This is the pre-hydration fallback. -->
+    <title>SavorScout — Skip the scroll. Get the one.</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

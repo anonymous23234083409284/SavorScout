@@ -706,7 +706,7 @@ function ConsentBanner() {
 
 /* Names for the two tabs plus the signed-out screen, used for both the document
    title and the GA page_path. Keyed by the same ids TABS uses. */
-const VIEW_LABELS = { find: "Find", you: "You", "sign-in": "Sign in" };
+const VIEW_LABELS = { find: "Find", you: "You", "sign-in": "Sign in", browse: "Browse" };
 
 /* ===========================================================================
    APP
@@ -737,6 +737,13 @@ function App() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authMode, setAuthMode] = useState("signin");
   const [resetSent, setResetSent] = useState(false);
+  /* Signed out, the app is browsable rather than walled off — the gate appears
+     once the one free search has been spent. */
+  const [showAuth, setShowAuth] = useState(false);
+  const [trialSpent, setTrialSpent] = useState(() => {
+    try { return Boolean(window.localStorage.getItem("ss_trial_spent")); }
+    catch { return false; }
+  });
 
   /* ---- analytics: one page_view per view ----
 
@@ -748,7 +755,10 @@ function App() {
      The first one is skipped: gtag.js already sent a page_view for the landing
      view, and firing again here would double count entry. Held until
      authChecked so the boot flash of the signed-out shell is not reported. */
-  const viewKey = user ? tab : "sign-in";
+  /* Browsing signed out is now its own view, and worth separating from the gate
+     — the ratio between /browse and /sign-in is the conversion this change
+     exists to move. */
+  const viewKey = user ? tab : (showAuth ? "sign-in" : "browse");
   const firstViewSent = useRef(false);
   useEffect(() => {
     if (!authChecked) return;
@@ -1138,17 +1148,27 @@ function App() {
 
   /* ---- search ---- */
 
+  /* The browser's copy of "the free search is gone". Purely so the UI can say
+     the right thing before the next request — the SERVER holds the real
+     allowance, so clearing this key buys nothing. */
+  const spendTrial = useCallback(() => {
+    setTrialSpent(true);
+    try { window.localStorage.setItem("ss_trial_spent", "1"); } catch { /* private mode */ }
+  }, []);
+
   const handleSearch = async () => {
-    if (loading || !query.trim() || !user) return;
+    if (loading || !query.trim()) return;
     if (!resolvedLocation) { setErrorMsg("Set your ZIP code first."); return; }
 
     setErrorMsg(""); setLoading(true);
     setShowMetrics(false); setShowCompare(false); setShowMap(false);
 
     try {
+      /* Signed out is a legitimate state here: the first search is free. The
+         Authorization header is simply omitted and the server decides, which
+         is the only place that decision can actually be enforced. */
       const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) { setErrorMsg("Your session expired — please sign in again."); return; }
+      const token = session?.access_token || null;
 
       searchAbortRef.current?.abort();
       const controller = new AbortController();
@@ -1157,7 +1177,10 @@ function App() {
       const trimmed = query.trim();
       const response = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           query: trimmed,
           lat: resolvedLocation.lat,
@@ -1176,6 +1199,17 @@ function App() {
         setErrorMsg(data.error || "You've hit your search limit for today.");
         setSearchesRemaining(0); setResults([]);
       } else if (response.status === 401) {
+        /* The server is the gate; this branch only mirrors its verdict. A spent
+           trial sends them straight to signup rather than leaving an error
+           sitting under a search box that will never work again. */
+        if (data.requiresAuth) {
+          spendTrial();
+          setShowAuth(true);
+          setAuthMode("signup");
+          if (typeof window.gtag === "function") {
+            window.gtag("event", "sign_up_prompt", { from: "trial_exhausted" });
+          }
+        }
         setErrorMsg(data.error || "Please sign in again."); setResults([]);
       } else if (!response.ok) {
         setErrorMsg(data.error || `Something went wrong (${response.status}).`); setResults([]);
@@ -1184,11 +1218,15 @@ function App() {
           ? `Nothing within ${data.maxRadiusMiles || 25} miles of ${resolvedLocation.name} — closest was about ${data.nearestMiles} mi out. Try "Anywhere worth it" or a different ZIP.`
           : `No match near ${resolvedLocation.name} — try a different craving.`);
         setResults([]);
+        if (data.trialUsed) spendTrial();
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       } else {
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
         setRadiusUsed(typeof data.radiusUsed === "number" ? data.radiusUsed : null);
+        /* The server flags a search it served anonymously. That is the moment
+           the free one is gone, so the UI stops promising another. */
+        if (data.trialUsed) spendTrial();
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
         refreshGame().catch(() => {});
         refreshHistory().catch(() => {});
@@ -1223,9 +1261,13 @@ function App() {
     return <div className="app">{Ambient}<p className="center-note">Loading…</p></div>;
   }
 
-  /* ---- signed out ---- */
+  /* ---- the gate ----
 
-  if (!user) {
+     Only reached once a signed-out visitor asks for something that needs an
+     account. Everyone else falls through to the main app below, where the
+     signedOut flag turns the search into a sign-in prompt. */
+
+  if (!user && showAuth) {
     return (
       <div className="app">
         {Ambient}
@@ -1238,6 +1280,11 @@ function App() {
           </header>
 
           <section className="gate">
+            {/* A way back out. Without it the gate is a dead end for anyone who
+                only meant to look around. */}
+            <button type="button" className="link-btn gate-back" onClick={() => setShowAuth(false)}>
+              ← Back to browsing
+            </button>
             <p className="hero-kicker">Sign in to find your one</p>
             <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>
 
@@ -1285,13 +1332,18 @@ function App() {
     );
   }
 
-  if (!onboardingChecked) {
+  /* Both onboarding gates are for signed-in users only. onboardingChecked is
+     reset to false whenever there is no user, so without the `user &&` guard a
+     signed-out visitor would sit on "Loading…" forever instead of reaching the
+     browsable app below. */
+
+  if (user && !onboardingChecked) {
     return <div className="app">{Ambient}<p className="center-note">Loading…</p></div>;
   }
 
-  /* ---- onboarding ---- */
+  /* ---- onboarding: allergies and dietary preferences ---- */
 
-  if (needsOnboarding) {
+  if (user && needsOnboarding) {
     return (
       <div className="app">
         {Ambient}
@@ -1338,7 +1390,16 @@ function App() {
   /* ---- main ---- */
 
   const level = game?.level;
-  const visibleTabs = TABS.filter((t) => (level?.level ?? 1) >= t.minLevel);
+  /* Signed out there is no level, no streak and no history, so the You tab has
+     nothing to show — Find is the whole surface until someone signs in. */
+  const signedOut = !user;
+  /* Signed out with the free search already spent. The server enforces this;
+     the flag only decides what the page says. */
+  const trialWall = signedOut && trialSpent;
+  const visibleTabs = signedOut
+    ? []
+    : TABS.filter((t) => (level?.level ?? 1) >= t.minLevel);
+  const activeTab = signedOut ? "find" : tab;
   // The only outstanding thing left is an ungraded pick.
   const openWork = pendingVerdicts.length;
 
@@ -1369,11 +1430,41 @@ function App() {
           </nav>
 
           <div className="topbar-right">
-            <Flame days={streakDays} />
-            <LevelRing level={level} />
-            <button className="signout" onClick={handleSignOut}>Sign out</button>
+            {signedOut ? (
+              <button className="btn btn--hot topbar-signin" onClick={() => setShowAuth(true)}>
+                Sign in
+              </button>
+            ) : (
+              <>
+                <Flame days={streakDays} />
+                <LevelRing level={level} />
+                <button className="signout" onClick={handleSignOut}>Sign out</button>
+              </>
+            )}
           </div>
         </header>
+
+        {/* The asterisk note. Sits directly under the header so it is the first
+            thing read, and is a button in full so the whole line is the way in
+            rather than a label with a link buried in it.
+
+            The wording tracks the actual state. Saying "sign in to search"
+            while a free search is still available would be a lie the very next
+            click disproves, so that line only appears once it is true. */}
+        {signedOut && (
+          <button
+            type="button"
+            className={`signedout-note${trialWall ? " signedout-note--spent" : ""}`}
+            onClick={() => { setShowAuth(true); if (trialWall) setAuthMode("signup"); }}
+          >
+            <span className="signedout-star" aria-hidden="true">*</span>
+            {trialWall ? (
+              <>You are not signed in. <strong>Sign up to keep searching</strong></>
+            ) : (
+              <>You are not signed in. <strong>One free search</strong>, then sign up to keep going</>
+            )}
+          </button>
+        )}
 
 
         <ShareSheet
@@ -1393,7 +1484,9 @@ function App() {
         )}
 
         {/* ================= TODAY ================= */}
-        {tab === "find" && (
+        {/* activeTab, not tab: signing out while on You would otherwise leave
+            the page blank, since the You tab is hidden but the state persists. */}
+        {activeTab === "find" && (
           <main className="page page--wide">
             <div className="hero-search">
               <p className="hero-kicker">Say what you're craving</p>
@@ -1408,8 +1501,15 @@ function App() {
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
                 />
-                <button className="btn btn--hot" onClick={handleSearch} disabled={loading || !query.trim() || !resolvedLocation}>
-                  {loading ? "Searching…" : "Find my one"}
+                {/* Once the free search is spent the button stops pretending to
+                    search and becomes the signup ask, so the wall is stated
+                    before the click rather than as an error after it. */}
+                <button
+                  className="btn btn--hot"
+                  onClick={trialWall ? () => { setShowAuth(true); setAuthMode("signup"); } : handleSearch}
+                  disabled={trialWall ? false : (loading || !query.trim() || !resolvedLocation)}
+                >
+                  {trialWall ? "Sign up to keep searching" : loading ? "Searching…" : "Find my one"}
                 </button>
               </div>
 
@@ -1456,7 +1556,10 @@ function App() {
                 </div>
               )}
 
-              {searchesRemaining !== null && (
+              {/* The daily allowance belongs to an account. Signed out, the
+                  only number that means anything is the free one, and the
+                  asterisk line above already says that. */}
+              {!signedOut && searchesRemaining !== null && (
                 <p className="searches-left">{searchesRemaining} search{searchesRemaining === 1 ? "" : "es"} left today</p>
               )}
               {errorMsg && <p className="err">{errorMsg}</p>}
@@ -1615,7 +1718,7 @@ function App() {
             Two things only: the places we've sent you, and whether we were
             right. The second is the whole reason the first is worth keeping —
             a history you never grade is a log, and a log teaches us nothing. */}
-        {tab === "you" && (
+        {activeTab === "you" && (
           <main className="page">
             <div className="page-head">
               <h1 className="page-title">Where we <em>sent you</em></h1>

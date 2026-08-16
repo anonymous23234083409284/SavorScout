@@ -76,6 +76,12 @@ const CANDIDATE_POOL_SIZE = 20; // over-fetch, since the radius filter discards 
 const MAX_PAGES = 1;            // a 2nd page is a 2nd serial Serper call; 15 candidates is plenty
 const STAGE1_FINALIST_COUNT = 3; // was 5 — fewer parallel Exa calls means a shorter tail
 const DAILY_SEARCH_LIMIT = 5;
+
+// One search before signing up. The point is to let someone feel the product
+// work once — after that the wall is real, and it is a SERVER wall. Doing this
+// in the browser would be theatre: clearing storage or opening a private
+// window would reset it.
+const FREE_TRIAL_SEARCHES = 1;
 const EARTH_RADIUS_MILES = 3958.8;
 const PROXIMITY_DECAY_MILES = 3;
 const MAX_QUERY_CHARS = 300;
@@ -2085,6 +2091,157 @@ app.post("/auth/check-email", async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// THE FREE TRIAL
+//
+// One search, then sign in. Enforced here rather than in the browser, because
+// a browser-side flag is a suggestion: clearing localStorage or opening a
+// private window resets it, and the whole point of the wall is that it holds.
+//
+// Anonymous callers are identified by a HASH of their IP. Hashed because the
+// server only needs to know whether it has seen this caller before — it never
+// needs the address itself, and an unhashed IP log is personal data we would
+// then be on the hook for.
+//
+// What this does and does not stop, stated plainly: clearing storage, private
+// windows and a different browser all fail to get a second free search. A
+// different network or a VPN will, as with any IP-based allowance. The bar is
+// "not trivially bypassable from the client", not "unbypassable".
+// ---------------------------------------------------------------------------
+
+const crypto = require("crypto");
+
+// X-Forwarded-For is client-settable when nothing sits in front of the app, so
+// it is only consulted when the deployment says a proxy is there. Getting this
+// backwards is worse than it sounds in both directions: trust it when exposed
+// and anyone can spoof a fresh identity; ignore it behind a proxy and every
+// visitor shares the proxy's address, so ONE free search exists for everyone.
+const TRUST_PROXY = process.env.TRUST_PROXY === "1";
+
+function clientIp(req) {
+  if (TRUST_PROXY) {
+    // The LAST entry, not the first. Each hop appends, so with one proxy in
+    // front the rightmost value is the one that proxy observed — the only
+    // entry the client could not have written. A caller who sends
+    // "X-Forwarded-For: 203.0.113.99" just gets their real address appended
+    // after it, so reading from the left would hand out a fresh free search
+    // for every made-up address.
+    const hops = String(req.headers["x-forwarded-for"] || "")
+      .split(",").map((s) => s.trim()).filter(Boolean);
+    if (hops.length) return hops[hops.length - 1];
+  }
+  return req.socket?.remoteAddress || "unknown";
+}
+
+const IP_SALT = process.env.SUPABASE_SERVICE_ROLE_KEY || "savorscout";
+const ipKey = (ip) => crypto.createHash("sha256").update(`${ip}:${IP_SALT}`).digest("hex").slice(0, 40);
+
+// The table in migrations/002_anon_trial.sql makes the allowance survive a
+// restart. Without it we fall back to process memory, which still blocks every
+// client-side bypass — it just forgets on deploy. Probed the same way the seal
+// is, so applying the migration takes effect without needing a restart.
+const TRIAL_RETRY_MS = 5 * 60 * 1000;
+let TRIAL_TABLE = false;
+let TRIAL_PROBED_AT = 0;
+
+async function trialTableReady() {
+  if (TRIAL_TABLE) return true;
+  if (TRIAL_PROBED_AT && Date.now() - TRIAL_PROBED_AT < TRIAL_RETRY_MS) return false;
+  TRIAL_PROBED_AT = Date.now();
+  const { error } = await supabaseAdmin.from("anon_trials").select("ip_hash").limit(1);
+  TRIAL_TABLE = !error;
+  if (TRIAL_TABLE) console.log("free trial: durable (anon_trials)");
+  else console.warn(`free trial: in-memory only — run backend/migrations/002_anon_trial.sql (${error.message})`);
+  return TRIAL_TABLE;
+}
+
+const trialMemory = new Map();
+const TRIAL_MEM_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+function sweepTrialMemory() {
+  const cutoff = Date.now() - TRIAL_MEM_TTL_MS;
+  for (const [k, v] of trialMemory) if (v.at < cutoff) trialMemory.delete(k);
+}
+
+async function trialSearchesUsed(key) {
+  if (await trialTableReady()) {
+    const { data } = await supabaseAdmin
+      .from("anon_trials").select("searches").eq("ip_hash", key).maybeSingle();
+    return data?.searches || 0;
+  }
+  return trialMemory.get(key)?.n || 0;
+}
+
+async function recordTrialSearch(key) {
+  if (await trialTableReady()) {
+    const used = await trialSearchesUsed(key);
+    await supabaseAdmin.from("anon_trials").upsert(
+      { ip_hash: key, searches: used + 1, last_at: new Date().toISOString() },
+      { onConflict: "ip_hash" }
+    );
+    return;
+  }
+  if (trialMemory.size > 50000) sweepTrialMemory();
+  const cur = trialMemory.get(key);
+  trialMemory.set(key, { n: (cur?.n || 0) + 1, at: Date.now() });
+}
+
+/* One place that knows how a search gets counted, so no call site has to.
+   A signed-in search increments that account's daily count; a trial search
+   burns the IP's single free go. Every exit from /search routes through here,
+   including the empty-result paths — otherwise the free search would only be
+   spent when it happened to find something, and a query that returned nothing
+   would leave the wall open forever. */
+/* What to tell the client is left. A trial caller has just spent their only
+   search, so it is zero and the sign-in wall goes up — reporting the signed-in
+   allowance here would promise four more searches that the gate will refuse. */
+function remainingFor(req, newCount) {
+  if (!req.userId) return 0;
+  return Math.max(0, DAILY_SEARCH_LIMIT - newCount);
+}
+
+async function countThisSearch(req, newCount) {
+  if (req.userId) return recordSearch(req.userId, req.searchDate, newCount);
+  if (req.anonTrialKey) return recordTrialSearch(req.anonTrialKey);
+  return undefined;
+}
+
+/* Signed in -> the normal daily limit. Signed out -> the one free search, and
+   then a hard stop that no amount of client-side tinkering gets past. */
+async function requireAuthOrTrial(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return requireAuthAndLimit(req, res, next);
+  }
+
+  try {
+    const key = ipKey(clientIp(req));
+    const used = await trialSearchesUsed(key);
+
+    if (used >= FREE_TRIAL_SEARCHES) {
+      return res.status(401).json({
+        error: "That was your free search — sign in to keep going.",
+        requiresAuth: true,
+        trialExhausted: true,
+        searchesRemaining: 0,
+      });
+    }
+
+    req.userId = null;          // every user-scoped write checks this
+    req.anonTrialKey = key;
+    req.currentSearchCount = 0;
+    req.searchDate = todayStr();
+    return next();
+  } catch (err) {
+    console.error("trial gate error:", err.message);
+    // Fail CLOSED. An error here must not become a free unlimited tier.
+    return res.status(401).json({
+      error: "Please sign in to search.",
+      requiresAuth: true,
+    });
+  }
+}
+
 async function requireAuthAndLimit(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
@@ -2904,7 +3061,7 @@ app.get("/me/scout-report", requireAuth, async (req, res) => {
   }
 });
 
-app.post("/search", requireAuthAndLimit, async (req, res) => {
+app.post("/search", requireAuthOrTrial, async (req, res) => {
   try {
     const userRequest = req.body.query;
     const userLat = req.body.lat;
@@ -2950,23 +3107,31 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // FIX: Promise.resolve() wrapper — supabase-js query builders are
     // PromiseLike (they implement `then`, not `catch`), so calling .catch()
     // directly on one throws a TypeError.
-    const profilePromise = Promise.resolve(
-      supabaseAdmin
-        .from("profiles")
-        .select("allergies, dietary_preferences")
-        .eq("id", req.userId)
-        .maybeSingle()
-    ).catch((err) => {
-      console.error("profile fetch error:", err.message);
-      return { data: null };
-    });
+    // A trial caller has no profile and no rating history, so both lookups
+    // are skipped rather than queried with a null id — which would match
+    // every row with a null user and leak one stranger’s preferences into
+    // another’s search.
+    const profilePromise = req.userId
+      ? Promise.resolve(
+          supabaseAdmin
+            .from("profiles")
+            .select("allergies, dietary_preferences")
+            .eq("id", req.userId)
+            .maybeSingle()
+        ).catch((err) => {
+          console.error("profile fetch error:", err.message);
+          return { data: null };
+        })
+      : Promise.resolve({ data: null });
 
     // Revealed preferences, learned from verdicts they've actually rated.
     // Runs concurrently with everything else, so it costs no latency.
-    const tastePromise = loadTasteProfile(req.userId).catch((err) => {
-      console.error("taste profile load failed:", err.message);
-      return null;
-    });
+    const tastePromise = req.userId
+      ? loadTasteProfile(req.userId).catch((err) => {
+          console.error("taste profile load failed:", err.message);
+          return null;
+        })
+      : Promise.resolve(null);
 
     const candidatePromise = fetchCandidatePool({
       textQuery: userRequest.trim(),
@@ -3055,12 +3220,13 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
 
     if (candidates.length === 0) {
       const { newCount } = emptyResult();
-      await recordSearch(req.userId, req.searchDate, newCount);
+      await countThisSearch(req, newCount);
       return res.json({
         preferences,
         locationName,
         restaurants: [],
-        searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
+        searchesRemaining: remainingFor(req, newCount),
+        trialUsed: !req.userId,
       });
     }
 
@@ -3108,12 +3274,13 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // undefined `winner` and crashed on `winner.composite`.
     if (withFeatures.length === 0) {
       const { newCount } = emptyResult();
-      await recordSearch(req.userId, req.searchDate, newCount);
+      await countThisSearch(req, newCount);
       return res.json({
         preferences,
         locationName,
         restaurants: [],
-        searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
+        searchesRemaining: remainingFor(req, newCount),
+        trialUsed: !req.userId,
       });
     }
 
@@ -3151,7 +3318,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
           `Serper received: ${JSON.stringify({ q: candidatePool.scopedQuery, location: locationName })}`
       );
       const { newCount } = emptyResult();
-      recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
+      countThisSearch(req, newCount).catch(() => {});
       return res.json({
         preferences,
         locationName,
@@ -3159,7 +3326,8 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
         outOfRange: true,
         nearestMiles: Math.round(nearest),
         maxRadiusMiles: maxRadius,
-        searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
+        searchesRemaining: remainingFor(req, newCount),
+        trialUsed: !req.userId,
       });
     }
 
@@ -3483,12 +3651,16 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // Neither of these blocks the response — the answer shouldn't wait on
     // bookkeeping. The verdict row is what makes the "did you go?" loop
     // possible, and it costs the user nothing to create.
-    recordSearch(req.userId, req.searchDate, newCount).catch(() => {});
-    recordVerdict(req.userId, winner, {
-      query: userRequest.trim(),
-      locationName,
-      matchScore: winner.matchScore,
-    }).catch(() => {});
+    countThisSearch(req, newCount).catch(() => {});
+    // No account, no history row to write it to — a trial search is
+    // deliberately not remembered.
+    if (req.userId) {
+      recordVerdict(req.userId, winner, {
+        query: userRequest.trim(),
+        locationName,
+        matchScore: winner.matchScore,
+      }).catch(() => {});
+    }
 
     // Every search quietly stocks the duel pool, so the daily game costs no
     // extra Serper calls and gets richer the more the area is searched.
@@ -3499,7 +3671,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     // Search XP decays through the day (40/25/15/5/0) so grinding converges
     // to zero. The bare-search rate is deliberately low — an unengaged
     // search is a log line, not data, and shouldn't be priced like data.
-    (async () => {
+    if (req.userId) (async () => {
       try {
         const state = await loadGameState(req.userId);
         const today = todayStr();
@@ -3518,7 +3690,7 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
     })();
 
     // Cuisine passport: first time they're sent to a category is a stamp.
-    if (winner.place.type) {
+    if (req.userId && winner.place.type) {
       supabaseAdmin
         .from("stamps")
         .upsert(
@@ -3542,7 +3714,8 @@ app.post("/search", requireAuthAndLimit, async (req, res) => {
       radiusUsed,
       radiusMode,
       restaurants: finalPicks,
-      searchesRemaining: DAILY_SEARCH_LIMIT - newCount,
+      searchesRemaining: remainingFor(req, newCount),
+      trialUsed: !req.userId,
     });
   } catch (err) {
     console.error("Unhandled /search error:", err);

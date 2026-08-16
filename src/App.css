@@ -3502,6 +3502,65 @@ body {
 }
 
 /* ===========================================================================
+   SIGNED-OUT NOTICE
+
+   The asterisk line under the header. Warm and quiet rather than an error —
+   nothing has gone wrong, there is just one thing left to do before searching.
+   The whole line is the button, so the target is the sentence, not a word in
+   the middle of it.
+   =========================================================================== */
+
+.signedout-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 4px;
+  padding: 11px max(28px, calc((100% - 732px) / 2));
+  border: none;
+  border-bottom: 1px solid var(--line-warm, var(--line));
+  background: rgba(255, 149, 0, 0.07);
+  cursor: pointer;
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--saffron);
+  transition: background 0.2s var(--ease);
+}
+
+.signedout-note:hover { background: rgba(255, 149, 0, 0.12); }
+.signedout-note strong { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.signedout-star { font-size: 14px; line-height: 1; }
+
+/* Once the free search is gone the line stops being an FYI and becomes the
+   only way forward, so it warms up to match the search button it now mirrors. */
+.signedout-note--spent {
+  background: rgba(255, 95, 31, 0.13);
+  border-bottom-color: rgba(255, 95, 31, 0.32);
+  color: var(--ember);
+}
+.signedout-note--spent:hover { background: rgba(255, 95, 31, 0.19); }
+
+/* Sits where the streak and level ring do when signed in, so the header keeps
+   its shape either way. */
+.topbar-signin { padding: 9px 18px; font-size: 13px; }
+
+/* Escape hatch out of the gate, above the heading so it reads first. */
+.gate-back {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-mid);
+}
+.gate-back:hover { color: var(--saffron); }
+
+@media (max-width: 480px) {
+  .signedout-note { font-size: 11px; padding-left: 18px; padding-right: 18px; }
+}
+
+/* ===========================================================================
    CONSENT BANNER
 
    Deliberately quiet. It is a legal requirement, not a feature, so it sits at

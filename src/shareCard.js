@@ -57,7 +57,6 @@ export const gates = {
   rating: (r, n) => typeof r === "number" && r >= 4.0 && (n || 0) >= 25,
   score: (s) => typeof s === "number" && s >= 70,
   beat: (b) => typeof b === "number" && b >= 3,
-  distance: (d) => typeof d === "number" && d > 0 && d < 60,
   quote: (t) => {
     if (typeof t !== "string") return false;
     const s = t.trim();
@@ -80,7 +79,10 @@ export function selectCardFields(winner, query) {
     meta.push(`${winner.rating.toFixed(1)}★`);
   }
   if (gates.category(winner.category)) meta.push(winner.category);
-  if (gates.distance(winner.distanceMiles)) meta.push(`${winner.distanceMiles} mi`);
+  /* Distance is deliberately NOT on the card. It is measured from the sharer,
+     so "0.4 mi" beside a named restaurant tells every viewer roughly where the
+     sharer lives — a detail they did not choose to publish and probably would
+     not have. It stays on their own result page, where the audience is them. */
 
   const quoteText = [winner.review?.text, winner.evidence?.quote, winner.reception?.quote]
     .find((t) => gates.quote(t));
@@ -134,7 +136,7 @@ export function buildCaption(fields) {
   bits.push(OPENERS[Math.abs(hashInt(fields.name)) % OPENERS.length].replace("{q}", q));
 
   // The result, stated concretely. A middling match score is gated out as a
-  // brag — but the rating and distance that survived their own gates are
+  // brag — but the rating and category that survived their own gates are
   // still true and still worth saying, so the line falls back to those rather
   // than shrinking to a bare name with nothing to recommend it.
   const stat = [];

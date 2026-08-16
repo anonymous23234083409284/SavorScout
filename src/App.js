@@ -264,12 +264,19 @@ function osmEmbedUrl(lat, lng) {
   return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - d},${lat - d},${lng + d},${lat + d}&layer=mapnik&marker=${lat},${lng}`;
 }
 
+/* beatCount is how many others it BEAT, so the size of the pool is beatCount+1.
+   "Best of the {beat}" was off by one and contradicted the share card, which
+   says "Best of {beat + 1}" — the same pick appearing to have been chosen from
+   two different pool sizes is exactly the kind of thing that costs trust. Every
+   phrasing here now derives from one of `beat` (others) or `pool` (total), and
+   never mixes them. */
 function verdictLine(w) {
   const beat = w.beatCount || 0;
+  const pool = beat + 1;
   const lead = w.dominancePercent;
   if (beat === 0) return "The only place nearby that fits what you asked for.";
   if (typeof lead === "number" && lead >= 25) return `Clear winner — well ahead of the other ${beat} nearby.`;
-  if (typeof lead === "number" && lead >= 8) return `Best of the ${beat} nearby places we compared.`;
+  if (typeof lead === "number" && lead >= 8) return `Best of the ${pool} nearby places we compared.`;
   return `Edged out ${beat} other${beat === 1 ? "" : "s"} nearby — it was close.`;
 }
 
@@ -704,6 +711,80 @@ function ConsentBanner() {
   );
 }
 
+/* ===========================================================================
+   ABOUT
+
+   The one question the product kept failing in testing was "why wouldn't I
+   just use Google?", so it is answered on the way in rather than buried.
+
+   Every claim below is one the product actually makes good on, and the last
+   block says plainly what SavorScout is worse at. That is not modesty — the
+   places data here comes from the same public sources Google surfaces, so
+   claiming better data would be a lie a single search could expose, and the
+   honest framing ("same data, different job") is the only version that
+   survives contact with someone who checks.
+   =========================================================================== */
+
+const ABOUT_KEY = "ss_about_seen";
+
+const ABOUT_POINTS = [
+  {
+    k: "one",
+    h: "Google hands you thirty. We hand you one.",
+    p: "Maps and Yelp are directories — they rank everything and leave the deciding to you. That is fine when you are researching and exhausting when you are hungry. SavorScout makes the call and stands behind it.",
+  },
+  {
+    k: "dish",
+    h: "We read for the dish, not the restaurant.",
+    p: "A four-star restaurant can still be mediocre at the thing you actually want. Ask for spicy ramen and we go looking for what people said about the ramen — menus and reviews for that dish — instead of ranking places by their overall star average.",
+  },
+  {
+    k: "why",
+    h: "You get the reasoning, not just the answer.",
+    p: "Every pick shows its match score, what it beat, and the evidence behind it. If the reasoning is weak you can see that it is weak, which is not something a ranked list ever lets you do.",
+  },
+  {
+    k: "you",
+    h: "It remembers your allergies. And it asks if it was right.",
+    p: "Dietary restrictions factor into every match, not a filter you re-apply each time. Afterwards we ask whether you went and whether it landed — the answer tunes the next pick. No directory has ever asked you that.",
+  },
+];
+
+function AboutPanel({ onClose }) {
+  return (
+    <section className="about" aria-labelledby="about-h">
+      <div className="about-head">
+        <h2 className="about-title" id="about-h">
+          Why not just use <em>Google Maps</em>?
+        </h2>
+        <button type="button" className="about-close" onClick={onClose} aria-label="Close about">
+          ×
+        </button>
+      </div>
+
+      <div className="about-grid">
+        {ABOUT_POINTS.map((pt) => (
+          <div className="about-point" key={pt.k}>
+            <h3 className="about-point-h">{pt.h}</h3>
+            <p className="about-point-p">{pt.p}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* The honest half. Leaving this out would make the rest read like
+          marketing, and the first person to check would stop trusting all of
+          it — including the parts that are true. */}
+      <p className="about-fine">
+        <strong>What we're not:</strong> we don't have Yelp's photo library, Google's hours,
+        reservations or delivery — and our place data comes from the same public sources they do.
+        We're not claiming better data. We're claiming a different job: they help you browse,
+        we pick one and show our work. For a long comparison, use Maps. To just eat somewhere
+        good tonight, use this.
+      </p>
+    </section>
+  );
+}
+
 /* Names for the two tabs plus the signed-out screen, used for both the document
    title and the GA page_path. Keyed by the same ids TABS uses. */
 const VIEW_LABELS = { find: "Find", you: "You", "sign-in": "Sign in", browse: "Browse" };
@@ -744,6 +825,17 @@ function App() {
     try { return Boolean(window.localStorage.getItem("ss_trial_spent")); }
     catch { return false; }
   });
+  /* Open on arrival until it has been dismissed once. The pitch is the first
+     thing a new visitor sees; after that it stays one tap away in the header
+     rather than re-announcing itself every session. */
+  const [aboutOpen, setAboutOpen] = useState(() => {
+    try { return window.localStorage.getItem(ABOUT_KEY) !== "1"; }
+    catch { return true; }
+  });
+  const closeAbout = useCallback(() => {
+    setAboutOpen(false);
+    try { window.localStorage.setItem(ABOUT_KEY, "1"); } catch { /* private mode */ }
+  }, []);
 
   /* ---- analytics: one page_view per view ----
 
@@ -1430,6 +1522,13 @@ function App() {
           </nav>
 
           <div className="topbar-right">
+            <button
+              className={`about-btn${aboutOpen ? " about-btn--on" : ""}`}
+              onClick={() => (aboutOpen ? closeAbout() : setAboutOpen(true))}
+              aria-expanded={aboutOpen}
+            >
+              About
+            </button>
             {signedOut ? (
               <button className="btn btn--hot topbar-signin" onClick={() => setShowAuth(true)}>
                 Sign in
@@ -1482,6 +1581,10 @@ function App() {
             {toast.leveledUp && <span className="toast-rank">{toast.rank}</span>}
           </div>
         )}
+
+        {/* Above the hero on purpose: this is the answer to the question every
+            first-time visitor arrives with, and it is worthless below the fold. */}
+        {aboutOpen && <AboutPanel onClose={closeAbout} />}
 
         {/* ================= TODAY ================= */}
         {/* activeTab, not tab: signing out while on You would otherwise leave
@@ -1671,7 +1774,12 @@ function App() {
                         </button>
                         {winner.runnerUps?.length > 0 && (
                           <button className="toggle" onClick={() => { setShowCompare((s) => !s); track("comparisons_open", { verdictId: winner.id }); }}>
-                            {showCompare ? "Hide comparisons" : `Top ${winner.runnerUps.length} comparisons`}
+                            {/* States which pool the runners-up came out of, so
+                                "Top 3" next to "Best of 7" reads as a subset
+                                rather than a second, contradictory number. */}
+                            {showCompare
+                              ? "Hide comparisons"
+                              : `Top ${winner.runnerUps.length} of ${(winner.beatCount || 0) + 1} compared`}
                           </button>
                         )}
                       </div>

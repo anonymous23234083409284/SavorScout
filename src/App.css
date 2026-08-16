@@ -3502,6 +3502,101 @@ body {
 }
 
 /* ===========================================================================
+   ABOUT PANEL
+
+   Sits above the hero and answers "why not Google?" before anyone has to ask.
+   Deliberately reads as prose rather than as a feature grid — the objection is
+   an argument, and bullet points do not win arguments.
+   =========================================================================== */
+
+.about {
+  margin: 4px 0 26px;
+  padding: 24px 26px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: linear-gradient(160deg, rgba(255, 95, 31, 0.06), rgba(255, 255, 255, 0.02));
+}
+
+.about-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+
+.about-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.about-title em { font-style: normal; color: var(--ember); }
+
+.about-close {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: none;
+  color: var(--ink-mid);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.about-close:hover { color: var(--ink); border-color: var(--ink-mid); }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 28px;
+  margin-top: 18px;
+}
+
+.about-point-h {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--saffron);
+  margin-bottom: 5px;
+}
+.about-point-p { font-size: 13px; line-height: 1.55; color: var(--ink-soft); }
+
+/* The limitations block. Held apart by a rule so it reads as a caveat the
+   product volunteered, not as more of the pitch. */
+.about-fine {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-mid);
+}
+.about-fine strong { color: var(--ink-soft); font-weight: 600; }
+
+.about-btn {
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: none;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.about-btn:hover { color: var(--ink); border-color: var(--ink-mid); }
+.about-btn--on { color: var(--saffron); border-color: var(--line-warm); }
+
+@media (max-width: 620px) {
+  .about { padding: 18px 18px 16px; }
+  .about-title { font-size: 18px; }
+  .about-grid { grid-template-columns: 1fr; gap: 15px; }
+  /* Close is a thumb target here, not a cursor target. */
+  .about-close { width: 44px; height: 44px; font-size: 22px; margin: -7px -7px 0 0; }
+  /* The header button must survive on mobile: it is the ONLY way back to the
+     panel once it has been dismissed, and dismissal is permanent. */
+  .about-btn { padding: 7px 11px; font-size: 11px; }
+}
+
+/* ===========================================================================
    SIGNED-OUT NOTICE
 
    The asterisk line under the header. Warm and quiet rather than an error —

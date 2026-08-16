@@ -65,9 +65,8 @@ const RADIUS_TIERS = {
 };
 const DEFAULT_RADIUS_MODE = "nearby";
 
-// A tier has to field at least this many candidates before we settle there.
-// Picking a "winner" out of two is not a comparison worth reporting.
-const MIN_CANDIDATES_PER_TIER = 4;
+// (MIN_CANDIDATES_PER_TIER removed: the tier ladder it gated is gone. Modes are
+// now nested maxima rather than escalating fallbacks — see Layer 2a.)
 
 // The best N inside the radius go on to be ranked in full.
 const SHORTLIST_SIZE = 10;
@@ -3284,32 +3283,32 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       });
     }
 
-    // Layer 2a: expandable radius. Walk the tiers outward and stop at the
-    // first one holding a real field of options; only fall back to the
-    // widest tier's contents if none of them clear the threshold.
+    // Layer 2a: the mode is a MAXIMUM, not a ladder.
+    //
+    // This used to walk the tiers outward and `break` at the first one holding
+    // MIN_CANDIDATES_PER_TIER, which made the modes non-monotonic: a wider mode
+    // could search a NARROWER area than a narrower one. "Willing to drive"
+    // (10/15/25) settling at 10 covered less ground than "Nearby" (5/10/15)
+    // escalating to 15 — so asking to drive further could return a smaller
+    // pool, and anything genuinely good at 18mi was never even a candidate.
+    //
+    // The modes are now strictly nested, which is what picking them implies:
+    //   nearby   -> everything within 15
+    //   driving  -> everything nearby, plus everything out to 25
+    //   anywhere -> everything within 40
+    //
+    // Preferring closer places is a RANKING job, not a filtering one. It is
+    // handled by distancePenalty below, which is why widening the pool does
+    // not simply hand the win to whatever sits at the far edge.
     const nearest = Math.min(...withFeatures.map((c) => c.distance));
     const tiers = RADIUS_TIERS[radiusMode] || RADIUS_TIERS[DEFAULT_RADIUS_MODE];
     const maxRadius = tiers[tiers.length - 1];
+    // The distance the mode treats as unremarkable. Inside it, being closer
+    // earns nothing extra; past it, a place has to justify the drive.
+    const comfortRadius = tiers[0];
 
-    let withinRadius = [];
-    let radiusUsed = tiers[0];
-
-    for (const tier of tiers) {
-      const atTier = withFeatures.filter((c) => c.distance <= tier);
-      // Settle here if this tier fields enough, OR if it is the last one and
-      // has anything at all — better a short list than nothing.
-      if (atTier.length >= MIN_CANDIDATES_PER_TIER || (tier === maxRadius && atTier.length > 0)) {
-        withinRadius = atTier;
-        radiusUsed = tier;
-        break;
-      }
-      // Keep the best we have seen so the loop can't end empty-handed while
-      // candidates genuinely exist inside the widest tier.
-      if (atTier.length > withinRadius.length) {
-        withinRadius = atTier;
-        radiusUsed = tier;
-      }
-    }
+    const withinRadius = withFeatures.filter((c) => c.distance <= maxRadius);
+    const radiusUsed = maxRadius;
 
     if (withinRadius.length === 0) {
       console.warn(
@@ -3332,7 +3331,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
     }
 
     console.log(
-      `Radius "${radiusMode}" settled at ${radiusUsed}mi: ` +
+      `Radius "${radiusMode}": full ${maxRadius}mi pool, free inside ${comfortRadius}mi — ` +
         `${withinRadius.length}/${withFeatures.length} candidates (nearest ${Math.round(nearest)}mi).`
     );
 
@@ -3354,12 +3353,24 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
     // good pool". Distance is the one signal where the absolute number is
     // the whole point, so it now bypasses normalisation entirely and a hard
     // penalty is applied past the preferred radius.
-    // Scaled to the tier we actually settled on: inside it, distance is a
-    // non-issue; past it, a place has to be exceptional. A fixed 12mi cutoff
-    // punished every result in a legitimately sparse area.
+    // Keyed to the mode's COMFORT radius, not to the pool edge. Now that the
+    // pool is the mode's full range, keying it to radiusUsed would make
+    // distance free all the way out — a 38mi place would compete on level
+    // terms with a 2mi one under "Anywhere", which is not what anyone means
+    // by picking it.
+    //
+    // The falloff is linear across the mode's own span and floors at 0.75 at
+    // the far edge rather than collapsing. Choosing a wider mode is an
+    // explicit statement that the drive is acceptable, so the edge has to stay
+    // winnable for a clearly better place — combined with the 0.3-weighted
+    // proximity term in the composite, a place at the limit still needs to be
+    // roughly twice as good on everything else to take it. That is a real
+    // preference for closer without making the wider modes decorative.
     const distancePenalty = (miles) => {
-      if (miles <= radiusUsed) return 1;
-      return Math.max(0.15, Math.exp(-(miles - radiusUsed) / 6));
+      if (miles <= comfortRadius) return 1;
+      if (miles > maxRadius) return 0.15;
+      const span = Math.max(1, maxRadius - comfortRadius);
+      return 1 - 0.25 * ((miles - comfortRadius) / span);
     };
 
     const tasteProfile = await tastePromise;

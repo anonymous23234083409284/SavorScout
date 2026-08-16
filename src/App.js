@@ -804,7 +804,9 @@ function App() {
 
   const [resolvedLocation, setResolvedLocation] = useState(null);
   const [radiusMode, setRadiusMode] = useState("nearby");
-  const [radiusUsed, setRadiusUsed] = useState(null);
+  /* radiusUsed is no longer tracked: the mode now always searches its full
+     range, so there is no "settled" radius to report. The result note keys
+     off the winner's own distance instead. */
   const [locationError, setLocationError] = useState("");
   const [locationInput, setLocationInput] = useState("");
   const [resolvingLocation, setResolvingLocation] = useState(false);
@@ -1136,7 +1138,7 @@ function App() {
     setResults([]); setQuery(""); setSubmittedQuery(""); setErrorMsg("");
     setSearchesRemaining(null); setOnboardingChecked(false); setNeedsOnboarding(false);
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
-    setLocationInput(""); setResolvedLocation(null); setLocationError(""); setRadiusUsed(null);
+    setLocationInput(""); setResolvedLocation(null); setLocationError("");
     setPendingVerdicts([]); setGame(null);
     setHistory({ history: [], stats: null });
     setTab("find");
@@ -1315,7 +1317,6 @@ function App() {
       } else {
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
-        setRadiusUsed(typeof data.radiusUsed === "number" ? data.radiusUsed : null);
         /* The server flags a search it served anonymously. That is the moment
            the free one is gone, so the UI stops promising another. */
         if (data.trialUsed) spendTrial();
@@ -1622,7 +1623,7 @@ function App() {
                     <span className="loc-key">Near</span>
                     <span className="loc-val">{resolvedLocation.name}</span>
                     <button className="link-btn" style={{ marginLeft: "auto" }}
-                            onClick={() => { setResolvedLocation(null); setLocationError(""); setRadiusUsed(null); }}>
+                            onClick={() => { setResolvedLocation(null); setLocationError(""); }}>
                       Change
                     </button>
                   </div>
@@ -1676,11 +1677,19 @@ function App() {
                     {submittedQuery && <span className="verdict-q">"{submittedQuery}"</span>}
                   </div>
 
-                  {typeof radiusUsed === "number" && radiusUsed > RADIUS_FIRST_TIER[radiusMode] && (
-                    <p className="verdict-note">
-                      Nothing close enough at {RADIUS_FIRST_TIER[radiusMode]} mi — widened to {radiusUsed} mi.
-                    </p>
-                  )}
+                  {/* There is no "widening" any more — the mode searches its
+                      full range every time, so comparing radiusUsed to the
+                      first tier was always true and the old note always lied.
+                      What is worth saying is when the winner itself sits past
+                      the comfortable distance, which is a fact about this
+                      result rather than about the search. */}
+                  {typeof winner.distanceMiles === "number" &&
+                    winner.distanceMiles > RADIUS_FIRST_TIER[radiusMode] && (
+                      <p className="verdict-note">
+                        Nothing better within {RADIUS_FIRST_TIER[radiusMode]} mi — this one's{" "}
+                        {winner.distanceMiles} mi out, and worth it.
+                      </p>
+                    )}
 
                   <div className="split">
                     <div className="pane-visual">

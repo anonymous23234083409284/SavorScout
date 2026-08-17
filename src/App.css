@@ -3688,6 +3688,33 @@ body {
 
 .rm-surprise { display: inline-block; margin-top: 12px; font-size: 12.5px; }
 
+/* Join by code. Monospace and wide-tracked so a 6-character code is easy to
+   check against a screenshot or something read aloud. */
+.rm-join { margin-bottom: 22px; }
+.rm-join-row { display: flex; gap: 10px; }
+.rm-join-input {
+  flex: 1; min-width: 0;
+  min-height: 50px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.rm-join-input::placeholder { color: var(--ink-mid); letter-spacing: 0.2em; }
+.rm-join-input:focus { outline: none; border-color: var(--saffron); }
+.rm-join-row > .btn { min-height: 50px; padding: 0 26px; }
+.rm-join-hint { margin-top: 10px; font-size: 12px; color: var(--ink-mid); }
+
+@media (max-width: 420px) {
+  .rm-join-input { font-size: 17px; padding: 0 14px; }
+  .rm-join-row > .btn { padding: 0 20px; }
+}
+
 /* Lobby — deliberately calm. Nothing is counting down, and it should look
    like nothing is counting down. */
 .rm-lobby {

@@ -676,6 +676,23 @@ const roomCodeFromUrl = () => {
 };
 const roomKey = (code) => `ss_room_${code}`;
 
+/* Pulls a room code out of whatever someone actually pastes or types.
+
+   In practice that is rarely a clean code: it is the whole URL copied from a
+   chat bubble, a code read aloud and typed in lowercase, or one written with a
+   dash in the middle. All of those are the right answer typed slightly wrong,
+   and rejecting them would be the app being pedantic at the worst moment.
+
+   Everything outside the code alphabet is dropped rather than mapped —
+   0/O/1/I/L are excluded from generated codes precisely because they are
+   misread, so there is no honest target to correct them to. */
+function parseRoomCode(raw) {
+  const cleaned = String(raw || "").toUpperCase().replace(/[^23456789ABCDEFGHJKMNPQRSTUVWXYZ]/g, "");
+  if (cleaned.length < 6) return null;
+  // A pasted URL leaves the code at the end, after the host's own letters.
+  return cleaned.slice(-6);
+}
+
 /* Polling, not sockets. A vote lasts 90 seconds and the payload is ~1.2KB, so
    a short poll costs almost nothing and cannot get wedged by a dropped
    connection, a sleeping dyno, or a proxy that buffers streams. Reliability is
@@ -973,6 +990,7 @@ function App() {
   }, []);
 
   const [roomCraving, setRoomCraving] = useState("");
+  const [roomJoinInput, setRoomJoinInput] = useState("");
   const [roomStage, setRoomStage] = useState(null); // "searching" | "opening"
   const roomPoll = useRef(null);
 
@@ -1008,6 +1026,10 @@ function App() {
       setRoomPlayerId(data.playerId);
       setRoom(data.room);
       setRoomCode(code);
+      /* Put the room in the address bar however you got here. Joining by code
+         used to leave the URL at "/", so a refresh dropped you out of the room
+         and there was nothing to copy back to anyone. */
+      if (roomCodeFromUrl() !== code) window.history.replaceState(null, "", `/r/${code}`);
     } catch (e) {
       setRoomError(e.message);
       setRoom(null);
@@ -1093,6 +1115,16 @@ function App() {
       setRoom(data.room);
     } catch (e) { setRoomError(e.message); }
   }, [roomCode, roomPlayerId, roomFetch]);
+
+  const joinByCode = useCallback(() => {
+    const code = parseRoomCode(roomJoinInput);
+    if (!code) {
+      setRoomError("That doesn't look like a room code — they're 6 characters, like MXEAMA.");
+      return;
+    }
+    setRoomJoinInput("");
+    joinRoom(code);
+  }, [roomJoinInput, joinRoom]);
 
   const surpriseMe = useCallback(() => {
     const pick = ROOM_CRAVINGS[Math.floor(Math.random() * ROOM_CRAVINGS.length)];
@@ -2357,8 +2389,11 @@ function App() {
                   )}
                 </div>
 
+                {/* Says where the code can be used. Showing a code with no
+                    stated destination is what made it look decorative. */}
                 <p className="rm-code">
-                  Room <strong>{room.code}</strong> · anyone with the link can join, no account needed
+                  Room <strong>{room.code}</strong> · join from the link, or enter this code
+                  under Group at savorscout.net
                 </p>
               </section>
             ) : (
@@ -2370,6 +2405,44 @@ function App() {
                     Everyone votes on their own phone. No app, no account, no arguing.
                   </p>
                 </div>
+
+                {/* Join-by-code comes FIRST. Someone who already has a code is
+                    mid-task and being kept waiting by friends; someone starting
+                    a room is browsing. The lobby shows the code in big letters,
+                    which promises somewhere to type it — this is that place. */}
+                <section className="card rm-join">
+                  <div className="card-head">
+                    <h2 className="card-title">Got a code?</h2>
+                    <span className="card-sub">join a round someone started</span>
+                  </div>
+                  <div className="rm-join-row">
+                    <input
+                      className="rm-join-input"
+                      type="text"
+                      inputMode="text"
+                      autoCapitalize="characters"
+                      autoCorrect="off"
+                      spellCheck="false"
+                      placeholder="MXEAMA"
+                      value={roomJoinInput}
+                      maxLength={60}
+                      onChange={(e) => setRoomJoinInput(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") joinByCode(); }}
+                      disabled={roomBusy}
+                      aria-label="Room code"
+                    />
+                    <button
+                      className="btn btn--hot"
+                      onClick={joinByCode}
+                      disabled={roomBusy || !parseRoomCode(roomJoinInput)}
+                    >
+                      Join
+                    </button>
+                  </div>
+                  <p className="rm-join-hint">
+                    Pasting the whole link works too — we'll pull the code out of it.
+                  </p>
+                </section>
 
                 {/* Spelled out, because a game nobody understands is a game
                     nobody starts. Four steps, in order, before they commit. */}

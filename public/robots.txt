@@ -1,3 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
+
+# Pointing at the sitemap here means crawlers find it without anyone having to
+# submit it by hand, and it is the one robots.txt directive that actively helps
+# rather than just permitting.
+Sitemap: https://www.savorscout.net/sitemap.xml

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  One real URL, because the app has one real URL.
+
+  Savor Scout navigates by state rather than by route — /find and /you are
+  GA-only labels, not addresses a crawler can fetch — so listing them here
+  would point Google at pages that do not exist. A sitemap claiming URLs that
+  404 is worse than a short honest one.
+
+  When genuine routes exist (per-town landing pages, for instance), add them
+  here with their own lastmod.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.savorscout.net/</loc>
+    <lastmod>2026-08-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

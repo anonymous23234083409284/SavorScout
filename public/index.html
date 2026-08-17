@@ -105,12 +105,103 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <!-- App.js rewrites this per view, so GA reports a real page_title instead
-         of one value for the whole site. This is the pre-hydration fallback. -->
-    <title>SavorScout — Skip the scroll. Get the one.</title>
+    <!-- Brand first, and spelled as people TYPE it. The product styles itself
+         "SavorScout", but the search is "savor scout" — two words. The spaced
+         form here and the alternateName in the schema below cover both, which
+         matters because ranking for your own name should be the free win and
+         currently unrelated sites hold it.
+
+         App.js keeps this exact string on the landing view and only appends a
+         view name once someone is inside the app, so the page Google actually
+         indexes is not retitled to something like "SavorScout — Browse" the
+         moment the bundle boots. -->
+    <title>Savor Scout | Can't decide where to eat? One pick, not a list.</title>
+
+    <!-- The apex 308-redirects to www, so www is the real address. Declaring it
+         stops the two hostnames competing as duplicates, which is the most
+         likely reason Search Console shows pages it found but did not index. -->
+    <link rel="canonical" href="https://www.savorscout.net/" />
+
+    <!-- Open Graph / Twitter. This product is shared into Reddit, TikTok bios
+         and group chats — every one of those renders a link preview, and
+         without these tags they render a bare URL with no title or image. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Savor Scout" />
+    <meta property="og:url" content="https://www.savorscout.net/" />
+    <meta property="og:title" content="Savor Scout — Can't decide where to eat?" />
+    <meta
+      property="og:description"
+      content="Google gives you thirty options. Savor Scout gives you one, reads the reviews for the dish you actually want, and shows why it picked it."
+    />
+    <meta property="og:image" content="https://www.savorscout.net/logo512.png" />
+    <meta property="og:image:alt" content="Savor Scout" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Savor Scout — Can't decide where to eat?" />
+    <meta
+      name="twitter:description"
+      content="One restaurant pick instead of a list of forty, with the reasoning shown."
+    />
+    <meta name="twitter:image" content="https://www.savorscout.net/logo512.png" />
+
+    <!-- Structured data. This is the piece that states, in a form Google parses
+         without rendering anything, that this domain IS the entity called
+         "Savor Scout". Without it the crawler has to infer the brand from a
+         JavaScript-rendered page, which is exactly why third-party mentions
+         currently outrank the site itself for its own name. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Savor Scout",
+        "alternateName": "SavorScout",
+        "url": "https://www.savorscout.net/",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "Any (web browser)",
+        "description": "Savor Scout picks one restaurant instead of returning a list. Say what you're craving and it reads menus and reviews for that specific dish, factors in your dietary restrictions, and explains why it chose the place it did.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- Real content, not a scolding.
+
+         Before this, the entire crawlable body was "You need to enable
+         JavaScript to run this app." — every word describing the product lived
+         inside the React bundle. Google does render JavaScript, but rendering
+         is queued and best-effort, and a brand-new domain with zero body text
+         in its initial HTML gives the crawler nothing to work with on the first
+         pass. This is the same message the app itself makes, written as prose
+         a crawler can read without executing anything. -->
+    <noscript>
+      <h1>Savor Scout — can't decide where to eat?</h1>
+      <p>
+        Google Maps and Yelp hand you thirty options and leave the deciding to you.
+        Savor Scout picks one restaurant near you and tells you why it chose that one.
+      </p>
+      <h2>How it is different from Google Maps and Yelp</h2>
+      <ul>
+        <li>
+          <strong>One pick, not a list.</strong> You say what you're craving and get a single
+          recommendation instead of a ranked directory to sift through.
+        </li>
+        <li>
+          <strong>It reads for the dish, not the restaurant.</strong> A four-star restaurant can
+          still be mediocre at the thing you actually want. Ask for spicy ramen and Savor Scout
+          looks at what people said about the ramen.
+        </li>
+        <li>
+          <strong>You see the reasoning.</strong> Every pick shows its match score, what it beat,
+          and the evidence behind it.
+        </li>
+        <li>
+          <strong>It remembers your allergies and dietary restrictions</strong>, and afterwards it
+          asks whether you went and whether it was any good.
+        </li>
+      </ul>
+      <p>
+        Savor Scout is a free web app. It needs JavaScript enabled to run the search.
+      </p>
+    </noscript>
     <div id="root"></div>
     <!--
       This HTML file is a template.

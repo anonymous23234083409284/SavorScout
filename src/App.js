@@ -787,7 +787,23 @@ function AboutPanel({ onClose }) {
 
 /* Names for the two tabs plus the signed-out screen, used for both the document
    title and the GA page_path. Keyed by the same ids TABS uses. */
-const VIEW_LABELS = { find: "Find", you: "You", "sign-in": "Sign in", browse: "Browse" };
+/* Full document titles per view, not labels appended to a prefix.
+
+   "browse" deliberately keeps the exact string from index.html. That is the
+   landing view, so it is the page Google indexes — and because the crawler
+   renders JavaScript, anything this effect sets REPLACES the tag in the HTML.
+   The previous version retitled it "SavorScout — Browse", which threw away the
+   brand and keywords on the one page ranking depends on.
+
+   Brand goes last on the inner views, the usual way round for app screens, and
+   the name is spaced ("Savor Scout") because that is how people search it. */
+const SEO_TITLE = "Savor Scout | Can't decide where to eat? One pick, not a list.";
+const VIEW_TITLES = {
+  browse: SEO_TITLE,
+  "sign-in": "Sign in — Savor Scout",
+  find: "Find somewhere to eat — Savor Scout",
+  you: "Your picks — Savor Scout",
+};
 
 /* ===========================================================================
    APP
@@ -856,8 +872,7 @@ function App() {
   const firstViewSent = useRef(false);
   useEffect(() => {
     if (!authChecked) return;
-    const label = VIEW_LABELS[viewKey] || viewKey;
-    const title = `SavorScout — ${label}`;
+    const title = VIEW_TITLES[viewKey] || SEO_TITLE;
     document.title = title;
     if (!firstViewSent.current) { firstViewSent.current = true; return; }
     if (typeof window.gtag !== "function") return;

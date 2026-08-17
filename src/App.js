@@ -903,6 +903,7 @@ const VIEW_TITLES = {
   browse: SEO_TITLE,
   "sign-in": "Sign in — Savor Scout",
   find: "Find somewhere to eat — Savor Scout",
+  group: "Dinner Roulette — Savor Scout",
   you: "Your picks — Savor Scout",
 };
 
@@ -1213,7 +1214,15 @@ function App() {
   /* Browsing signed out is now its own view, and worth separating from the gate
      — the ratio between /browse and /sign-in is the conversion this change
      exists to move. */
-  const viewKey = user ? tab : (showAuth ? "sign-in" : "browse");
+  /* "browse" stays the LANDING view so the indexed page keeps its SEO title.
+     Group is broken out even when signed out, both so the tab is titled
+     honestly and so GA can see /group separately — signed-out group traffic is
+     precisely the number that says whether the shared-link loop is working. */
+  const viewKey = user
+    ? tab
+    : showAuth ? "sign-in"
+    : tab === "group" ? "group"
+    : "browse";
   const firstViewSent = useRef(false);
   useEffect(() => {
     if (!authChecked) return;

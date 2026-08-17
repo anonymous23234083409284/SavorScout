@@ -3659,7 +3659,77 @@ body {
 }
 .rm-code strong { color: var(--saffron); letter-spacing: 0.14em; }
 
-.rm-seed { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 16px; }
+.rm-seed { font-size: 12px; line-height: 1.55; color: var(--ink-mid); margin-top: 14px; }
+
+/* How it works. Numbered because the order is the explanation. */
+.rm-how {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 10px;
+  margin: 0 0 22px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+.rm-how li {
+  display: flex; align-items: baseline; gap: 11px;
+  font-size: 13px; line-height: 1.5; color: var(--ink-soft);
+}
+.rm-how-n {
+  flex-shrink: 0;
+  width: 20px; height: 20px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 95, 31, 0.16);
+  color: var(--ember);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; font-weight: 600;
+}
+
+.rm-surprise { display: inline-block; margin-top: 12px; font-size: 12.5px; }
+
+/* Lobby — deliberately calm. Nothing is counting down, and it should look
+   like nothing is counting down. */
+.rm-lobby {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--line-warm);
+  border-radius: var(--r-md);
+  background: rgba(255, 200, 87, 0.05);
+}
+.rm-lobby-code {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 12px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.03);
+}
+.rm-lobby-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-mid);
+}
+.rm-lobby-code strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 22px; letter-spacing: 0.22em; color: var(--saffron);
+}
+.rm-start { min-height: 50px; font-size: 15px; }
+
+.rm-waiting {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  padding: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px; color: var(--ink-soft);
+}
+.rm-waiting-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--saffron);
+  animation: rm-breathe 1.4s ease-in-out infinite;
+}
+@keyframes rm-breathe { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-waiting-dot { animation: none; opacity: 1; }
+}
 
 @media (max-width: 480px) {
   .rm-title { font-size: 24px; }

@@ -682,6 +682,15 @@ const roomKey = (code) => `ss_room_${code}`;
    worth more here than the few hundred ms a socket would save. */
 const ROOM_POLL_MS = 900;
 
+/* "Surprise us" pool. Indecision is the whole problem this product exists for,
+   so being asked to type a craving before you can start a vote about what to
+   crave is its own small joke at the user's expense. One tap fills it in. */
+const ROOM_CRAVINGS = [
+  "tacos", "pizza", "ramen", "sushi", "burgers", "wings", "dumplings",
+  "burritos", "pasta", "fried chicken", "pho", "bbq", "falafel", "empanadas",
+  "curry", "sandwiches", "noodles", "steak", "seafood", "breakfast",
+];
+
 /* ===========================================================================
    ANALYTICS CONSENT
 
@@ -954,8 +963,16 @@ function App() {
   const [roomBusy, setRoomBusy] = useState(false);
   const [roomError, setRoomError] = useState("");
   const [roomCopied, setRoomCopied] = useState(false);
-  // Candidates from the last search — what a room is built out of.
-  const [roomSeed, setRoomSeed] = useState(null);
+  /* The browser's copy of "the free search is gone". Purely so the UI can say
+     the right thing before the next request — the SERVER holds the real
+     allowance, so clearing this key buys nothing. */
+  const spendTrial = useCallback(() => {
+    setTrialSpent(true);
+    try { window.localStorage.setItem("ss_trial_spent", "1"); } catch { /* private mode */ }
+  }, []);
+
+  const [roomCraving, setRoomCraving] = useState("");
+  const [roomStage, setRoomStage] = useState(null); // "searching" | "opening"
   const roomPoll = useRef(null);
 
   const roomFetch = useCallback(async (path, init) => {
@@ -1000,16 +1017,56 @@ function App() {
     } finally { setRoomBusy(false); }
   }, [roomFetch]);
 
-  const createRoom = useCallback(async () => {
-    if (!roomSeed?.candidates?.length) return;
-    setRoomBusy(true); setRoomError("");
+  /* One step, not two.
+     Hosting used to require running a search on Find first and then coming
+     here, which was pure ceremony: building a room runs exactly the same
+     search under the hood, so making someone do it by hand first just added a
+     detour. The host types a craving here (or taps Surprise us) and this does
+     the search and opens the room in one go. */
+  const createRoom = useCallback(async (cravingArg) => {
+    const craving = String(cravingArg ?? roomCraving).trim();
+    if (!craving) { setRoomError("Say what you're in the mood for first."); return; }
+    if (!resolvedLocation) { setRoomError("Set your ZIP code so we know where to look."); return; }
+
+    setRoomBusy(true); setRoomError(""); setRoomStage("searching");
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token || null;
+      const sres = await fetch(`${API_BASE_URL}/search`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          query: craving,
+          lat: resolvedLocation.lat,
+          lng: resolvedLocation.lng,
+          locationHint: resolvedLocation.name,
+          zip: resolvedLocation.zip || getZip(),
+          radiusMode,
+        }),
+      });
+      const sdata = await sres.json().catch(() => ({}));
+      if (!sres.ok) {
+        // A spent free search lands here; send them to the gate rather than
+        // leaving an error under a button that will never work again.
+        if (sdata.requiresAuth) { spendTrial(); setShowAuth(true); setAuthMode("signup"); }
+        throw new Error(sdata.error || "Couldn't build a room from that.");
+      }
+      if (sdata.trialUsed) spendTrial();
+      const candidates = Array.isArray(sdata.roomCandidates) ? sdata.roomCandidates : [];
+      if (candidates.length < 2) {
+        throw new Error(`Only found one place for “${craving}” near you — try a wider craving.`);
+      }
+
+      setRoomStage("opening");
       const data = await roomFetch("/rooms", {
         method: "POST",
         body: JSON.stringify({
-          candidates: roomSeed.candidates,
-          query: roomSeed.query,
-          locationName: roomSeed.locationName,
+          candidates,
+          query: craving,
+          locationName: sdata.locationName || resolvedLocation.name,
         }),
       });
       try { window.localStorage.setItem(roomKey(data.code), data.playerId); } catch { /* private mode */ }
@@ -1022,8 +1079,25 @@ function App() {
       if (typeof window.gtag === "function") window.gtag("event", "room_create");
     } catch (e) {
       setRoomError(e.message);
-    } finally { setRoomBusy(false); }
-  }, [roomSeed, roomFetch]);
+    } finally { setRoomBusy(false); setRoomStage(null); }
+  }, [roomCraving, resolvedLocation, radiusMode, roomFetch, spendTrial]);
+
+  const startRound = useCallback(async () => {
+    if (!roomCode) return;
+    try {
+      const data = await roomFetch(`/rooms/${roomCode}/start`, {
+        method: "POST",
+        body: JSON.stringify({ playerId: roomPlayerId }),
+      });
+      setRoom(data.room);
+    } catch (e) { setRoomError(e.message); }
+  }, [roomCode, roomPlayerId, roomFetch]);
+
+  const surpriseMe = useCallback(() => {
+    const pick = ROOM_CRAVINGS[Math.floor(Math.random() * ROOM_CRAVINGS.length)];
+    setRoomCraving(pick);
+    createRoom(pick);
+  }, [createRoom]);
 
   const castVote = useCallback(async (cardId, kind) => {
     if (!roomCode || !roomPlayerId) return;
@@ -1097,7 +1171,11 @@ function App() {
      immediately instead of waiting out the interval. */
   useEffect(() => {
     clearInterval(roomPoll.current);
-    if (!roomCode || !roomPlayerId || room?.status !== "voting") return undefined;
+    // Lobby polls too: watching names appear as friends tap the link is the
+    // whole reason the wait is tolerable, and joiners need to see the round
+    // start the moment the host presses go. Only a finished room is static.
+    const live = room?.status === "lobby" || room?.status === "voting";
+    if (!roomCode || !roomPlayerId || !live) return undefined;
 
     roomPoll.current = setInterval(() => { if (!document.hidden) pullRoom(); }, ROOM_POLL_MS);
     const onVisible = () => { if (!document.hidden) pullRoom(); };
@@ -1524,14 +1602,6 @@ function App() {
 
   /* ---- search ---- */
 
-  /* The browser's copy of "the free search is gone". Purely so the UI can say
-     the right thing before the next request — the SERVER holds the real
-     allowance, so clearing this key buys nothing. */
-  const spendTrial = useCallback(() => {
-    setTrialSpent(true);
-    try { window.localStorage.setItem("ss_trial_spent", "1"); } catch { /* private mode */ }
-  }, []);
-
   const handleSearch = async () => {
     if (loading || !query.trim()) return;
     if (!resolvedLocation) { setErrorMsg("Set your ZIP code first."); return; }
@@ -1599,15 +1669,6 @@ function App() {
       } else {
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
-        /* Keep the shortlist around so the Group tab can turn this search into
-           a vote without running (or paying for) another one. */
-        if (Array.isArray(data.roomCandidates) && data.roomCandidates.length >= 2) {
-          setRoomSeed({
-            candidates: data.roomCandidates,
-            query: trimmed,
-            locationName: resolvedLocation.name,
-          });
-        }
         /* The server flags a search it served anonymously. That is the moment
            the free one is gone, so the UI stops promising another. */
         if (data.trialUsed) spendTrial();
@@ -2146,11 +2207,15 @@ function App() {
                 <div className="rm-top">
                   <div>
                     <p className="rm-kicker">
-                      {room.status === "done" ? "Locked in" : "Dinner Roulette"}
+                      {room.status === "done" ? "Locked in" : room.status === "lobby" ? "Waiting room" : "Dinner Roulette"}
                       {room.query && <> · “{room.query}”</>}
                     </p>
                     <h1 className="rm-title">
-                      {room.status === "done" ? "We're going here." : "Vote. Fast."}
+                      {room.status === "done"
+                        ? "We're going here."
+                        : room.status === "lobby"
+                          ? "Get everyone in."
+                          : "Vote. Fast."}
                     </h1>
                   </div>
                   {room.status === "voting" && <RoomClock endsAt={room.endsAt} status={room.status} />}
@@ -2173,6 +2238,33 @@ function App() {
                     Tap <strong>Yes</strong> on anything you'd eat. You get <strong>one 💣</strong> to
                     kill an option for everyone. Most Yes wins.
                   </p>
+                )}
+
+                {/* Lobby. No clock is running yet, and it says so — the whole
+                    point is that nobody's round is burning while they wait. */}
+                {room.status === "lobby" && (
+                  <div className="rm-lobby">
+                    <p className="rm-rule">
+                      {room.cards.length} places are loaded and <strong>no timer is running yet</strong>.
+                      Send the link, wait for everyone to show up, then start the round —
+                      you'll all get <strong>90 seconds</strong> to vote.
+                    </p>
+                    <div className="rm-lobby-code">
+                      <span className="rm-lobby-label">Room code</span>
+                      <strong>{room.code}</strong>
+                    </div>
+                    {room.me?.isHost ? (
+                      <button className="btn btn--hot btn--block rm-start" onClick={startRound}>
+                        Start the round · {room.players.length}{" "}
+                        {room.players.length === 1 ? "player" : "players"} in
+                      </button>
+                    ) : (
+                      <p className="rm-waiting">
+                        <span className="rm-waiting-dot" aria-hidden="true" />
+                        Waiting for the host to start…
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 <ul className="rm-cards">
@@ -2228,7 +2320,16 @@ function App() {
                 {roomError && <p className="err">{roomError}</p>}
 
                 <div className="rm-foot">
-                  {room.status === "voting" ? (
+                  {room.status === "lobby" ? (
+                    <>
+                      {/* Share is the loud button here — it is the only thing
+                          that needs doing before the round can start. */}
+                      <button className="btn btn--hot" onClick={shareRoom}>
+                        {roomCopied ? "Link copied ✓" : "Send the link"}
+                      </button>
+                      <button className="btn btn--ghost" onClick={leaveRoom}>Cancel</button>
+                    </>
+                  ) : room.status === "voting" ? (
                     <>
                       <button className="btn btn--hot" onClick={shareRoom}>
                         {roomCopied ? "Link copied ✓" : "Invite the group"}
@@ -2257,42 +2358,92 @@ function App() {
                 <div className="page-head">
                   <h1 className="page-title">Settle it in <em>90 seconds</em></h1>
                   <p className="page-sub">
-                    Turn a search into a vote, drop the link in the group chat, and let everyone
-                    kill the options they hate. Most Yes wins.
+                    Everyone votes on their own phone. No app, no account, no arguing.
                   </p>
                 </div>
 
-                {roomBusy && <p className="center-note">Getting the room ready…</p>}
-                {roomError && !roomBusy && <p className="err">{roomError}</p>}
+                {/* Spelled out, because a game nobody understands is a game
+                    nobody starts. Four steps, in order, before they commit. */}
+                <ol className="rm-how">
+                  <li><span className="rm-how-n">1</span> Say what you're craving and where you are.</li>
+                  <li><span className="rm-how-n">2</span> We find the best spots near you and open a room.</li>
+                  <li><span className="rm-how-n">3</span> Send the link. Everyone who taps it joins — no signup.</li>
+                  <li><span className="rm-how-n">4</span> You start the round. 90 seconds, one 💣 each, most Yes wins.</li>
+                </ol>
 
-                {!roomBusy && (
-                  roomSeed ? (
-                    <section className="card card--glow">
-                      <div className="card-head">
-                        <h2 className="card-title">Ready to go</h2>
-                        <span className="card-sub">{roomSeed.candidates.length} places · “{roomSeed.query}”</span>
+                <section className="card card--glow">
+                  <div className="card-head">
+                    <h2 className="card-title">What are you all in the mood for?</h2>
+                  </div>
+
+                  <div className="searchbar">
+                    <input
+                      type="text"
+                      placeholder="tacos, spicy ramen, cheap sushi…"
+                      value={roomCraving}
+                      maxLength={80}
+                      onChange={(e) => setRoomCraving(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") createRoom(); }}
+                      disabled={roomBusy}
+                    />
+                    <button
+                      className="btn btn--hot"
+                      onClick={() => createRoom()}
+                      disabled={roomBusy || !roomCraving.trim() || !resolvedLocation}
+                    >
+                      {roomStage === "searching" ? "Finding places…"
+                        : roomStage === "opening" ? "Opening room…"
+                        : "Open the room"}
+                    </button>
+                  </div>
+
+                  {/* Being asked to decide what to crave, by the app that
+                      exists because deciding is hard, is a joke at the user's
+                      expense. One tap picks for them. */}
+                  <button
+                    className="link-btn rm-surprise"
+                    onClick={surpriseMe}
+                    disabled={roomBusy || !resolvedLocation}
+                  >
+                    🎲 Can't decide? Let us pick the craving too
+                  </button>
+
+                  <div className="loc" style={{ marginTop: 16 }}>
+                    {resolvedLocation ? (
+                      <div className="loc-set">
+                        <span className="loc-key">Near</span>
+                        <span className="loc-val">{resolvedLocation.name}</span>
+                        <button className="link-btn" style={{ marginLeft: "auto" }}
+                                onClick={() => { setResolvedLocation(null); setLocationError(""); }}>
+                          Change
+                        </button>
                       </div>
-                      <p className="rm-seed">
-                        Built from your last search near {roomSeed.locationName}. No one needs an
-                        account, and the round is over in a minute and a half.
-                      </p>
-                      <button className="btn btn--hot btn--block" onClick={createRoom} disabled={roomBusy}>
-                        Start the vote
-                      </button>
-                    </section>
-                  ) : (
-                    <section className="card">
-                      <div className="card-head"><h2 className="card-title">Search first</h2></div>
-                      <p className="empty">
-                        A room is built out of real places near you, so run one search and the
-                        vote is one tap away.
-                      </p>
-                      <button className="btn btn--hot" style={{ marginTop: 18 }} onClick={() => setTab("find")}>
-                        Find somewhere
-                      </button>
-                    </section>
-                  )
-                )}
+                    ) : (
+                      <>
+                        <span className="loc-prompt">Enter your ZIP code so we know where to look</span>
+                        <div className="loc-row">
+                          <input
+                            type="text" inputMode="numeric" pattern="[0-9]*" maxLength={5}
+                            placeholder="e.g. 11801" value={locationInput}
+                            onChange={(e) => setLocationInput(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                            onKeyDown={(e) => { if (e.key === "Enter") applyLocation(); }}
+                          />
+                          <button className="btn btn--ghost" onClick={applyLocation}
+                                  disabled={resolvingLocation || locationInput.length !== 5}>
+                            {resolvingLocation ? "Checking…" : "Set"}
+                          </button>
+                        </div>
+                        {locationError && <p className="err">{locationError}</p>}
+                      </>
+                    )}
+                  </div>
+
+                  {roomError && <p className="err">{roomError}</p>}
+                  <p className="rm-seed">
+                    Opening a room runs one search, the same as searching on Find — so this
+                    replaces that step rather than adding to it.
+                  </p>
+                </section>
               </>
             )}
           </main>

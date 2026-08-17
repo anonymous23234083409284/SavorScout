@@ -3779,7 +3779,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
    =========================================================================== */
 
 const ROOM_TTL_MS = 2 * 60 * 60 * 1000;   // rooms are useless long before this
-const ROOM_VOTE_MS = 90 * 1000;           // the whole game
+const ROOM_VOTE_MS = 90 * 1000;           // the round, once the host starts it
 const ROOM_MAX_CARDS = 5;
 const ROOM_MAX_PLAYERS = 12;
 const rooms = new Map();
@@ -3841,9 +3841,10 @@ function resolveRoom(room) {
 }
 
 // Auto-resolve on read rather than with a timer, so a sleeping dyno or a
-// dropped connection can never leave a room stuck mid-game forever.
+// dropped connection can never leave a room stuck mid-game forever. A room in
+// "lobby" has no clock at all — see /rooms/:code/start.
 function touchRoom(room) {
-  if (room.status === "voting" && Date.now() >= room.endsAt) resolveRoom(room);
+  if (room.status === "voting" && room.endsAt && Date.now() >= room.endsAt) resolveRoom(room);
   return room;
 }
 
@@ -3856,7 +3857,7 @@ function roomView(room, playerId) {
     query: room.query,
     locationName: room.locationName,
     endsAt: room.endsAt,
-    msLeft: Math.max(0, room.endsAt - Date.now()),
+    msLeft: room.endsAt ? Math.max(0, room.endsAt - Date.now()) : null,
     hostId: room.hostId,
     revived: !!room.revived,
     winnerId: room.winnerId || null,
@@ -3904,9 +3905,13 @@ app.post("/rooms", (req, res) => {
 
   const code = newRoomCode();
   const hostId = crypto.randomBytes(9).toString("hex");
+  /* Rooms open in "lobby" with NO clock running. Starting the countdown at
+     creation meant the host burned a third of the round just pasting the link,
+     and anyone who joined late arrived to a timer already half gone. The host
+     starts the round once people are actually in. */
   const room = {
-    code, hostId, createdAt: Date.now(), endsAt: Date.now() + ROOM_VOTE_MS,
-    status: "voting", version: 1, winnerId: null, revived: false,
+    code, hostId, createdAt: Date.now(), endsAt: null,
+    status: "lobby", version: 1, winnerId: null, revived: false,
     query: String(req.body?.query || "").slice(0, 80),
     locationName: String(req.body?.locationName || "").slice(0, 80),
     cards: clean, players: new Map(),
@@ -3950,6 +3955,8 @@ app.post("/rooms/:code/vote", (req, res) => {
   const room = rooms.get(String(req.params.code || "").toUpperCase());
   if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
   touchRoom(room);
+  // Votes before the round starts are ignored rather than queued — a Yes cast
+  // in the lobby would silently pre-load the result before anyone saw a card.
   if (room.status !== "voting") return res.json({ room: roomView(room, req.body?.playerId) });
 
   const player = room.players.get(String(req.body?.playerId || ""));
@@ -3982,6 +3989,24 @@ app.post("/rooms/:code/vote", (req, res) => {
   if (everyone.length > 1 && everyone.every((p) => p.voted)) resolveRoom(room);
 
   return res.json({ room: roomView(room, player.id) });
+});
+
+/* The host drops the countdown, not the clock. Only the host can start, so a
+   friend who taps early cannot strand everyone still opening the link. */
+app.post("/rooms/:code/start", (req, res) => {
+  const room = rooms.get(String(req.params.code || "").toUpperCase());
+  if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
+  const playerId = String(req.body?.playerId || "");
+  if (playerId !== room.hostId) {
+    return res.status(403).json({ error: "Only the host can start the round." });
+  }
+  if (room.status !== "lobby") return res.json({ room: roomView(room, playerId) });
+
+  room.status = "voting";
+  room.endsAt = Date.now() + ROOM_VOTE_MS;
+  room.version++;
+  console.log(`room ${room.code} started: ${room.players.size} players`);
+  return res.json({ room: roomView(room, playerId) });
 });
 
 app.post("/rooms/:code/lock", (req, res) => {

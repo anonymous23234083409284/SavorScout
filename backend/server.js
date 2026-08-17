@@ -3583,6 +3583,25 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       matchScore: c.matchScore,
     }));
 
+    /* Group-vote candidates. The winner plus the next four, with just enough
+       to render a game card. These are already scored and researched, so a
+       room costs no extra Serper/OpenAI calls — it reuses the search the host
+       already paid for, which is what keeps hosting a room free and instant. */
+    const roomCandidates = [winner, ...others.slice(0, 4)].map((c) => ({
+      id: String(c.place.placeId || c.place.cid || c.place.title),
+      name: c.place.title,
+      rating: typeof c.rating === "number" ? c.rating : null,
+      reviewCount: c.reviewCount || 0,
+      category: c.place.type || (c.place.types && c.place.types[0]) || null,
+      address: c.place.address || "",
+      lat: c.place.latitude,
+      lng: c.place.longitude,
+      distanceMiles: Math.round(c.distance * 10) / 10,
+      matchScore: c.matchScore,
+      matchedDish: c.matchedDish || null,
+      image: c.place.thumbnailUrl || c.place.thumbnail || null,
+    }));
+
     // Serper Places often already includes a thumbnail. When it does, the
     // extra image search — a serial 300-600ms call at the very end of the
     // request — is skipped entirely.
@@ -3725,6 +3744,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       radiusUsed,
       radiusMode,
       restaurants: finalPicks,
+      roomCandidates,
       searchesRemaining: remainingFor(req, newCount),
       trialUsed: !req.userId,
     });
@@ -3734,6 +3754,241 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       return res.status(500).json({ error: "Something went wrong on our end. Please try again." });
     }
   }
+});
+
+/* ===========================================================================
+   GROUP ROOMS — "Dinner Roulette"
+
+   A host turns a search they already ran into a 90-second vote and drops the
+   link in a group chat. Everyone taps, votes, and the room locks in one place.
+
+   Design constraints this is built around, in priority order:
+
+   1. NO SIGNUP, EVER. Joining is a GET of a 6-character code. Players get an
+      auto-assigned handle. Asking a hungry person for an email is the single
+      fastest way to lose the whole group.
+   2. NO NEW INFRASTRUCTURE. Rooms live in process memory with a TTL. A dinner
+      vote is over in ninety seconds and worthless an hour later, so durability
+      buys nothing here — and a migration that never gets run would mean the
+      feature simply does not work. The one real cost is that a server restart
+      mid-vote drops live rooms; at this traffic that is a rounding error.
+   3. NO EXTRA API SPEND. Candidates are passed in from the host's completed
+      search rather than re-queried, so hosting a room is free and instant.
+   4. IT MUST NEVER DEAD-END. Every resolution path produces a restaurant —
+      including the case where the group vetoes literally everything.
+   =========================================================================== */
+
+const ROOM_TTL_MS = 2 * 60 * 60 * 1000;   // rooms are useless long before this
+const ROOM_VOTE_MS = 90 * 1000;           // the whole game
+const ROOM_MAX_CARDS = 5;
+const ROOM_MAX_PLAYERS = 12;
+const rooms = new Map();
+
+// No 0/O/1/I/L — these get read aloud and retyped from a phone screen.
+const ROOM_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+function newRoomCode() {
+  for (let attempt = 0; attempt < 40; attempt++) {
+    let c = "";
+    for (let i = 0; i < 6; i++) c += ROOM_ALPHABET[Math.floor(Math.random() * ROOM_ALPHABET.length)];
+    if (!rooms.has(c)) return c;
+  }
+  return `R${Date.now().toString(36).toUpperCase()}`;
+}
+
+/* Handles are assigned, not typed. A name field is a keyboard between someone
+   and the game; a handle they did not choose is also funnier. */
+const ROOM_ANIMALS = ["Fox", "Otter", "Wolf", "Crane", "Bear", "Hawk", "Moth", "Lynx", "Ram", "Owl", "Eel", "Boar"];
+const ROOM_MOODS = ["Hungry", "Starving", "Picky", "Ravenous", "Impatient", "Snacky", "Peckish", "Feral"];
+function newPlayerName(room) {
+  const taken = new Set([...room.players.values()].map((p) => p.name));
+  for (let i = 0; i < 60; i++) {
+    const n = `${ROOM_MOODS[Math.floor(Math.random() * ROOM_MOODS.length)]} ${ROOM_ANIMALS[Math.floor(Math.random() * ROOM_ANIMALS.length)]}`;
+    if (!taken.has(n)) return n;
+  }
+  return `Guest ${room.players.size + 1}`;
+}
+
+function sweepRooms() {
+  const now = Date.now();
+  for (const [code, r] of rooms) if (now - r.createdAt > ROOM_TTL_MS) rooms.delete(code);
+}
+
+/* Resolution. Most YES wins among cards nobody vetoed; ties break on the match
+   score the search already computed, so a tie is never decided by chance.
+
+   The last branch is the important one: if the group nukes every option, the
+   room does NOT fail. It revives whichever card had the most support and says
+   so plainly. A game that can end in "no answer" is a game people stop
+   playing, and the entire point of this product is that it always answers. */
+function resolveRoom(room) {
+  if (room.status === "done") return room;
+  const alive = room.cards.filter((c) => !c.vetoedBy);
+  const pool = alive.length ? alive : room.cards;
+  const revived = alive.length === 0;
+
+  let best = pool[0];
+  for (const c of pool) {
+    const cy = c.yes.length, by = best.yes.length;
+    if (cy > by || (cy === by && (c.matchScore || 0) > (best.matchScore || 0))) best = c;
+  }
+
+  room.status = "done";
+  room.winnerId = best.id;
+  room.revived = revived;
+  room.resolvedAt = Date.now();
+  room.version++;
+  return room;
+}
+
+// Auto-resolve on read rather than with a timer, so a sleeping dyno or a
+// dropped connection can never leave a room stuck mid-game forever.
+function touchRoom(room) {
+  if (room.status === "voting" && Date.now() >= room.endsAt) resolveRoom(room);
+  return room;
+}
+
+function roomView(room, playerId) {
+  const me = playerId ? room.players.get(playerId) : null;
+  return {
+    code: room.code,
+    status: room.status,
+    version: room.version,
+    query: room.query,
+    locationName: room.locationName,
+    endsAt: room.endsAt,
+    msLeft: Math.max(0, room.endsAt - Date.now()),
+    hostId: room.hostId,
+    revived: !!room.revived,
+    winnerId: room.winnerId || null,
+    players: [...room.players.values()].map((p) => ({
+      id: p.id, name: p.name, voted: p.voted, vetoUsed: p.vetoUsed, isHost: p.id === room.hostId,
+    })),
+    cards: room.cards.map((c) => ({
+      id: c.id, name: c.name, rating: c.rating, reviewCount: c.reviewCount,
+      category: c.category, address: c.address, lat: c.lat, lng: c.lng,
+      distanceMiles: c.distanceMiles, matchedDish: c.matchedDish, image: c.image,
+      // matchScore is withheld while voting so people vote on the food rather
+      // than on the algorithm's number — it only appears in the reveal.
+      matchScore: room.status === "done" ? c.matchScore : null,
+      yesCount: c.yes.length,
+      vetoedBy: c.vetoedBy ? room.players.get(c.vetoedBy)?.name || "Someone" : null,
+      myYes: me ? c.yes.includes(me.id) : false,
+    })),
+    me: me ? { id: me.id, name: me.name, vetoUsed: me.vetoUsed, isHost: me.id === room.hostId } : null,
+  };
+}
+
+app.post("/rooms", (req, res) => {
+  sweepRooms();
+  const cands = Array.isArray(req.body?.candidates) ? req.body.candidates : [];
+  const clean = cands
+    .filter((c) => c && c.name && c.id)
+    .slice(0, ROOM_MAX_CARDS)
+    .map((c) => ({
+      id: String(c.id), name: String(c.name).slice(0, 120),
+      rating: typeof c.rating === "number" ? c.rating : null,
+      reviewCount: Number(c.reviewCount) || 0,
+      category: c.category ? String(c.category).slice(0, 60) : null,
+      address: c.address ? String(c.address).slice(0, 200) : "",
+      lat: c.lat, lng: c.lng,
+      distanceMiles: typeof c.distanceMiles === "number" ? c.distanceMiles : null,
+      matchScore: Number(c.matchScore) || 0,
+      matchedDish: c.matchedDish ? String(c.matchedDish).slice(0, 60) : null,
+      image: typeof c.image === "string" && /^https:\/\//.test(c.image) ? c.image : null,
+      yes: [], vetoedBy: null,
+    }));
+
+  if (clean.length < 2) {
+    return res.status(400).json({ error: "Need at least two places to vote on. Run a search first." });
+  }
+
+  const code = newRoomCode();
+  const hostId = crypto.randomBytes(9).toString("hex");
+  const room = {
+    code, hostId, createdAt: Date.now(), endsAt: Date.now() + ROOM_VOTE_MS,
+    status: "voting", version: 1, winnerId: null, revived: false,
+    query: String(req.body?.query || "").slice(0, 80),
+    locationName: String(req.body?.locationName || "").slice(0, 80),
+    cards: clean, players: new Map(),
+  };
+  room.players.set(hostId, { id: hostId, name: "", voted: false, vetoUsed: false });
+  room.players.get(hostId).name = newPlayerName(room);
+  rooms.set(code, room);
+
+  console.log(`room ${code} created: ${clean.length} cards, "${room.query}" @ ${room.locationName}`);
+  return res.json({ code, playerId: hostId, room: roomView(room, hostId) });
+});
+
+app.post("/rooms/:code/join", (req, res) => {
+  const room = rooms.get(String(req.params.code || "").toUpperCase());
+  if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
+  touchRoom(room);
+
+  // Rejoining with a known id must NOT mint a second player — a refresh
+  // mid-vote would otherwise inflate the roster and strand your veto.
+  const existing = req.body?.playerId && room.players.get(String(req.body.playerId));
+  if (existing) return res.json({ playerId: existing.id, room: roomView(room, existing.id) });
+
+  if (room.players.size >= ROOM_MAX_PLAYERS) {
+    return res.status(409).json({ error: "This room is full." });
+  }
+  const id = crypto.randomBytes(9).toString("hex");
+  room.players.set(id, { id, name: "", voted: false, vetoUsed: false });
+  room.players.get(id).name = newPlayerName(room);
+  room.version++;
+  return res.json({ playerId: id, room: roomView(room, id) });
+});
+
+app.get("/rooms/:code", (req, res) => {
+  const room = rooms.get(String(req.params.code || "").toUpperCase());
+  if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
+  touchRoom(room);
+  return res.json({ room: roomView(room, req.query.playerId) });
+});
+
+app.post("/rooms/:code/vote", (req, res) => {
+  const room = rooms.get(String(req.params.code || "").toUpperCase());
+  if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
+  touchRoom(room);
+  if (room.status !== "voting") return res.json({ room: roomView(room, req.body?.playerId) });
+
+  const player = room.players.get(String(req.body?.playerId || ""));
+  if (!player) return res.status(403).json({ error: "Join the room first." });
+  const card = room.cards.find((c) => c.id === String(req.body?.cardId || ""));
+  if (!card) return res.status(404).json({ error: "No such option." });
+
+  const kind = req.body?.kind === "veto" ? "veto" : "yes";
+  if (kind === "veto") {
+    if (player.vetoUsed) return res.status(409).json({ error: "You've already used your veto." });
+    if (card.vetoedBy) return res.json({ room: roomView(room, player.id) });
+    // Never let the last option be nuked outright — resolveRoom can revive,
+    // but a board of zero live cards mid-game just reads as broken.
+    if (room.cards.filter((c) => !c.vetoedBy).length <= 1) {
+      return res.status(409).json({ error: "Can't veto the last one standing." });
+    }
+    card.vetoedBy = player.id;
+    player.vetoUsed = true;
+    card.yes = card.yes.filter((id) => id !== player.id);
+  } else {
+    const i = card.yes.indexOf(player.id);
+    if (i >= 0) card.yes.splice(i, 1); else card.yes.push(player.id);
+  }
+
+  player.voted = room.cards.some((c) => c.yes.includes(player.id)) || player.vetoUsed;
+  room.version++;
+
+  // Everyone has weighed in — no reason to make them stare at a timer.
+  const everyone = [...room.players.values()];
+  if (everyone.length > 1 && everyone.every((p) => p.voted)) resolveRoom(room);
+
+  return res.json({ room: roomView(room, player.id) });
+});
+
+app.post("/rooms/:code/lock", (req, res) => {
+  const room = rooms.get(String(req.params.code || "").toUpperCase());
+  if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
+  if (room.status === "voting") resolveRoom(room);
+  return res.json({ room: roomView(room, req.body?.playerId) });
 });
 
 app.listen(PORT, () => {

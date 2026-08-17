@@ -653,8 +653,34 @@ function verdictTone(h) {
    visit; You is where the picks land and get graded. */
 const TABS = [
   { id: "find", label: "Find", minLevel: 1 },
+  { id: "group", label: "Group", minLevel: 1 },
   { id: "you", label: "You", minLevel: 1 },
 ];
+
+/* ---------------------------------------------------------------------------
+   GROUP ROOMS — client
+
+   The whole feature is judged on one thing: how long it takes a person who was
+   handed a link in a group chat to be voting. So there is no signup, no name
+   entry, no lobby to wait in — tapping the link joins you and shows the cards.
+
+   Rooms are plain URLs (/r/ABC123) rather than a routed page, because the app
+   has no router and does not need one for a single pattern. The path is read
+   once on boot; everything after that is state.
+   --------------------------------------------------------------------------- */
+
+const ROOM_PATH = /^\/r\/([23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6})\/?$/i;
+const roomCodeFromUrl = () => {
+  const m = ROOM_PATH.exec(window.location.pathname);
+  return m ? m[1].toUpperCase() : null;
+};
+const roomKey = (code) => `ss_room_${code}`;
+
+/* Polling, not sockets. A vote lasts 90 seconds and the payload is ~1.2KB, so
+   a short poll costs almost nothing and cannot get wedged by a dropped
+   connection, a sleeping dyno, or a proxy that buffers streams. Reliability is
+   worth more here than the few hundred ms a socket would save. */
+const ROOM_POLL_MS = 900;
 
 /* ===========================================================================
    ANALYTICS CONSENT
@@ -787,6 +813,72 @@ function AboutPanel({ onClose }) {
 
 /* Names for the two tabs plus the signed-out screen, used for both the document
    title and the GA page_path. Keyed by the same ids TABS uses. */
+/* Live countdown. Driven off the server's endsAt rather than a local tick, so
+   a phone that slept through half the round shows the truth on wake. */
+function RoomClock({ endsAt, status }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    if (status !== "voting") return undefined;
+    const t = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(t);
+  }, [status]);
+  const left = Math.max(0, Math.ceil((endsAt - now) / 1000));
+  const urgent = left <= 15;
+  return (
+    <div className={`rm-clock${urgent ? " rm-clock--urgent" : ""}`} role="timer" aria-live="off">
+      <span className="rm-clock-num">{String(Math.floor(left / 60))}:{String(left % 60).padStart(2, "0")}</span>
+    </div>
+  );
+}
+
+function RoomCard({ card, disabled, vetoUsed, myName, onYes, onVeto }) {
+  const dead = Boolean(card.vetoedBy);
+  return (
+    <li className={`rm-card${dead ? " rm-card--dead" : ""}${card.myYes ? " rm-card--mine" : ""}`}>
+      <div className="rm-card-body">
+        <div className="rm-card-head">
+          <span className="rm-card-name">{card.name}</span>
+          {card.yesCount > 0 && <span className="rm-card-tally">{card.yesCount}</span>}
+        </div>
+        <span className="rm-card-meta">
+          {typeof card.rating === "number" && <>{card.rating.toFixed(1)}★ </>}
+          {card.category}
+          {typeof card.distanceMiles === "number" && <> · {card.distanceMiles} mi</>}
+        </span>
+      </div>
+
+      {dead ? (
+        /* Second person for your own veto. Seeing your own handle reported back
+           at you in the third person breaks the illusion that you did it. */
+        <p className="rm-card-dead">
+          💣 {card.vetoedBy === myName ? "You" : card.vetoedBy} nuked it
+        </p>
+      ) : (
+        <div className="rm-card-acts">
+          <button
+            type="button"
+            className={`rm-yes${card.myYes ? " rm-yes--on" : ""}`}
+            onClick={() => onYes(card.id)}
+            disabled={disabled}
+            aria-pressed={card.myYes}
+          >
+            {card.myYes ? "Yes ✓" : "Yes"}
+          </button>
+          <button
+            type="button"
+            className="rm-veto"
+            onClick={() => onVeto(card.id)}
+            disabled={disabled || vetoUsed}
+            title={vetoUsed ? "You've used your veto" : "Nuke this option for everyone"}
+          >
+            💣
+          </button>
+        </div>
+      )}
+    </li>
+  );
+}
+
 /* Full document titles per view, not labels appended to a prefix.
 
    "browse" deliberately keeps the exact string from index.html. That is the
@@ -854,6 +946,181 @@ function App() {
     setAboutOpen(false);
     try { window.localStorage.setItem(ABOUT_KEY, "1"); } catch { /* private mode */ }
   }, []);
+
+  /* ---- group rooms ---- */
+  const [roomCode, setRoomCode] = useState(roomCodeFromUrl);
+  const [roomPlayerId, setRoomPlayerId] = useState(null);
+  const [room, setRoom] = useState(null);
+  const [roomBusy, setRoomBusy] = useState(false);
+  const [roomError, setRoomError] = useState("");
+  const [roomCopied, setRoomCopied] = useState(false);
+  // Candidates from the last search — what a room is built out of.
+  const [roomSeed, setRoomSeed] = useState(null);
+  const roomPoll = useRef(null);
+
+  const roomFetch = useCallback(async (path, init) => {
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Room unavailable.");
+    return data;
+  }, []);
+
+  /* Joining is automatic and idempotent. Arriving by link, refreshing, or
+     coming back from a locked phone all land here; the stored playerId makes
+     the server hand back the same seat instead of minting a new one. */
+  const joinRoom = useCallback(async (code) => {
+    /* Switch tabs BEFORE the request, not after it resolves. Doing it only on
+       success meant a dead link left you on Find with the explanation rendered
+       on a tab you were never shown — you just landed somewhere random with no
+       idea why. Now the loading state and any failure both appear where you
+       are actually looking. */
+    setTab("group");
+    setRoomBusy(true); setRoomError("");
+    try {
+      let known = null;
+      try { known = window.localStorage.getItem(roomKey(code)); } catch { /* private mode */ }
+      const data = await roomFetch(`/rooms/${code}/join`, {
+        method: "POST",
+        body: JSON.stringify({ playerId: known || undefined }),
+      });
+      try { window.localStorage.setItem(roomKey(code), data.playerId); } catch { /* private mode */ }
+      setRoomPlayerId(data.playerId);
+      setRoom(data.room);
+      setRoomCode(code);
+    } catch (e) {
+      setRoomError(e.message);
+      setRoom(null);
+      setRoomCode(null);
+      // Drop the dead code out of the URL so a refresh doesn't replay the same
+      // failure, and so "Start the vote" leaves a clean address behind.
+      if (roomCodeFromUrl()) window.history.replaceState(null, "", "/");
+    } finally { setRoomBusy(false); }
+  }, [roomFetch]);
+
+  const createRoom = useCallback(async () => {
+    if (!roomSeed?.candidates?.length) return;
+    setRoomBusy(true); setRoomError("");
+    try {
+      const data = await roomFetch("/rooms", {
+        method: "POST",
+        body: JSON.stringify({
+          candidates: roomSeed.candidates,
+          query: roomSeed.query,
+          locationName: roomSeed.locationName,
+        }),
+      });
+      try { window.localStorage.setItem(roomKey(data.code), data.playerId); } catch { /* private mode */ }
+      setRoomPlayerId(data.playerId);
+      setRoom(data.room);
+      setRoomCode(data.code);
+      // The address bar becomes the shareable thing, so a refresh or a
+      // copied URL both still work.
+      window.history.replaceState(null, "", `/r/${data.code}`);
+      if (typeof window.gtag === "function") window.gtag("event", "room_create");
+    } catch (e) {
+      setRoomError(e.message);
+    } finally { setRoomBusy(false); }
+  }, [roomSeed, roomFetch]);
+
+  const castVote = useCallback(async (cardId, kind) => {
+    if (!roomCode || !roomPlayerId) return;
+    // Optimistic: the tap must feel instant. The poll reconciles ~900ms later,
+    // and the server is authoritative, so a rejected veto simply snaps back.
+    setRoom((r) => {
+      if (!r || r.status !== "voting") return r;
+      return {
+        ...r,
+        cards: r.cards.map((c) => {
+          if (c.id !== cardId) return c;
+          if (kind === "veto") return { ...c, vetoedBy: r.me?.name || "You" };
+          return { ...c, myYes: !c.myYes, yesCount: c.yesCount + (c.myYes ? -1 : 1) };
+        }),
+        me: kind === "veto" && r.me ? { ...r.me, vetoUsed: true } : r.me,
+      };
+    });
+    try {
+      const data = await roomFetch(`/rooms/${roomCode}/vote`, {
+        method: "POST",
+        body: JSON.stringify({ playerId: roomPlayerId, cardId, kind }),
+      });
+      setRoom(data.room);
+    } catch (e) {
+      setRoomError(e.message);
+      try {
+        const data = await roomFetch(`/rooms/${roomCode}?playerId=${roomPlayerId}`);
+        setRoom(data.room);
+      } catch { /* poll will catch up */ }
+    }
+  }, [roomCode, roomPlayerId, roomFetch]);
+
+  const lockRoom = useCallback(async () => {
+    if (!roomCode) return;
+    try {
+      const data = await roomFetch(`/rooms/${roomCode}/lock`, {
+        method: "POST",
+        body: JSON.stringify({ playerId: roomPlayerId }),
+      });
+      setRoom(data.room);
+    } catch { /* poll will catch up */ }
+  }, [roomCode, roomPlayerId, roomFetch]);
+
+  const leaveRoom = useCallback(() => {
+    setRoom(null); setRoomCode(null); setRoomPlayerId(null); setRoomError("");
+    window.history.replaceState(null, "", "/");
+  }, []);
+
+  // Auto-join when the page was opened from a shared link.
+  useEffect(() => {
+    const code = roomCodeFromUrl();
+    if (code) joinRoom(code);
+  }, [joinRoom]);
+
+  const pullRoom = useCallback(async () => {
+    if (!roomCode || !roomPlayerId) return;
+    try {
+      const data = await roomFetch(`/rooms/${roomCode}?playerId=${roomPlayerId}`);
+      // Never let a slow response overwrite fresher state.
+      setRoom((prev) => (prev && data.room.version < prev.version ? prev : data.room));
+    } catch { /* transient — the next tick retries */ }
+  }, [roomCode, roomPlayerId, roomFetch]);
+
+  /* Poll only while a vote is actually running, and only while the tab is
+     visible. A finished room is static and a backgrounded one is not being
+     looked at, so either case is pure battery and data burn.
+
+     The visibilitychange handler is the other half of that: the host almost
+     always leaves to paste the link and comes straight back, and returning to
+     a stale board would make the whole thing feel broken. Coming back pulls
+     immediately instead of waiting out the interval. */
+  useEffect(() => {
+    clearInterval(roomPoll.current);
+    if (!roomCode || !roomPlayerId || room?.status !== "voting") return undefined;
+
+    roomPoll.current = setInterval(() => { if (!document.hidden) pullRoom(); }, ROOM_POLL_MS);
+    const onVisible = () => { if (!document.hidden) pullRoom(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(roomPoll.current);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [roomCode, roomPlayerId, room?.status, pullRoom]);
+
+  const shareRoom = useCallback(async () => {
+    const url = `${window.location.origin}/r/${roomCode}`;
+    const text = `Dinner Roulette — vote on where we're eating. 90 seconds.`;
+    try {
+      if (navigator.share) { await navigator.share({ title: "SavorScout", text, url }); return; }
+    } catch { /* user dismissed the sheet */ }
+    try {
+      await navigator.clipboard.writeText(url);
+      setRoomCopied(true);
+      setTimeout(() => setRoomCopied(false), 1800);
+    } catch { /* clipboard blocked; the code is on screen to type */ }
+  }, [roomCode]);
+
 
   /* ---- analytics: one page_view per view ----
 
@@ -1332,6 +1599,15 @@ function App() {
       } else {
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
+        /* Keep the shortlist around so the Group tab can turn this search into
+           a vote without running (or paying for) another one. */
+        if (Array.isArray(data.roomCandidates) && data.roomCandidates.length >= 2) {
+          setRoomSeed({
+            candidates: data.roomCandidates,
+            query: trimmed,
+            locationName: resolvedLocation.name,
+          });
+        }
         /* The server flags a search it served anonymously. That is the moment
            the free one is gone, so the UI stops promising another. */
         if (data.trialUsed) spendTrial();
@@ -1504,10 +1780,13 @@ function App() {
   /* Signed out with the free search already spent. The server enforces this;
      the flag only decides what the page says. */
   const trialWall = signedOut && trialSpent;
+  /* Group is available signed out — someone handed a link in a group chat has
+     to be able to play without an account, or the whole loop dies at the door.
+     You still needs an account, since it has nothing to show without one. */
   const visibleTabs = signedOut
-    ? []
+    ? TABS.filter((t) => t.id === "find" || t.id === "group")
     : TABS.filter((t) => (level?.level ?? 1) >= t.minLevel);
-  const activeTab = signedOut ? "find" : tab;
+  const activeTab = signedOut && tab === "you" ? "find" : tab;
   // The only outstanding thing left is an ungraded pick.
   const openWork = pendingVerdicts.length;
 
@@ -1566,7 +1845,9 @@ function App() {
             The wording tracks the actual state. Saying "sign in to search"
             while a free search is still available would be a lie the very next
             click disproves, so that line only appears once it is true. */}
-        {signedOut && (
+        {/* Also hidden in a room: a signup nudge is irrelevant to someone who
+            came to vote, and it costs vertical space the cards need. */}
+        {signedOut && !room && (
           <button
             type="button"
             className={`signedout-note${trialWall ? " signedout-note--spent" : ""}`}
@@ -1599,8 +1880,14 @@ function App() {
         )}
 
         {/* Above the hero on purpose: this is the answer to the question every
-            first-time visitor arrives with, and it is worthless below the fold. */}
-        {aboutOpen && <AboutPanel onClose={closeAbout} />}
+            first-time visitor arrives with, and it is worthless below the fold.
+
+            Suppressed inside a room. Someone who tapped a link in a group chat
+            is mid-game with a clock running — measured on a 375px screen, the
+            panel pushed the first card below the fold, so the pitch was
+            physically standing between them and voting. The room IS the pitch
+            at that point; About is one tap away in the header afterwards. */}
+        {aboutOpen && !room && <AboutPanel onClose={closeAbout} />}
 
         {/* ================= TODAY ================= */}
         {/* activeTab, not tab: signing out while on You would otherwise leave
@@ -1850,6 +2137,167 @@ function App() {
             Two things only: the places we've sent you, and whether we were
             right. The second is the whole reason the first is worth keeping —
             a history you never grade is a log, and a log teaches us nothing. */}
+        {/* ================= GROUP ================= */}
+        {activeTab === "group" && (
+          <main className="page">
+            {/* --- in a room --- */}
+            {room ? (
+              <section className={`rm${room.status === "done" ? " rm--done" : ""}`}>
+                <div className="rm-top">
+                  <div>
+                    <p className="rm-kicker">
+                      {room.status === "done" ? "Locked in" : "Dinner Roulette"}
+                      {room.query && <> · “{room.query}”</>}
+                    </p>
+                    <h1 className="rm-title">
+                      {room.status === "done" ? "We're going here." : "Vote. Fast."}
+                    </h1>
+                  </div>
+                  {room.status === "voting" && <RoomClock endsAt={room.endsAt} status={room.status} />}
+                </div>
+
+                {/* Presence. Seeing friends arrive is most of the reason this
+                    feels like a game rather than a form. */}
+                <ul className="rm-players">
+                  {room.players.map((p) => (
+                    <li key={p.id} className={`rm-player${p.voted ? " rm-player--voted" : ""}${p.id === room.me?.id ? " rm-player--me" : ""}`}>
+                      <span className="rm-player-dot" aria-hidden="true" />
+                      {p.id === room.me?.id ? "You" : p.name}
+                      {p.isHost && <span className="rm-host">host</span>}
+                    </li>
+                  ))}
+                </ul>
+
+                {room.status === "voting" && (
+                  <p className="rm-rule">
+                    Tap <strong>Yes</strong> on anything you'd eat. You get <strong>one 💣</strong> to
+                    kill an option for everyone. Most Yes wins.
+                  </p>
+                )}
+
+                <ul className="rm-cards">
+                  {room.cards
+                    .slice()
+                    .sort((a, b) => (a.id === room.winnerId ? -1 : b.id === room.winnerId ? 1 : 0))
+                    .map((c) => {
+                      if (room.status === "done") {
+                        const won = c.id === room.winnerId;
+                        if (!won) return null;
+                        return (
+                          <li className="rm-win" key={c.id}>
+                            <p className="rm-win-name">{c.name}</p>
+                            <p className="rm-win-meta">
+                              {typeof c.rating === "number" && <>{c.rating.toFixed(1)}★ · </>}
+                              {c.category}
+                              {typeof c.distanceMiles === "number" && <> · {c.distanceMiles} mi</>}
+                            </p>
+                            <p className="rm-win-why">
+                              {room.revived
+                                ? "You vetoed everything. So we picked the strongest one anyway."
+                                : c.yesCount > 0
+                                  ? `${c.yesCount} ${c.yesCount === 1 ? "vote" : "votes"} — and it survived the vetoes.`
+                                  : "Nobody voted, so the highest match wins by default."}
+                            </p>
+                            {c.lat && c.lng && (
+                              <a
+                                className="btn btn--hot rm-go"
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Directions
+                              </a>
+                            )}
+                          </li>
+                        );
+                      }
+                      return (
+                        <RoomCard
+                          key={c.id}
+                          card={c}
+                          disabled={room.status !== "voting"}
+                          vetoUsed={Boolean(room.me?.vetoUsed)}
+                          myName={room.me?.name}
+                          onYes={(id) => castVote(id, "yes")}
+                          onVeto={(id) => castVote(id, "veto")}
+                        />
+                      );
+                    })}
+                </ul>
+
+                {roomError && <p className="err">{roomError}</p>}
+
+                <div className="rm-foot">
+                  {room.status === "voting" ? (
+                    <>
+                      <button className="btn btn--hot" onClick={shareRoom}>
+                        {roomCopied ? "Link copied ✓" : "Invite the group"}
+                      </button>
+                      {room.me?.isHost && (
+                        <button className="btn btn--ghost" onClick={lockRoom}>Lock it in now</button>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn btn--hot" onClick={shareRoom}>
+                        {roomCopied ? "Link copied ✓" : "Share the result"}
+                      </button>
+                      <button className="btn btn--ghost" onClick={leaveRoom}>New round</button>
+                    </>
+                  )}
+                </div>
+
+                <p className="rm-code">
+                  Room <strong>{room.code}</strong> · anyone with the link can join, no account needed
+                </p>
+              </section>
+            ) : (
+              /* --- not in a room --- */
+              <>
+                <div className="page-head">
+                  <h1 className="page-title">Settle it in <em>90 seconds</em></h1>
+                  <p className="page-sub">
+                    Turn a search into a vote, drop the link in the group chat, and let everyone
+                    kill the options they hate. Most Yes wins.
+                  </p>
+                </div>
+
+                {roomBusy && <p className="center-note">Getting the room ready…</p>}
+                {roomError && !roomBusy && <p className="err">{roomError}</p>}
+
+                {!roomBusy && (
+                  roomSeed ? (
+                    <section className="card card--glow">
+                      <div className="card-head">
+                        <h2 className="card-title">Ready to go</h2>
+                        <span className="card-sub">{roomSeed.candidates.length} places · “{roomSeed.query}”</span>
+                      </div>
+                      <p className="rm-seed">
+                        Built from your last search near {roomSeed.locationName}. No one needs an
+                        account, and the round is over in a minute and a half.
+                      </p>
+                      <button className="btn btn--hot btn--block" onClick={createRoom} disabled={roomBusy}>
+                        Start the vote
+                      </button>
+                    </section>
+                  ) : (
+                    <section className="card">
+                      <div className="card-head"><h2 className="card-title">Search first</h2></div>
+                      <p className="empty">
+                        A room is built out of real places near you, so run one search and the
+                        vote is one tap away.
+                      </p>
+                      <button className="btn btn--hot" style={{ marginTop: 18 }} onClick={() => setTab("find")}>
+                        Find somewhere
+                      </button>
+                    </section>
+                  )
+                )}
+              </>
+            )}
+          </main>
+        )}
+
         {activeTab === "you" && (
           <main className="page">
             <div className="page-head">

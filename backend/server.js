@@ -3782,6 +3782,17 @@ const ROOM_TTL_MS = 2 * 60 * 60 * 1000;   // rooms are useless long before this
 const ROOM_VOTE_MS = 90 * 1000;           // the round, once the host starts it
 const ROOM_MAX_CARDS = 5;
 const ROOM_MAX_PLAYERS = 12;
+/* Hard ceiling on live rooms. Creation needs no account and no search of its
+   own, so without a cap a loop can mint rooms as fast as the network allows —
+   measured at 300 in 4.5s — and every one of them pins its cards in memory
+   until the TTL. At the cap the oldest room is evicted rather than refusing
+   the new one, because a real host must never be turned away by someone
+   else's abuse. */
+const ROOM_MAX_ACTIVE = 500;
+/* A player is "present" if we have heard from them recently. Polling refreshes
+   this every ~900ms, so this is generous enough to survive a lock screen or a
+   tunnel while still noticing someone who closed the tab. */
+const ROOM_PRESENCE_MS = 25 * 1000;
 const rooms = new Map();
 
 // No 0/O/1/I/L — these get read aloud and retyped from a phone screen.
@@ -3812,6 +3823,26 @@ function sweepRooms() {
   const now = Date.now();
   for (const [code, r] of rooms) if (now - r.createdAt > ROOM_TTL_MS) rooms.delete(code);
 }
+
+/* On a timer, not only on create. Sweeping just inside POST /rooms meant that
+   once room creation stopped, expired rooms were never collected — a quiet
+   night left every room from the evening resident in memory until the process
+   restarted. unref() so this never holds the process open. */
+const roomSweepTimer = setInterval(sweepRooms, 5 * 60 * 1000);
+if (roomSweepTimer.unref) roomSweepTimer.unref();
+
+// Map preserves insertion order, so the first key is the oldest room.
+function evictOldestRoom() {
+  const oldest = rooms.keys().next();
+  if (!oldest.done) rooms.delete(oldest.value);
+}
+
+const isFiniteNum = (v) => typeof v === "number" && Number.isFinite(v);
+const seen = (room, player) => { if (player) player.lastSeen = Date.now(); return room; };
+const presentPlayers = (room) => {
+  const cutoff = Date.now() - ROOM_PRESENCE_MS;
+  return [...room.players.values()].filter((p) => (p.lastSeen || 0) >= cutoff);
+};
 
 /* Resolution. Most YES wins among cards nobody vetoed; ties break on the match
    score the search already computed, so a tie is never decided by chance.
@@ -3882,17 +3913,32 @@ function roomView(room, playerId) {
 app.post("/rooms", (req, res) => {
   sweepRooms();
   const cands = Array.isArray(req.body?.candidates) ? req.body.candidates : [];
+  /* Ids must be unique: votes are matched by find(), so two cards sharing an
+     id would send every vote to the first and leave the second permanently
+     unvotable — visible on the board and impossible to pick. */
+  const seenIds = new Set();
   const clean = cands
-    .filter((c) => c && c.name && c.id)
+    .filter((c) => {
+      if (!c || !c.name || !c.id) return false;
+      const id = String(c.id);
+      if (seenIds.has(id)) return false;
+      seenIds.add(id);
+      return true;
+    })
     .slice(0, ROOM_MAX_CARDS)
     .map((c) => ({
       id: String(c.id), name: String(c.name).slice(0, 120),
-      rating: typeof c.rating === "number" ? c.rating : null,
+      rating: isFiniteNum(c.rating) ? c.rating : null,
       reviewCount: Number(c.reviewCount) || 0,
       category: c.category ? String(c.category).slice(0, 60) : null,
       address: c.address ? String(c.address).slice(0, 200) : "",
-      lat: c.lat, lng: c.lng,
-      distanceMiles: typeof c.distanceMiles === "number" ? c.distanceMiles : null,
+      /* Coordinates are built into a Google Maps URL on the client, so a
+         non-numeric value is not just wrong — "0&q=whatever" injects extra
+         query parameters into that link. Anything not a finite number becomes
+         null, and the client omits the Directions button entirely. */
+      lat: isFiniteNum(c.lat) ? c.lat : null,
+      lng: isFiniteNum(c.lng) ? c.lng : null,
+      distanceMiles: isFiniteNum(c.distanceMiles) ? c.distanceMiles : null,
       matchScore: Number(c.matchScore) || 0,
       matchedDish: c.matchedDish ? String(c.matchedDish).slice(0, 60) : null,
       image: typeof c.image === "string" && /^https:\/\//.test(c.image) ? c.image : null,
@@ -3902,6 +3948,8 @@ app.post("/rooms", (req, res) => {
   if (clean.length < 2) {
     return res.status(400).json({ error: "Need at least two places to vote on. Run a search first." });
   }
+
+  while (rooms.size >= ROOM_MAX_ACTIVE) evictOldestRoom();
 
   const code = newRoomCode();
   const hostId = crypto.randomBytes(9).toString("hex");
@@ -3916,7 +3964,7 @@ app.post("/rooms", (req, res) => {
     locationName: String(req.body?.locationName || "").slice(0, 80),
     cards: clean, players: new Map(),
   };
-  room.players.set(hostId, { id: hostId, name: "", voted: false, vetoUsed: false });
+  room.players.set(hostId, { id: hostId, name: "", voted: false, vetoUsed: false, lastSeen: Date.now() });
   room.players.get(hostId).name = newPlayerName(room);
   rooms.set(code, room);
 
@@ -3932,13 +3980,16 @@ app.post("/rooms/:code/join", (req, res) => {
   // Rejoining with a known id must NOT mint a second player — a refresh
   // mid-vote would otherwise inflate the roster and strand your veto.
   const existing = req.body?.playerId && room.players.get(String(req.body.playerId));
-  if (existing) return res.json({ playerId: existing.id, room: roomView(room, existing.id) });
+  if (existing) {
+    seen(room, existing);
+    return res.json({ playerId: existing.id, room: roomView(room, existing.id) });
+  }
 
   if (room.players.size >= ROOM_MAX_PLAYERS) {
     return res.status(409).json({ error: "This room is full." });
   }
   const id = crypto.randomBytes(9).toString("hex");
-  room.players.set(id, { id, name: "", voted: false, vetoUsed: false });
+  room.players.set(id, { id, name: "", voted: false, vetoUsed: false, lastSeen: Date.now() });
   room.players.get(id).name = newPlayerName(room);
   room.version++;
   return res.json({ playerId: id, room: roomView(room, id) });
@@ -3947,6 +3998,8 @@ app.post("/rooms/:code/join", (req, res) => {
 app.get("/rooms/:code", (req, res) => {
   const room = rooms.get(String(req.params.code || "").toUpperCase());
   if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
+  // The poll doubles as the heartbeat — no separate keepalive to get out of sync.
+  seen(room, room.players.get(String(req.query.playerId || "")));
   touchRoom(room);
   return res.json({ room: roomView(room, req.query.playerId) });
 });
@@ -3961,6 +4014,7 @@ app.post("/rooms/:code/vote", (req, res) => {
 
   const player = room.players.get(String(req.body?.playerId || ""));
   if (!player) return res.status(403).json({ error: "Join the room first." });
+  seen(room, player);
   const card = room.cards.find((c) => c.id === String(req.body?.cardId || ""));
   if (!card) return res.status(404).json({ error: "No such option." });
 
@@ -3984,21 +4038,41 @@ app.post("/rooms/:code/vote", (req, res) => {
   player.voted = room.cards.some((c) => c.yes.includes(player.id)) || player.vetoUsed;
   room.version++;
 
-  // Everyone has weighed in — no reason to make them stare at a timer.
-  const everyone = [...room.players.values()];
-  if (everyone.length > 1 && everyone.every((p) => p.voted)) resolveRoom(room);
+  /* Everyone still here has weighed in — no reason to stare at a timer.
+     Counts only PRESENT players: someone who closed their tab used to hold the
+     round hostage for the full ninety seconds, because a player who is gone
+     never votes. */
+  const here = presentPlayers(room);
+  if (here.length > 1 && here.every((p) => p.voted)) resolveRoom(room);
 
   return res.json({ room: roomView(room, player.id) });
 });
 
 /* The host drops the countdown, not the clock. Only the host can start, so a
-   friend who taps early cannot strand everyone still opening the link. */
+   friend who taps early cannot strand everyone still opening the link.
+
+   With one exception, because the strict rule created a worse dead end than
+   the one it prevented: if the host closes their tab in the lobby, nobody else
+   could ever start and the room sat there until it expired. Once the host has
+   gone quiet for longer than the presence window, anyone still in the room can
+   start it. */
 app.post("/rooms/:code/start", (req, res) => {
   const room = rooms.get(String(req.params.code || "").toUpperCase());
   if (!room) return res.status(404).json({ error: "That room has expired or never existed." });
   const playerId = String(req.body?.playerId || "");
-  if (playerId !== room.hostId) {
+  const player = room.players.get(playerId);
+  if (!player) return res.status(403).json({ error: "Join the room first." });
+  seen(room, player);
+
+  const host = room.players.get(room.hostId);
+  const hostPresent = host && (Date.now() - (host.lastSeen || 0)) < ROOM_PRESENCE_MS;
+  if (playerId !== room.hostId && hostPresent) {
     return res.status(403).json({ error: "Only the host can start the round." });
+  }
+  if (playerId !== room.hostId) {
+    // Whoever rescues the room becomes the host, so Lock it in works too.
+    room.hostId = playerId;
+    console.log(`room ${room.code}: host absent, handed off`);
   }
   if (room.status !== "lobby") return res.json({ room: roomView(room, playerId) });
 

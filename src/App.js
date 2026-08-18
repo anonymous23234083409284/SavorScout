@@ -1187,10 +1187,18 @@ function App() {
 
   const pullRoom = useCallback(async () => {
     if (!roomCode || !roomPlayerId) return;
+    const forCode = roomCode;
     try {
-      const data = await roomFetch(`/rooms/${roomCode}?playerId=${roomPlayerId}`);
-      // Never let a slow response overwrite fresher state.
-      setRoom((prev) => (prev && data.room.version < prev.version ? prev : data.room));
+      const data = await roomFetch(`/rooms/${forCode}?playerId=${roomPlayerId}`);
+      setRoom((prev) => {
+        /* Two guards, and the code check is the important one. Version numbers
+           are per-room and both start at 1, so a poll still in flight for the
+           room you just left could otherwise land on top of the room you just
+           joined — same shape, completely wrong contents. */
+        if (prev && prev.code !== forCode) return prev;
+        if (prev && prev.code === data.room.code && data.room.version < prev.version) return prev;
+        return data.room;
+      });
     } catch { /* transient — the next tick retries */ }
   }, [roomCode, roomPlayerId, roomFetch]);
 
@@ -2331,7 +2339,10 @@ function App() {
                                   ? `${c.yesCount} ${c.yesCount === 1 ? "vote" : "votes"} — and it survived the vetoes.`
                                   : "Nobody voted, so the highest match wins by default."}
                             </p>
-                            {c.lat && c.lng && (
+                            {/* Numbers, not truthiness. A place at longitude 0
+                                is real, and a non-numeric coordinate would
+                                build a malformed maps URL. */}
+                            {typeof c.lat === "number" && typeof c.lng === "number" && (
                               <a
                                 className="btn btn--hot rm-go"
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`}

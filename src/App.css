@@ -3700,6 +3700,67 @@ body {
 
 .rm-surprise { display: inline-block; margin-top: 12px; font-size: 12.5px; }
 
+/* Step 2 is visually separated from step 1 so the order reads as an order. */
+.rm-step2 { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.rm-shuffle { width: 100%; min-height: 46px; font-size: 13.5px; }
+.rm-extras {
+  width: 100%;
+  margin-top: 10px;
+  padding: 13px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13.5px;
+}
+.rm-extras::placeholder { color: var(--ink-mid); }
+.rm-extras:focus { outline: none; border-color: var(--saffron); }
+.rm-open { margin-top: 14px; min-height: 50px; }
+
+/* The rules, as a numbered list. Prose buried the one thing people get wrong:
+   that bombs stop at two. */
+.rm-rules {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  counter-reset: rmrule;
+}
+.rm-rules li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+  counter-increment: rmrule;
+}
+.rm-rules li::before {
+  content: counter(rmrule);
+  position: absolute; left: 0; top: 1px;
+  width: 16px; height: 16px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 95, 31, 0.16);
+  color: var(--ember);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9.5px;
+}
+.rm-rules strong { color: var(--ink); font-weight: 600; }
+
+/* Announces the rule change at the moment it takes effect, which is when
+   people otherwise think the bomb button broke. */
+.rm-final-two {
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-cool);
+  background: rgba(46, 230, 214, 0.08);
+  color: var(--ion);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  text-align: center;
+}
+
 /* GPS is offered second, not first: an unprompted permission dialog on arrival
    is the fastest way to get denied permanently. Typing always works. */
 .loc-gps { display: inline-block; margin-top: 10px; font-size: 12.5px; }

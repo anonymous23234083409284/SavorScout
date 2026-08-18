@@ -62,6 +62,11 @@ const RADIUS_TIERS = {
   nearby: [5, 10, 15],
   driving: [10, 15, 25],
   anywhere: [15, 25, 40],
+  /* Group rooms search a fixed 35mi. A board of five has to be findable
+     wherever the host happens to be, and a tight radius in a thin area is the
+     fastest way to end up with two options and a dead round. Closer places are
+     still preferred — that is the comfort radius doing its job, not the pool. */
+  group: [15, 25, 35],
 };
 const DEFAULT_RADIUS_MODE = "nearby";
 
@@ -73,10 +78,10 @@ const DEFAULT_RADIUS_MODE = "nearby";
    /search builds the candidate list long before the room code runs, and a
    constant used above its own declaration only works by accident. */
 const ROOM_MAX_CARDS = 5;
-/* The last two on the board cannot be vetoed. With every card nukeable the
-   board could be shredded down to a single forced answer, which is not a vote;
-   two guaranteed survivors mean there is always a real choice at the end. */
-const ROOM_VETO_PROOF_TAIL = 2;
+/* Vetoing stops once this many options remain. Any card is fair game above the
+   floor; at the floor the bombs go quiet and the winner is decided purely by
+   votes, so the group never gets to bomb its way to a single forced answer. */
+const ROOM_VETO_FLOOR = 2;
 
 const SHORTLIST_SIZE = 10;
 
@@ -3596,7 +3601,25 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
        to render a game card. These are already scored and researched, so a
        room costs no extra Serper/OpenAI calls — it reuses the search the host
        already paid for, which is what keeps hosting a room free and instant. */
-    const roomCandidates = [winner, ...others.slice(0, ROOM_MAX_CARDS - 1)].map((c) => ({
+    /* Built from the SHORTLIST, not the researched finalists.
+
+       This was the "only found one place" bug. Candidates came from `ranked`,
+       which is `finalists` — and STAGE1_FINALIST_COUNT is 3, so a room could
+       never hold more than three cards, and any craving whose shortlist came
+       back thin produced one card and an error telling the user their craving
+       was too narrow. The craving was rarely the problem; the cap was.
+
+       Game cards only need name, rating, distance and category — all present
+       on every shortlist entry. Deep research is what the finalists get, and
+       the board does not display any of it. So the finalists lead (they carry
+       real match scores) and the rest of the shortlist fills the board behind
+       them, in the order stage 1 already ranked them. */
+    const roomPool = [
+      ...ranked,
+      ...shortlist.filter((c) => !ranked.some((r) => r.place.placeId === c.place.placeId && r.place.title === c.place.title)),
+    ].slice(0, ROOM_MAX_CARDS);
+
+    const roomCandidates = roomPool.map((c, i) => ({
       id: String(c.place.placeId || c.place.cid || c.place.title),
       name: c.place.title,
       rating: typeof c.rating === "number" ? c.rating : null,
@@ -3606,7 +3629,12 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       lat: c.place.latitude,
       lng: c.place.longitude,
       distanceMiles: Math.round(c.distance * 10) / 10,
-      matchScore: c.matchScore,
+      /* Finalists carry a real, researched match score. Shortlist fill has
+         only a stage-1 composite, which is a different scale — so rather than
+         publish a number that looks equally trustworthy, they get a descending
+         value that sits below every finalist. It is used for tie-breaking and
+         board order, never shown as a percentage until the reveal. */
+      matchScore: typeof c.matchScore === "number" ? c.matchScore : Math.max(1, 40 - i * 3),
       matchedDish: c.matchedDish || null,
       image: c.place.thumbnailUrl || c.place.thumbnail || null,
     }));
@@ -4042,6 +4070,9 @@ function roomView(room, playerId) {
     endsAt: room.endsAt,
     msLeft: room.endsAt ? Math.max(0, room.endsAt - Date.now()) : null,
     hostId: room.hostId,
+    // One board-level fact instead of a per-card flag: are bombs live?
+    vetoOpen: room.cards.filter((c) => !c.vetoedBy).length > ROOM_VETO_FLOOR,
+    aliveCount: room.cards.filter((c) => !c.vetoedBy).length,
     revived: !!room.revived,
     winnerId: room.winnerId || null,
     players: [...room.players.values()].map((p) => ({
@@ -4051,7 +4082,7 @@ function roomView(room, playerId) {
       id: c.id, name: c.name, rating: c.rating, reviewCount: c.reviewCount,
       category: c.category, address: c.address, lat: c.lat, lng: c.lng,
       distanceMiles: c.distanceMiles, matchedDish: c.matchedDish, image: c.image,
-      vetoProof: !!c.vetoProof,
+
       // matchScore is withheld while voting so people vote on the food rather
       // than on the algorithm's number — it only appears in the reveal.
       matchScore: room.status === "done" ? c.matchScore : null,
@@ -4102,11 +4133,7 @@ app.post("/rooms", (req, res) => {
     return res.status(400).json({ error: "Need at least two places to vote on. Run a search first." });
   }
 
-  /* The tail of the board is protected. Candidates arrive ranked, so these are
-     the lowest-scoring options — which is what makes it interesting: nuke the
-     three you're fighting over and you are left eating whatever survived. */
-  const proofFrom = Math.max(1, clean.length - ROOM_VETO_PROOF_TAIL);
-  clean.forEach((c, i) => { c.vetoProof = i >= proofFrom; });
+
 
   while (rooms.size >= ROOM_MAX_ACTIVE) evictOldestRoom();
 
@@ -4179,17 +4206,20 @@ app.post("/rooms/:code/vote", (req, res) => {
 
   const kind = req.body?.kind === "veto" ? "veto" : "yes";
   if (kind === "veto") {
-    if (card.vetoProof) {
-      return res.status(409).json({ error: "That one's protected — you can't bomb the bottom two.", room: roomView(room, player.id) });
-    }
     if (player.vetoUsed) {
       return res.status(409).json({ error: "You've already used your veto.", room: roomView(room, player.id) });
     }
     if (card.vetoedBy) return res.json({ room: roomView(room, player.id) });
-    // Never let the last option be nuked outright — resolveRoom can revive,
-    // but a board of zero live cards mid-game just reads as broken.
-    if (room.cards.filter((c) => !c.vetoedBy).length <= 1) {
-      return res.status(409).json({ error: "Can't veto the last one standing.", room: roomView(room, player.id) });
+    /* Vetoing stops when two are left. Not a fixed pair of protected cards —
+       ANY card can be bombed while three or more survive, and the moment the
+       board is down to two the bombs go quiet and it becomes a straight vote.
+       That way the final choice is always decided by votes rather than by
+       whoever bombed last. */
+    if (room.cards.filter((c) => !c.vetoedBy).length <= ROOM_VETO_FLOOR) {
+      return res.status(409).json({
+        error: "Down to the final two — it's votes only now.",
+        room: roomView(room, player.id),
+      });
     }
     card.vetoedBy = player.id;
     player.vetoUsed = true;

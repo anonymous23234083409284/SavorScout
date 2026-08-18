@@ -702,10 +702,27 @@ const ROOM_POLL_MS = 900;
 /* "Surprise us" pool. Indecision is the whole problem this product exists for,
    so being asked to type a craving before you can start a vote about what to
    crave is its own small joke at the user's expense. One tap fills it in. */
+/* Shuffle pool for "pick one for us".
+
+   Chosen for COVERAGE, not for variety. The old list had dumplings, steak and
+   falafel in it — real cravings, but ones that return two or three places in a
+   suburb, which is how a shuffle ended up producing a board that could not be
+   filled. Everything here is a category that essentially any populated area
+   supports, phrased the way a search actually resolves: "pizza" rather than
+   "Neapolitan", "chinese food" rather than "hand-pulled noodles".
+
+   Broad terms also behave better with the ranker, because a wide net gives it
+   more to sort rather than forcing it to accept whatever it found. */
 const ROOM_CRAVINGS = [
-  "tacos", "pizza", "ramen", "sushi", "burgers", "wings", "dumplings",
-  "burritos", "pasta", "fried chicken", "pho", "bbq", "falafel", "empanadas",
-  "curry", "sandwiches", "noodles", "steak", "seafood", "breakfast",
+  "pizza", "burgers", "tacos", "chinese food", "italian food", "mexican food",
+  "sushi", "thai food", "indian food", "sandwiches", "bbq", "fried chicken",
+  "wings", "pasta", "steakhouse", "seafood", "breakfast", "brunch", "diner food",
+  "deli", "salads", "soup", "noodles", "ramen", "pho", "burritos", "wraps",
+  "greek food", "mediterranean food", "middle eastern food", "korean food",
+  "japanese food", "vietnamese food", "caribbean food", "southern food",
+  "comfort food", "vegetarian food", "vegan food", "healthy food", "bakery",
+  "dessert", "ice cream", "coffee and pastries", "pub food", "sports bar food",
+  "family restaurant", "cheap eats", "takeout", "late night food", "food trucks",
 ];
 
 /* ===========================================================================
@@ -857,7 +874,7 @@ function RoomClock({ endsAt, status }) {
   );
 }
 
-function RoomCard({ card, disabled, vetoUsed, myName, onYes, onVeto }) {
+function RoomCard({ card, disabled, vetoUsed, vetoOpen, myName, onYes, onVeto }) {
   const dead = Boolean(card.vetoedBy);
   return (
     <li className={`rm-card${dead ? " rm-card--dead" : ""}${card.myYes ? " rm-card--mine" : ""}`}>
@@ -890,17 +907,18 @@ function RoomCard({ card, disabled, vetoUsed, myName, onYes, onVeto }) {
           >
             {card.myYes ? "Yes ✓" : "Yes"}
           </button>
-          {/* Protected cards show a shield instead of a disabled bomb — a
-              greyed-out button reads as "broken", a shield reads as a rule. */}
-          {card.vetoProof ? (
-            <span className="rm-shield" title="Protected — the bottom two can't be bombed">🛡️</span>
+          {/* Once the board is down to two, bombs are off for everyone — a
+              shield rather than a greyed-out button, because a disabled bomb
+              reads as broken while a shield reads as a rule that changed. */}
+          {!vetoOpen ? (
+            <span className="rm-shield" title="Final two — bombs are off, votes only">🛡️</span>
           ) : (
             <button
               type="button"
               className="rm-veto"
               onClick={() => onVeto(card.id)}
               disabled={disabled || vetoUsed}
-              title={vetoUsed ? "You've used your veto" : "Nuke this option for everyone"}
+              title={vetoUsed ? "You've used your veto" : "Remove this option for everyone"}
             >
               💣
             </button>
@@ -997,6 +1015,7 @@ function App() {
 
   const [roomCraving, setRoomCraving] = useState("");
   const [roomJoinInput, setRoomJoinInput] = useState("");
+  const [roomExtras, setRoomExtras] = useState("");
   const [roomStage, setRoomStage] = useState(null); // "searching" | "opening"
   const roomPoll = useRef(null);
 
@@ -1073,12 +1092,16 @@ function App() {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
-          query: craving,
+          // Extra details ride along with the craving — the ranker already
+          // reads price, dietary and vibe words out of the query text.
+          query: [craving, roomExtras.trim()].filter(Boolean).join(", "),
           lat: resolvedLocation.lat,
           lng: resolvedLocation.lng,
           locationHint: resolvedLocation.name,
           zip: resolvedLocation.zip || getZip(),
-          radiusMode,
+          // Group rooms always search the wider fixed radius, so a board of
+          // five is findable even where the host lives somewhere thin.
+          radiusMode: "group",
         }),
       });
       const sdata = await sres.json().catch(() => ({}));
@@ -1091,7 +1114,7 @@ function App() {
       if (sdata.trialUsed) spendTrial();
       const candidates = Array.isArray(sdata.roomCandidates) ? sdata.roomCandidates : [];
       if (candidates.length < 2) {
-        throw new Error(`Only found one place for “${craving}” near you — try a wider craving.`);
+        throw new Error(`Only found ${candidates.length === 1 ? "one place" : "nothing"} near ${sdata.locationName || resolvedLocation.name}. Try a broader craving, or shuffle for one.`);
       }
 
       setRoomStage("opening");
@@ -1114,7 +1137,7 @@ function App() {
     } catch (e) {
       setRoomError(e.message);
     } finally { setRoomBusy(false); setRoomStage(null); }
-  }, [roomCraving, resolvedLocation, radiusMode, roomFetch, spendTrial]);
+  }, [roomCraving, roomExtras, resolvedLocation, roomFetch, spendTrial]);
 
   const startRound = useCallback(async () => {
     if (!roomCode) return;
@@ -1137,11 +1160,17 @@ function App() {
     joinRoom(code);
   }, [roomJoinInput, joinRoom]);
 
+  /* Shuffling is FREE. It used to open the room immediately, which meant every
+     tap of "pick one for us" ran a real search — so browsing for a craving you
+     liked burned the daily allowance and cost money per tap. Now it only fills
+     the box; opening the room is still a separate, deliberate action.
+
+     Never repeats the craving already showing, or a tap can look broken. */
   const surpriseMe = useCallback(() => {
-    const pick = ROOM_CRAVINGS[Math.floor(Math.random() * ROOM_CRAVINGS.length)];
-    setRoomCraving(pick);
-    createRoom(pick);
-  }, [createRoom]);
+    const pool = ROOM_CRAVINGS.filter((c) => c !== roomCraving);
+    setRoomCraving(pool[Math.floor(Math.random() * pool.length)]);
+    setRoomError("");
+  }, [roomCraving]);
 
   const castVote = useCallback(async (cardId, kind) => {
     if (!roomCode || !roomPlayerId) return;
@@ -2352,10 +2381,17 @@ function App() {
                 </ul>
 
                 {room.status === "voting" && (
-                  <p className="rm-rule">
-                    Tap <strong>Yes</strong> on anything you'd eat. You get <strong>one 💣</strong> to
-                    kill an option for everyone — but the bottom two are 🛡️ protected. Most Yes wins.
-                  </p>
+                  <>
+                    <ol className="rm-rules">
+                      <li><strong>Tap Yes</strong> on every place you'd happily eat at. As many as you like.</li>
+                      <li><strong>You get one 💣.</strong> It removes an option for the whole group.</li>
+                      <li><strong>At two left, bombs stop.</strong> The final call is votes only.</li>
+                      <li><strong>Most Yes wins</strong> when the clock runs out, or once everyone's voted.</li>
+                    </ol>
+                    {room.aliveCount <= 2 && (
+                      <p className="rm-final-two">🛡️ Final two — bombs are off. Vote it out.</p>
+                    )}
+                  </>
                 )}
 
                 {/* Lobby. No clock is running yet, and it says so — the whole
@@ -2363,10 +2399,16 @@ function App() {
                 {room.status === "lobby" && (
                   <div className="rm-lobby">
                     <p className="rm-rule">
-                      {room.cards.length} places are loaded and <strong>no timer is running yet</strong>.
-                      Send the link, wait for everyone to show up, then start the round —
-                      you'll all get <strong>90 seconds</strong> to vote.
+                      <strong>{room.cards.length} places</strong> within 35 miles are loaded, and
+                      <strong> no timer is running yet</strong>. Send the link, wait for everyone,
+                      then start the round.
                     </p>
+                    <ol className="rm-rules">
+                      <li>Everyone gets <strong>90 seconds</strong> to vote.</li>
+                      <li>Yes on anything you'd eat — as many as you like.</li>
+                      <li><strong>One 💣 each.</strong> It removes a place for everyone.</li>
+                      <li>Once <strong>two are left</strong>, no more bombs — votes only.</li>
+                    </ol>
                     <div className="rm-lobby-code">
                       <span className="rm-lobby-label">Room code</span>
                       <strong>{room.code}</strong>
@@ -2430,6 +2472,7 @@ function App() {
                           card={c}
                           disabled={room.status !== "voting"}
                           vetoUsed={Boolean(room.me?.vetoUsed)}
+                          vetoOpen={room.vetoOpen !== false}
                           myName={room.me?.name}
                           onYes={(id) => castVote(id, "yes")}
                           onVeto={(id) => castVote(id, "veto")}
@@ -2527,50 +2570,24 @@ function App() {
                 {/* Spelled out, because a game nobody understands is a game
                     nobody starts. Four steps, in order, before they commit. */}
                 <ol className="rm-how">
-                  <li><span className="rm-how-n">1</span> Say what you're craving and where you are.</li>
-                  <li><span className="rm-how-n">2</span> We find the best spots near you and open a room.</li>
-                  <li><span className="rm-how-n">3</span> Send the link. Everyone who taps it joins — no signup.</li>
-                  <li><span className="rm-how-n">4</span> You start the round. 90 seconds, one 💣 each, most Yes wins.</li>
+                  <li><span className="rm-how-n">1</span> Set where you are, then pick a craving — or shuffle for one, free.</li>
+                  <li><span className="rm-how-n">2</span> We find <strong>5 places within 35 miles</strong> and open a room.</li>
+                  <li><span className="rm-how-n">3</span> Send the link. Anyone who taps it joins — no app, no signup.</li>
+                  <li><span className="rm-how-n">4</span> You start the clock. <strong>90 seconds</strong>, one 💣 each.</li>
+                  <li><span className="rm-how-n">5</span> Bombs stop at the final two. <strong>Most Yes wins.</strong></li>
                 </ol>
 
                 <section className="card card--glow">
+                  {/* STEP 1 first. The craving box used to sit above the
+                      location box even though "Open the room" stays disabled
+                      until a location is set — so the first thing you could
+                      type was the thing that did not unblock the button. */}
                   <div className="card-head">
-                    <h2 className="card-title">What are you all in the mood for?</h2>
+                    <h2 className="card-title">1 · Where are you?</h2>
+                    {resolvedLocation && <span className="card-sub">searching 35 miles around you</span>}
                   </div>
 
-                  <div className="searchbar">
-                    <input
-                      type="text"
-                      placeholder="tacos, spicy ramen, cheap sushi…"
-                      value={roomCraving}
-                      maxLength={80}
-                      onChange={(e) => setRoomCraving(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === "Enter") createRoom(); }}
-                      disabled={roomBusy}
-                    />
-                    <button
-                      className="btn btn--hot"
-                      onClick={() => createRoom()}
-                      disabled={roomBusy || !roomCraving.trim() || !resolvedLocation}
-                    >
-                      {roomStage === "searching" ? "Finding places…"
-                        : roomStage === "opening" ? "Opening room…"
-                        : "Open the room"}
-                    </button>
-                  </div>
-
-                  {/* Being asked to decide what to crave, by the app that
-                      exists because deciding is hard, is a joke at the user's
-                      expense. One tap picks for them. */}
-                  <button
-                    className="link-btn rm-surprise"
-                    onClick={surpriseMe}
-                    disabled={roomBusy || !resolvedLocation}
-                  >
-                    🎲 Can't decide? Let us pick the craving too
-                  </button>
-
-                  <div className="loc" style={{ marginTop: 16 }}>
+                  <div className="loc">
                     {resolvedLocation ? (
                       <div className="loc-set">
                         <span className="loc-key">Near</span>
@@ -2582,7 +2599,7 @@ function App() {
                       </div>
                     ) : (
                       <>
-                        <span className="loc-prompt">Where are you? City, postcode, or address — anywhere in the world.</span>
+                        <span className="loc-prompt">City, postcode, or address — anywhere in the world.</span>
                         <div className="loc-row">
                           <input
                             type="text" maxLength={120} autoComplete="off"
@@ -2603,10 +2620,65 @@ function App() {
                     )}
                   </div>
 
+                  <div className="rm-step2">
+                    <div className="card-head">
+                      <h2 className="card-title">2 · What are you all in the mood for?</h2>
+                    </div>
+
+                    {/* Shuffle sits ABOVE the box and costs nothing — tapping it
+                        only fills the field. Opening the room is the separate,
+                        deliberate action below. */}
+                    <button
+                      className="btn btn--ghost rm-shuffle"
+                      onClick={surpriseMe}
+                      disabled={roomBusy}
+                    >
+                      🎲 {roomCraving ? "Shuffle again" : "Pick one for us"} — free, tap as often as you like
+                    </button>
+
+                    <div className="searchbar" style={{ marginTop: 12 }}>
+                      <input
+                        type="text"
+                        placeholder="pizza, tacos, sushi…"
+                        value={roomCraving}
+                        maxLength={80}
+                        onChange={(e) => setRoomCraving(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") createRoom(); }}
+                        disabled={roomBusy}
+                      />
+                    </div>
+
+                    {/* Free text rather than checkboxes: the ranker already
+                        reads price, dietary and vibe words straight out of the
+                        query, so anything typed here genuinely counts. */}
+                    <input
+                      className="rm-extras"
+                      type="text"
+                      placeholder="Anything else? cheap · vegetarian · gluten free · date night · open late"
+                      value={roomExtras}
+                      maxLength={120}
+                      onChange={(e) => setRoomExtras(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") createRoom(); }}
+                      disabled={roomBusy}
+                      aria-label="Extra details"
+                    />
+
+                    <button
+                      className="btn btn--hot btn--block rm-open"
+                      onClick={() => createRoom()}
+                      disabled={roomBusy || !roomCraving.trim() || !resolvedLocation}
+                    >
+                      {roomStage === "searching" ? "Finding places…"
+                        : roomStage === "opening" ? "Opening room…"
+                        : !resolvedLocation ? "Set your location first"
+                        : "Open the room →"}
+                    </button>
+                  </div>
+
                   {roomError && <p className="err">{roomError}</p>}
                   <p className="rm-seed">
-                    Opening a room runs one search, the same as searching on Find — so this
-                    replaces that step rather than adding to it.
+                    Shuffling is free. Opening a room runs one search — the same single
+                    search as using Find, so this replaces that step rather than adding one.
                   </p>
                 </section>
               </>

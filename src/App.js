@@ -713,16 +713,28 @@ const ROOM_POLL_MS = 900;
 
    Broad terms also behave better with the ranker, because a wide net gives it
    more to sort rather than forcing it to accept whatever it found. */
+/* Shuffle pool, pruned for DEPTH rather than length.
+
+   The old list had dumplings, steak and falafel in it — real cravings that
+   return two or three places in a suburb, which is how a shuffle produced a
+   board that could not be filled. Tested against Hicksville NY, a fairly
+   ordinary suburb: "pizza" and "dumplings" return a full five, "steak" returns
+   two, "diner food" returns four. So narrow dish names are out and broad
+   category and cuisine terms are in — "steakhouse" not "steak", "chinese food"
+   not "hand-pulled noodles".
+
+   Thirty-odd entries is far more than anyone shuffles through, and every one
+   is a category an ordinary town supports. I could not afford to API-test all
+   of them, so anything I was unsure about was cut rather than kept: a shuffle
+   that lands on a dead craving is worse than a shorter list. */
 const ROOM_CRAVINGS = [
   "pizza", "burgers", "tacos", "chinese food", "italian food", "mexican food",
-  "sushi", "thai food", "indian food", "sandwiches", "bbq", "fried chicken",
-  "wings", "pasta", "steakhouse", "seafood", "breakfast", "brunch", "diner food",
-  "deli", "salads", "soup", "noodles", "ramen", "pho", "burritos", "wraps",
-  "greek food", "mediterranean food", "middle eastern food", "korean food",
-  "japanese food", "vietnamese food", "caribbean food", "southern food",
-  "comfort food", "vegetarian food", "vegan food", "healthy food", "bakery",
-  "dessert", "ice cream", "coffee and pastries", "pub food", "sports bar food",
-  "family restaurant", "cheap eats", "takeout", "late night food", "food trucks",
+  "sushi", "thai food", "indian food", "japanese food", "korean food",
+  "greek food", "mediterranean food", "vietnamese food", "spanish food",
+  "sandwiches", "bbq", "fried chicken", "wings", "pasta", "steakhouse",
+  "seafood", "breakfast", "brunch", "deli", "noodles", "ramen", "burritos",
+  "comfort food", "vegetarian food", "bakery", "dessert", "pub food",
+  "family restaurant", "cheap eats", "takeout",
 ];
 
 /* ===========================================================================

@@ -94,7 +94,11 @@ const DAILY_SEARCH_LIMIT = 5;
 // work once — after that the wall is real, and it is a SERVER wall. Doing this
 // in the browser would be theatre: clearing storage or opening a private
 // window would reset it.
-const FREE_TRIAL_SEARCHES = 1;
+/* Three, not one. One free search meant opening a single group room spent the
+   entire allowance, so the next attempt — or one shuffle you actually wanted —
+   died on an auth error that read like a search failure. Three is enough to
+   find a location, try a craving, and still open a room for the group. */
+const FREE_TRIAL_SEARCHES = 3;
 const EARTH_RADIUS_MILES = 3958.8;
 const PROXIMITY_DECAY_MILES = 3;
 const MAX_QUERY_CHARS = 300;

@@ -4056,4 +4056,4 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .consent { transition: none; }
-}
+}.qz-entry-note { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 16px; }

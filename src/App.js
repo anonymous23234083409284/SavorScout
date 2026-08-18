@@ -3,6 +3,7 @@ import "./App.css";
 import { supabase } from "./supabaseClient";
 import { renderShareCard, canvasToBlob, buildCaption } from "./shareCard";
 import logoFlame from "./assets/logo-flame.png";
+import Quiz, { quizStatus } from "./quiz/Quiz";
 
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
@@ -1028,6 +1029,7 @@ function App() {
   const [roomCraving, setRoomCraving] = useState("");
   const [roomJoinInput, setRoomJoinInput] = useState("");
   const [roomExtras, setRoomExtras] = useState("");
+
   const [roomStage, setRoomStage] = useState(null); // "searching" | "opening"
   const roomPoll = useRef(null);
 
@@ -1444,6 +1446,50 @@ function App() {
       if (res?.award) { flash(res.award); refreshGame().catch(() => {}); }
     } catch { /* telemetry never surfaces an error */ }
   }, [authedFetch, flash, refreshGame]);
+
+  /* ---- taste quiz ----
+     Opened by hand from You, and once automatically the first time someone
+     lands signed-in with nothing recorded. Auto-opening on every visit would
+     make the app feel like it wants something from you before it gives you
+     anything. */
+  const [quizOpen, setQuizOpen] = useState(false);
+  const [quizState, setQuizState] = useState(() => quizStatus());
+  const quizAutoShown = useRef(false);
+
+  useEffect(() => {
+    if (!user || !onboardingChecked || needsOnboarding) return;
+    if (quizAutoShown.current) return;
+    quizAutoShown.current = true;
+    const st = quizStatus();
+    setQuizState(st);
+    if (st.phase === "ready" && st.day === 1) {
+      // Let the app paint first, so the modal arrives over a real page.
+      const t = setTimeout(() => setQuizOpen(true), 900);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+  }, [user, onboardingChecked, needsOnboarding]);
+
+  /* The quiz is only worth taking if it changes results, so each finished day
+     is pushed to the profile the recommender already reads. Fire and forget —
+     a failed write must never block the reveal. */
+  const onQuizComplete = useCallback((scores) => {
+    setQuizState(quizStatus());
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "quiz_day_done", { dims: Object.keys(scores).length });
+    }
+    authedFetch("/taste/quiz", { method: "POST", body: JSON.stringify({ scores }) }).catch(() => {});
+  }, [authedFetch]);
+
+  const onQuizShare = useCallback(async (p) => {
+    const text = `I'm ${p.name} on SavorScout — ${p.tagline}`;
+    const url = `${window.location.origin}/`;
+    try {
+      if (navigator.share) { await navigator.share({ title: "SavorScout", text, url }); return; }
+      await navigator.clipboard.writeText(`${text} ${url}`);
+      flash?.({ amount: 0 });
+    } catch { /* dismissed */ }
+  }, [flash]);
 
   /* Answering a prediction. Resolves in its own frame because the grading
      moment IS the mechanic — routing it through a generic handler would clear
@@ -1927,7 +1973,14 @@ function App() {
             {authError && <p className="err">{authError}</p>}
           </section>
 
-          <footer className="foot">© 2026 SavorScout</footer>
+          <Quiz
+          open={quizOpen}
+          onClose={() => { setQuizOpen(false); setQuizState(quizStatus()); }}
+          onComplete={onQuizComplete}
+          onShare={onQuizShare}
+        />
+
+        <footer className="foot">© 2026 SavorScout</footer>
         </div>
       </div>
     );
@@ -2747,6 +2800,38 @@ function App() {
                 ))}
               </section>
             )}
+
+            {/* The quiz card. Shows what today actually offers rather than a
+                generic "take the quiz", because the answer to "why now?" is
+                the entire reason a drip works. */}
+            <section className="card card--glow qz-entry">
+              <div className="card-head">
+                <h2 className="card-title">Your taste profile</h2>
+                <span className="card-sub">
+                  {quizState.phase === "done" ? "complete"
+                    : quizState.phase === "waiting" ? `day ${quizState.day} of 6 done`
+                    : quizState.phase === "reveal-ready" ? "ready to reveal"
+                    : quizState.day > 1 ? `day ${quizState.day} of 6` : "7 days · 1 min a day"}
+                </span>
+              </div>
+              <p className="qz-entry-note">
+                {quizState.phase === "done"
+                  ? "Your type is set, and every search is weighted to it. Open it any time to look again."
+                  : quizState.phase === "waiting"
+                    ? "Today's set is done. The next five questions unlock tomorrow."
+                    : quizState.phase === "reveal-ready"
+                      ? "All six days answered. Your food personality is waiting."
+                      : quizState.day > 1
+                        ? "Five questions, about a minute. Each day sharpens what we pick for you."
+                        : "Six days, five questions each, then your food personality. Every answer changes what we recommend — starting today."}
+              </p>
+              <button className="btn btn--hot btn--block" onClick={() => setQuizOpen(true)}>
+                {quizState.phase === "done" ? "See my type"
+                  : quizState.phase === "waiting" ? "See where I'm at"
+                  : quizState.phase === "reveal-ready" ? "Reveal my type"
+                  : quizState.day > 1 ? `Continue · day ${quizState.day}` : "Start the quiz"}
+              </button>
+            </section>
 
             <section className="card">
               <div className="card-head">

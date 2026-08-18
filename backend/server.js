@@ -3798,6 +3798,66 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
 });
 
 /* ===========================================================================
+   TASTE QUIZ
+
+   Stores the quiz scores so search can weight results by them. Kept
+   deliberately small: the quiz owns its own question state in the browser,
+   and only the six numbers that actually affect recommendations come here.
+
+   Writes to profiles.quiz_scores when that column exists and degrades to an
+   in-process map when it does not — the same probe-and-fallback shape the free
+   trial uses, so the feature works before anyone runs a migration and simply
+   becomes durable once they do.
+   =========================================================================== */
+
+const QUIZ_DIMS = ["heat", "sweet", "value", "adventure", "lateNight", "discovery"];
+const quizMemory = new Map();
+let QUIZ_COLUMN = null; // null = unprobed, true/false = known
+
+async function quizColumnReady() {
+  if (QUIZ_COLUMN !== null) return QUIZ_COLUMN;
+  const { error } = await supabaseAdmin.from("profiles").select("quiz_scores").limit(1);
+  QUIZ_COLUMN = !error;
+  if (!QUIZ_COLUMN) {
+    console.warn(`quiz scores: in-memory only — add profiles.quiz_scores (${error.message})`);
+  }
+  return QUIZ_COLUMN;
+}
+
+function cleanScores(raw) {
+  const out = {};
+  if (!raw || typeof raw !== "object") return out;
+  for (const k of QUIZ_DIMS) {
+    const v = Number(raw[k]);
+    if (Number.isFinite(v) && v >= 0 && v <= 100) out[k] = Math.round(v);
+  }
+  return out;
+}
+
+app.post("/taste/quiz", requireAuth, async (req, res) => {
+  const scores = cleanScores(req.body?.scores);
+  if (!Object.keys(scores).length) return res.status(400).json({ error: "No usable scores." });
+
+  quizMemory.set(req.userId, scores);
+  if (await quizColumnReady()) {
+    const { error } = await supabaseAdmin
+      .from("profiles").update({ quiz_scores: scores }).eq("id", req.userId);
+    if (error) console.error("quiz save failed:", error.message);
+  }
+  return res.json({ ok: true, scores });
+});
+
+async function quizScoresFor(userId) {
+  if (!userId) return null;
+  if (await quizColumnReady()) {
+    const { data } = await supabaseAdmin
+      .from("profiles").select("quiz_scores").eq("id", userId).maybeSingle();
+    if (data?.quiz_scores) return cleanScores(data.quiz_scores);
+  }
+  return quizMemory.get(userId) || null;
+}
+
+/* ===========================================================================
    GEOCODING — anywhere, not just US ZIP codes
 
    The client used to hit Nominatim and Mapbox directly, both locked to the US

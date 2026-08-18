@@ -3838,6 +3838,38 @@ function geoThrottled(fn) {
   return run;
 }
 
+/* Providers return wildly different label quality. Zippopotam hands back
+   "Downtown Toronto (CN Tower / King and Spadina / Railway Lands / ...)" for a
+   single postcode, and BigDataCloud uses formal ISO country names like
+   "United States of America (the)". Both are correct and both are unreadable
+   on a card, so every label passes through here before a user sees it. */
+const COUNTRY_TIDY = {
+  "United States of America (the)": "United States",
+  "United States of America": "United States",
+  "Great Britain": "United Kingdom",
+  "United Kingdom of Great Britain and Northern Ireland (the)": "United Kingdom",
+  "Netherlands (the)": "Netherlands",
+  "Philippines (the)": "Philippines",
+};
+function tidyPlace(name) {
+  if (!name) return name;
+  // Drop parenthetical neighbourhood dumps, then take the first alternative.
+  let out = String(name).replace(/\s*\([^)]*\)\s*/g, " ").split("/")[0].trim();
+  out = out.replace(/\s{2,}/g, " ").replace(/[,;]\s*$/, "");
+  return out.length > 42 ? out.slice(0, 42).trim() + "…" : out;
+}
+function tidyCountry(c) { return c ? (COUNTRY_TIDY[c] || c) : c; }
+function tidyLocation(loc, region) {
+  if (!loc) return loc;
+  const country = tidyCountry(loc.country);
+  const short = tidyPlace(loc.short);
+  const isUS = country === "United States";
+  // Rebuild the label from tidied parts rather than patching the old string.
+  const tail = isUS ? (region ? tidyPlace(region) : null) : country;
+  const name = [short, tail].filter(Boolean).join(", ") || tidyPlace(loc.name);
+  return { ...loc, name, short, country };
+}
+
 function shapeNominatim(hit) {
   if (!hit) return null;
   const lat = parseFloat(hit.lat), lng = parseFloat(hit.lon);
@@ -3856,6 +3888,50 @@ function shapeNominatim(hit) {
     ? [city || parts[0], country].filter(Boolean).join(", ")
     : parts.join(", ");
   return { name, short: city || parts[0], lat, lng, country };
+}
+
+/* Nominatim blocks datacentre IPs. Verified in production: the same query that
+   answers 200 from a laptop fails 3/3 from Render, which made the "worldwide
+   geocoding" fix work everywhere except the one place it runs. So Nominatim is
+   now the LAST resort, and two providers that welcome server traffic go first.
+
+   Neither needs an API key, which matters — a key would be one more thing to
+   configure before location works at all. */
+
+// Postcodes, ~60 countries, purpose-built for exactly this and happy to be
+// called from a server. Handles the "11801 is not in the Dominican Republic"
+// problem structurally rather than by guessing.
+async function zippopotam(country, postcode) {
+  const res = await fetch(`https://api.zippopotam.us/${country}/${encodeURIComponent(postcode)}`);
+  if (!res.ok) return null;
+  const d = await res.json().catch(() => null);
+  const p = d && Array.isArray(d.places) ? d.places[0] : null;
+  if (!p) return null;
+  const lat = parseFloat(p.latitude), lng = parseFloat(p.longitude);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const city = p["place name"], region = p["state"] || p["state abbreviation"] || null;
+  const country_name = d.country || null;
+  const name = country_name && country_name !== "United States"
+    ? [city, country_name].filter(Boolean).join(", ")
+    : [city, region].filter(Boolean).join(", ");
+  return { name: name || city, short: city, lat, lng, country: country_name, region };
+}
+
+// Place names worldwide, no key, explicitly intended for programmatic use.
+async function openMeteoGeocode(q) {
+  const res = await fetch(
+    `https://geocoding-api.open-meteo.com/v1/search?count=1&language=en&format=json&name=${encodeURIComponent(q)}`
+  );
+  if (!res.ok) return null;
+  const d = await res.json().catch(() => null);
+  const hit = d && Array.isArray(d.results) ? d.results[0] : null;
+  if (!hit) return null;
+  const { latitude: lat, longitude: lng, name: city, admin1: region, country } = hit;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const label = country && country !== "United States"
+    ? [city, country].filter(Boolean).join(", ")
+    : [city, region].filter(Boolean).join(", ");
+  return { name: label || city, short: city, lat, lng, country, region };
 }
 
 async function nominatim(pathAndQuery) {
@@ -3889,20 +3965,33 @@ app.get("/geocode", async (req, res) => {
       /^[A-Za-z]{1,2}\d[A-Za-z\d]? ?\d[A-Za-z]{2}$/.test(q) ? "gb" :
       null;
 
+    /* Postcode-shaped input goes to a postcode service first. Free-text search
+       resolves "11801" to Santo Domingo Este, Dominican Republic — so without
+       this, adding worldwide support breaks every US user typing five digits. */
     if (asPostcode) {
-      const pc = await geoThrottled(() =>
-        nominatim(`/search?format=json&addressdetails=1&limit=1&countrycodes=${asPostcode}&postalcode=${encodeURIComponent(q)}`)
-      );
-      loc = shapeNominatim(Array.isArray(pc) ? pc[0] : null);
+      try { loc = await zippopotam(asPostcode, q.replace(/\s+/g, "")); } catch { /* next */ }
+      // Canadian postcodes are only indexed by their forward sortation area.
+      if (!loc && asPostcode === "ca") {
+        try { loc = await zippopotam("ca", q.replace(/\s+/g, "").slice(0, 3)); } catch { /* next */ }
+      }
+      if (!loc && asPostcode === "gb") {
+        try { loc = await zippopotam("gb", q.replace(/\s+/g, "").slice(0, -3)); } catch { /* next */ }
+      }
     }
 
+    if (!loc) { try { loc = await openMeteoGeocode(q); } catch { /* next */ } }
+
+    // Last resort. Works from a laptop, usually refused from a datacentre.
     if (!loc) {
-      const data = await geoThrottled(() =>
-        nominatim(`/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(q)}`)
-      );
-      loc = shapeNominatim(Array.isArray(data) ? data[0] : null);
+      try {
+        const data = await geoThrottled(() =>
+          nominatim(`/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(q)}`)
+        );
+        loc = shapeNominatim(Array.isArray(data) ? data[0] : null);
+      } catch { /* fall through to the 404 */ }
     }
-    if (!loc) return res.status(404).json({ error: `Couldn't find "${q}".` });
+    if (!loc) return res.status(404).json({ error: `Couldn't find "${q}". Try adding the city or country.` });
+    loc = tidyLocation(loc, loc.region);
     geoCachePut(key, loc);
     return res.json({ location: loc });
   } catch (err) {
@@ -3926,12 +4015,33 @@ app.get("/geocode/reverse", async (req, res) => {
   const cached = geoCacheGet(key);
   if (cached) return res.json({ location: { ...cached, lat, lng }, cached: true });
 
+  let loc = null;
+  /* BigDataCloud's reverse endpoint is keyless, worldwide, and unlike Nominatim
+     does not refuse datacentre traffic — which is the whole reason this needs a
+     first choice that is not Nominatim. */
   try {
-    const data = await geoThrottled(() =>
-      nominatim(`/reverse?format=json&addressdetails=1&zoom=12&lat=${lat}&lon=${lng}`)
-    );
-    const loc = shapeNominatim(data);
+    const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+    if (r.ok) {
+      const d = await r.json().catch(() => null);
+      const city = d && (d.city || d.locality || d.principalSubdivision);
+      if (city) {
+        const label = d.countryName && d.countryName !== "United States"
+          ? [city, d.countryName].filter(Boolean).join(", ")
+          : [city, d.principalSubdivision].filter(Boolean).join(", ");
+        loc = { name: label || city, short: city, lat, lng, country: d.countryName || null, region: d.principalSubdivision || null };
+      }
+    }
+  } catch { /* fall through */ }
+
+  try {
+    if (!loc) {
+      const data = await geoThrottled(() =>
+        nominatim(`/reverse?format=json&addressdetails=1&zoom=12&lat=${lat}&lon=${lng}`)
+      );
+      loc = shapeNominatim(data);
+    }
     if (!loc) return res.status(404).json({ error: "Couldn't name that location." });
+    loc = tidyLocation(loc, loc.region);
     geoCachePut(key, loc);
     // Keep the caller's exact coordinates; only the label comes from the API.
     return res.json({ location: { ...loc, lat, lng } });

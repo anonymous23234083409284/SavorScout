@@ -3625,6 +3625,18 @@ body {
 .rm-veto:hover:not(:disabled) { background: rgba(255, 95, 31, 0.14); border-color: var(--ember); }
 .rm-yes:disabled, .rm-veto:disabled { opacity: 0.35; cursor: not-allowed; }
 
+/* Not a button. It is a state of the card, and making it look pressable would
+   invite taps that can only ever be refused. */
+.rm-shield {
+  min-width: 48px; min-height: 44px;
+  display: grid; place-items: center;
+  font-size: 16px;
+  border-radius: var(--r-full);
+  border: 1px dashed var(--line-cool);
+  background: rgba(46, 230, 214, 0.06);
+  cursor: help;
+}
+
 /* The payoff. Deliberately loud — this is the moment the argument ends. */
 .rm-win {
   padding: 26px 22px;
@@ -3687,6 +3699,11 @@ body {
 }
 
 .rm-surprise { display: inline-block; margin-top: 12px; font-size: 12.5px; }
+
+/* GPS is offered second, not first: an unprompted permission dialog on arrival
+   is the fastest way to get denied permanently. Typing always works. */
+.loc-gps { display: inline-block; margin-top: 10px; font-size: 12.5px; }
+.loc-gps:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Join by code. Monospace and wide-tracked so a 6-character code is easy to
    check against a screenshot or something read aloud. */

@@ -69,6 +69,15 @@ const DEFAULT_RADIUS_MODE = "nearby";
 // now nested maxima rather than escalating fallbacks — see Layer 2a.)
 
 // The best N inside the radius go on to be ranked in full.
+/* How many places go on the group-vote board. Declared up here because
+   /search builds the candidate list long before the room code runs, and a
+   constant used above its own declaration only works by accident. */
+const ROOM_MAX_CARDS = 5;
+/* The last two on the board cannot be vetoed. With every card nukeable the
+   board could be shredded down to a single forced answer, which is not a vote;
+   two guaranteed survivors mean there is always a real choice at the end. */
+const ROOM_VETO_PROOF_TAIL = 2;
+
 const SHORTLIST_SIZE = 10;
 
 const CANDIDATE_POOL_SIZE = 20; // over-fetch, since the radius filter discards some
@@ -3587,7 +3596,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
        to render a game card. These are already scored and researched, so a
        room costs no extra Serper/OpenAI calls — it reuses the search the host
        already paid for, which is what keeps hosting a room free and instant. */
-    const roomCandidates = [winner, ...others.slice(0, 4)].map((c) => ({
+    const roomCandidates = [winner, ...others.slice(0, ROOM_MAX_CARDS - 1)].map((c) => ({
       id: String(c.place.placeId || c.place.cid || c.place.title),
       name: c.place.title,
       rating: typeof c.rating === "number" ? c.rating : null,
@@ -3757,6 +3766,150 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
 });
 
 /* ===========================================================================
+   GEOCODING — anywhere, not just US ZIP codes
+
+   The client used to hit Nominatim and Mapbox directly, both locked to the US
+   and both restricted to postcodes. Anyone outside the US, and anyone who
+   typed a city instead of five digits, simply could not use the product.
+
+   Proxying it here rather than from the browser fixes the reliability half:
+   Nominatim's usage policy requires a descriptive User-Agent, which a browser
+   cannot set — fetch() forbids overriding it — so browser-direct requests are
+   the ones that get throttled or refused. From the server we can identify
+   ourselves properly, cache aggressively, and serialise our own requests so we
+   stay inside their one-per-second rule.
+   =========================================================================== */
+
+const GEO_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const GEO_CACHE_MAX = 2000;
+const geoCache = new Map();
+const GEO_UA = "SavorScout/1.0 (restaurant recommender; +https://www.savorscout.net)";
+
+function geoCacheGet(key) {
+  const hit = geoCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > GEO_CACHE_TTL_MS) { geoCache.delete(key); return null; }
+  return hit.value;
+}
+function geoCachePut(key, value) {
+  if (geoCache.size >= GEO_CACHE_MAX) geoCache.delete(geoCache.keys().next().value);
+  geoCache.set(key, { at: Date.now(), value });
+}
+
+/* Nominatim asks for no more than one request per second. Chaining every call
+   onto a single promise enforces that without a queue library, and the cache
+   means real users almost never reach this path anyway. */
+let geoChain = Promise.resolve();
+function geoThrottled(fn) {
+  const run = geoChain.then(fn, fn);
+  geoChain = run.then(() => new Promise((r) => setTimeout(r, 1100)), () => new Promise((r) => setTimeout(r, 1100)));
+  return run;
+}
+
+function shapeNominatim(hit) {
+  if (!hit) return null;
+  const lat = parseFloat(hit.lat), lng = parseFloat(hit.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const a = hit.address || {};
+  const city = a.city || a.town || a.village || a.hamlet || a.suburb ||
+               a.municipality || a.county || a.state_district || a.state;
+  const region = a.state || a.region || a.province || null;
+  const country = a.country || null;
+  // "Hicksville, New York" at home; "Shibuya, Japan" abroad, where a region
+  // name would mean nothing to the person reading it.
+  const parts = [city, region && region !== city ? region : null].filter(Boolean);
+  if (!parts.length && country) parts.push(country);
+  if (!parts.length) return null;
+  const name = country && country !== "United States"
+    ? [city || parts[0], country].filter(Boolean).join(", ")
+    : parts.join(", ");
+  return { name, short: city || parts[0], lat, lng, country };
+}
+
+async function nominatim(pathAndQuery) {
+  const res = await fetch(`https://nominatim.openstreetmap.org${pathAndQuery}`, {
+    headers: { "User-Agent": GEO_UA, "Accept-Language": "en", Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error(`nominatim ${res.status}`);
+  return res.json();
+}
+
+app.get("/geocode", async (req, res) => {
+  const q = String(req.query.q || "").trim().slice(0, 120);
+  if (q.length < 2) return res.status(400).json({ error: "Type a place to search for." });
+
+  const key = `f:${q.toLowerCase()}`;
+  const cached = geoCacheGet(key);
+  if (cached) return res.json({ location: cached, cached: true });
+
+  try {
+    /* A bare 5-digit string is ambiguous to free-text search and it guesses
+       badly: "11801" returned Santo Domingo Este, Dominican Republic, not
+       Hicksville NY. Postcode-shaped input is therefore tried as a postcode
+       first, in the country whose format it matches, and only falls through to
+       free text if that finds nothing. Without this, adding worldwide support
+       would have broken every US user who types five digits — the exact thing
+       that worked before. */
+    let loc = null;
+    const asPostcode =
+      /^\d{5}$/.test(q) ? "us" :
+      /^[A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d$/.test(q) ? "ca" :
+      /^[A-Za-z]{1,2}\d[A-Za-z\d]? ?\d[A-Za-z]{2}$/.test(q) ? "gb" :
+      null;
+
+    if (asPostcode) {
+      const pc = await geoThrottled(() =>
+        nominatim(`/search?format=json&addressdetails=1&limit=1&countrycodes=${asPostcode}&postalcode=${encodeURIComponent(q)}`)
+      );
+      loc = shapeNominatim(Array.isArray(pc) ? pc[0] : null);
+    }
+
+    if (!loc) {
+      const data = await geoThrottled(() =>
+        nominatim(`/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(q)}`)
+      );
+      loc = shapeNominatim(Array.isArray(data) ? data[0] : null);
+    }
+    if (!loc) return res.status(404).json({ error: `Couldn't find "${q}".` });
+    geoCachePut(key, loc);
+    return res.json({ location: loc });
+  } catch (err) {
+    console.error("geocode failed:", err.message);
+    return res.status(502).json({ error: "Location lookup is unavailable right now." });
+  }
+});
+
+/* Turns GPS coordinates into a place name. This is the path that actually
+   makes location work everywhere — no typing, no postcode format to get
+   wrong, and correct in countries whose addresses we could not parse. */
+app.get("/geocode/reverse", async (req, res) => {
+  const lat = Number(req.query.lat), lng = Number(req.query.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) ||
+      lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return res.status(400).json({ error: "Bad coordinates." });
+  }
+  // ~1km buckets: enough to reuse the cache along a street without
+  // pretending two different neighbourhoods are the same place.
+  const key = `r:${lat.toFixed(2)},${lng.toFixed(2)}`;
+  const cached = geoCacheGet(key);
+  if (cached) return res.json({ location: { ...cached, lat, lng }, cached: true });
+
+  try {
+    const data = await geoThrottled(() =>
+      nominatim(`/reverse?format=json&addressdetails=1&zoom=12&lat=${lat}&lon=${lng}`)
+    );
+    const loc = shapeNominatim(data);
+    if (!loc) return res.status(404).json({ error: "Couldn't name that location." });
+    geoCachePut(key, loc);
+    // Keep the caller's exact coordinates; only the label comes from the API.
+    return res.json({ location: { ...loc, lat, lng } });
+  } catch (err) {
+    console.error("reverse geocode failed:", err.message);
+    return res.status(502).json({ error: "Location lookup is unavailable right now." });
+  }
+});
+
+/* ===========================================================================
    GROUP ROOMS — "Dinner Roulette"
 
    A host turns a search they already ran into a 90-second vote and drops the
@@ -3780,7 +3933,6 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
 
 const ROOM_TTL_MS = 2 * 60 * 60 * 1000;   // rooms are useless long before this
 const ROOM_VOTE_MS = 90 * 1000;           // the round, once the host starts it
-const ROOM_MAX_CARDS = 5;
 const ROOM_MAX_PLAYERS = 12;
 /* Hard ceiling on live rooms. Creation needs no account and no search of its
    own, so without a cap a loop can mint rooms as fast as the network allows —
@@ -3899,6 +4051,7 @@ function roomView(room, playerId) {
       id: c.id, name: c.name, rating: c.rating, reviewCount: c.reviewCount,
       category: c.category, address: c.address, lat: c.lat, lng: c.lng,
       distanceMiles: c.distanceMiles, matchedDish: c.matchedDish, image: c.image,
+      vetoProof: !!c.vetoProof,
       // matchScore is withheld while voting so people vote on the food rather
       // than on the algorithm's number — it only appears in the reveal.
       matchScore: room.status === "done" ? c.matchScore : null,
@@ -3948,6 +4101,12 @@ app.post("/rooms", (req, res) => {
   if (clean.length < 2) {
     return res.status(400).json({ error: "Need at least two places to vote on. Run a search first." });
   }
+
+  /* The tail of the board is protected. Candidates arrive ranked, so these are
+     the lowest-scoring options — which is what makes it interesting: nuke the
+     three you're fighting over and you are left eating whatever survived. */
+  const proofFrom = Math.max(1, clean.length - ROOM_VETO_PROOF_TAIL);
+  clean.forEach((c, i) => { c.vetoProof = i >= proofFrom; });
 
   while (rooms.size >= ROOM_MAX_ACTIVE) evictOldestRoom();
 
@@ -4020,12 +4179,17 @@ app.post("/rooms/:code/vote", (req, res) => {
 
   const kind = req.body?.kind === "veto" ? "veto" : "yes";
   if (kind === "veto") {
-    if (player.vetoUsed) return res.status(409).json({ error: "You've already used your veto." });
+    if (card.vetoProof) {
+      return res.status(409).json({ error: "That one's protected — you can't bomb the bottom two.", room: roomView(room, player.id) });
+    }
+    if (player.vetoUsed) {
+      return res.status(409).json({ error: "You've already used your veto.", room: roomView(room, player.id) });
+    }
     if (card.vetoedBy) return res.json({ room: roomView(room, player.id) });
     // Never let the last option be nuked outright — resolveRoom can revive,
     // but a board of zero live cards mid-game just reads as broken.
     if (room.cards.filter((c) => !c.vetoedBy).length <= 1) {
-      return res.status(409).json({ error: "Can't veto the last one standing." });
+      return res.status(409).json({ error: "Can't veto the last one standing.", room: roomView(room, player.id) });
     }
     card.vetoedBy = player.id;
     player.vetoUsed = true;

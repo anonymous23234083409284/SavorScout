@@ -890,15 +890,21 @@ function RoomCard({ card, disabled, vetoUsed, myName, onYes, onVeto }) {
           >
             {card.myYes ? "Yes ✓" : "Yes"}
           </button>
-          <button
-            type="button"
-            className="rm-veto"
-            onClick={() => onVeto(card.id)}
-            disabled={disabled || vetoUsed}
-            title={vetoUsed ? "You've used your veto" : "Nuke this option for everyone"}
-          >
-            💣
-          </button>
+          {/* Protected cards show a shield instead of a disabled bomb — a
+              greyed-out button reads as "broken", a shield reads as a rule. */}
+          {card.vetoProof ? (
+            <span className="rm-shield" title="Protected — the bottom two can't be bombed">🛡️</span>
+          ) : (
+            <button
+              type="button"
+              className="rm-veto"
+              onClick={() => onVeto(card.id)}
+              disabled={disabled || vetoUsed}
+              title={vetoUsed ? "You've used your veto" : "Nuke this option for everyone"}
+            >
+              💣
+            </button>
+          )}
         </div>
       )}
     </li>
@@ -1000,7 +1006,12 @@ function App() {
       headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "Room unavailable.");
+    if (!res.ok) {
+      const err = new Error(data.error || "Room unavailable.");
+      // Carry any room state the server sent with the refusal.
+      if (data.room) err.room = data.room;
+      throw err;
+    }
     return data;
   }, []);
 
@@ -1156,6 +1167,10 @@ function App() {
       setRoom(data.room);
     } catch (e) {
       setRoomError(e.message);
+      /* A refused tap (protected card, veto already spent) now comes back WITH
+         the room, so the optimistic change is rolled back from the response
+         instead of costing a second round trip. */
+      if (e.room) { setRoom(e.room); return; }
       try {
         const data = await roomFetch(`/rooms/${roomCode}?playerId=${roomPlayerId}`);
         setRoom(data.room);
@@ -1629,25 +1644,76 @@ function App() {
     return { ok: false, reason: responded ? "not_found" : "network" };
   }, [zipProviders]);
 
+  /* Anywhere, not just a US ZIP.
+     The old rule rejected anything that was not five digits before it even
+     asked, which meant a city name, a UK or Canadian postcode, and every
+     address outside the US failed at the input box. Now anything is sent to
+     the server, which disambiguates postcode-shaped input by country and
+     falls back to free-text search. The old US-only providers stay as a
+     fallback for the case where our own backend is unreachable. */
   const applyLocation = async () => {
-    const zip = locationInput.trim();
+    const q = locationInput.trim();
     if (resolvingLocation) return;
-    if (!/^\d{5}$/.test(zip)) { setLocationError("Enter a 5-digit ZIP code."); return; }
+    if (q.length < 2) { setLocationError("Type a city, postcode, or address."); return; }
 
     setLocationError(""); setResolvingLocation(true);
     try {
-      const result = await lookupZip(zip);
-      if (!result.ok) {
-        setLocationError(result.reason === "network"
-          ? "Couldn't reach the location service — check your connection."
-          : `Couldn't find ZIP "${zip}" in the US.`);
-        return;
+      try {
+        const res = await fetch(`${API_BASE_URL}/geocode?q=${encodeURIComponent(q)}`);
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.location) {
+          setResolvedLocation({ ...data.location, zip: /^\d{5}$/.test(q) ? q : "" });
+          setLocationInput("");
+          if (/^\d{5}$/.test(q)) setZip(q);
+          return;
+        }
+        if (res.status === 404) { setLocationError(`Couldn't find "${q}". Try adding the city or country.`); return; }
+      } catch { /* our backend is down — fall through to the direct providers */ }
+
+      if (/^\d{5}$/.test(q)) {
+        const result = await lookupZip(q);
+        if (result.ok) {
+          setResolvedLocation({ ...result.location, zip: q });
+          setLocationInput("");
+          setZip(q);
+          return;
+        }
       }
-      setResolvedLocation({ ...result.location, zip });
-      setLocationInput("");
-      setZip(zip);
+      setLocationError("Couldn't reach the location service — check your connection.");
     } finally { setResolvingLocation(false); }
   };
+
+  /* The path that actually makes this work everywhere: no typing, no postcode
+     format to get wrong, and correct in countries whose address formats we
+     could never parse. Permission is requested only on an explicit tap. */
+  const useMyLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      setLocationError("This browser can't share your location — type a place instead.");
+      return;
+    }
+    setLocationError(""); setResolvingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        try {
+          const res = await fetch(`${API_BASE_URL}/geocode/reverse?lat=${lat}&lng=${lng}`);
+          const data = await res.json().catch(() => ({}));
+          // Even if naming it fails, the coordinates are what the search needs.
+          setResolvedLocation(data.location || { name: "Your location", short: "Nearby", lat, lng, zip: "" });
+          setLocationInput("");
+        } catch {
+          setResolvedLocation({ name: "Your location", short: "Nearby", lat, lng, zip: "" });
+        } finally { setResolvingLocation(false); }
+      },
+      (err) => {
+        setResolvingLocation(false);
+        setLocationError(err.code === err.PERMISSION_DENIED
+          ? "Location permission denied — type a city or postcode instead."
+          : "Couldn't get your location — type a city or postcode instead.");
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 }
+    );
+  }, []);
 
   /* ---- search ---- */
 
@@ -2041,20 +2107,23 @@ function App() {
                   </div>
                 ) : (
                   <>
-                    <span className="loc-prompt">Enter your ZIP code to search</span>
+                    <span className="loc-prompt">Where are you? City, postcode, or address — anywhere in the world.</span>
                     <div className="loc-row">
                       <input
-                        type="text" inputMode="numeric" pattern="[0-9]*" maxLength={5}
-                        placeholder="e.g. 11801" value={locationInput}
-                        onChange={(e) => setLocationInput(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                        type="text" maxLength={120} autoComplete="off"
+                        placeholder="Hicksville NY · Paris · SW1A 1AA" value={locationInput}
+                        onChange={(e) => setLocationInput(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") applyLocation(); }}
                       />
                       <button className="btn btn--ghost" onClick={applyLocation}
-                              disabled={resolvingLocation || locationInput.length !== 5}>
+                              disabled={resolvingLocation || locationInput.trim().length < 2}>
                         {resolvingLocation ? "Checking…" : "Set"}
                       </button>
                     </div>
-                    {locationError && <p className="err">{locationError}</p>}
+                    <button type="button" className="link-btn loc-gps" onClick={useMyLocation} disabled={resolvingLocation}>
+                          📍 Use my current location
+                        </button>
+                        {locationError && <p className="err">{locationError}</p>}
                   </>
                 )}
               </div>
@@ -2285,7 +2354,7 @@ function App() {
                 {room.status === "voting" && (
                   <p className="rm-rule">
                     Tap <strong>Yes</strong> on anything you'd eat. You get <strong>one 💣</strong> to
-                    kill an option for everyone. Most Yes wins.
+                    kill an option for everyone — but the bottom two are 🛡️ protected. Most Yes wins.
                   </p>
                 )}
 
@@ -2513,19 +2582,22 @@ function App() {
                       </div>
                     ) : (
                       <>
-                        <span className="loc-prompt">Enter your ZIP code so we know where to look</span>
+                        <span className="loc-prompt">Where are you? City, postcode, or address — anywhere in the world.</span>
                         <div className="loc-row">
                           <input
-                            type="text" inputMode="numeric" pattern="[0-9]*" maxLength={5}
-                            placeholder="e.g. 11801" value={locationInput}
-                            onChange={(e) => setLocationInput(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                            type="text" maxLength={120} autoComplete="off"
+                            placeholder="Hicksville NY · Paris · SW1A 1AA" value={locationInput}
+                            onChange={(e) => setLocationInput(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Enter") applyLocation(); }}
                           />
                           <button className="btn btn--ghost" onClick={applyLocation}
-                                  disabled={resolvingLocation || locationInput.length !== 5}>
+                                  disabled={resolvingLocation || locationInput.trim().length < 2}>
                             {resolvingLocation ? "Checking…" : "Set"}
                           </button>
                         </div>
+                        <button type="button" className="link-btn loc-gps" onClick={useMyLocation} disabled={resolvingLocation}>
+                          📍 Use my current location
+                        </button>
                         {locationError && <p className="err">{locationError}</p>}
                       </>
                     )}

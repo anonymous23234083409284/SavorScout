@@ -1,0 +1,74 @@
+{
+  "heat_high": {
+    "id": "heat_high",
+    "name": "The Firewalker",
+    "tagline": "You chase the burn, and you finish the plate.",
+    "blurb": "Heat isn't a challenge you tolerate — it's the reason you ordered. You read a chilli symbol as a recommendation, and the meals you remember are the ones that fought back.",
+    "color": "#FF3D00",
+    "glow": "linear-gradient(135deg, #FF3D00, #FF9E1F)",
+    "prop": "flame"
+  },
+  "heat_low": {
+    "id": "heat_low",
+    "name": "The Purist",
+    "tagline": "You want to taste the food, not the fire.",
+    "blurb": "You're not avoiding flavour — you're protecting it. Heat that buries the dish is heat that wasted it, and you'd rather know what the cook actually made.",
+    "color": "#2EE6D6",
+    "glow": "linear-gradient(135deg, #2EE6D6, #5B9BFF)",
+    "prop": "leaf"
+  },
+  "sweet_high": {
+    "id": "sweet_high",
+    "name": "The Sweet Tooth",
+    "tagline": "There is always room. You've checked.",
+    "blurb": "Dessert isn't the end of the meal, it's a reason to have one. You'd cross town for a pastry and you've never once regretted ordering the sweet thing.",
+    "color": "#FF4081",
+    "glow": "linear-gradient(135deg, #FF4081, #FFC857)",
+    "prop": "cherry"
+  },
+  "value_high": {
+    "id": "value_high",
+    "name": "The Bargain Hunter",
+    "tagline": "Plastic chairs, perfect food, half the price.",
+    "blurb": "You've worked out that the room has almost nothing to do with the cooking. Give you a handwritten menu and a queue of locals and you're exactly where you want to be.",
+    "color": "#00C853",
+    "glow": "linear-gradient(135deg, #00C853, #B2FF59)",
+    "prop": "coin"
+  },
+  "value_low": {
+    "id": "value_low",
+    "name": "The Occasion Maker",
+    "tagline": "You're paying for the evening, not just the food.",
+    "blurb": "A meal is a place to be, not just fuel. You'll happily spend more for a room worth sitting in — and you think the people counting pennies are missing the point.",
+    "color": "#FFC857",
+    "glow": "linear-gradient(135deg, #FFC857, #FF5F1F)",
+    "prop": "glass"
+  },
+  "adventure_high": {
+    "id": "adventure_high",
+    "name": "The Blind Orderer",
+    "tagline": "You order the thing you can't identify.",
+    "blurb": "The unfamiliar dish is the interesting one, and letting the kitchen decide is a feature, not a risk. You've eaten some disasters. You'd do it again tomorrow.",
+    "color": "#8B5CF6",
+    "glow": "linear-gradient(135deg, #8B5CF6, #FF4081)",
+    "prop": "compass"
+  },
+  "lateNight_high": {
+    "id": "lateNight_high",
+    "name": "The Night Owl",
+    "tagline": "The best food happens after dark.",
+    "blurb": "Rooms get better when they get busy, and the meal that ends the night beats the one that starts it. Breakfast at 9pm is a legitimate dinner and you'll defend that.",
+    "color": "#5B9BFF",
+    "glow": "linear-gradient(135deg, #5B9BFF, #8B5CF6)",
+    "prop": "moon"
+  },
+  "discovery_high": {
+    "id": "discovery_high",
+    "name": "The Gem Finder",
+    "tagline": "Thirty reviews beats three thousand.",
+    "blurb": "You trust a place people haven't discovered yet over one everybody agrees about. No website and a phone number reads as promising, not risky — and you're usually right.",
+    "color": "#FF6D00",
+    "glow": "linear-gradient(135deg, #FF6D00, #FFC857)",
+    "prop": "gem"
+  }
+}

@@ -18,7 +18,19 @@
       "destination": "/eat/:slug.html"
     },
     {
-      "source": "/((?!static/|eat/|.*\\.[a-zA-Z0-9]+$).*)",
+      "source": "/type",
+      "destination": "/type/index.html"
+    },
+    {
+      "source": "/type/",
+      "destination": "/type/index.html"
+    },
+    {
+      "source": "/type/:slug",
+      "destination": "/type/:slug.html"
+    },
+    {
+      "source": "/((?!static/|eat/|type/|.*\\.[a-zA-Z0-9]+$).*)",
       "destination": "/index.html"
     }
   ]

@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postbuild": "node scripts/make-room-html.js && node scripts/make-location-pages.js"
+    "postbuild": "node scripts/make-room-html.js && node scripts/make-location-pages.js && node scripts/make-type-pages.js"
   },
   "eslintConfig": {
     "extends": [

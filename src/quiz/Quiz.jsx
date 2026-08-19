@@ -106,8 +106,7 @@ function Question({ q, dim, index, total, day, onAnswer }) {
   };
 
   return (
-    <motion.div className="qz-q" variants={fade} initial="initial" animate="animate" exit="exit"
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}>
+    <div className="qz-q">
       <div className="qz-qhead">
         <span className="qz-count">{index + 1} / {total}</span>
         <span className="qz-daytag">{DIMENSIONS[dim].emoji} Day {day}</span>
@@ -130,16 +129,19 @@ function Question({ q, dim, index, total, day, onAnswer }) {
           </button>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 function DayResult({ dim, score, day, onClose }) {
   const d = DIMENSIONS[dim];
-  const leaning = score >= 50 ? d.high : d.low;
   const strength = Math.abs(score - 50);
+  /* A dead-centre score is its own result. Reading ">= 50 means high" put
+     "Heat seeker" above a note saying "genuinely balanced" — the headline and
+     the explanation contradicting each other in the same breath. */
+  const leaning = strength < 12 ? "Right down the middle" : score > 50 ? d.high : d.low;
   return (
-    <motion.div className="qz-result" variants={fade} initial="initial" animate="animate" exit="exit">
+    <div className="qz-result">
       <div className="qz-result-emoji">{d.emoji}</div>
       <p className="qz-result-kicker">Day {day} · {d.label}</p>
       <h2 className="qz-result-name">{leaning}</h2>
@@ -169,7 +171,7 @@ function DayResult({ dim, score, day, onClose }) {
           <button className="btn btn--hot btn--block" onClick={onClose}>See it</button>
         </>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -182,7 +184,7 @@ function Reveal({ scores, answers, onClose, onShare }) {
   const p = personalityFor(scores, depth);
 
   return (
-    <motion.div className="qz-reveal" variants={fade} initial="initial" animate="animate" exit="exit">
+    <div className="qz-reveal">
       <div className="qz-confetti" aria-hidden="true">
         {Array.from({ length: 26 }).map((_, i) => (
           <span key={i} className="qz-confetti-bit"
@@ -225,14 +227,14 @@ function Reveal({ scores, answers, onClose, onShare }) {
         <button className="btn btn--hot btn--block" onClick={onClose}>Find somewhere to eat</button>
         <button className="btn btn--ghost btn--block" onClick={() => onShare(p)}>Share my type</button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 function Locked({ status, onClose }) {
   const nextDim = DAY_ORDER[status.next - 1];
   return (
-    <motion.div className="qz-locked" variants={fade} initial="initial" animate="animate" exit="exit">
+    <div className="qz-locked">
       <div className="qz-locked-emoji">{nextDim ? DIMENSIONS[nextDim].emoji : "🎉"}</div>
       <h2 className="qz-locked-title">Come back tomorrow</h2>
       <p className="qz-locked-note">
@@ -242,7 +244,7 @@ function Locked({ status, onClose }) {
       <ProgressDots day={status.day} />
       <p className="qz-locked-sub">{status.day} of {DAY_ORDER.length} days done</p>
       <button className="btn btn--ghost btn--block" onClick={onClose}>Close</button>
-    </motion.div>
+    </div>
   );
 }
 
@@ -337,43 +339,72 @@ export default function Quiz({ open, onClose, onComplete, onShare }) {
           </button>
 
           <div className="qz-body">
-            <AnimatePresence mode="wait">
-              {screen === "intro" && (
-                <motion.div key="intro" className="qz-intro" variants={fade} initial="initial" animate="animate" exit="exit">
-                  <div className="qz-intro-art">🍽️</div>
-                  <p className="qz-reveal-kicker">7 days · 5 questions a day</p>
-                  <h1 className="qz-intro-title">What kind of eater are you?</h1>
-                  <p className="qz-intro-sub">
-                    A minute a day for six days. Each one reads a different part of your
-                    taste — heat, sweet, value, adventure, late nights, discovery — and on
-                    day seven you get your type.
-                  </p>
-                  <p className="qz-intro-note">
-                    Every answer sharpens what we recommend, starting from day one. You
-                    don't have to finish to feel it.
-                  </p>
-                  <ProgressDots day={0} />
-                  <button className="btn btn--hot btn--block" onClick={startToday}>Start day 1</button>
-                </motion.div>
-              )}
+            {/* ONE child, one key.
 
-              {screen === "questions" && dayQs[qIndex] && (
-                <Question key={dayQs[qIndex].id} q={dayQs[qIndex]} dim={dim}
-                          index={qIndex} total={dayQs.length} day={status.day} onAnswer={answer} />
-              )}
+                AnimatePresence with mode="wait" expects a single child. Given
+                several sibling `screen === "x" && <…/>` expressions it began
+                the intro's exit animation and then never mounted the next
+                screen — the modal froze on an invisible intro. Selecting the
+                element first and giving the wrapper a single key on `screen`
+                is what makes the crossfade actually resolve. */}
+            {/* Keyed remount, no AnimatePresence.
 
-              {screen === "dayresult" && (
-                <DayResult key="dayresult" dim={dim} day={status.day}
-                           score={scores[dim] ?? 50} onClose={closeDayResult} />
-              )}
+                mode="wait" holds the outgoing child until its exit animation
+                finishes before mounting the next one — and here it never
+                finished, so the modal sat on an intro that had already been
+                replaced in state. Verified with a data-attribute: `screen` read
+                "questions" while the DOM still showed the intro.
 
-              {screen === "locked" && <Locked key="locked" status={status} onClose={onClose} />}
+                Changing the key unmounts and remounts, and framer runs the
+                enter animation on the new node. We lose the cross-fade out and
+                gain a screen that actually advances. */}
+            <motion.div
+              /* Keyed per QUESTION, not just per screen. Keying on `screen`
+                 alone kept one Question instance alive across all five, so its
+                 internal `picked` state survived into the next question and
+                 every click after the first was ignored as a double-tap. */
+              key={screen === "questions" ? `q${qIndex}` : screen}
+              variants={fade}
+              initial="initial"
+              animate="animate"
+              transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            >
+                {screen === "intro" && (
+                  <div className="qz-intro">
+                    <div className="qz-intro-art">🍽️</div>
+                    <p className="qz-reveal-kicker">7 days · 5 questions a day</p>
+                    <h1 className="qz-intro-title">What kind of eater are you?</h1>
+                    <p className="qz-intro-sub">
+                      A minute a day for six days. Each one reads a different part of your
+                      taste — heat, sweet, value, adventure, late nights, discovery — and on
+                      day seven you get your type.
+                    </p>
+                    <p className="qz-intro-note">
+                      Every answer sharpens what we recommend, starting from day one. You
+                      don't have to finish to feel it.
+                    </p>
+                    <ProgressDots day={0} />
+                    <button className="btn btn--hot btn--block" onClick={startToday}>Start day 1</button>
+                  </div>
+                )}
 
-              {screen === "reveal" && (
-                <Reveal key="reveal" scores={scores} answers={state.answers}
-                        onClose={finishReveal} onShare={onShare} />
-              )}
-            </AnimatePresence>
+                {screen === "questions" && dayQs[qIndex] && (
+                  <Question q={dayQs[qIndex]} dim={dim} index={qIndex}
+                            total={dayQs.length} day={status.day} onAnswer={answer} />
+                )}
+
+                {screen === "dayresult" && (
+                  <DayResult dim={dim} day={status.day}
+                             score={scores[dim] ?? 50} onClose={closeDayResult} />
+                )}
+
+                {screen === "locked" && <Locked status={status} onClose={onClose} />}
+
+                {screen === "reveal" && (
+                  <Reveal scores={scores} answers={state.answers}
+                          onClose={finishReveal} onShare={onShare} />
+                )}
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>

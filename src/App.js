@@ -1452,7 +1452,13 @@ function App() {
      lands signed-in with nothing recorded. Auto-opening on every visit would
      make the app feel like it wants something from you before it gives you
      anything. */
-  const [quizOpen, setQuizOpen] = useState(false);
+  /* ?quiz=1 opens it directly. Useful for sharing the quiz on its own, and it
+     is the only way to reach the modal without first getting through auth —
+     which otherwise makes the whole feature untestable. */
+  const [quizOpen, setQuizOpen] = useState(() => {
+    try { return new URLSearchParams(window.location.search).get("quiz") === "1"; }
+    catch { return false; }
+  });
   const [quizState, setQuizState] = useState(() => quizStatus());
   const quizAutoShown = useRef(false);
 
@@ -1972,13 +1978,6 @@ function App() {
             {authNotice && <p className="notice">{authNotice}</p>}
             {authError && <p className="err">{authError}</p>}
           </section>
-
-          <Quiz
-          open={quizOpen}
-          onClose={() => { setQuizOpen(false); setQuizState(quizStatus()); }}
-          onComplete={onQuizComplete}
-          onShare={onQuizShare}
-        />
 
         <footer className="foot">© 2026 SavorScout</footer>
         </div>
@@ -2871,6 +2870,13 @@ function App() {
             </section>
           </main>
         )}
+
+        <Quiz
+          open={quizOpen}
+          onClose={() => { setQuizOpen(false); setQuizState(quizStatus()); }}
+          onComplete={onQuizComplete}
+          onShare={onQuizShare}
+        />
 
         <footer className="foot">© 2026 SavorScout</footer>
       </div>

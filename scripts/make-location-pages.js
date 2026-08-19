@@ -1,96 +1,135 @@
-/* Generates static, indexable landing pages for local food-intent searches.
+/* Generates one indexable landing page per US city, plus a browsable index
+ * and the sitemap.
  *
  * WHY THESE EXIST
- * The homepage cannot rank for "where to eat in Hicksville" because it never
- * says "Hicksville". Local food queries are won by pages that name the place,
- * and the Maps pack taking the top block does not mean the organic results
- * below it are empty — Yelp, TripAdvisor and DoorDash live there and collect
- * real traffic from exactly these searches.
+ * The homepage cannot rank for "where to eat in Toledo" because it never says
+ * Toledo. Local food queries are won by pages that name the place. The Maps
+ * pack taking the top block does not empty the organic results beneath it —
+ * Yelp, TripAdvisor and DoorDash live there and take real traffic from exactly
+ * those searches.
  *
- * WHY THIS IS NOT A DOORWAY-PAGE FARM
- * Google penalises mass-generated pages that exist only to catch a keyword and
- * bounce you elsewhere. Two things keep these on the right side of that line:
+ * WHAT KEEPS 1,000 PAGES FROM BEING A DOORWAY FARM
+ * The risk with a generator like this was never the page COUNT. It is 1,000
+ * pages that are the same page. Google's helpful-content assessment is
+ * sitewide, so a large block of interchangeable pages can drag down the
+ * homepage — which would mean trading the one asset that ranks for pages that
+ * never did. Four things make each page genuinely its own:
  *
- *   1. Each page DOES something. It opens the app with the location already
- *      set, so landing on it is a working entry point rather than a stop on the
- *      way to one.
- *   2. The count is deliberately small and the copy is honest. There is no
- *      invented local knowledge — no fake "best taco spots in Levittown" list —
- *      because fabricated local detail is worse than no page at all, and it is
- *      the first thing a reader would catch us out on.
+ *   1. Real data per city. Population and coordinates come from a dataset, so
+ *      every page states facts that are true and different.
+ *   2. A real internal link graph. Nearest cities are computed from actual
+ *      coordinates, so pages link to their genuine neighbours instead of 1,000
+ *      orphans all pointing at the homepage — itself a doorway signal.
+ *   3. Copy that varies with the place. A metro of four million and a city of
+ *      forty thousand get different text, chosen from the population figure
+ *      rather than randomised, so it is accurate rather than merely varied.
+ *   4. The page DOES something. ?near= and ?craving= open the app with the
+ *      location already resolved, so landing here is a working entry point and
+ *      not a stop on the way to one.
  *
- * Adding a hundred more towns would be trivial and is exactly the wrong move.
+ * NOTHING IS INVENTED. No fabricated "best tacos in Akron" lists, no made-up
+ * neighbourhoods. Every claim is either from the dataset or about the product.
+ * Invented local detail is the first thing a real local catches you on.
  */
 const fs = require("fs");
 const path = require("path");
 
 const BUILD = path.join(__dirname, "..", "build");
 const ORIGIN = "https://www.savorscout.net";
+const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 
-/* The market this product actually serves first. Every entry is a real place
-   with a dense enough restaurant scene that a search there returns a full
-   board — a landing page for somewhere the app then fails is worse than none. */
-const PLACES = [
-  { slug: "hicksville-ny",        name: "Hicksville",        region: "NY", q: "Hicksville NY" },
-  { slug: "garden-city-ny",       name: "Garden City",       region: "NY", q: "Garden City NY" },
-  { slug: "rockville-centre-ny",  name: "Rockville Centre",  region: "NY", q: "Rockville Centre NY" },
-  { slug: "huntington-ny",        name: "Huntington",        region: "NY", q: "Huntington NY" },
-  { slug: "farmingdale-ny",       name: "Farmingdale",       region: "NY", q: "Farmingdale NY" },
-  { slug: "mineola-ny",           name: "Mineola",           region: "NY", q: "Mineola NY" },
-  { slug: "massapequa-ny",        name: "Massapequa",        region: "NY", q: "Massapequa NY" },
-  { slug: "great-neck-ny",        name: "Great Neck",        region: "NY", q: "Great Neck NY" },
-  { slug: "long-beach-ny",        name: "Long Beach",        region: "NY", q: "Long Beach NY" },
-  { slug: "levittown-ny",         name: "Levittown",         region: "NY", q: "Levittown NY" },
-  { slug: "new-york-ny",          name: "New York City",     region: "NY", q: "New York NY" },
-  { slug: "brooklyn-ny",          name: "Brooklyn",          region: "NY", q: "Brooklyn NY" },
-];
-
-/* Cravings people actually search alongside a place name. These become the
-   internal links on each page, which is where the dish keywords come from —
-   rather than generating a page per town per dish and drowning the site in
-   near-identical copy. */
 const CRAVINGS = [
-  "tacos", "pizza", "sushi", "burgers", "ramen", "wings",
-  "chinese food", "italian food", "thai food", "brunch", "bbq", "seafood",
+  "tacos", "pizza", "sushi", "burgers", "ramen", "wings", "chinese food",
+  "italian food", "thai food", "mexican food", "bbq", "seafood", "brunch",
+  "indian food", "sandwiches", "noodles",
 ];
 
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const fmt = (n) => n.toLocaleString("en-US");
 
-function page(shell, place) {
-  const { name, region, slug, q } = place;
-  const title = `Where to Eat in ${name}, ${region} — One Pick, Not a List | Savor Scout`;
-  const desc =
-    `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${name}, ${region} ` +
-    `based on what you're craving — and shows why it chose it. Free, no app, no signup.`;
+/* Nearest neighbours by great-circle distance. Equirectangular is plenty here:
+   we only need a correct ORDER over a few hundred miles, not a precise figure,
+   and it is fast enough to run a thousand times against a thousand rows. */
+function nearest(city, k = 6) {
+  const latR = (city.lat * Math.PI) / 180;
+  const cos = Math.cos(latR);
+  const out = [];
+  for (const o of CITIES) {
+    if (o.s === city.s) continue;
+    const dx = (o.lng - city.lng) * cos;
+    const dy = o.lat - city.lat;
+    out.push({ o, d2: dx * dx + dy * dy });
+  }
+  out.sort((a, b) => a.d2 - b.d2);
+  return out.slice(0, k).map((x) => ({
+    ...x.o,
+    miles: Math.round(Math.sqrt(x.d2) * 69),
+  }));
+}
+
+/* Copy chosen by population, so the description is accurate rather than just
+   different. A city of 40,000 genuinely does have a different problem from
+   one of 4 million: too few obvious options versus far too many. */
+function sizeCopy(city) {
+  const p = city.p;
+  if (p >= 1000000) return {
+    tier: "metro",
+    problem: `${city.c} has more restaurants than anyone could work through, which is exactly why picking one is so hard. Every list you open is longer than the last.`,
+    angle: `In a city this size the problem is never a lack of options — it is that thirty good ones look identical on a map.`,
+  };
+  if (p >= 250000) return {
+    tier: "large",
+    problem: `${city.c} has plenty of places to eat, and that is the problem. A ranked list of thirty gets you no closer to a decision than you were before you opened it.`,
+    angle: `Enough choice to argue about for twenty minutes, which is usually what happens.`,
+  };
+  if (p >= 100000) return {
+    tier: "mid",
+    problem: `${city.c} has more than enough places to eat — the trouble is choosing between them without spending longer deciding than eating.`,
+    angle: `A city this size has real range, and range is what makes the decision slow.`,
+  };
+  return {
+    tier: "small",
+    problem: `${city.c} does not have infinite options, and that brings its own problem: you have been to most of them, and picking again is somehow still hard.`,
+    angle: `Somewhere this size rewards knowing which places are actually worth the trip.`,
+  };
+}
+
+function page(shell, city) {
+  const { c: name, r: region, s: slug, p: pop } = city;
+  const place = `${name}, ${region}`;
+  const near = nearest(city);
+  const copy = sizeCopy(city);
+
+  const title = `Where to Eat in ${place} — One Pick, Not a List | Savor Scout`;
+  const desc = `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${place} ` +
+    `based on what you're craving and shows why it chose it. Free, no app, no signup.`;
   const url = `${ORIGIN}/eat/${slug}`;
-  const appUrl = `/?near=${encodeURIComponent(q)}`;
+  const app = `/?near=${encodeURIComponent(place)}`;
 
-  const cravingLinks = CRAVINGS.map(
-    (c) => `<li><a href="${appUrl}&craving=${encodeURIComponent(c)}">${esc(c)} in ${esc(name)}</a></li>`
-  ).join("\n        ");
+  const cravingLinks = CRAVINGS
+    .map((k) => `<li><a href="${app}&craving=${encodeURIComponent(k)}">${esc(k)} in ${esc(name)}</a></li>`)
+    .join("\n        ");
+  const nearLinks = near
+    .map((n) => `<li><a href="/eat/${n.s}">${esc(n.c)}, ${esc(n.r)}</a> — about ${n.miles} miles away</li>`)
+    .join("\n        ");
 
   const body = `
-      <h1>Where to eat in ${esc(name)}, ${esc(region)}</h1>
+      <h1>Where to eat in ${esc(place)}</h1>
+      <p>${esc(copy.problem)}</p>
       <p>
-        You already know ${esc(name)} has plenty of places to eat. That's the problem —
-        opening Maps gives you thirty of them ranked by nothing in particular, and you're
-        no closer to a decision than when you started.
+        Savor Scout picks <strong>one</strong> restaurant in ${esc(name)} and tells you why it
+        picked it. Say what you're craving and it reads menus and reviews for that specific
+        dish, rather than sorting places by overall star rating. Free, runs in the browser,
+        and one search needs no account.
       </p>
-      <p>
-        Savor Scout picks <strong>one</strong> restaurant in ${esc(name)} and tells you why.
-        Say what you're craving, and it reads menus and reviews for that specific dish
-        rather than sorting places by overall star average. It's free, it runs in the
-        browser, and one search needs no account.
-      </p>
-      <p><a href="${appUrl}">Find somewhere to eat in ${esc(name)} →</a></p>
+      <p><a href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
 
-      <h2>Eating with a group in ${esc(name)}?</h2>
+      <h2>Eating out in ${esc(name)}</h2>
       <p>
-        Group decisions stall because everyone stays polite until someone gets annoyed.
-        Savor Scout's group rooms make it a 90-second vote: share a link, everyone taps yes
-        on anything they'd eat, and each person gets one veto to kill an option for the
-        whole group. At two options left the vetoes stop and votes decide. Nobody needs to
-        install anything.
+        ${esc(name)} has a population of about ${fmt(pop)}. ${esc(copy.angle)}
+        Savor Scout searches up to 35 miles around ${esc(name)}, so places just outside the
+        city are still on the table when they are worth the drive.
       </p>
 
       <h2>What are you craving in ${esc(name)}?</h2>
@@ -98,14 +137,28 @@ function page(shell, place) {
         ${cravingLinks}
       </ul>
 
-      <h2>How it's different from Google Maps and Yelp</h2>
+      <h2>Deciding as a group in ${esc(name)}</h2>
       <p>
-        Maps and Yelp are directories: they rank everything nearby and leave the deciding
-        to you. Savor Scout makes the call and shows its reasoning — the match score, what
-        it beat, and the evidence behind the pick. The underlying place data comes from the
+        Group meals stall because everyone stays polite until someone gets annoyed. Savor
+        Scout turns it into a 90-second vote: share a link, everyone taps yes on anything
+        they would eat, and each person gets one veto to remove an option for the whole
+        group. When two options remain the vetoes stop and votes decide. Nobody installs
+        anything.
+      </p>
+
+      <h2>Near ${esc(name)}</h2>
+      <ul>
+        ${nearLinks}
+      </ul>
+
+      <h2>How this differs from Google Maps and Yelp</h2>
+      <p>
+        Maps and Yelp are directories: they rank everything nearby and leave the deciding to
+        you. Savor Scout makes the call and shows its reasoning — the match score, what it
+        beat, and the evidence behind the pick. The underlying place data comes from the
         same public sources, so the difference is the selection, not the data.
       </p>
-      <p><a href="${ORIGIN}/">Savor Scout home</a></p>
+      <p><a href="/eat/">All cities</a> &middot; <a href="/">Savor Scout home</a></p>
   `;
 
   const ld = JSON.stringify({
@@ -114,10 +167,26 @@ function page(shell, place) {
     name: title,
     description: desc,
     url,
-    about: { "@type": "Place", name: `${name}, ${region}` },
+    about: {
+      "@type": "City",
+      name: place,
+      geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lng },
+    },
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Savor Scout", item: `${ORIGIN}/` },
+        { "@type": "ListItem", position: 2, name: "Cities", item: `${ORIGIN}/eat/` },
+        { "@type": "ListItem", position: 3, name: place, item: url },
+      ],
+    },
   });
 
+  return render(shell, { title, desc, url, body, ld });
+}
+
+function render(shell, { title, desc, url, body, ld }) {
   let html = shell;
   const swaps = [
     [/<title>[^<]*<\/title>/i, `<title>${esc(title)}</title>`],
@@ -139,14 +208,11 @@ function page(shell, place) {
     missed.forEach((m) => console.error("  " + m));
     process.exit(1);
   }
-
-  // Replace the shared noscript block with copy about THIS town, so the page
-  // is not a duplicate of the homepage with one word changed.
   html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, `<noscript>${body}</noscript>`);
-  // Add the page-level schema alongside the app's existing blocks.
-  html = html.replace("</head>", `<script type="application/ld+json">${ld}</script></head>`);
-  return html;
+  return html.replace("</head>", `<script type="application/ld+json">${ld}</script></head>`);
 }
+
+/* ---- write ---------------------------------------------------------------- */
 
 const src = path.join(BUILD, "index.html");
 if (!fs.existsSync(src)) {
@@ -154,28 +220,68 @@ if (!fs.existsSync(src)) {
   process.exit(1);
 }
 const shell = fs.readFileSync(src, "utf8");
-
 const outDir = path.join(BUILD, "eat");
 fs.mkdirSync(outDir, { recursive: true });
-PLACES.forEach((p) => {
-  fs.writeFileSync(path.join(outDir, `${p.slug}.html`), page(shell, p));
+
+CITIES.forEach((city) => {
+  fs.writeFileSync(path.join(outDir, `${city.s}.html`), page(shell, city));
 });
 
-/* Sitemap is regenerated rather than hand-maintained, so a place added above
-   can never be left out of it. */
+/* The index. Without it every city page is reachable only from the sitemap and
+   from its handful of neighbours, which is a weak crawl path — and a set of
+   pages with no browsable parent is itself a doorway tell. */
+const byState = {};
+CITIES.forEach((c) => { (byState[c.r] = byState[c.r] || []).push(c); });
+const stateBlocks = Object.keys(byState).sort().map((st) => {
+  const list = byState[st].sort((a, b) => a.c.localeCompare(b.c))
+    .map((c) => `<li><a href="/eat/${c.s}">${esc(c.c)}, ${esc(c.r)}</a></li>`).join("\n        ");
+  return `      <h2>${esc(st)}</h2>\n      <ul>\n        ${list}\n      </ul>`;
+}).join("\n");
+
+const indexBody = `
+      <h1>Where to eat, city by city</h1>
+      <p>
+        Savor Scout picks one restaurant instead of handing you a list of thirty. Pick your
+        city below and it opens with your location already set — say what you're craving and
+        it finds the single best match, then shows why it chose it.
+      </p>
+      <p>${CITIES.length} cities across ${Object.keys(byState).length} states.</p>
+${stateBlocks}
+      <p><a href="/">Savor Scout home</a></p>
+`;
+fs.writeFileSync(path.join(outDir, "index.html"), render(shell, {
+  title: `Where to Eat — ${CITIES.length} US Cities | Savor Scout`,
+  desc: `Can't decide where to eat? Savor Scout picks one restaurant for you in ${CITIES.length} US cities. Free, no app, no signup.`,
+  url: `${ORIGIN}/eat/`,
+  body: indexBody,
+  ld: JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `Where to eat — ${CITIES.length} US cities`,
+    url: `${ORIGIN}/eat/`,
+    isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
+  }),
+}));
+
+const today = new Date().toISOString().slice(0, 10);
 const urls = [
   { loc: `${ORIGIN}/`, pri: "1.0", freq: "weekly" },
+  { loc: `${ORIGIN}/eat/`, pri: "0.9", freq: "weekly" },
   { loc: `${ORIGIN}/?quiz=1`, pri: "0.6", freq: "monthly" },
-  ...PLACES.map((p) => ({ loc: `${ORIGIN}/eat/${p.slug}`, pri: "0.8", freq: "weekly" })),
+  /* Priority tracks population. It is a hint rather than a ranking factor, but
+     it is the honest one: bigger cities are where the search volume is, so
+     that is the crawl order we would choose ourselves. */
+  ...CITIES.map((c) => ({
+    loc: `${ORIGIN}/eat/${c.s}`,
+    pri: c.p >= 500000 ? "0.9" : c.p >= 150000 ? "0.8" : "0.7",
+    freq: "weekly",
+  })),
 ];
-const today = new Date().toISOString().slice(0, 10);
-const sitemap =
+fs.writeFileSync(path.join(BUILD, "sitemap.xml"),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   urls.map((u) =>
     `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n` +
     `    <changefreq>${u.freq}</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`
-  ).join("\n") +
-  `\n</urlset>\n`;
-fs.writeFileSync(path.join(BUILD, "sitemap.xml"), sitemap);
+  ).join("\n") + `\n</urlset>\n`);
 
-console.log(`make-location-pages: wrote ${PLACES.length} pages + sitemap (${urls.length} urls)`);
+console.log(`make-location-pages: ${CITIES.length} city pages + index, sitemap ${urls.length} urls`);

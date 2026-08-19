@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  One real URL, because the app has one real URL.
+  Two real URLs, and deliberately no more.
 
-  Savor Scout navigates by state rather than by route — /find and /you are
-  GA-only labels, not addresses a crawler can fetch — so listing them here
-  would point Google at pages that do not exist. A sitemap claiming URLs that
-  404 is worse than a short honest one.
+  The app navigates by state, so /find and /you are GA labels rather than
+  addresses — listing them would point Google at pages that 404, which is worse
+  than a short sitemap. /?quiz=1 is included because it genuinely renders
+  something different (the taste quiz opens on load) and is the one deep link
+  worth landing on from search.
 
-  When genuine routes exist (per-town landing pages, for instance), add them
-  here with their own lastmod.
+  Room URLs (/r/CODE) are excluded on purpose: they are ephemeral, private, and
+  marked noindex, so thousands of dead codes must never compete with the
+  homepage.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.savorscout.net/</loc>
-    <lastmod>2026-08-16</lastmod>
+    <lastmod>2026-08-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.savorscout.net/?quiz=1</loc>
+    <lastmod>2026-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

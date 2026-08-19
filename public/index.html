@@ -168,7 +168,64 @@
         "applicationCategory": "LifestyleApplication",
         "operatingSystem": "Any (web browser)",
         "description": "Savor Scout picks one restaurant instead of returning a list. Say what you're craving and it reads menus and reviews for that specific dish, factors in your dietary restrictions, and explains why it chose the place it did.",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Returns one restaurant recommendation instead of a ranked list",
+          "Reads menus and reviews for the specific dish you asked for",
+          "Group voting rooms shareable by link, no signup required",
+          "Accounts for dietary restrictions and allergies",
+          "Taste quiz that personalises future recommendations"
+        ]
+      }
+    </script>
+
+    <!-- FAQ schema, matching the questions answered in the body above.
+
+         Worth being honest about what this does: since 2023 Google shows FAQ
+         rich results almost exclusively for government and health sites, so
+         this is unlikely to draw the expandable snippet it once would. It is
+         here because it still describes the page's subject matter in a form
+         crawlers parse without rendering, and because the questions are the
+         actual phrases people type. The visible copy above is doing the real
+         ranking work; this annotates it. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do you decide where to eat?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Most tools hand you a ranked list of thirty restaurants, which moves the work rather than doing it. Savor Scout takes your craving and location and returns one restaurant, showing its match score, what it beat, and the evidence behind the pick."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do you pick a restaurant as a group?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Savor Scout group rooms turn it into a 90-second vote. The host shares a link, everyone taps yes on anything they would eat, and each person gets one veto to remove an option for the group. When two options remain the vetoes stop and votes decide. No app or signup is needed."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Savor Scout free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Searching and group rooms are free, no app download is required, and you can run one search without creating an account."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is Savor Scout different from Google Maps or Yelp?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Maps and Yelp are directories that rank everything and leave the deciding to you. Savor Scout makes the call. It reads menus and reviews for the specific dish you asked about rather than ranking places by overall star average, and it shows its reasoning. Its place data comes from the same public sources, so the difference is the selection, not the data."
+            }
+          }
+        ]
       }
     </script>
   </head>
@@ -210,6 +267,45 @@
       </ul>
       <p>
         Savor Scout is a free web app. It needs JavaScript enabled to run the search.
+      </p>
+
+      <h2>How do you decide where to eat?</h2>
+      <p>
+        Most people open Google Maps or Yelp, get a ranked list of thirty places, and are
+        no closer to a decision than before — the list moved the work rather than doing it.
+        Savor Scout takes the craving and the location and returns one restaurant, with the
+        reasoning shown: its match score, what it beat, and the evidence behind the pick.
+      </p>
+
+      <h2>How do you pick a restaurant as a group?</h2>
+      <p>
+        Group decisions fail because everyone is polite until someone is annoyed. Savor
+        Scout's group rooms turn it into a 90-second game: the host opens a room and shares
+        a link, everyone taps Yes on anything they'd eat, and each person gets one veto to
+        remove an option for the whole group. When two options remain the vetoes stop and
+        the winner is decided on votes. No app, no signup — anyone who taps the link plays.
+      </p>
+
+      <h2>What restaurant should I eat at tonight?</h2>
+      <p>
+        Tell Savor Scout what you're craving — tacos, ramen, cheap sushi, somewhere for a
+        date — along with any constraints like price, dietary restrictions or how far you'll
+        travel. It searches your area, reads menus and reviews for the specific dish you
+        asked about, and returns the single best match rather than a directory to sift.
+      </p>
+
+      <h2>Is Savor Scout free?</h2>
+      <p>
+        Yes. Searching is free, group rooms are free, and no app download is required. You
+        can run one search without an account at all.
+      </p>
+
+      <h2>What kind of eater are you?</h2>
+      <p>
+        The taste quiz reads six dimensions of how you eat — heat, sweet, value, adventure,
+        late nights and discovery — over five questions a day for six days, then names your
+        food personality. Every answer weights what gets recommended to you, starting from
+        day one.
       </p>
     </noscript>
     <div id="root"></div>

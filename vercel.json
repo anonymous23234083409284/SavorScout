@@ -1,7 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/r/:code", "destination": "/room.html" },
-    { "source": "/((?!static/|.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }
+    {
+      "source": "/r/:code",
+      "destination": "/room.html"
+    },
+    {
+      "source": "/eat/:slug",
+      "destination": "/eat/:slug.html"
+    },
+    {
+      "source": "/((?!static/|eat/|.*\\.[a-zA-Z0-9]+$).*)",
+      "destination": "/index.html"
+    }
   ]
 }

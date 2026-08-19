@@ -1779,6 +1779,34 @@ function App() {
   /* The path that actually makes this work everywhere: no typing, no postcode
      format to get wrong, and correct in countries whose address formats we
      could never parse. Permission is requested only on an explicit tap. */
+  /* Landing pages arrive with ?near= (and sometimes ?craving=), so a visitor
+     from "where to eat in Hicksville" lands on a page that already knows where
+     they are. Without this the location pages would be pure bait: rank for a
+     town, then ask the reader to type that same town into a box. */
+  const deepLinkApplied = useRef(false);
+  useEffect(() => {
+    if (deepLinkApplied.current) return;
+    let near = null, craving = null;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      near = sp.get("near");
+      craving = sp.get("craving");
+    } catch { return; }
+    if (!near && !craving) return;
+    deepLinkApplied.current = true;
+    if (craving) { setQuery(craving); setRoomCraving(craving); }
+    if (!near || resolvedLocation) return;
+    (async () => {
+      setResolvingLocation(true);
+      try {
+        const res = await fetch(`${API_BASE_URL}/geocode?q=${encodeURIComponent(near)}`);
+        const data = await res.json().catch(() => ({}));
+        if (data.location) setResolvedLocation({ ...data.location, zip: "" });
+      } catch { /* they can still type it */ }
+      finally { setResolvingLocation(false); }
+    })();
+  }, [resolvedLocation]);
+
   const useMyLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setLocationError("This browser can't share your location — type a place instead.");

@@ -1218,9 +1218,14 @@ function App() {
         throw new Error(sdata.error || "Couldn't build a room from that.");
       }
       if (sdata.trialUsed) spendTrial();
+      /* Three is the floor the server now fills to, widening past the chosen
+         radius if it has to. Reaching here with fewer means the area genuinely
+         has almost nothing, so say that rather than opening a room where the
+         vote is already decided. */
       const candidates = Array.isArray(sdata.roomCandidates) ? sdata.roomCandidates : [];
-      if (candidates.length < 2) {
-        throw new Error(`Only found ${candidates.length === 1 ? "one place" : "nothing"} near ${sdata.locationName || resolvedLocation.name}. Try a broader craving, or shuffle for one.`);
+      if (candidates.length < 3) {
+        const found = candidates.length === 0 ? "nothing" : candidates.length === 1 ? "one place" : "two places";
+        throw new Error(`Only found ${found} near ${sdata.locationName || resolvedLocation.name} — not enough for a real vote. Try a broader craving, or shuffle for one.`);
       }
 
       setRoomStage("opening");
@@ -2489,18 +2494,32 @@ function App() {
                     <div className="pane-detail">
                       <h2 className="name">{winner.name}</h2>
 
-                      {/* Identity only. The rating and the distance used to
-                          sit here AND again in the reasons below, inches
-                          apart — printing 4.8★ twice on one card is exactly
-                          the numeric clutter that buried the verdict. Each
-                          number now appears once, in the reason that earns
-                          it. */}
+                      {/* The hard facts, at a glance, directly under the name:
+                          score, then how good, then how far. Stripping these
+                          out to avoid repeating the reasons below went too far
+                          — it left the header reading just "Restaurant", and
+                          the two things people scan for before they read
+                          anything are the stars and the distance. */}
                       <div className="rowmeta">
-                        {winner.category
-                          ? <span>{winner.category}</span>
-                          : <span>Restaurant</span>}
-                        {typeof winner.rating !== "number" && (
-                          <><span className="sep">·</span><span>Not yet widely rated</span></>
+                        {typeof winner.rating === "number" ? (
+                          <span className="rating">
+                            {winner.rating.toFixed(1)}★
+                            {winner.reviewCount ? ` (${winner.reviewCount.toLocaleString()})` : ""}
+                          </span>
+                        ) : (
+                          <span>Not yet widely rated</span>
+                        )}
+                        {winner.category && <><span className="sep">·</span><span>{winner.category}</span></>}
+                        {typeof winner.distanceMiles === "number" && (
+                          <>
+                            <span className="sep">·</span>
+                            <span>
+                              {winner.distanceMiles} mi
+                              {winner.distanceFrom && winner.distanceFrom !== "you"
+                                ? ` from ${winner.distanceFrom}`
+                                : " away"}
+                            </span>
+                          </>
                         )}
                       </div>
 

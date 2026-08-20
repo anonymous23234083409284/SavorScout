@@ -82,6 +82,18 @@ const ROOM_MAX_CARDS = 5;
    floor; at the floor the bombs go quiet and the winner is decided purely by
    votes, so the group never gets to bomb its way to a single forced answer. */
 const ROOM_VETO_FLOOR = 2;
+/* A room needs a real choice or it is not a vote. Two cards with one veto each
+   is a coin toss, and one card is a decision already made — the group opens the
+   link, sees a single option, and the whole point of the room has evaporated.
+   Three is the floor, and the pool is widened until it is met. */
+const ROOM_MIN_CARDS = 3;
+/* How far the room is willing to reach past the chosen radius to fill a board.
+   Not unlimited: searching a sparse county returned three genuine restaurants
+   192 miles away, which satisfies "three places" and fails the actual purpose
+   — nobody drives three hours for dinner. Past this, saying "there isn't
+   enough here" is the more useful answer. The widest normal tier is 40mi, so
+   this stretches to a long drive and stops. */
+const ROOM_WIDEN_CEILING_MILES = 60;
 
 const SHORTLIST_SIZE = 10;
 
@@ -3530,8 +3542,37 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
     // earns nothing extra; past it, a place has to justify the drive.
     const comfortRadius = tiers[0];
 
-    const withinRadius = withFeatures.filter((c) => c.distance <= maxRadius);
+    let withinRadius = withFeatures.filter((c) => c.distance <= maxRadius);
     const radiusUsed = maxRadius;
+
+    /* A group room must be able to field a board. Find can honestly answer
+       "nothing within 15 miles" and stop, because one person asked one
+       question and a wrong-side-of-the-county answer helps nobody. A room
+       cannot: the host has already told people to tap a link, and opening it
+       to a single option — or to an error — wastes everyone's time far more
+       than a place a few miles further out would.
+
+       So in group mode the radius becomes a preference rather than a wall, and
+       the nearest few are pulled in when the wall would leave the board empty.
+       Every card still shows its real distance. */
+    if (radiusMode === "group" && withinRadius.length < ROOM_MIN_CARDS) {
+      const insideCount = withinRadius.length;
+      const reachable = withFeatures
+        .filter((c) => c.distance <= ROOM_WIDEN_CEILING_MILES)
+        .sort((a, b) => a.distance - b.distance);
+      if (reachable.length >= ROOM_MIN_CARDS) {
+        withinRadius = reachable.slice(0, Math.max(ROOM_MIN_CARDS, insideCount));
+        console.log(
+          `group room: only ${insideCount} inside ${maxRadius}mi, widened to the nearest ` +
+            `${withinRadius.length} (furthest ${Math.round(withinRadius[withinRadius.length - 1].distance)}mi).`
+        );
+      } else {
+        console.log(
+          `group room: ${reachable.length} place(s) within the ${ROOM_WIDEN_CEILING_MILES}mi ceiling — ` +
+            `not widening, there is genuinely not enough here.`
+        );
+      }
+    }
 
     if (withinRadius.length === 0) {
       console.warn(
@@ -3823,10 +3864,39 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
        the board does not display any of it. So the finalists lead (they carry
        real match scores) and the rest of the shortlist fills the board behind
        them, in the order stage 1 already ranked them. */
-    const roomPool = [
-      ...ranked,
-      ...shortlist.filter((c) => !ranked.some((r) => r.place.placeId === c.place.placeId && r.place.title === c.place.title)),
-    ].slice(0, ROOM_MAX_CARDS);
+    /* Filling the board, in order of how much we trust each source.
+
+       Finalists first (fully researched), then the rest of the shortlist, then
+       anything else inside the radius, and finally — only if we still cannot
+       field three — the nearest places OUTSIDE it.
+
+       That last step is the guarantee. It used to be absent, so a thin
+       neighbourhood produced a room with one card in it and the host got
+       "Only found one place" instead of a game. A restaurant a few miles past
+       the chosen radius is a far better outcome than a vote with nothing to
+       vote on, and every card shows its distance, so nobody is misled about
+       what they are looking at. */
+    const samePlace = (a, b) =>
+      (a.place.placeId && a.place.placeId === b.place.placeId) || a.place.title === b.place.title;
+    const roomPool = [];
+    const addFrom = (list) => {
+      for (const c of list) {
+        if (roomPool.length >= ROOM_MAX_CARDS) return;
+        if (roomPool.some((r) => samePlace(r, c))) continue;
+        roomPool.push(c);
+      }
+    };
+
+    addFrom(ranked);
+    addFrom(shortlist);
+    addFrom(stage1Ranked);
+    if (roomPool.length < ROOM_MIN_CARDS) {
+      // Outside the radius, nearest first — the least-bad way to reach three.
+      addFrom(withFeatures.slice().sort((a, b) => a.distance - b.distance));
+    }
+    if (roomPool.length < ROOM_MIN_CARDS) {
+      console.log(`room board short: only ${roomPool.length} place(s) exist near ${locationName}`);
+    }
 
     const roomCandidates = roomPool.map((c, i) => ({
       id: String(c.place.placeId || c.place.cid || c.place.title),

@@ -2216,7 +2216,10 @@ body {
   font-size: 9.5px;
   color: rgba(253, 248, 242, 0.75);
   text-decoration: none;
+  max-width: calc(100% - 96px);   /* never slides under the score badge */
 }
+.shot-src a { color: inherit; text-decoration: underline; }
+.shot-src a:hover { color: var(--ink); }
 
 /* A 76px disc around a 19px number is mostly empty disc. The number is the
    only reason the badge exists, so it gets the space: ~46% of the diameter,

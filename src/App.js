@@ -2425,9 +2425,26 @@ function App() {
                           </span>
                           <span className="score-k">match</span>
                         </div>
-                        {winner.imageSourceUrl && (
+                        {/* Says what the picture IS. A stock photo of the dish
+                            is a better picture than a parking lot pulled off
+                            image search, but only while it is labelled — left
+                            unlabelled it reads as this restaurant's food, and
+                            that is a worse lie than the one it replaced.
+                            Pexels also requires the photographer credit. */}
+                        {winner.imageCredit?.source === "pexels" ? (
+                          <span className="shot-src">
+                            Representative photo ·{" "}
+                            <a href={winner.imageCredit.photographerUrl} target="_blank" rel="noreferrer">
+                              {winner.imageCredit.photographer}
+                            </a>{" "}
+                            /{" "}
+                            <a href={winner.imageSourceUrl || "https://www.pexels.com"} target="_blank" rel="noreferrer">
+                              Pexels
+                            </a>
+                          </span>
+                        ) : winner.imageSourceUrl ? (
                           <a className="shot-src" href={winner.imageSourceUrl} target="_blank" rel="noreferrer">Photo source</a>
-                        )}
+                        ) : null}
                       </div>
 
                       <p className="verdict-line">{verdictLine(winner)}</p>

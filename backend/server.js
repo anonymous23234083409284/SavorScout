@@ -2110,6 +2110,122 @@ async function refreshTraits(userId) {
   return { revealed: fresh, pending: pendingFromAxes(readings).slice(0, 3) };
 }
 
+// --- Pexels food photography ------------------------------------------------
+
+/* Why the picture changed source.
+
+   fetchWinnerImage below runs a Google image search for "<name> <address>
+   restaurant" and hotlinks whatever comes back first. Two problems with that.
+   The legal one: those URLs resolve to other companies' CDNs — Yelp, Uber
+   Eats, Grubhub — and hotlinking them is at best unlicensed. The product one
+   is worse. The first image result for a restaurant is frequently a storefront,
+   a logo, a parking lot, or a DIFFERENT restaurant with a similar name, and we
+   were presenting all of it, unlabelled, as though it were this place.
+
+   A Pexels photo is properly licensed and looks like the food someone just
+   asked for. It is also, unavoidably, NOT this restaurant's food — so it is
+   labelled as representative wherever it appears. An unlabelled stock photo
+   would trade a licensing problem for a trust problem, which is a worse deal
+   for a product whose entire promise is that we actually looked.
+
+   No key configured means this whole layer is skipped and the old path runs
+   unchanged, so the site keeps working while the key is being set up. */
+
+const PEXELS_TIMEOUT_MS = 3500;
+const PEXELS_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // stock photos do not go stale
+const PEXELS_CACHE_MAX = 500;
+const pexelsCache = new Map();
+
+/* Cravings repeat far more than restaurants do — "pizza" is the same lookup
+   for every user in every town — so caching by craving keeps us comfortably
+   inside the free tier's 200 requests/hour no matter how the traffic grows. */
+function pexelsCacheGet(key) {
+  const hit = pexelsCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > PEXELS_CACHE_TTL_MS) { pexelsCache.delete(key); return null; }
+  return hit.value;
+}
+function pexelsCachePut(key, value) {
+  if (pexelsCache.size >= PEXELS_CACHE_MAX) pexelsCache.delete(pexelsCache.keys().next().value);
+  pexelsCache.set(key, { at: Date.now(), value });
+}
+
+/* Words that describe the SEARCH rather than the food. Leaving them in sends
+   Pexels looking for photographs of cheapness. */
+const PHOTO_STOPWORDS = new Set([
+  "cheap", "best", "good", "great", "top", "nice", "amazing", "authentic",
+  "near", "nearby", "me", "open", "now", "late", "quick", "fast", "healthy",
+  "a", "an", "the", "some", "any", "for", "with", "and", "or", "in", "at",
+  "place", "places", "restaurant", "restaurants", "spot", "spots", "food",
+]);
+
+/* Bare "wings" returns birds and aircraft; bare "rolls" returns bread. Terms
+   that are only food in context get the context put back. */
+const NEEDS_FOOD_CONTEXT = new Set([
+  "wings", "rolls", "roll", "buns", "bun", "chips", "greens", "shells",
+  "cakes", "cake", "bowls", "bowl", "plates", "sticks", "fingers", "bites",
+  "hot", "cold", "sweet", "spicy", "fresh",
+]);
+
+function pexelsQuery(raw) {
+  const words = String(raw || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w && !PHOTO_STOPWORDS.has(w));
+  if (words.length === 0) return null;
+  const term = words.slice(0, 3).join(" ");
+  // Single ambiguous word → anchor it to food. Multi-word terms are already
+  // unambiguous ("chicken wings" is never an aircraft).
+  return words.length === 1 && NEEDS_FOOD_CONTEXT.has(words[0]) ? `${term} food` : term;
+}
+
+/* Same craving, different restaurants, different photos — but the SAME photo
+   every time for a given restaurant. A picture that reshuffled on refresh
+   would look like the pick itself had changed. */
+function pickIndex(seed, length) {
+  if (length <= 1) return 0;
+  let h = 5381;
+  const str = String(seed || "");
+  for (let i = 0; i < str.length; i++) h = ((h * 33) ^ str.charCodeAt(i)) >>> 0;
+  return h % length;
+}
+
+async function fetchPexelsFood(craving, seed) {
+  if (!process.env.PEXELS_API_KEY) return null;
+  const query = pexelsQuery(craving);
+  if (!query) return null;
+
+  let photos = pexelsCacheGet(query);
+  if (!photos) {
+    try {
+      const response = await http.get("https://api.pexels.com/v1/search", {
+        params: { query, per_page: 15, orientation: "landscape" },
+        headers: { Authorization: process.env.PEXELS_API_KEY },
+        timeout: PEXELS_TIMEOUT_MS,
+      });
+      photos = (response.data?.photos || [])
+        .filter((ph) => ph?.src?.large)
+        .map((ph) => ({
+          imageUrl: ph.src.large,
+          photographer: ph.photographer || "Pexels photographer",
+          photographerUrl: ph.photographer_url || "https://www.pexels.com",
+          pexelsUrl: ph.url || "https://www.pexels.com",
+        }));
+      pexelsCachePut(query, photos);
+    } catch (err) {
+      // A missing photo is a cosmetic failure. Never let it fail the search.
+      console.error("Pexels lookup failed:", err.response?.status || err.message);
+      pexelsCachePut(query, []); // negative-cache so one outage is not retried per request
+      return null;
+    }
+  }
+
+  if (!photos.length) return null;
+  const chosen = photos[pickIndex(seed, photos.length)];
+  return { ...chosen, source: "pexels", representative: true };
+}
+
 // --- Serper image search (winner only) -------------------------------------
 
 async function fetchWinnerImage(name, address) {
@@ -3704,13 +3820,33 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       image: c.place.thumbnailUrl || c.place.thumbnail || null,
     }));
 
-    // Serper Places often already includes a thumbnail. When it does, the
-    // extra image search — a serial 300-600ms call at the very end of the
-    // request — is skipped entirely.
+    /* Picture priority: the food they asked for, then the place.
+
+       Pexels leads because it is licensed and it shows the dish rather than a
+       storefront. It is seeded on the restaurant id, so two wing places in the
+       same town get different photos and each keeps its own on every reload.
+
+       The Serper paths remain as fallbacks for when Pexels has no photo of
+       something, or when no key is configured. */
+    const pexelsPhoto = await fetchPexelsFood(
+      preferences.dish || preferences.cuisine || userRequest,
+      winner.place.placeId || winner.place.cid || winner.place.title
+    );
     const existingThumb = winner.place.thumbnailUrl || winner.place.thumbnail || null;
-    const winnerImage = existingThumb
-      ? { imageUrl: existingThumb, imageSourceUrl: null }
-      : await fetchWinnerImage(winner.place.title, winner.place.address);
+    const winnerImage = pexelsPhoto
+      ? {
+          imageUrl: pexelsPhoto.imageUrl,
+          imageSourceUrl: pexelsPhoto.pexelsUrl,
+          imageCredit: {
+            source: "pexels",
+            photographer: pexelsPhoto.photographer,
+            photographerUrl: pexelsPhoto.photographerUrl,
+            representative: true,
+          },
+        }
+      : existingThumb
+        ? { imageUrl: existingThumb, imageSourceUrl: null }
+        : await fetchWinnerImage(winner.place.title, winner.place.address);
 
     const finalPicks = [
       {
@@ -3776,6 +3912,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
         runnerUps,
         imageUrl: winnerImage?.imageUrl || null,
         imageSourceUrl: winnerImage?.imageSourceUrl || null,
+        imageCredit: winnerImage?.imageCredit || null,
       },
     ];
 

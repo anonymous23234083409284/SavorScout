@@ -2246,6 +2246,16 @@ body {
   color: var(--ink);
 }
 
+/* Sized off .score-n so the pair scales together, and deliberately smaller:
+   at full size "56%" crowds a 68px circle, and the number is the thing worth
+   reading first. */
+.score-pct {
+  font-size: 0.6em;
+  font-weight: 600;
+  letter-spacing: 0;
+  margin-left: 1px;
+}
+
 .score-k {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 7.5px;
@@ -2307,7 +2317,6 @@ body {
   margin-bottom: 12px;
 }
 
-.rowmeta .rating { color: var(--saffron); font-weight: 600; }
 .rowmeta .sep { color: var(--ink-ghost); }
 
 .addr {
@@ -2327,84 +2336,75 @@ body {
   margin-bottom: 10px;
 }
 
-.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+/* THE REASONS.
 
-.chip {
-  padding: 7px 13px;
-  border-radius: var(--r-full);
-  background: rgba(255, 46, 136, 0.08);
-  border: 1px solid rgba(255, 46, 136, 0.22);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  animation: pop 0.35s var(--ease) both;
+   A two-column grid rather than a flex row: the icon column is a fixed width
+   so all three headlines start on the same vertical line. Ragged left edges
+   are what made the old chip row read as scattered tags instead of an
+   argument. */
+.reasons {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
 }
-.chips .chip:nth-child(1) { animation-delay: 0.05s; }
-.chips .chip:nth-child(2) { animation-delay: 0.1s; }
-.chips .chip:nth-child(3) { animation-delay: 0.15s; }
-.chips .chip:nth-child(4) { animation-delay: 0.2s; }
 
-.evidence {
-  padding: 16px 18px;
+.reason {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 12px;
+  align-items: start;
+  animation: pop 0.4s var(--ease) both;
+}
+.reason:nth-child(1) { animation-delay: 0.06s; }
+.reason:nth-child(2) { animation-delay: 0.14s; }
+.reason:nth-child(3) { animation-delay: 0.22s; }
+
+.reason-icon {
+  font-size: 19px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* min-width:0 so a long menu-item name wraps instead of pushing the grid
+   wider than the card. */
+.reason-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.reason-head {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.reason-detail {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* The verdict in one sentence. Boxed because it is a conclusion, not a fourth
+   reason. */
+.reason-sum {
+  padding: 11px 14px;
   border-radius: var(--r-md);
-  background: rgba(46, 230, 214, 0.05);
-  border: 1px solid var(--line-cool);
+  background: rgba(255, 46, 136, 0.07);
+  border: 1px solid rgba(255, 46, 136, 0.2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
   margin-bottom: 18px;
 }
 
-.ev-key {
-  display: block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ion);
-  margin-bottom: 9px;
-}
-
-.stars { color: var(--saffron); font-size: 13px; letter-spacing: 1.5px; }
-.stars-off { color: rgba(255, 200, 87, 0.22); }
-
-.ev-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; flex-wrap: wrap; }
-.ev-head .ev-key { margin-bottom: 0; }
-
-.quote {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 13.5px;
-  font-style: italic;
-  line-height: 1.6;
-  color: var(--ink-soft);
-  margin-bottom: 9px;
-}
-
-.ev-link {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10.5px;
-  color: var(--ion);
-  text-decoration: none;
-}
-.ev-link:hover { text-decoration: underline; }
-
-.menu-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-cool); }
-
-.menu-item {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-}
-
-.menu-dash { flex: 1; border-bottom: 1px dotted var(--ink-ghost); }
-.menu-price { color: var(--saffron); font-weight: 600; }
+.safety { margin-bottom: 4px; }
 
 .allergy { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--danger); line-height: 1.6; margin-top: 10px; }
 .dietary { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--saffron); line-height: 1.6; margin-top: 8px; }
 
-.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
-
+/* .toggle stays: the Show map button still uses it. */
 .toggle {
   padding: 7px 14px;
   border-radius: var(--r-full);
@@ -2417,24 +2417,6 @@ body {
   transition: background 0.2s var(--ease);
 }
 .toggle:hover { background: rgba(46, 230, 214, 0.1); }
-
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
-  gap: 12px 20px;
-  margin-top: 14px;
-  animation: fade 0.35s var(--ease) both;
-}
-
-.metric { display: grid; grid-template-columns: 1fr 34px; gap: 5px; align-items: center; }
-.metric-bar { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
-.metric-fill { height: 100%; background: linear-gradient(90deg, var(--saffron), var(--magenta)); transition: width 0.9s var(--ease); }
-.metric-val { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-faint); text-align: right; }
-.metric-key { grid-column: 1 / -1; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-ghost); }
-
-.compare { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 7px; }
-.compare li { display: flex; justify-content: space-between; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); }
-.compare-score { color: var(--ion); }
 
 .mapbox { margin-top: 12px; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line); filter: grayscale(0.35) contrast(1.1) brightness(0.86); }
 
@@ -3661,6 +3643,34 @@ body {
 }
 .rm-win-why { margin-top: 12px; font-size: 13px; color: var(--ink-mid); }
 .rm-go { display: inline-block; margin-top: 18px; text-decoration: none; }
+
+/* The receipts. Left-aligned inside a centred card on purpose — these read as
+   a list of things that happened, and centring them would turn a record into
+   decoration. */
+.rm-receipts {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 8px;
+  text-align: left;
+}
+.rm-receipt {
+  font-size: 12.5px; line-height: 1.5; color: var(--ink-soft);
+}
+.rm-receipt strong { color: var(--ink); font-weight: 600; }
+/* The one line people will read out loud gets the loud treatment. */
+.rm-receipt--villain {
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  background: rgba(255, 95, 31, 0.12);
+  border: 1px solid rgba(255, 95, 31, 0.28);
+  color: var(--ink);
+}
+.rm-receipt--lost { color: var(--ink-mid); }
+.rm-receipt--dim {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--ink-mid);
+}
 
 .rm-foot { display: flex; gap: 10px; flex-wrap: wrap; }
 .rm-foot > .btn { flex: 1; min-width: 150px; min-height: 46px; }

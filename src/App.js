@@ -227,30 +227,137 @@ function CountUp({ value, duration = 900, className }) {
    VERDICT CARD HELPERS
    =========================================================================== */
 
-function buildChips(r) {
-  const chips = [];
-  const sb = r.scoreBreakdown || {};
+/* Ordered so the specific wins before the general: "chicken wings" must not
+   match on "chicken" before it ever reaches "wing". */
+const DISH_ICONS = [
+  ["wing", "\u{1F357}"], ["fried chicken", "\u{1F357}"], ["chicken", "\u{1F357}"],
+  ["pizza", "\u{1F355}"], ["burger", "\u{1F354}"], ["taco", "\u{1F32E}"], ["burrito", "\u{1F32F}"],
+  ["sushi", "\u{1F363}"], ["ramen", "\u{1F35C}"], ["noodle", "\u{1F35C}"], ["pho", "\u{1F35C}"],
+  ["pasta", "\u{1F35D}"], ["italian", "\u{1F35D}"], ["steak", "\u{1F969}"], ["bbq", "\u{1F356}"],
+  ["barbecue", "\u{1F356}"], ["rib", "\u{1F356}"], ["seafood", "\u{1F990}"], ["lobster", "\u{1F99E}"],
+  ["shrimp", "\u{1F990}"], ["fish", "\u{1F41F}"], ["sandwich", "\u{1F96A}"], ["deli", "\u{1F96A}"],
+  ["breakfast", "\u{1F373}"], ["brunch", "\u{1F373}"], ["egg", "\u{1F373}"], ["pancake", "\u{1F95E}"],
+  ["salad", "\u{1F957}"], ["vegan", "\u{1F957}"], ["vegetarian", "\u{1F957}"], ["soup", "\u{1F372}"],
+  ["curry", "\u{1F35B}"], ["indian", "\u{1F35B}"], ["thai", "\u{1F35B}"], ["chinese", "\u{1F961}"],
+  ["dumpling", "\u{1F95F}"], ["korean", "\u{1F35A}"], ["mexican", "\u{1F32E}"], ["greek", "\u{1F959}"],
+  ["kebab", "\u{1F959}"], ["mediterranean", "\u{1F959}"], ["dessert", "\u{1F370}"],
+  ["ice cream", "\u{1F366}"], ["bakery", "\u{1F950}"], ["coffee", "\u2615"], ["bar", "\u{1F37A}"],
+];
 
-  if (r.matchedDish) chips.push(`Matches "${r.matchedDish}"`);
-  else if (r.matchedCuisine) chips.push(`${r.matchedCuisine} done well`);
-
-  if (typeof r.rating === "number" && sb.quality >= 65 && r.reviewCount >= 50) {
-    chips.push(`${r.reviewCount.toLocaleString()} ratings`);
-  }
-  if (sb.proximity >= 75 && typeof r.distanceMiles === "number") chips.push(`${r.distanceMiles} mi away`);
-  if (sb.evidence >= 60) {
-    chips.push(r.evidence?.sourceType === "official_site" ? "Confirmed on their menu" : "Menu confirmed online");
-  }
-  if (r.matchedFactors?.length) for (const f of r.matchedFactors.slice(0, 2)) chips.push(`Reviews mention "${f}"`);
-  if (typeof sb.budget === "number" && sb.budget >= 70) chips.push("Fits your budget");
-  if (chips.length === 0 && r.category) chips.push(r.category);
-  return chips;
+function dishIcon(term) {
+  const t = String(term || "").toLowerCase();
+  for (const [key, icon] of DISH_ICONS) if (t.includes(key)) return icon;
+  return "\u{1F37D}\uFE0F";
 }
 
-function distanceLabel(r) {
-  if (typeof r.distanceMiles !== "number") return null;
-  const from = r.distanceFrom && r.distanceFrom !== "you" ? `from ${r.distanceFrom}` : "away";
-  return `${r.distanceMiles} mi ${from}`;
+function listOf(a) {
+  if (a.length === 1) return a[0];
+  if (a.length === 2) return `${a[0]} and ${a[1]}`;
+  return `${a.slice(0, -1).join(", ")}, and ${a[a.length - 1]}`;
+}
+
+/* THE THREE REASONS.
+
+   This replaced a row of flat chips, a scraped-evidence panel, and two
+   collapsible blocks of comparison bars. The information was never wrong. The
+   problem was that someone who typed "chicken wings" had to read eight numbers
+   and four rival restaurants to find out why we picked this one. The promise
+   is "we looked, this is the one, here's why" — and the card was answering a
+   question nobody asked.
+
+   A reason is a CLAIM plus the evidence for that claim. Three is as many as
+   anyone reads before they either trust the pick or leave. Every detail line
+   is derived from data we actually hold; nothing is phrased as a fact we
+   cannot point at, because an invented reason costs more trust than no reason
+   at all. */
+function buildReasons(r) {
+  const sb = r.scoreBreakdown || {};
+  const out = [];
+
+  // 1. Does it serve what you asked for? That is the question, so it leads.
+  const dish = r.matchedDish || r.matchedCuisine;
+  if (dish) {
+    const items = (r.menuItems || []).map((m) => m && m.name).filter(Boolean).slice(0, 2);
+    out.push({
+      icon: dishIcon(dish),
+      tag: `${dish} selection`,
+      headline: r.matchedDish ? `Strong ${dish} match` : `${dish} done well`,
+      detail: items.length
+        ? `Their menu lists ${listOf(items)}.`
+        : sb.evidence >= 60
+          ? (r.evidence?.sourceType === "official_site"
+              ? "Confirmed on their own menu."
+              : "Menu confirmed online.")
+          : "Their listing matches what you asked for.",
+    });
+  }
+
+  // 2. Is it any good? Ratings only count with enough of them to mean anything.
+  if (typeof r.rating === "number" && (r.reviewCount || 0) >= 10) {
+    out.push({
+      icon: "\u2B50",
+      tag: "local ratings",
+      headline: r.rating >= 4.5 ? "Highly rated locally" : "Solidly rated locally",
+      detail: `${r.rating.toFixed(1)}\u2605 from ${r.reviewCount.toLocaleString()} ratings.`,
+    });
+  }
+
+  // 3. Can you actually get there?
+  if (typeof r.distanceMiles === "number") {
+    const near = r.distanceMiles <= 5;
+    const from = r.distanceFrom && r.distanceFrom !== "you" ? r.distanceFrom : "you";
+    out.push({
+      icon: "\u{1F4CD}",
+      tag: "distance",
+      headline: near ? "Close enough to make sense" : "Worth the drive",
+      detail: `${near ? "Just " : ""}${r.distanceMiles} miles from ${from}.`,
+    });
+  }
+
+  // Fallbacks. Only reached when one of the three above had no data to show.
+  if (r.matchedDietaryTerms?.length) {
+    out.push({
+      icon: "\u{1F957}",
+      tag: "your dietary needs",
+      headline: "Fits how you eat",
+      detail: `Confirmed ${listOf(r.matchedDietaryTerms)} on their menu.`,
+    });
+  }
+  if (typeof sb.budget === "number" && sb.budget >= 70) {
+    out.push({
+      icon: "\u{1F4B8}",
+      tag: "price",
+      headline: "Fits your budget",
+      detail: "Priced in the range you asked for.",
+    });
+  }
+  if (r.matchedFactors?.length) {
+    out.push({
+      icon: "\u{1F4AC}",
+      tag: "the vibe you wanted",
+      headline: "The vibe checks out",
+      detail: `Reviews keep mentioning ${listOf(r.matchedFactors.slice(0, 2).map((f) => `"${f}"`))}.`,
+    });
+  }
+  if (out.length === 0 && r.category) {
+    out.push({
+      icon: "\u{1F37D}\uFE0F",
+      tag: null,
+      headline: r.category,
+      detail: "The closest fit we found nearby.",
+    });
+  }
+
+  return out.slice(0, 3);
+}
+
+/* The one-line summary under the reasons. Names the dimensions that actually
+   decided it, so the pick reads as a trade-off a person would recognise rather
+   than a number a machine emitted. */
+function balanceLine(reasons) {
+  const tags = reasons.map((r) => r.tag).filter(Boolean);
+  if (tags.length < 2) return null;
+  return `Best balance of ${listOf(tags)}.`;
 }
 
 function mapsUrl(r) {
@@ -281,91 +388,25 @@ function verdictLine(w) {
   return `Edged out ${beat} other${beat === 1 ? "" : "s"} nearby — it was close.`;
 }
 
-function Stars({ rating }) {
-  const filled = Math.round(typeof rating === "number" ? rating : 5);
+/* What survived of the old evidence panel.
+
+   The panel itself is gone. It led with "What people say" over text that was
+   usually not what anyone said — just whatever got scraped — and it buried the
+   verdict under a wall of sourcing. But two of its lines are safety
+   disclosures rather than decoration. Someone with a nut allergy reading this
+   card is the one person who cannot afford a tidier layout, so the allergy and
+   dietary notes stay exactly as they were. */
+function SafetyNote({ dietary, allergy }) {
+  if (!allergy?.length && !dietary?.length) return null;
   return (
-    <span className="stars" aria-label={`${filled} of 5`}>
-      {"★★★★★".slice(0, filled)}
-      <span className="stars-off">{"★★★★★".slice(filled)}</span>
-    </span>
-  );
-}
-
-const METRIC_LABELS = {
-  relevance: "Dish match",
-  quality: "Ratings",
-  proximity: "Distance",
-  vibe: "Vibe match",
-  evidence: "Evidence",
-  budget: "Price fit",
-};
-
-function Evidence({ evidence, reception, review, menuItems, rating, dietary, allergy }) {
-  const hasReview = Boolean(review?.text);
-  const hasMenu = Boolean(menuItems?.length);
-  const hasQuote = Boolean(evidence?.quote) && !hasReview;
-  const hasRecep = Boolean(reception?.quote) && !hasReview;
-  const hasAll = Boolean(allergy?.length);
-  const hasDiet = Boolean(dietary?.length);
-
-  if (!hasReview && !hasMenu && !hasQuote && !hasRecep && !hasAll && !hasDiet && typeof rating !== "number") return null;
-
-  return (
-    <div className="evidence">
-      {hasReview ? (
-        <>
-          <div className="ev-head">
-            <Stars rating={5} />
-            <span className="ev-key">What people say</span>
-          </div>
-          <p className="quote">{review.text}</p>
-          {review.sourceUrl && (
-            <a className="ev-link" href={review.sourceUrl} target="_blank" rel="noreferrer">Read the source →</a>
-          )}
-        </>
-      ) : (
-        typeof rating === "number" && (
-          <div className="ev-head">
-            <Stars rating={rating} />
-            <span className="ev-key">{rating.toFixed(1)} average</span>
-          </div>
-        )
-      )}
-
-      {hasMenu && (
-        <div className="menu-block">
-          <span className="ev-key">On the menu</span>
-          {menuItems.map((m, i) => (
-            <div className="menu-item" key={i}>
-              <span>{m.name}</span>
-              <span className="menu-dash" />
-              <span className="menu-price">{m.price}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {hasQuote && (
-        <div className="menu-block">
-          <span className="ev-key">From their menu</span>
-          <p className="quote">{evidence.quote}</p>
-        </div>
-      )}
-
-      {hasRecep && (
-        <div className="menu-block">
-          <span className="ev-key">From web research</span>
-          <p className="quote">{reception.quote}</p>
-        </div>
-      )}
-
-      {hasAll && (
+    <div className="safety">
+      {allergy?.length > 0 && (
         <p className="allergy">
-          Mentions {allergy.join(", ")} — not a safety guarantee. Confirm allergy details with the
-          restaurant before ordering.
+          Mentions {allergy.join(", ")} \u2014 not a safety guarantee. Confirm allergy details with
+          the restaurant before ordering.
         </p>
       )}
-      {hasDiet && <p className="dietary">Confirmed: {dietary.join(", ")}</p>}
+      {dietary?.length > 0 && <p className="dietary">Confirmed: {dietary.join(", ")}</p>}
     </div>
   );
 }
@@ -1033,6 +1074,20 @@ function App() {
   const [roomStage, setRoomStage] = useState(null); // "searching" | "opening"
   const roomPoll = useRef(null);
 
+  /* A room of one is a person testing the thing, or the first to arrive. The
+     receipts are all about who did what to whom, so alone they read as a
+     computer congratulating you for agreeing with yourself — hide them. */
+  const roomSolo = (room?.players?.length || 0) < 2;
+  /* And a room where nothing happened has nothing to show. Without this the
+     block still renders its top border and padding: a stray rule under the
+     winner with no content beneath it. */
+  const r_ = room?.receipts;
+  const roomReceipts =
+    !roomSolo && r_ &&
+    (r_.villain || r_.backers?.length > 0 || r_.outvoted?.length > 0 || r_.kills?.length > 0)
+      ? r_
+      : null;
+
   const roomFetch = useCallback(async (path, init) => {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
@@ -1232,6 +1287,27 @@ function App() {
     } catch { /* poll will catch up */ }
   }, [roomCode, roomPlayerId, roomFetch]);
 
+  /* Run it back. Reuses the location that is already loaded, so a second round
+     is one tap while the group is still together — the only moment a rematch
+     costs nothing to organise. The craving is reshuffled so the rematch is a
+     genuinely different board rather than the same five places again.
+
+     Host only, and only with a location in hand. Two reasons: a rematch mints
+     a NEW code, so if a joiner ran it they would silently walk away from the
+     group into a private room of one; and createRoom needs coordinates, which
+     someone who arrived by tapping a link has never set. Anyone else gets a
+     button that starts their own setup instead — an honest action rather than
+     one that dead-ends on "set your ZIP first". */
+  const canRematch = Boolean(room && room.hostId === roomPlayerId && resolvedLocation);
+  const rematch = useCallback(() => {
+    const pool = ROOM_CRAVINGS.filter((c) => c !== roomCraving);
+    const next = pool[Math.floor(Math.random() * pool.length)] || roomCraving;
+    setRoom(null); setRoomCode(null); setRoomPlayerId(null); setRoomError("");
+    window.history.replaceState(null, "", "/");
+    setRoomCraving(next);
+    createRoom(next);
+  }, [roomCraving, createRoom]);
+
   const leaveRoom = useCallback(() => {
     setRoom(null); setRoomCode(null); setRoomPlayerId(null); setRoomError("");
     window.history.replaceState(null, "", "/");
@@ -1361,8 +1437,6 @@ function App() {
   useEffect(() => { shareRef.current = share; }, [share]);
   const [toast, setToast] = useState(null);
 
-  const [showMetrics, setShowMetrics] = useState(false);
-  const [showCompare, setShowCompare] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
   const searchAbortRef = useRef(null);
@@ -1843,7 +1917,7 @@ function App() {
     if (!resolvedLocation) { setErrorMsg("Set your ZIP code first."); return; }
 
     setErrorMsg(""); setLoading(true);
-    setShowMetrics(false); setShowCompare(false); setShowMap(false);
+    setShowMap(false);
 
     try {
       /* Signed out is a legitimate state here: the first search is free. The
@@ -1921,7 +1995,8 @@ function App() {
   };
 
   const winner = results[0];
-  const chips = useMemo(() => (winner ? buildChips(winner) : []), [winner]);
+  const reasons = useMemo(() => (winner ? buildReasons(winner) : []), [winner]);
+  const balance = useMemo(() => balanceLine(reasons), [reasons]);
   const streakDays = game?.streak?.days ?? 0;
   const tierInfo = useMemo(() => nextTierInfo(streakDays), [streakDays]);
 
@@ -2299,8 +2374,14 @@ function App() {
                         {winner.imageUrl
                           ? <img src={winner.imageUrl} alt={winner.name} loading="lazy" referrerPolicy="no-referrer" />
                           : <span className="shot-mono">{(winner.name || "?").charAt(0).toUpperCase()}</span>}
+                        {/* The unit belongs ON the number. As a bare "56" it
+                            was a score out of nothing, and every reader had to
+                            guess the denominator. */}
                         <div className="score">
-                          <CountUp className="score-n" value={winner.matchScore} />
+                          <span className="score-n">
+                            <CountUp value={winner.matchScore} />
+                            <span className="score-pct">%</span>
+                          </span>
                           <span className="score-k">match</span>
                         </div>
                         {winner.imageSourceUrl && (
@@ -2350,74 +2431,46 @@ function App() {
                     <div className="pane-detail">
                       <h2 className="name">{winner.name}</h2>
 
+                      {/* Identity only. The rating and the distance used to
+                          sit here AND again in the reasons below, inches
+                          apart — printing 4.8★ twice on one card is exactly
+                          the numeric clutter that buried the verdict. Each
+                          number now appears once, in the reason that earns
+                          it. */}
                       <div className="rowmeta">
-                        {typeof winner.rating === "number"
-                          ? <span className="rating">{winner.rating.toFixed(1)}★ {winner.reviewCount ? `(${winner.reviewCount.toLocaleString()})` : ""}</span>
-                          : <span>Not yet widely rated</span>}
-                        {winner.category && <><span className="sep">·</span><span>{winner.category}</span></>}
-                        {distanceLabel(winner) && <><span className="sep">·</span><span>{distanceLabel(winner)}</span></>}
+                        {winner.category
+                          ? <span>{winner.category}</span>
+                          : <span>Restaurant</span>}
+                        {typeof winner.rating !== "number" && (
+                          <><span className="sep">·</span><span>Not yet widely rated</span></>
+                        )}
                       </div>
 
                       {winner.address && <p className="addr">{winner.address}</p>}
 
-                      {chips.length > 0 && (
+                      {reasons.length > 0 && (
                         <>
                           <span className="why-key">Why this won</span>
-                          <div className="chips">
-                            {chips.map((c, i) => <span className="chip" key={i}>{c}</span>)}
-                          </div>
+                          <ul className="reasons">
+                            {reasons.map((r, i) => (
+                              <li className="reason" key={i}>
+                                <span className="reason-icon" aria-hidden="true">{r.icon}</span>
+                                <span className="reason-body">
+                                  <span className="reason-head">{r.headline}</span>
+                                  <span className="reason-detail">{r.detail}</span>
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                          {balance && <p className="reason-sum">{balance}</p>}
                         </>
                       )}
 
-                      <Evidence
-                        evidence={winner.evidence}
-                        reception={winner.reception}
-                        review={winner.review}
-                        menuItems={winner.menuItems}
-                        rating={winner.rating}
+                      {/* Safety disclosures survive the cleanup; see SafetyNote. */}
+                      <SafetyNote
                         dietary={winner.matchedDietaryTerms}
                         allergy={winner.matchedAllergyTerms}
                       />
-
-                      <div className="toggles">
-                        <button className="toggle" onClick={() => { setShowMetrics((s) => !s); track("breakdown_open", { verdictId: winner.id }); }}>
-                          {showMetrics ? "Hide numbers" : "How we scored this"}
-                        </button>
-                        {winner.runnerUps?.length > 0 && (
-                          <button className="toggle" onClick={() => { setShowCompare((s) => !s); track("comparisons_open", { verdictId: winner.id }); }}>
-                            {/* States which pool the runners-up came out of, so
-                                "Top 3" next to "Best of 7" reads as a subset
-                                rather than a second, contradictory number. */}
-                            {showCompare
-                              ? "Hide comparisons"
-                              : `Top ${winner.runnerUps.length} of ${(winner.beatCount || 0) + 1} compared`}
-                          </button>
-                        )}
-                      </div>
-
-                      {showMetrics && winner.scoreBreakdown && (
-                        <div className="metrics">
-                          {Object.entries(METRIC_LABELS)
-                            .filter(([k]) => typeof winner.scoreBreakdown[k] === "number")
-                            .map(([k, label]) => (
-                              <div className="metric" key={k}>
-                                <div className="metric-bar">
-                                  <div className="metric-fill" style={{ width: `${winner.scoreBreakdown[k]}%` }} />
-                                </div>
-                                <span className="metric-val">{winner.scoreBreakdown[k]}%</span>
-                                <span className="metric-key">{label}</span>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-
-                      {showCompare && winner.runnerUps?.length > 0 && (
-                        <ul className="compare">
-                          {winner.runnerUps.map((r, i) => (
-                            <li key={i}><span>{r.name}</span><span className="compare-score">{r.matchScore}%</span></li>
-                          ))}
-                        </ul>
-                      )}
                     </div>
                   </div>
                 </article>
@@ -2535,13 +2588,71 @@ function App() {
                               {c.category}
                               {typeof c.distanceMiles === "number" && <> · {c.distanceMiles} mi</>}
                             </p>
+                            {/* Order matters. The margin branches have to sit
+                                BELOW the no-votes check: a room where nobody
+                                voted has a margin of zero, and reading that as
+                                a "dead heat" invents a photo finish out of an
+                                empty board. Solo rooms skip the margin talk
+                                entirely — there is no one to have beaten. */}
                             <p className="rm-win-why">
                               {room.revived
                                 ? "You vetoed everything. So we picked the strongest one anyway."
-                                : c.yesCount > 0
-                                  ? `${c.yesCount} ${c.yesCount === 1 ? "vote" : "votes"} — and it survived the vetoes.`
-                                  : "Nobody voted, so the highest match wins by default."}
+                                : c.yesCount === 0
+                                  ? "Nobody voted, so the highest match wins by default."
+                                  : roomSolo
+                                    ? "Your pick. Go eat."
+                                    : room.receipts?.unanimous
+                                      ? "Unanimous. Nobody argued — put it in the group chat and go."
+                                      : room.receipts?.margin === 0
+                                        ? `Dead heat with ${room.receipts.runnerUp?.name} — the match score broke the tie.`
+                                        : room.receipts?.margin === 1
+                                          ? `Won by a single vote over ${room.receipts.runnerUp?.name}.`
+                                          : `${c.yesCount} votes — and it survived the bombs.`}
                             </p>
+
+                            {/* THE RECEIPTS.
+                                The ten seconds after the winner appears is the
+                                only moment the whole group is looking at the
+                                same screen. It used to say "here's the winner"
+                                and end — so everyone left and nobody came back.
+                                This turns the ending into something to argue
+                                about on the way to the restaurant. */}
+                            {roomReceipts && (
+                              <div className="rm-receipts">
+                                {room.receipts.villain && (
+                                  <p className="rm-receipt rm-receipt--villain">
+                                    💣 <strong>{room.receipts.villain.by}</strong> nuked{" "}
+                                    {room.receipts.villain.place} — the one with the most votes.
+                                  </p>
+                                )}
+                                {room.receipts.backers?.length > 0 && (
+                                  <p className="rm-receipt">
+                                    ✅ Called it: <strong>{room.receipts.backers.join(", ")}</strong>
+                                  </p>
+                                )}
+                                {room.receipts.outvoted?.length > 0 && (
+                                  <p className="rm-receipt rm-receipt--lost">
+                                    🙃 Outvoted: {room.receipts.outvoted.join(", ")}
+                                  </p>
+                                )}
+                                {/* Only the kills the villain line has not
+                                    already reported. With a single veto in the
+                                    round both lines were printing the same
+                                    fact, one directly under the other. */}
+                                {(() => {
+                                  const v = room.receipts.villain;
+                                  const rest = (room.receipts.kills || []).filter(
+                                    (k) => !v || k.place !== v.place || k.by !== v.by
+                                  );
+                                  return rest.length > 0 ? (
+                                    <p className="rm-receipt rm-receipt--dim">
+                                      {v ? "Also bombed: " : "Bombed: "}
+                                      {rest.map((k) => `${k.place} (${k.by})`).join(" · ")}
+                                    </p>
+                                  ) : null;
+                                })()}
+                              </div>
+                            )}
                             {/* Numbers, not truthiness. A place at longitude 0
                                 is real, and a non-numeric coordinate would
                                 build a malformed maps URL. */}
@@ -2596,10 +2707,22 @@ function App() {
                     </>
                   ) : (
                     <>
-                      <button className="btn btn--hot" onClick={shareRoom}>
+                      {/* Rematch first, and loud. Everyone is still on the
+                          screen and still has opinions — that is the only
+                          moment a second round costs nothing to start. */}
+                      {canRematch ? (
+                        <button className="btn btn--hot" onClick={rematch} disabled={roomBusy}>
+                          {roomBusy ? "Setting it up…" : "🔁 Run it back"}
+                        </button>
+                      ) : (
+                        <button className="btn btn--hot" onClick={leaveRoom}>
+                          🔁 Start your own round
+                        </button>
+                      )}
+                      <button className="btn btn--ghost" onClick={shareRoom}>
                         {roomCopied ? "Link copied ✓" : "Share the result"}
                       </button>
-                      <button className="btn btn--ghost" onClick={leaveRoom}>New round</button>
+                      <button className="btn btn--ghost" onClick={leaveRoom}>Done</button>
                     </>
                   )}
                 </div>

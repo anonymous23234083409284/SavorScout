@@ -4233,6 +4233,54 @@ function touchRoom(room) {
   return room;
 }
 
+/* Turns the raw vote arrays into things worth reading out loud.
+
+   Deliberately blame-shaped rather than statistical: "Picky Wolf nuked the
+   crowd favourite" is a sentence a group repeats, and "veto distribution" is
+   not. The whole point of the ending is to give people something to argue
+   about on the way to the restaurant. */
+/* Viewer-aware on purpose. The roster already calls the reader "You", so
+   naming them by their generated animal in the receipts reads like a fourth
+   person was in a room of three. It also makes the best line land harder:
+   "You nuked Birria Bar" is an accusation; "Ravenous Boar nuked Birria Bar"
+   is a log entry. */
+function buildReceipts(room, viewerId) {
+  const nameOf = (id) =>
+    id && id === viewerId ? "You" : room.players.get(id)?.name || "Someone";
+  const winner = room.cards.find((c) => c.id === room.winnerId);
+  const alive = room.cards.filter((c) => !c.vetoedBy);
+
+  const kills = room.cards
+    .filter((c) => c.vetoedBy)
+    .map((c) => ({ by: nameOf(c.vetoedBy), place: c.name, yesCount: c.yes.length }));
+
+  // Someone who bombed the option with the most support is the story of the
+  // round, so it gets called out by name rather than buried in a list.
+  const mostBacked = kills.slice().sort((a, b) => b.yesCount - a.yesCount)[0];
+  const villain = mostBacked && mostBacked.yesCount > 0 ? mostBacked : null;
+
+  const backers = winner ? winner.yes.map(nameOf) : [];
+  const outvoted = [...room.players.values()]
+    .filter((p) => p.voted && winner && !winner.yes.includes(p.id))
+    .map((p) => p.name);
+
+  // Margin over the best surviving alternative — "won by one vote" is the
+  // difference between a decision and a landslide.
+  const rivals = alive.filter((c) => c.id !== room.winnerId)
+    .sort((a, b) => b.yes.length - a.yes.length);
+  const margin = winner && rivals.length ? winner.yes.length - rivals[0].yes.length : null;
+
+  return {
+    kills,
+    villain,
+    backers,
+    outvoted,
+    margin,
+    runnerUp: rivals.length ? { name: rivals[0].name, yesCount: rivals[0].yes.length } : null,
+    unanimous: Boolean(winner && backers.length > 1 && outvoted.length === 0),
+  };
+}
+
 function roomView(room, playerId) {
   const me = playerId ? room.players.get(playerId) : null;
   return {
@@ -4249,6 +4297,11 @@ function roomView(room, playerId) {
     aliveCount: room.cards.filter((c) => !c.vetoedBy).length,
     revived: !!room.revived,
     winnerId: room.winnerId || null,
+    /* The receipts. Only computed once the room is done, because this is the
+       part people actually talk about afterwards — who blocked what, who
+       backed the winner, who got outvoted. The room already holds every fact;
+       it was just throwing them away at the moment they became interesting. */
+    receipts: room.status === "done" ? buildReceipts(room, playerId) : null,
     players: [...room.players.values()].map((p) => ({
       id: p.id, name: p.name, voted: p.voted, vetoUsed: p.vetoUsed, isHost: p.id === room.hostId,
     })),

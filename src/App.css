@@ -2249,6 +2249,9 @@ body {
 /* Sized off .score-n so the pair scales together, and deliberately smaller:
    at full size "56%" crowds a 68px circle, and the number is the thing worth
    reading first. */
+/* Only 100 reaches three digits; it needs ~17% off to clear the circle. */
+.score-n--wide { font-size: 25px; }
+
 .score-pct {
   font-size: 0.6em;
   font-weight: 600;

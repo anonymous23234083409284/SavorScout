@@ -205,7 +205,11 @@ function CountUp({ value, duration = 900, className }) {
   useEffect(() => {
     if (typeof value !== "number") return undefined;
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { setShown(value); return undefined; }
+    /* A hidden tab never runs animation frames, so the counter would sit at its
+       initial 0 — a WRONG number on the card, not merely an unanimated one.
+       Snap to the value instead; if the tab is revealed later there is nothing
+       left to animate, which is the right trade against displaying "0%". */
+    if (reduce || document.hidden) { setShown(value); return undefined; }
 
     let frame;
     const start = performance.now();
@@ -256,6 +260,36 @@ function listOf(a) {
   return `${a.slice(0, -1).join(", ")}, and ${a[a.length - 1]}`;
 }
 
+/* Pulls concrete dishes out of the evidence blob.
+
+   menuItems is usually empty, but the evidence quote we already fetched is
+   typically a delimiter-separated menu dump — "- Best Sellers - Bone in Wings
+   - Bone Out Wings - Smash Burgers -". That blob was previously shown to the
+   user raw, under a heading claiming it was what people say, which is what
+   made it read as scraped filler. The blob was never the problem; presenting
+   it unread was. Split it, keep only the segments that contain a word from the
+   craving, and the reason can name real dishes instead of asserting a match. */
+function itemsFromQuote(quote, dish) {
+  if (!quote || !dish) return [];
+  const words = String(dish).toLowerCase().split(/\s+/).filter((w) => w.length > 3);
+  if (words.length === 0) return [];
+  const seen = new Set();
+  return String(quote)
+    .split(/\s*[\u2013\u2014\u2022|,/]\s*|\s+-\s+/)
+    .map((seg) => seg.replace(/^[\s-]+|[\s-]+$/g, "").trim())
+    .filter((seg) => {
+      // Long segments are prose, not dish names, and repeats are common in
+      // these dumps ("Wings Box" appears twice in the Bethpage blob).
+      if (seg.length < 3 || seg.length > 34) return false;
+      const low = seg.toLowerCase();
+      if (seen.has(low)) return false;
+      if (!words.some((w) => low.includes(w))) return false;
+      seen.add(low);
+      return true;
+    })
+    .slice(0, 2);
+}
+
 /* THE THREE REASONS.
 
    This replaced a row of flat chips, a scraped-evidence panel, and two
@@ -277,7 +311,10 @@ function buildReasons(r) {
   // 1. Does it serve what you asked for? That is the question, so it leads.
   const dish = r.matchedDish || r.matchedCuisine;
   if (dish) {
-    const items = (r.menuItems || []).map((m) => m && m.name).filter(Boolean).slice(0, 2);
+    const listed = (r.menuItems || []).map((m) => m && m.name).filter(Boolean).slice(0, 2);
+    const items = listed.length
+      ? listed
+      : itemsFromQuote(r.evidence?.quote || r.review?.text, dish);
     out.push({
       icon: dishIcon(dish),
       tag: `${dish} selection`,
@@ -2378,7 +2415,11 @@ function App() {
                             was a score out of nothing, and every reader had to
                             guess the denominator. */}
                         <div className="score">
-                          <span className="score-n">
+                          {/* A three-digit score plus the % sign overruns the
+                              68px circle and clips. Only 100 can do it, but a
+                              clipped "100%" is the worst possible moment for
+                              the badge to break. */}
+                          <span className={`score-n${winner.matchScore >= 100 ? " score-n--wide" : ""}`}>
                             <CountUp value={winner.matchScore} />
                             <span className="score-pct">%</span>
                           </span>

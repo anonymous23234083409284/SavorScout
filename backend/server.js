@@ -252,6 +252,20 @@ function computeRelevance(place, dishKeyword, cuisineKeyword) {
   return 0;
 }
 
+/* Names only the part of the craving we can actually stand behind. A search
+   for "chicken wings" that only hits "wings" returns "wings", not the full
+   phrase — the card says "Strong wings match", which is true, instead of
+   claiming a chicken match we never verified. */
+function matchDishLabel(haystack, dishKeyword, dishRaw) {
+  if (!dishKeyword || !dishRaw) return null;
+  if (haystack.includes(dishKeyword)) return dishRaw.trim();
+  const words = dishKeyword.split(/\s+/).filter((w) => w.length > 3);
+  if (words.length < 2) return null;
+  const hits = words.filter((w) => haystack.includes(w));
+  if (hits.length === 0) return null;
+  return hits.length === words.length ? dishRaw.trim() : hits.join(" ");
+}
+
 function buildHaystack(place) {
   return `${place.title || ""} ${place.type || ""} ${(place.types || []).join(" ")} ${place.description || ""}`.toLowerCase();
 }
@@ -672,6 +686,47 @@ function weightedAbsolute(absolute, weights) {
 }
 
 // How much of what the user asked for shows up in the REAL text we have.
+/* Dish relevance, and ONLY dish relevance.
+
+   computeConceptualRelevance below demands the literal phrase. For vibe,
+   dietary and allergy terms that strictness is the whole point — loosening
+   "tree nut" into "tree" would turn an allergy disclosure into a false
+   positive, and that is the one mistake on this card nobody can afford.
+
+   For a craving it was quietly breaking the product. Searching "chicken
+   wings" in Bethpage returned a menu reading "Bone in Wings / Bone Out Wings
+   / Chicken Sandwiches" and scored it a flat ZERO, because those exact two
+   words never sit adjacent. Every wing shop in town tied at zero, relevance
+   contributed nothing to the ranking, and the pick was decided by rating and
+   distance alone — while the card claimed we matched what you asked for.
+
+   So: full credit for a phrase hit, partial credit for the share of a term's
+   own words that appear, capped below a true phrase match so an exact hit
+   always outranks a scattered one. */
+function computeDishRelevance(combinedText, terms) {
+  const meaningful = terms.filter(Boolean).map((t) => String(t).toLowerCase().trim()).filter(Boolean);
+  if (meaningful.length === 0) return { score: 0.5, matched: [] };
+  const text = combinedText.toLowerCase();
+
+  let total = 0;
+  const matched = [];
+  for (const term of meaningful) {
+    if (text.includes(term)) {
+      total += 1;
+      matched.push(term);
+      continue;
+    }
+    // Short words ("of", "and", "hot") carry no signal and match everywhere.
+    const words = term.split(/\s+/).filter((w) => w.length > 3);
+    if (words.length < 2) continue;
+    const hits = words.filter((w) => text.includes(w));
+    if (hits.length === 0) continue;
+    total += 0.8 * (hits.length / words.length);
+    matched.push(hits.join(" "));
+  }
+  return { score: total / meaningful.length, matched };
+}
+
 function computeConceptualRelevance(combinedText, terms) {
   const meaningful = terms.filter(Boolean).map((t) => String(t).toLowerCase().trim()).filter(Boolean);
   if (meaningful.length === 0) return { score: 0.5, matched: [] };
@@ -3276,7 +3331,13 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
         const budgetMatch = computeBudgetMatch(userBudgetLevel, placePriceLevel);
 
         const haystack = buildHaystack(p);
-        const matchedDish = dishKeyword && haystack.includes(dishKeyword) ? preferences.dish.trim() : null;
+        /* The label has to agree with the score that explains it. This used to
+           require the whole phrase while computeRelevance already had a
+           word-level fallback, so "chicken wings" vs "Bethpage House of Wings"
+           scored as a partial match and then labelled itself as no match at
+           all — and the card silently dropped the one reason that answers what
+           the user actually asked for. */
+        const matchedDish = matchDishLabel(haystack, dishKeyword, preferences.dish);
         const matchedCuisine =
           !matchedDish && cuisineKeyword && haystack.includes(cuisineKeyword) ? preferences.cuisine.trim() : null;
 
@@ -3504,7 +3565,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       const menuText = `${serperText} ${(research?.highlights || []).join(" ")}`;
       const receptionText = `${serperText} ${(reception?.highlights || []).join(" ")}`;
 
-      const dishMatch = computeConceptualRelevance(menuText, dishTerms);
+      const dishMatch = computeDishRelevance(menuText, dishTerms);
       const vibeMatch = wantsVibe ? computeConceptualRelevance(receptionText, vibeTerms) : null;
 
       // Dietary and allergy terms can surface in either channel — a menu

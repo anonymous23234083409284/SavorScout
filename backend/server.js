@@ -2159,25 +2159,53 @@ const PHOTO_STOPWORDS = new Set([
   "place", "places", "restaurant", "restaurants", "spot", "spots", "food",
 ]);
 
-/* Bare "wings" returns birds and aircraft; bare "rolls" returns bread. Terms
-   that are only food in context get the context put back. */
-const NEEDS_FOOD_CONTEXT = new Set([
-  "wings", "rolls", "roll", "buns", "bun", "chips", "greens", "shells",
-  "cakes", "cake", "bowls", "bowl", "plates", "sticks", "fingers", "bites",
-  "hot", "cold", "sweet", "spicy", "fresh",
-]);
+/* "food" is appended to EVERY query, measured rather than assumed.
 
+   A cuisine name on its own does not describe a photograph of a meal. Searched
+   bare, "greek" returns the Parthenon and national flags, "korean" returns a
+   bell pavilion, "italian" returns flags and Baroque facades. Adding the word
+   fixes all three outright. Dish nouns — pizza, sushi, chicken wings — return
+   the same food either way, so there is nothing to trade off and no reason to
+   keep a list of which words need help. */
 function pexelsQuery(raw) {
   const words = String(raw || "")
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, " ")
     .split(/\s+/)
     .filter((w) => w && !PHOTO_STOPWORDS.has(w));
-  if (words.length === 0) return null;
-  const term = words.slice(0, 3).join(" ");
-  // Single ambiguous word → anchor it to food. Multi-word terms are already
-  // unambiguous ("chicken wings" is never an aircraft).
-  return words.length === 1 && NEEDS_FOOD_CONTEXT.has(words[0]) ? `${term} food` : term;
+  // Nothing but stopwords ("food", "best restaurant") still deserves a photo
+  // of a meal rather than no photo at all.
+  if (words.length === 0) return "food";
+  return `${words.slice(0, 3).join(" ")} food`;
+}
+
+/* Some cuisines have no food photography on Pexels at all. "ethiopian food"
+   returns portraits of Ethiopian people, religious processions and handcrafted
+   crosses — and putting a stranger's portrait on a restaurant card, captioned
+   as that restaurant's food, is a far worse outcome than showing no photo.
+
+   So results are filtered on what the photo is OF. This is a blocklist of
+   strong person-and-place signals rather than a list of required food words:
+   requiring food words threw away "traditional Korean kimchi in a dark ceramic
+   bowl", which is exactly the photo we want. Anything that survives is a
+   picture of a thing on a plate; anything that does not leaves us with no
+   Pexels photo, and the Serper fallback or the monogram takes over. */
+const NON_FOOD_ALT = new RegExp(
+  "\\b(" +
+    "portraits?|selfies?|flags?|parades?|processions?|architecture|monuments?|" +
+    "temples?|pavilions?|gazebos?|cathedrals?|churches|mosques?|statues?|ruins?|" +
+    "columns?|parthenon|skylines?|landscapes?|attire|hanbok|kimono|robes?|" +
+    "costumes?|tattoos?|elderly|senior|orthodox|religious|crosses|cross" +
+  ")\\b",
+  "i"
+);
+
+function isFoodPhoto(photo) {
+  const alt = String(photo?.alt || "").trim();
+  // No alt text is not evidence of a bad photo, and most Pexels food shots
+  // carry one. Keep it and let the query do the work.
+  if (!alt) return true;
+  return !NON_FOOD_ALT.test(alt);
 }
 
 /* Same craving, different restaurants, different photos — but the SAME photo
@@ -2205,7 +2233,7 @@ async function fetchPexelsFood(craving, seed) {
         timeout: PEXELS_TIMEOUT_MS,
       });
       photos = (response.data?.photos || [])
-        .filter((ph) => ph?.src?.large)
+        .filter((ph) => ph?.src?.large && isFoodPhoto(ph))
         .map((ph) => ({
           imageUrl: ph.src.large,
           photographer: ph.photographer || "Pexels photographer",

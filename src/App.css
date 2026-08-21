@@ -2644,13 +2644,7 @@ body {
    FOOTER + MISC
    =========================================================================== */
 
-/* A stack rather than a single line, so a partner badge can sit under the
-   copyright instead of competing with it. */
 .foot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
   text-align: center;
   padding: 40px 24px 50px;
   font-family: 'IBM Plex Mono', monospace;
@@ -2659,17 +2653,12 @@ body {
   border-top: 1px solid var(--line);
 }
 
-/* Quiet, not hidden. Full size and fully clickable — it just sits back until
-   somebody actually looks at the bottom of the page. */
-.foot-badge {
-  display: inline-flex;
-  opacity: 0.62;
-  transition: opacity 0.2s var(--ease);
-  border-radius: var(--r-sm);
-}
-.foot-badge:hover,
-.foot-badge:focus-visible { opacity: 1; }
-.foot-badge img { display: block; height: 44px; width: auto; max-width: 100%; }
+/* The badge itself lives in public/index.html so it exists before any JS runs;
+   see the comment there. Only the hover lift belongs here — it is an
+   enhancement, and the inline styles already carry the base look. */
+.static-badge a { transition: opacity 0.2s var(--ease); }
+.static-badge a:hover,
+.static-badge a:focus-visible { opacity: 1 !important; }
 
 .center-note { text-align: center; padding: 80px 24px; font-family: 'IBM Plex Mono', monospace; color: var(--ink-soft); }
 

@@ -309,6 +309,29 @@
       </p>
     </noscript>
     <div id="root"></div>
+
+    <!--
+      Partner badge, deliberately in the STATIC shell rather than in the React
+      tree.
+
+      It first went in the app's footer, which meant it only existed after the
+      bundle executed. A directory verifier fetches the HTML and greps for the
+      link, so it found nothing and the listing stayed unverified — `curl
+      savorscout.net | grep maidensail` returned zero. Here it is in the
+      document every crawler and verifier actually receives, while still
+      rendering for real visitors on every SPA route.
+
+      Styled inline because App.css only arrives with the bundle; these rules
+      have to hold on their own.
+    -->
+    <footer class="static-badge" style="text-align:center;padding:26px 24px 44px;">
+      <a href="https://maidensail.com/startup/savor-scout" rel="dofollow"
+         style="display:inline-block;line-height:0;opacity:0.62;">
+        <img src="https://maidensail.com/badge/savor-scout.svg?theme=dark"
+             alt="Featured on Maidensail" width="190" height="44"
+             style="display:block;height:44px;width:auto;max-width:100%;">
+      </a>
+    </footer>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

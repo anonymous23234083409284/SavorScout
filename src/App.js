@@ -3106,7 +3106,34 @@ function App() {
           onShare={onQuizShare}
         />
 
-        <footer className="foot">© 2026 SavorScout</footer>
+        {/* Partner badge. It lives in the footer rather than on You for one
+            practical reason: You is behind an account, so neither Maidensail's
+            verifier nor a search crawler would ever reach it — and a backlink
+            nobody can see is not a backlink. The footer renders on every tab,
+            signed in or out, which is the quietest genuinely PUBLIC spot on
+            the site. */}
+        <footer className="foot">
+          <span>© 2026 SavorScout</span>
+          <a
+            className="foot-badge"
+            href="https://maidensail.com/startup/savor-scout"
+            rel="dofollow"
+          >
+            {/* Same tab, deliberately. target="_blank" forces rel="noreferrer"
+                past the linter, and that strips the Referer header — the exact
+                signal a directory uses to confirm the traffic came from here.
+
+                Intrinsic size stated so the footer does not jump when the SVG
+                arrives. Measured from the file: 190 x 44. */}
+            <img
+              src="https://maidensail.com/badge/savor-scout.svg?theme=dark"
+              alt="Featured on Maidensail"
+              width="190"
+              height="44"
+              loading="lazy"
+            />
+          </a>
+        </footer>
       </div>
     </div>
   );

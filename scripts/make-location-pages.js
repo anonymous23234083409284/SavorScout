@@ -267,7 +267,13 @@ const today = new Date().toISOString().slice(0, 10);
 const urls = [
   { loc: `${ORIGIN}/`, pri: "1.0", freq: "weekly" },
   { loc: `${ORIGIN}/eat/`, pri: "0.9", freq: "weekly" },
-  { loc: `${ORIGIN}/?quiz=1`, pri: "0.6", freq: "monthly" },
+  /* /?quiz=1 was listed here and should not have been. It is the homepage with
+     a query string, so it serves the homepage and declares the homepage as its
+     canonical — which is exactly what Search Console flags as "Alternate page
+     with proper canonical tag". Submitting a URL that points its canonical
+     somewhere else asks Google to index something we have already told it not
+     to. If the quiz ever deserves to rank it needs its own real page, not a
+     parameter on this one. */
   /* Priority tracks population. It is a hint rather than a ranking factor, but
      it is the honest one: bigger cities are where the search volume is, so
      that is the crawl order we would choose ourselves. */

@@ -1020,6 +1020,14 @@ function RoomCard({ card, disabled, vetoUsed, vetoOpen, myName, onYes, onVeto })
   );
 }
 
+/* True on the pages scripts/lib/page.js generates, which stamp a marker meta
+   tag into <head>. Those documents arrive with a title, description and
+   canonical written for one specific query, and the app is a widget on them
+   rather than the page itself — so it must not rewrite the document's identity.
+   Read once at module scope: the tag is in the served HTML and never changes. */
+const STATIC_PAGE = typeof document !== "undefined" &&
+  !!document.querySelector('meta[name="ss-static-page"]');
+
 /* Full document titles per view, not labels appended to a prefix.
 
    "browse" deliberately keeps the exact string from index.html. That is the
@@ -1442,16 +1450,34 @@ function App() {
   const firstViewSent = useRef(false);
   useEffect(() => {
     if (!authChecked) return;
-    const title = VIEW_TITLES[viewKey] || SEO_TITLE;
-    document.title = title;
+    /* On a generated landing page — /eat/*, /food/*, /what-to-eat/*, /diet/*,
+       /campus/*, /type/* — the document already carries a title written for the
+       query that page exists to answer, and the app must not touch it.
+
+       This effect used to overwrite it unconditionally. Because Google indexes
+       the RENDERED page rather than the served HTML, that meant all 1,700-odd
+       static pages were being submitted to the index under the homepage's
+       title: one title, seventeen hundred URLs, which is indistinguishable from
+       seventeen hundred copies of the homepage. Found by loading one of them in
+       a browser and reading document.title back, which is the only place the
+       bug is visible — the served HTML is correct.
+
+       GA still gets a page_view; it just reports the page's own title. */
+    const title = STATIC_PAGE ? document.title : (VIEW_TITLES[viewKey] || SEO_TITLE);
+    if (!STATIC_PAGE) document.title = title;
     if (!firstViewSent.current) { firstViewSent.current = true; return; }
     if (typeof window.gtag !== "function") return;
     window.gtag("event", "page_view", {
       page_title: title,
-      /* Synthetic paths. The URL genuinely never changes, so these exist to
-         give the reports something to separate the views by. */
-      page_location: `${window.location.origin}/${viewKey}`,
-      page_path: `/${viewKey}`,
+      /* Synthetic paths, because on the app itself the URL never changes and
+         the reports need something to separate the views by. On a generated
+         landing page the URL is real and specific, so it is reported as-is —
+         otherwise every /what-to-eat/* visit would land in the reports as
+         "/browse" and the whole point of building those pages would be
+         invisible in the numbers. */
+      page_location: STATIC_PAGE ? window.location.href
+        : `${window.location.origin}/${viewKey}`,
+      page_path: STATIC_PAGE ? window.location.pathname : `/${viewKey}`,
     });
   }, [viewKey, authChecked]);
 
@@ -2310,7 +2336,14 @@ function App() {
           <main className="page page--wide">
             <div className="hero-search">
               <p className="hero-kicker">Say what you're craving</p>
-              <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>
+              {/* A generated landing page already has an <h1> naming the thing
+                  it is about. The app's hero is a search widget on that page,
+                  not its subject, so it steps down to an <h2> and leaves the
+                  page's own heading as the single h1. Styling is unchanged —
+                  .hero-title carries it either way. */}
+              {STATIC_PAGE
+                ? <h2 className="hero-title">Skip the scroll.<em>Get the one.</em></h2>
+                : <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>}
 
               <div className="searchbar">
                 <input

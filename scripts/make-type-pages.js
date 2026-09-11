@@ -21,13 +21,16 @@
 const fs = require("fs");
 const path = require("path");
 
-const BUILD = path.join(__dirname, "..", "build");
-const ORIGIN = "https://www.savorscout.net";
+const {
+  BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie,
+} = require("./lib/page");
+
+const WHO = "make-type-pages";
 const TYPES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "personalities.json"), "utf8"));
 
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const slugOf = (name) => name.toLowerCase().replace(/^the /, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
+const HUB = { name: "Food personality types", url: `${ORIGIN}/type/` };
 
 /* Mirrors the prop shapes in personalities.jsx. Kept as strings because this
    runs in plain Node with no JSX toolchain — the shapes are simple enough that
@@ -87,7 +90,9 @@ function page(shell, t, all) {
     .map((o) => `<li><a href="/type/${slugOf(o.name)}">${esc(o.name)}</a> — ${esc(o.tagline)}</li>`)
     .join("\n        ");
 
-  const body = `
+  const trail = [HOME, HUB, { name: t.name, url }];
+
+  const body = `      ${crumbHtml(trail)}
       <h1>${esc(t.name)}</h1>
       ${characterSvg(t)}
       <p><strong>${esc(t.tagline)}</strong></p>
@@ -108,14 +113,23 @@ function page(shell, t, all) {
         ${esc((all.find((o) => o.id !== t.id) || t).name)} searching the same words in the
         same town get different restaurants back.
       </p>
-      <p><a href="/?quiz=1">Take the taste quiz &rarr;</a></p>
+      <p><a class="cta" href="/?quiz=1">Take the taste quiz &rarr;</a></p>
 
       <h2>The other types</h2>
       <ul>
         ${others}
       </ul>
-      <p><a href="/type/">All food personality types</a> &middot; <a href="/">Savor Scout home</a></p>
-  `;
+
+      <h2>Guides</h2>
+      <ul>
+        <li><a href="/what-to-eat/">What to eat when&hellip;</a> — picking a restaurant by
+            situation rather than by cuisine.</li>
+        <li><a href="/food/">Food guides</a> — what separates a good version of a dish from
+            an average one.</li>
+        <li><a href="/eat/">Cities</a> &middot; <a href="/campus/">Campuses</a></li>
+      </ul>
+      <hr>
+      <p><a href="/type/">All food personality types</a> &middot; <a href="/">Savor Scout home</a></p>`;
 
   const ld = JSON.stringify({
     "@context": "https://schema.org",
@@ -126,43 +140,13 @@ function page(shell, t, all) {
     author: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     publisher: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     mainEntityOfPage: url,
+    breadcrumb: breadcrumb(trail),
   });
 
-  return { slug, url, title, html: render(shell, { title, desc, url, body, ld }) };
+  return { slug, url, title, html: render(shell, { title, desc, url, body, ld, who: WHO }) };
 }
 
-function render(shell, { title, desc, url, body, ld }) {
-  let html = shell;
-  const swaps = [
-    [/<title>[^<]*<\/title>/i, `<title>${esc(title)}</title>`],
-    [/(<meta name="description" content=")[^"]*(")/i, `$1${esc(desc)}$2`],
-    [/(<meta property="og:title" content=")[^"]*(")/i, `$1${esc(title)}$2`],
-    [/(<meta property="og:description" content=")[^"]*(")/i, `$1${esc(desc)}$2`],
-    [/(<meta property="og:url" content=")[^"]*(")/i, `$1${url}$2`],
-    [/(<meta name="twitter:title" content=")[^"]*(")/i, `$1${esc(title)}$2`],
-    [/(<meta name="twitter:description" content=")[^"]*(")/i, `$1${esc(desc)}$2`],
-    [/(<link rel="canonical" href=")[^"]*(")/i, `$1${url}$2`],
-  ];
-  const missed = [];
-  for (const [re, to] of swaps) {
-    if (!re.test(html)) { missed.push(String(re)); continue; }
-    html = html.replace(re, to);
-  }
-  if (missed.length) {
-    console.error("make-type-pages: tags missing from index.html:");
-    missed.forEach((m) => console.error("  " + m));
-    process.exit(1);
-  }
-  html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, `<noscript>${body}</noscript>`);
-  return html.replace("</head>", `<script type="application/ld+json">${ld}</script></head>`);
-}
-
-const src = path.join(BUILD, "index.html");
-if (!fs.existsSync(src)) {
-  console.error("make-type-pages: build/index.html missing — did the build run?");
-  process.exit(1);
-}
-const shell = fs.readFileSync(src, "utf8");
+const shell = shellOrDie(WHO);
 const all = Object.values(TYPES);
 const outDir = path.join(BUILD, "type");
 fs.mkdirSync(outDir, { recursive: true });
@@ -173,42 +157,42 @@ const made = all.map((t) => {
   return p;
 });
 
-const indexBody = `
+const hubTrail = [HOME, HUB];
+const indexBody = `      ${crumbHtml(hubTrail)}
       <h1>Food personality types</h1>
       <p>
         Eight ways of eating, and the quiz that tells you which one is yours. Five questions
         a day for six days, about a minute each — then your type, and an app that starts
         recommending accordingly.
       </p>
-      <p><a href="/?quiz=1">Take the taste quiz &rarr;</a></p>
+      <p><a class="cta" href="/?quiz=1">Take the taste quiz &rarr;</a></p>
       <ul>
         ${all.map((t) => `<li><a href="/type/${slugOf(t.name)}">${esc(t.name)}</a> — ${esc(t.tagline)} ${esc(t.blurb.slice(0, 110))}…</li>`).join("\n        ")}
       </ul>
-      <p><a href="/">Savor Scout home</a></p>
-`;
+      <hr>
+      <p><a href="/what-to-eat/">What to eat when&hellip;</a> &middot;
+         <a href="/food/">Food guides</a> &middot;
+         <a href="/eat/">Cities</a> &middot;
+         <a href="/">Savor Scout home</a></p>`;
 fs.writeFileSync(path.join(outDir, "index.html"), render(shell, {
   title: "Food Personality Types — What Kind of Eater Are You? | Savor Scout",
   desc: "Eight food personality types, and a free 7-day quiz that tells you which one you are. Your answers change what Savor Scout recommends.",
   url: `${ORIGIN}/type/`,
   body: indexBody,
+  who: WHO,
   ld: JSON.stringify({
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Food personality types",
     url: `${ORIGIN}/type/`,
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
+    breadcrumb: breadcrumb(hubTrail),
   }),
 }));
 
-/* Appended to the sitemap the city script wrote, rather than replacing it —
-   these two generators must not clobber each other's URLs. */
-const sitemapPath = path.join(BUILD, "sitemap.xml");
-const today = new Date().toISOString().slice(0, 10);
-const extra = [{ loc: `${ORIGIN}/type/`, pri: "0.9" }, ...made.map((m) => ({ loc: m.url, pri: "0.8" }))]
-  .map((u) => `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n` +
-              `    <changefreq>monthly</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`).join("\n");
-let xml = fs.readFileSync(sitemapPath, "utf8");
-xml = xml.replace("</urlset>", extra + "\n</urlset>");
-fs.writeFileSync(sitemapPath, xml);
+emit("types", [
+  { loc: `${ORIGIN}/type/`, pri: "0.9", freq: "weekly" },
+  ...made.map((m) => ({ loc: m.url, pri: "0.8", freq: "monthly" })),
+]);
 
 console.log(`make-type-pages: ${made.length} type pages + index (${made.map((m) => m.slug).join(", ")})`);

@@ -34,19 +34,29 @@
 const fs = require("fs");
 const path = require("path");
 
-const BUILD = path.join(__dirname, "..", "build");
-const ORIGIN = "https://www.savorscout.net";
+const {
+  BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie, fitTitle,
+} = require("./lib/page");
+
+const WHO = "make-location-pages";
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 
+/* Each craving now has a real page behind it at /food/<slug>. They used to link
+   to `/?near=…&craving=…`, which is the homepage with a query string — a URL
+   that declares the homepage as its canonical, so a thousand pages were
+   spending their internal links on something that could never rank. The slug is
+   the destination; the label is what a person searching would actually type. */
 const CRAVINGS = [
-  "tacos", "pizza", "sushi", "burgers", "ramen", "wings", "chinese food",
-  "italian food", "thai food", "mexican food", "bbq", "seafood", "brunch",
-  "indian food", "sandwiches", "noodles",
+  ["tacos", "tacos"], ["pizza", "pizza"], ["sushi", "sushi"], ["burgers", "burgers"],
+  ["ramen", "ramen"], ["wings", "wings"], ["chinese-food", "chinese food"],
+  ["italian-food", "italian food"], ["thai-food", "thai food"], ["mexican-food", "mexican food"],
+  ["bbq", "barbecue"], ["seafood", "seafood"], ["brunch", "brunch"],
+  ["indian-food", "indian food"], ["sandwiches", "sandwiches"], ["noodles", "noodles"],
 ];
 
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const fmt = (n) => n.toLocaleString("en-US");
+const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
+const HUB = { name: "Cities", url: `${ORIGIN}/eat/` };
 
 /* Nearest neighbours by great-circle distance. Equirectangular is plenty here:
    we only need a correct ORDER over a few hundred miles, not a precise figure,
@@ -101,29 +111,38 @@ function page(shell, city) {
   const near = nearest(city);
   const copy = sizeCopy(city);
 
-  const title = `Where to Eat in ${place} — One Pick, Not a List | Savor Scout`;
+  const title = fitTitle([
+    `Where to Eat in ${place} — One Pick, Not a List | Savor Scout`,
+    `Where to Eat in ${place} — One Pick, Not a List`,
+    `Where to Eat in ${place} | Savor Scout`,
+    `Where to Eat in ${place}`,
+  ]);
   const desc = `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${place} ` +
     `based on what you're craving and shows why it chose it. Free, no app, no signup.`;
   const url = `${ORIGIN}/eat/${slug}`;
   const app = `/?near=${encodeURIComponent(place)}`;
 
+  const trail = [HOME, HUB, { name: place, url }];
+
   const cravingLinks = CRAVINGS
-    .map((k) => `<li><a href="${app}&craving=${encodeURIComponent(k)}">${esc(k)} in ${esc(name)}</a></li>`)
+    .map(([slug, label]) =>
+      `<li><a href="${app}&craving=${encodeURIComponent(label)}">${esc(label)} in ${esc(name)}</a>` +
+      ` &middot; <a href="/food/${slug}">how to find good ${esc(label)}</a></li>`)
     .join("\n        ");
   const nearLinks = near
     .map((n) => `<li><a href="/eat/${n.s}">${esc(n.c)}, ${esc(n.r)}</a> — about ${n.miles} miles away</li>`)
     .join("\n        ");
 
-  const body = `
+  const body = `      ${crumbHtml(trail)}
       <h1>Where to eat in ${esc(place)}</h1>
-      <p>${esc(copy.problem)}</p>
+      <p class="lede">${esc(copy.problem)}</p>
       <p>
         Savor Scout picks <strong>one</strong> restaurant in ${esc(name)} and tells you why it
         picked it. Say what you're craving and it reads menus and reviews for that specific
         dish, rather than sorting places by overall star rating. Free, runs in the browser,
         and one search needs no account.
       </p>
-      <p><a href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
+      <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
 
       <h2>Eating out in ${esc(name)}</h2>
       <p>
@@ -158,8 +177,19 @@ function page(shell, city) {
         beat, and the evidence behind the pick. The underlying place data comes from the
         same public sources, so the difference is the selection, not the data.
       </p>
-      <p><a href="/eat/">All cities</a> &middot; <a href="/">Savor Scout home</a></p>
-  `;
+
+      <h2>Guides</h2>
+      <ul>
+        <li><a href="/what-to-eat/">What to eat when&hellip;</a> — 30 guides by situation, from
+            a first date to a hangover to a group of twelve.</li>
+        <li><a href="/food/">Food guides</a> — what separates a good taco, ramen or pizza from
+            an average one.</li>
+        <li><a href="/diet/">Eating out with a restriction</a> — allergies, halal, kosher, vegan
+            and more.</li>
+        <li><a href="/campus/">Near a campus?</a> — food around 637 US universities.</li>
+      </ul>
+      <hr>
+      <p><a href="/eat/">All cities</a> &middot; <a href="/">Savor Scout home</a></p>`;
 
   const ld = JSON.stringify({
     "@context": "https://schema.org",
@@ -173,53 +203,15 @@ function page(shell, city) {
       geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lng },
     },
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Savor Scout", item: `${ORIGIN}/` },
-        { "@type": "ListItem", position: 2, name: "Cities", item: `${ORIGIN}/eat/` },
-        { "@type": "ListItem", position: 3, name: place, item: url },
-      ],
-    },
+    breadcrumb: breadcrumb(trail),
   });
 
-  return render(shell, { title, desc, url, body, ld });
-}
-
-function render(shell, { title, desc, url, body, ld }) {
-  let html = shell;
-  const swaps = [
-    [/<title>[^<]*<\/title>/i, `<title>${esc(title)}</title>`],
-    [/(<meta name="description" content=")[^"]*(")/i, `$1${esc(desc)}$2`],
-    [/(<meta property="og:title" content=")[^"]*(")/i, `$1${esc(title)}$2`],
-    [/(<meta property="og:description" content=")[^"]*(")/i, `$1${esc(desc)}$2`],
-    [/(<meta property="og:url" content=")[^"]*(")/i, `$1${url}$2`],
-    [/(<meta name="twitter:title" content=")[^"]*(")/i, `$1${esc(title)}$2`],
-    [/(<meta name="twitter:description" content=")[^"]*(")/i, `$1${esc(desc)}$2`],
-    [/(<link rel="canonical" href=")[^"]*(")/i, `$1${url}$2`],
-  ];
-  const missed = [];
-  for (const [re, to] of swaps) {
-    if (!re.test(html)) { missed.push(String(re)); continue; }
-    html = html.replace(re, to);
-  }
-  if (missed.length) {
-    console.error("make-location-pages: tags missing from index.html:");
-    missed.forEach((m) => console.error("  " + m));
-    process.exit(1);
-  }
-  html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, `<noscript>${body}</noscript>`);
-  return html.replace("</head>", `<script type="application/ld+json">${ld}</script></head>`);
+  return render(shell, { title, desc, url, body, ld, who: WHO });
 }
 
 /* ---- write ---------------------------------------------------------------- */
 
-const src = path.join(BUILD, "index.html");
-if (!fs.existsSync(src)) {
-  console.error("make-location-pages: build/index.html missing — did the build run?");
-  process.exit(1);
-}
-const shell = fs.readFileSync(src, "utf8");
+const shell = shellOrDie(WHO);
 const outDir = path.join(BUILD, "eat");
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -238,42 +230,45 @@ const stateBlocks = Object.keys(byState).sort().map((st) => {
   return `      <h2>${esc(st)}</h2>\n      <ul>\n        ${list}\n      </ul>`;
 }).join("\n");
 
-const indexBody = `
+const hubTrail = [HOME, HUB];
+const indexBody = `      ${crumbHtml(hubTrail)}
       <h1>Where to eat, city by city</h1>
-      <p>
+      <p class="lede">
         Savor Scout picks one restaurant instead of handing you a list of thirty. Pick your
         city below and it opens with your location already set — say what you're craving and
         it finds the single best match, then shows why it chose it.
       </p>
       <p>${CITIES.length} cities across ${Object.keys(byState).length} states.</p>
+
+      <h2>Or start somewhere else</h2>
+      <ul>
+        <li><a href="/what-to-eat/">What to eat when&hellip;</a> — guides by situation rather
+            than by cuisine.</li>
+        <li><a href="/food/">Food guides</a> — how to find the good version of a dish.</li>
+        <li><a href="/diet/">Eating out with a restriction</a></li>
+        <li><a href="/campus/">Near a campus</a></li>
+      </ul>
 ${stateBlocks}
-      <p><a href="/">Savor Scout home</a></p>
-`;
+      <hr>
+      <p><a href="/">Savor Scout home</a></p>`;
 fs.writeFileSync(path.join(outDir, "index.html"), render(shell, {
   title: `Where to Eat — ${CITIES.length} US Cities | Savor Scout`,
   desc: `Can't decide where to eat? Savor Scout picks one restaurant for you in ${CITIES.length} US cities. Free, no app, no signup.`,
   url: `${ORIGIN}/eat/`,
   body: indexBody,
+  who: WHO,
   ld: JSON.stringify({
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: `Where to eat — ${CITIES.length} US cities`,
     url: `${ORIGIN}/eat/`,
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
+    breadcrumb: breadcrumb(hubTrail),
   }),
 }));
 
-const today = new Date().toISOString().slice(0, 10);
 const urls = [
-  { loc: `${ORIGIN}/`, pri: "1.0", freq: "weekly" },
   { loc: `${ORIGIN}/eat/`, pri: "0.9", freq: "weekly" },
-  /* /?quiz=1 was listed here and should not have been. It is the homepage with
-     a query string, so it serves the homepage and declares the homepage as its
-     canonical — which is exactly what Search Console flags as "Alternate page
-     with proper canonical tag". Submitting a URL that points its canonical
-     somewhere else asks Google to index something we have already told it not
-     to. If the quiz ever deserves to rank it needs its own real page, not a
-     parameter on this one. */
   /* Priority tracks population. It is a hint rather than a ranking factor, but
      it is the honest one: bigger cities are where the search volume is, so
      that is the crawl order we would choose ourselves. */
@@ -283,11 +278,10 @@ const urls = [
     freq: "weekly",
   })),
 ];
-fs.writeFileSync(path.join(BUILD, "sitemap.xml"),
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  urls.map((u) =>
-    `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n` +
-    `    <changefreq>${u.freq}</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`
-  ).join("\n") + `\n</urlset>\n`);
 
-console.log(`make-location-pages: ${CITIES.length} city pages + index, sitemap ${urls.length} urls`);
+/* The homepage used to be added here. It now belongs to make-sitemap.js, which
+   is the only place that knows about URLs no generator owns — listing it here
+   as well would make it a duplicate the moment a second generator did the same. */
+emit("cities", urls);
+
+console.log(`make-location-pages: ${CITIES.length} city pages + index, ${urls.length} urls`);

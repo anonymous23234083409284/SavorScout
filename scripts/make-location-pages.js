@@ -266,10 +266,20 @@ function page(shell, city) {
   const stateNode = { name: STATES[region] || region, url: `${ORIGIN}/eat/${region.toLowerCase()}` };
   const trail = [HOME, HUB, stateNode, { name: place, url }];
 
+  /* One link per craving, pointing at the /food/ guide — a real indexable page
+     that itself opens the app.
+
+     This used to emit TWO links, the first being `/?near=…&craving=…`: the
+     homepage with a query string, which correctly declares the homepage as its
+     canonical and so can never be indexed on its own. Sixteen of those per page
+     across a thousand pages was 16,000 crawlable dead ends, and Search Console
+     had already found 1,070 of them sitting under "Alternate page with proper
+     canonical tag". Not an error — but every one of those crawls was spent on a
+     URL that resolves to the homepage instead of on a page that could rank. */
   const cravingLinks = CRAVINGS
     .map(([slug, label]) =>
-      `<li><a href="${app}&craving=${encodeURIComponent(label)}">${esc(label)} in ${esc(name)}</a>` +
-      ` &middot; <a href="/food/${slug}">how to find good ${esc(label)}</a></li>`)
+      `<li><a href="/food/${slug}">${esc(label)} in ${esc(name)}</a> — what separates` +
+      ` a good one from an average one</li>`)
     .join("\n        ");
   const nearLinks = near
     .map((n) => `<li><a href="/eat/${n.s}">${esc(n.c)}, ${esc(n.r)}</a> — about ${n.miles} miles away</li>`)

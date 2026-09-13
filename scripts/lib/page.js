@@ -119,6 +119,26 @@ function render(shell, { title, desc, url, body, ld, who }) {
   html = html.replace('<div id="root"></div>',
     `<main class="ss-static">\n${body}\n</main>\n<div id="root"></div>`);
 
+  /* Every link into the app is the homepage with a query string — /?near=…,
+     /?craving=…, /?quiz=1 — so each one correctly declares the homepage as its
+     canonical and can never be indexed in its own right.
+
+     Google still has to crawl one to learn that. Search Console showed 1,070 of
+     them sitting under "Alternate page with proper canonical tag", which is not
+     an error — it is Google correctly respecting the canonical — but every one
+     of those crawls was spent on a URL that resolves to the homepage instead of
+     on a page that could actually rank. There were 21,469 such links in the
+     build, so the supply was effectively unlimited.
+
+     rel="nofollow" is applied here rather than at each call site so a link added
+     later cannot miss it. It changes nothing for a reader: the link still works,
+     still opens the app, still pre-fills the search. */
+  html = html.replace(
+    /<a((?:\s+[a-zA-Z-]+="[^"]*")*)\s+href="(\/\?[^"]*)"/g,
+    (match, attrs, href) =>
+      /\brel=/.test(attrs) ? match : `<a${attrs} rel="nofollow" href="${href}"`
+  );
+
   /* Tells App.js this document is a generated page so it leaves document.title
      alone. Without it the app's view-title effect overwrites the <title> on
      mount, and since Google indexes the RENDERED page, every one of these would

@@ -1,42 +1,125 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
-    { "source": "/eat/:slug/", "destination": "/eat/:slug", "permanent": true },
-    { "source": "/type/:slug/", "destination": "/type/:slug", "permanent": true },
-    { "source": "/what-to-eat/:slug/", "destination": "/what-to-eat/:slug", "permanent": true },
-    { "source": "/food/:slug/", "destination": "/food/:slug", "permanent": true },
-    { "source": "/diet/:slug/", "destination": "/diet/:slug", "permanent": true },
-    { "source": "/campus/:slug/", "destination": "/campus/:slug", "permanent": true }
+    {
+      "source": "/eat/:slug/",
+      "destination": "/eat/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/type/:slug/",
+      "destination": "/type/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/what-to-eat/:slug/",
+      "destination": "/what-to-eat/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/food/:slug/",
+      "destination": "/food/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/diet/:slug/",
+      "destination": "/diet/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/campus/:slug/",
+      "destination": "/campus/:slug",
+      "permanent": true
+    },
+    {
+      "source": "/about/:slug/",
+      "destination": "/about/:slug",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/r/:code", "destination": "/room.html" },
-
-    { "source": "/eat", "destination": "/eat/index.html" },
-    { "source": "/eat/", "destination": "/eat/index.html" },
-    { "source": "/eat/:slug", "destination": "/eat/:slug.html" },
-
-    { "source": "/type", "destination": "/type/index.html" },
-    { "source": "/type/", "destination": "/type/index.html" },
-    { "source": "/type/:slug", "destination": "/type/:slug.html" },
-
-    { "source": "/what-to-eat", "destination": "/what-to-eat/index.html" },
-    { "source": "/what-to-eat/", "destination": "/what-to-eat/index.html" },
-    { "source": "/what-to-eat/:slug", "destination": "/what-to-eat/:slug.html" },
-
-    { "source": "/food", "destination": "/food/index.html" },
-    { "source": "/food/", "destination": "/food/index.html" },
-    { "source": "/food/:slug", "destination": "/food/:slug.html" },
-
-    { "source": "/diet", "destination": "/diet/index.html" },
-    { "source": "/diet/", "destination": "/diet/index.html" },
-    { "source": "/diet/:slug", "destination": "/diet/:slug.html" },
-
-    { "source": "/campus", "destination": "/campus/index.html" },
-    { "source": "/campus/", "destination": "/campus/index.html" },
-    { "source": "/campus/:slug", "destination": "/campus/:slug.html" },
-
     {
-      "source": "/((?!static/|eat/|type/|what-to-eat/|food/|diet/|campus/|.*\\.[a-zA-Z0-9]+$).*)",
+      "source": "/r/:code",
+      "destination": "/room.html"
+    },
+    {
+      "source": "/eat",
+      "destination": "/eat/index.html"
+    },
+    {
+      "source": "/eat/",
+      "destination": "/eat/index.html"
+    },
+    {
+      "source": "/eat/:slug",
+      "destination": "/eat/:slug.html"
+    },
+    {
+      "source": "/type",
+      "destination": "/type/index.html"
+    },
+    {
+      "source": "/type/",
+      "destination": "/type/index.html"
+    },
+    {
+      "source": "/type/:slug",
+      "destination": "/type/:slug.html"
+    },
+    {
+      "source": "/what-to-eat",
+      "destination": "/what-to-eat/index.html"
+    },
+    {
+      "source": "/what-to-eat/",
+      "destination": "/what-to-eat/index.html"
+    },
+    {
+      "source": "/what-to-eat/:slug",
+      "destination": "/what-to-eat/:slug.html"
+    },
+    {
+      "source": "/food",
+      "destination": "/food/index.html"
+    },
+    {
+      "source": "/food/",
+      "destination": "/food/index.html"
+    },
+    {
+      "source": "/food/:slug",
+      "destination": "/food/:slug.html"
+    },
+    {
+      "source": "/diet",
+      "destination": "/diet/index.html"
+    },
+    {
+      "source": "/diet/",
+      "destination": "/diet/index.html"
+    },
+    {
+      "source": "/diet/:slug",
+      "destination": "/diet/:slug.html"
+    },
+    {
+      "source": "/campus",
+      "destination": "/campus/index.html"
+    },
+    {
+      "source": "/campus/",
+      "destination": "/campus/index.html"
+    },
+    {
+      "source": "/campus/:slug",
+      "destination": "/campus/:slug.html"
+    },
+    {
+      "source": "/about/:slug",
+      "destination": "/about/:slug.html"
+    },
+    {
+      "source": "/((?!static/|eat/|type/|what-to-eat/|food/|diet/|campus/|about/|.*\\.[a-zA-Z0-9]+$).*)",
       "destination": "/index.html"
     }
   ]

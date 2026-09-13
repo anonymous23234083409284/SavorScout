@@ -35,24 +35,15 @@ const path = require("path");
 const {
   BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie, fitTitle,
 } = require("./lib/page");
+const STATES = require("./data/states");
 
 const WHO = "make-campus-pages";
 
-/* Institutions with no single campus to eat near.
- *
- * IPEDS lists online divisions and multi-campus districts as institutions in
- * their own right, with a mailing address attached. That address is an
- * administrative office, so "where to eat near Penn State World Campus" would
- * be a page about the food near a building nobody studies in — and "near Austin
- * Community College District" points at a headquarters rather than at any of
- * the campuses students actually attend. Both are pages that would be wrong
- * rather than merely thin, which is worse. Excluded by name because IPEDS has
- * no flag that separates them.
- */
-const NO_CAMPUS = /digital immersion|\bonline\b|global campus|world campus|\bdistrict\b|system office|\bvirtual\b/i;
+/* The exclusion rule and the filtered list live in lib/campuses.js, because the
+   city generator needs to know which states have campuses too — see the comment
+   there. */
+const { CAMPUSES, BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
-const CAMPUSES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "campuses.json"), "utf8"))
-  .filter((c) => !NO_CAMPUS.test(c.n));
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 
 const shell = shellOrDie(WHO);
@@ -196,7 +187,8 @@ function page(c) {
     `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
     `what you're craving instead of handing you a list. Free, no app, no signup.`;
 
-  const trail = [HOME, HUB, { name: c.n, url }];
+  const stateNode = { name: STATES[c.r] || c.r, url: `${ORIGIN}/campus/${c.r.toLowerCase()}` };
+  const trail = [HOME, HUB, stateNode, { name: c.n, url }];
   const appLink = `/?near=${encodeURIComponent(place)}`;
 
   /* Drawn from the setting rather than a fixed list, plus one that follows from
@@ -314,19 +306,102 @@ CAMPUSES.forEach((c) => {
   urls.push({ loc: p.url, pri: c.sz === 5 ? "0.8" : "0.7", freq: "monthly" });
 });
 
-const byState = {};
-CAMPUSES.forEach((c) => { (byState[c.r] = byState[c.r] || []).push(c); });
-const stateBlocks = Object.keys(byState).sort().map((st) => {
-  const li = byState[st].sort((a, b) => a.n.localeCompare(b.n))
-    .map((c) => `        <li><a href="/campus/${c.s}">${esc(c.n)}</a> — ${esc(c.c)}</li>`).join("\n");
-  return `      <h2>${esc(st)}</h2>\n      <ul>\n${li}\n      </ul>`;
-}).join("\n");
+/* ---- state hubs -------------------------------------------------------------
+   Same reasoning as /eat/: a single index listing all 627 campuses was the only
+   crawl path into every one of them, and a 627-link page splits its authority
+   627 ways. /campus/ now lists states, and each state page lists its campuses.
+   Two clicks from the homepage either way, but the links concentrate. */
+const byState = CAMPUS_BY_STATE;
+const stateCodes = Object.keys(byState).sort();
+const CITY_STATES = new Set(CITIES.map((c) => c.r));
+
+function stateHub(st) {
+  const list = byState[st];
+  const name = STATES[st] || st;
+  const url = `${ORIGIN}/campus/${st.toLowerCase()}`;
+  const trail = [HOME, HUB, { name, url }];
+
+  const big = list.filter((c) => c.sz === 5).length;
+  const settings = list.reduce((m, c) => {
+    const g = setting(c.lc); m[g] = (m[g] || 0) + 1; return m;
+  }, {});
+  const shape = Object.entries(settings).sort((a, b) => b[1] - a[1])
+    .map(([k, n]) => `${n} ${k === "city" ? "in cities" : k === "suburb" ? "in suburbs"
+      : k === "town" ? "in college towns" : "rurally situated"}`).join(", ");
+
+  const rows = list.map((c) =>
+    `        <li><a href="/campus/${c.s}">${esc(c.n)}</a> — ${esc(c.c)}, ` +
+    `${esc(SIZE[c.sz].label)}</li>`).join("\n");
+
+  const body = `      ${crumbHtml(trail)}
+      <h1>Where to eat near ${esc(name)} campuses</h1>
+      <p class="lede">
+        ${list.length} ${esc(name)} ${list.length === 1 ? "campus" : "campuses"} of 5,000 students
+        and up${big ? `, ${big} of them with 20,000 or more` : ""}. Pick yours and Savor Scout opens
+        with the location already set.
+      </p>
+      <p><a class="cta" href="/">Find somewhere to eat &rarr;</a></p>
+
+      <h2>What eating near these campuses is like</h2>
+      <p>
+        Of the ${list.length} here, ${shape}. That matters more than it sounds: a campus in a city
+        has too many options and needs a filter, while a rural one has too few and needs a drive.
+        Each page below starts from whichever problem that campus actually has.
+      </p>
+
+      <h2>${esc(name)} campuses</h2>
+      <ul>
+${rows}
+      </ul>
+
+      <h2>Guides worth reading</h2>
+      <ul>
+        <li><a href="/what-to-eat/finals-week">What to eat during finals week</a></li>
+        <li><a href="/what-to-eat/on-a-budget">Where to eat when you're broke</a></li>
+        <li><a href="/what-to-eat/late-night">Where to eat late at night</a></li>
+${CITY_STATES.has(st) ? `        <li><a href="/eat/${st.toLowerCase()}">${esc(name)} cities</a></li>
+` : ""}      </ul>
+      <hr>
+      <p><a href="/campus/">All states</a> &middot; <a href="/">Savor Scout home</a></p>`;
+
+  return {
+    url,
+    html: render(shell, {
+      title: fitTitle([
+        `Where to Eat Near ${name} Campuses — ${list.length} Universities | Savor Scout`,
+        `Where to Eat Near ${name} Campuses — ${list.length} Universities`,
+        `Where to Eat Near ${name} Campuses`,
+      ]),
+      desc: `Food near ${list.length} ${name} university campuses. Savor Scout picks one restaurant ` +
+        `based on what you're craving instead of handing you a list.`,
+      url, body, who: WHO,
+      ld: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: `Where to eat near ${name} campuses`,
+        url,
+        isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
+        breadcrumb: breadcrumb(trail),
+      }),
+    }),
+  };
+}
+
+stateCodes.forEach((st) => {
+  const h = stateHub(st);
+  fs.writeFileSync(path.join(outDir, `${st.toLowerCase()}.html`), h.html);
+  urls.push({ loc: h.url, pri: "0.8", freq: "weekly" });
+});
 
 const hubTrail = [HOME, HUB];
+const stateRows = stateCodes.map((st) =>
+  `        <li><a href="/campus/${st.toLowerCase()}">${esc(STATES[st] || st)}</a> — ` +
+  `${byState[st].length} ${byState[st].length === 1 ? "campus" : "campuses"}</li>`).join("\n");
+
 const hubBody = `      ${crumbHtml(hubTrail)}
       <h1>Where to eat near campus</h1>
       <p class="lede">
-        ${CAMPUSES.length} US campuses of 5,000 students and up, across ${Object.keys(byState).length}
+        ${CAMPUSES.length} US campuses of 5,000 students and up, across ${stateCodes.length}
         states. Pick yours and Savor Scout opens with the location already set — say what you are
         craving and it finds one place, then shows why it chose it.
       </p>
@@ -340,7 +415,11 @@ const hubBody = `      ${crumbHtml(hubTrail)}
         Campus data from IPEDS, the US Department of Education's institutional survey (public
         domain). Four-year, degree-granting, public and private not-for-profit institutions.
       </p>
-${stateBlocks}
+
+      <h2>Browse by state</h2>
+      <ul class="cols">
+${stateRows}
+      </ul>
       <hr>
       <p><a href="/eat/">Cities</a> &middot;
          <a href="/what-to-eat/">What to eat when&hellip;</a> &middot;

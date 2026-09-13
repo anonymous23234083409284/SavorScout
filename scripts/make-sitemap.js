@@ -15,7 +15,7 @@ const fs = require("fs");
 const path = require("path");
 const { BUILD, ORIGIN, MANIFEST_DIR } = require("./lib/page");
 
-const EXPECTED = ["cities", "types", "guides", "campus"];
+const EXPECTED = ["cities", "types", "guides", "campus", "about"];
 
 if (!fs.existsSync(MANIFEST_DIR)) {
   console.error("make-sitemap: build/.sitemap missing — no generator ran?");

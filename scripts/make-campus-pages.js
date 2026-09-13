@@ -44,7 +44,14 @@ const WHO = "make-campus-pages";
    there. */
 const { CAMPUSES, BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
-const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
+/* Only the cities that still have a page. /eat/ was cut from 1,000 templated
+   pages to 50 written ones, so linking to the full dataset would send 3,599
+   internal links through a 301 to somewhere else — and an internal link should
+   point at its final destination, not at a redirect. */
+const METROS = require("./data/metros");
+const ALL_CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
+const KEEP = new Set(METROS.map((m) => m.s));
+const CITIES = ALL_CITIES.filter((c) => KEEP.has(c.s));
 
 const shell = shellOrDie(WHO);
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
@@ -139,16 +146,15 @@ function nearestCities(c, k) {
     .map((x) => ({ ...x.o, miles: Math.max(1, Math.round(Math.sqrt(x.d2) * 69)) }));
 }
 
-/* The nearest city over 150,000 people, with a real distance. On a rural or
-   town campus this is the single most useful fact on the page — it is the
-   answer to "where do we drive when nobody wants the same four places again" —
-   and it is different for almost every campus, which is exactly what 637 pages
-   need to be worth having. */
+/* The nearest major city, with a real distance. On a rural or town campus this
+   is the single most useful fact on the page — the answer to "where do we drive
+   when nobody wants the same four places again" — and it differs for almost
+   every campus, which is what 627 pages need to be worth having. Every city in
+   the list is now a top-50 metro, so the population filter is gone. */
 function nearestBigCity(c) {
   const cos = Math.cos((c.lat * Math.PI) / 180);
   let best = null;
   for (const o of CITIES) {
-    if (o.p < 150000) continue;
     const dx = (o.lng - c.lng) * cos;
     const dy = o.lat - c.lat;
     const d2 = dx * dx + dy * dy;
@@ -359,8 +365,8 @@ ${rows}
         <li><a href="/what-to-eat/finals-week">What to eat during finals week</a></li>
         <li><a href="/what-to-eat/on-a-budget">Where to eat when you're broke</a></li>
         <li><a href="/what-to-eat/late-night">Where to eat late at night</a></li>
-${CITY_STATES.has(st) ? `        <li><a href="/eat/${st.toLowerCase()}">${esc(name)} cities</a></li>
-` : ""}      </ul>
+        <li><a href="/eat/">The 50 biggest US cities, written up</a></li>
+      </ul>
       <hr>
       <p><a href="/campus/">All states</a> &middot; <a href="/">Savor Scout home</a></p>`;
 

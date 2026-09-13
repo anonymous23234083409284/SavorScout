@@ -40,10 +40,13 @@ const sitMap = new Map(SITUATIONS.map((x) => [x.s, x]));
 const dishMap = new Map(DISHES.map((x) => [x.s, x]));
 const dietMap = new Map(DIETS.map((x) => [x.s, x]));
 
-/* Top cities by population, for the "where" grid on every dish page. These link
-   to the city pages rather than to the app so the link graph actually connects
-   the two classes — a dish page is the hub a thousand city pages were missing. */
-const TOP_CITIES = [...CITIES].sort((a, b) => b.p - a.p).slice(0, 60);
+/* The cities that still have a page, for the "where" grid on every dish page.
+   /eat/ was cut from 1,000 templated pages to 50 written ones, so this reads the
+   metro list rather than taking the top 60 of the full dataset — otherwise ten
+   of the links on every dish page would point at a redirect. */
+const METROS = require("./data/metros");
+const KEEP = new Set(METROS.map((m) => m.s));
+const TOP_CITIES = CITIES.filter((c) => KEEP.has(c.s)).sort((a, b) => b.p - a.p);
 
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
 const list = (items) => `<ul>\n${items.map((i) => `        <li>${i}</li>`).join("\n")}\n      </ul>`;
@@ -148,14 +151,13 @@ function dishPage(x) {
 
       <h2>Looking in a particular city?</h2>
       <p>
-        Each of these opens Savor Scout with the location already set, so you can say what
-        you want and it searches from there. It covers ${CITIES.length.toLocaleString("en-US")}
-        US cities in total &mdash; these are simply the largest.
+        Each of these is a written guide to what that city actually does well, with the app
+        opening on the right location.
       </p>
       <ul class="cols">
         ${cityLinks}
       </ul>
-      <p><a href="/eat/">All ${CITIES.length.toLocaleString("en-US")} cities &rarr;</a></p>
+      <p><a href="/eat/">All ${TOP_CITIES.length} cities &rarr;</a></p>
 
       <h2>Related food guides</h2>
       <p>${relDish}</p>
@@ -355,8 +357,7 @@ hub({
     "\n      </ul>",
   extra: `      <h2>Or start from where you are</h2>
       <p>
-        Savor Scout covers ${CITIES.length.toLocaleString("en-US")} US cities. Pick yours and
-        it opens with the location already set.
+        Savor Scout has a written guide to each of the ${TOP_CITIES.length} biggest US cities.
       </p>
       <p><a href="/eat/">Browse cities &rarr;</a></p>`,
 });

@@ -83,14 +83,33 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYT8CPXNXS"></script>
 
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+
+    <!-- Icons, generated from src/assets/logo-flame.png by scripts/make-icons.js.
+
+         These were the Create React App defaults until now, which is what Google
+         was showing beside savorscout.net in search results: the React atom.
+
+         Google takes the icon for a search result from the HOME page's rel=icon,
+         needs it square with a side that is a multiple of 48, and needs it
+         crawlable. favicon.ico stays for clients that request the root path
+         blindly; the explicit 48 and 96 PNGs are the sizes Google documents.
+         Every generated page inherits this head, so all 1,800-odd of them carry
+         the same icon. -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="48x48" href="%PUBLIC_URL%/icon-48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="%PUBLIC_URL%/icon-96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="%PUBLIC_URL%/icon-192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="%PUBLIC_URL%/icon-512.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <!-- Brand dark, matching the icon tile and the app background. This was
+         #000000, a CRA default that is not a colour this product uses. -->
+    <meta name="theme-color" content="#0C0912" />
     <meta
       name="description"
       content="Tell SavorScout what you're hungry for and it comes back with one place worth going — not a list to sift through."
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/

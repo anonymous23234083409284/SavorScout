@@ -176,13 +176,24 @@
          without rendering anything, that this domain IS the entity called
          "Savor Scout". Without it the crawler has to infer the brand from a
          JavaScript-rendered page, which is exactly why third-party mentions
-         currently outrank the site itself for its own name. -->
+         currently outrank the site itself for its own name.
+
+         alternateName carries every spelling somebody who has heard of this
+         product might actually type. Search Console shows 25 weekly impressions
+         for "savors" alone, plus "savor" and "food savour" — some of which is
+         brand demand leaking to the thousands of restaurants using the word.
+         Declaring the variants is how Google learns they name one entity.
+
+         Deliberately NOT listed: "Savors", "Savor" and "Scout" on their own.
+         Those are other businesses' names. Claiming them here would be a false
+         statement about this entity in machine-readable form, which is worse
+         than losing the traffic. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Savor Scout",
-        "alternateName": "SavorScout",
+        "alternateName": ["SavorScout", "Savour Scout", "SavourScout", "savorscout.net"],
         "url": "https://www.savorscout.net/",
         "applicationCategory": "LifestyleApplication",
         "operatingSystem": "Any (web browser)",

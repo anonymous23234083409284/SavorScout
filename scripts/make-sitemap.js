@@ -31,7 +31,24 @@ if (missing.length) {
   process.exit(1);
 }
 
+/* Per-URL lastmod, from scripts/make-lastmod.js. Committed, not generated at
+   build time — see the comment at the top of that file for why.
+
+   Falling back to the build date for an unknown URL is deliberate: a page that
+   has just been added genuinely did change today, and a missing entry means
+   make-lastmod has not been run since it was created. */
+const LASTMOD = (() => {
+  const p = path.join(__dirname, "data", "lastmod.json");
+  if (!fs.existsSync(p)) {
+    console.warn("make-sitemap: no lastmod.json — every URL will carry the build date.");
+    console.warn("  Run `node scripts/make-lastmod.js` after a build and commit the result.");
+    return {};
+  }
+  return JSON.parse(fs.readFileSync(p, "utf8"));
+})();
+
 const today = new Date().toISOString().slice(0, 10);
+const lastmodFor = (loc) => (LASTMOD[loc] && LASTMOD[loc].d) || today;
 
 /* The homepage is the only URL not owned by a generator, so it is added here.
    Note what is NOT here: /?quiz=1. It is the homepage with a query string, so
@@ -67,7 +84,7 @@ if (urls.length > 50000) {
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
   urls.map((u) =>
-    `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n` +
+    `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${lastmodFor(u.loc)}</lastmod>\n` +
     `    <changefreq>${u.freq}</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`
   ).join("\n") + `\n</urlset>\n`;
 

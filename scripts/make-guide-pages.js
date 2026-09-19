@@ -30,7 +30,15 @@ const {
 
 const WHO = "make-guide-pages";
 const SITUATIONS = require("./data/situations");
-const DISHES = require("./data/dishes");
+/* Two files, one list. dishes.js is the original 29; dishes-more.js is the 39
+   added after Search Console showed /food/korean-food out-pulling all 627
+   campus pages combined. Split only so neither file becomes unmanageable to
+   edit — the generator sees one array and nothing downstream knows. */
+const DISHES = [...require("./data/dishes"), ...require("./data/dishes-more")];
+
+/* A slug ending in -food is a cuisine; anything else is a dish or a format.
+   With 68 entries a flat list on the hub is a wall, so they are grouped. */
+const isCuisine = (d) => /-food$/.test(d.s);
 const DIETS = require("./data/diets");
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 
@@ -346,12 +354,12 @@ hub({
   h1: "How to find the good version of anything",
   intro:
     "What makes a taco good has nothing in common with what makes a bowl of ramen good. These are guides to the specific things worth looking for, dish by dish — and to what to order once you are there.",
-  groups: `      <h2>Dishes</h2>\n      <ul>\n` +
-    DISHES.filter((d) => !/-food$/.test(d.s)).map((d) =>
-      `        <li><a href="/food/${d.s}">${esc(d.h1)}</a></li>`).join("\n") +
-    `\n      </ul>\n      <h2>Cuisines</h2>\n      <ul>\n` +
-    DISHES.filter((d) => /-food$/.test(d.s)).map((d) =>
-      `        <li><a href="/food/${d.s}">${esc(d.h1)}</a></li>`).join("\n") +
+  groups: `      <h2>Dishes and formats</h2>\n      <ul class="cols">\n` +
+    DISHES.filter((d) => !isCuisine(d)).slice().sort((a, b) => a.n.localeCompare(b.n)).map((d) =>
+      `        <li><a href="/food/${d.s}">${esc(d.n)}</a></li>`).join("\n") +
+    `\n      </ul>\n      <h2>Cuisines</h2>\n      <ul class="cols">\n` +
+    DISHES.filter(isCuisine).slice().sort((a, b) => a.n.localeCompare(b.n)).map((d) =>
+      `        <li><a href="/food/${d.s}">${esc(d.n)}</a></li>`).join("\n") +
     "\n      </ul>",
   extra: `      <h2>Or start from where you are</h2>
       <p>

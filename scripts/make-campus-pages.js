@@ -174,13 +174,27 @@ function page(c) {
   const sibs = siblings(c);
   const shortName = c.a || c.n;
 
+  /* Led by "Restaurants Near", not "Where to Eat Near".
+     Search Console, 24 September: of the campus queries reaching these pages,
+     "restaurants near X" outnumbers every other phrasing combined, followed by
+     "food near X" and "places to eat near X". The title was answering the
+     phrasing hardly anyone types.
+
+     And the abbreviation goes in when there is one, because a large share of
+     those queries use it — "food near fau", "restaurants near umkc campus",
+     "gvsu restaurants". A title naming only "Florida Atlantic University" has
+     to rely on Google inferring that FAU means the same thing. */
+  const abbr = c.a && c.a !== c.n && /^[A-Z&]{2,6}$/.test(c.a) ? c.a : null;
   const title = fitTitle([
-    `Where to Eat Near ${c.n} — ${place} | Savor Scout`,
-    `Where to Eat Near ${c.n} | Savor Scout`,
-    `Where to Eat Near ${c.n} — ${place}`,
-    `Where to Eat Near ${c.n}`,
-    ...(c.a ? [`Where to Eat Near ${c.a} — ${place} | Savor Scout`,
-               `Where to Eat Near ${c.a} — ${place}`] : []),
+    ...(abbr ? [
+      `Restaurants Near ${abbr} — Where to Eat Near ${c.n} | Savor Scout`,
+      `Restaurants Near ${abbr} (${c.n}) | Savor Scout`,
+      `Restaurants Near ${abbr} — ${c.n}`,
+      `Restaurants Near ${abbr} — ${place} | Savor Scout`,
+    ] : []),
+    `Restaurants Near ${c.n} — ${place} | Savor Scout`,
+    `Restaurants Near ${c.n} | Savor Scout`,
+    `Restaurants Near ${c.n}`,
     `Food Near ${c.n}`,
   ]);
   const desc =
@@ -196,8 +210,14 @@ function page(c) {
      suggest genuinely different searches instead of the same six links. */
   const cravings = [...sc.cravings.slice(0, 5), sz.craving];
 
+  /* Every other name the school goes by, for the facts list. The abbreviation
+     already sits in the title and h1; this puts the longer forms ("Grand Valley
+     State", "Cal State Fullerton") on the page too, as plain text, where a
+     searcher using them can be matched to it. */
+  const otherNames = (c.al || []).filter((s) => s && s !== c.n);
+
   const body = `      ${crumbHtml(trail)}
-      <h1>Where to eat near ${esc(c.n)}</h1>
+      <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
       <p class="lede">${esc(sc.problem(shortName))}</p>
 
       <p>
@@ -211,7 +231,7 @@ function page(c) {
       <h2>The campus</h2>
       <ul>
         <li><strong>Location</strong> — ${esc(place)}</li>
-        <li><strong>Setting</strong> — ${esc(sc.label)}</li>
+${otherNames.length ? `        <li><strong>Also known as</strong> — ${otherNames.map(esc).join(", ")}</li>\n` : ""}        <li><strong>Setting</strong> — ${esc(sc.label)}</li>
         <li><strong>Size</strong> — ${esc(sz.label)}</li>
         <li><strong>Type</strong> — ${c.pub ? "Public" : "Private, not-for-profit"} four-year institution</li>
       </ul>
@@ -284,6 +304,10 @@ ${sibs.length ? `
     about: {
       "@type": "CollegeOrUniversity",
       name: c.n,
+      /* The machine-readable form of "also known as", which is what the
+         property exists for: telling Google that "GVSU" and "Grand Valley State
+         University" are the same institution. */
+      ...(c.al && c.al.length ? { alternateName: c.al } : {}),
       address: { "@type": "PostalAddress", addressLocality: c.c, addressRegion: c.r, addressCountry: "US" },
       geo: { "@type": "GeoCoordinates", latitude: c.lat, longitude: c.lng },
     },

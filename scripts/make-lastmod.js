@@ -68,24 +68,79 @@ const today = new Date().toISOString().slice(0, 10);
 const next = {};
 let changed = 0, added = 0, kept = 0;
 
+/* `--touch /food/` marks every URL under a prefix as changed today, for the
+   rare edit this script cannot see for itself. Kept for that, and needed once:
+   see the v1 migration note below. */
+/* Takes a section name: `--touch food`. A leading slash is tolerated but
+   stripped, and only the last path segment is kept, because Git Bash on Windows
+   rewrites any argument beginning with "/" into a Windows path before Node sees
+   it — "/food/" arrives as "C:/Program Files/Git/food/". That silently matched
+   nothing the first time this was used, which is why an unmatched --touch is
+   now an error rather than a no-op. */
+const TOUCH = process.argv
+  .flatMap((a, i, all) => a === "--touch" && all[i + 1] ? [all[i + 1]] : [])
+  .map((p) => p.replace(/\\/g, "/").split("/").filter(Boolean).pop())
+  .filter(Boolean);
+const touchHits = Object.fromEntries(TOUCH.map((p) => [p, 0]));
+const touched = (url) => {
+  const hit = TOUCH.find((p) => url.startsWith(`${ORIGIN}/${p}/`));
+  if (hit) touchHits[hit]++;
+  return !!hit;
+};
+
+/* What counts as the page, for deciding whether it changed.
+
+   v1 hashed only the <main> body. That missed a retitle — the 68 food pages
+   were renamed on 24 September to match the queries people type, and a new
+   <title> is precisely what Google should re-crawl for, yet v1 saw nothing.
+
+   v2 hashes the <title>, the meta description and the <main> body: everything a
+   reader or a results page shows, and nothing that changes on every build (the
+   bundle filename lives in <script> tags, which are excluded). */
+const V = 2;
+const pick = (html, re) => (html.match(re) || [""])[0];
+const bodyOf = (html) => {
+  const i = html.indexOf('<main class="ss-static">');
+  const j = html.indexOf("</main>");
+  return i >= 0 && j > i ? html.slice(i, j) : "";
+};
+const sha = (s) => crypto.createHash("sha1").update(s).digest("hex");
+
 for (const file of walk(BUILD)) {
   if (path.basename(file) === "room.html") continue;   // noindex, never in the sitemap
   const html = fs.readFileSync(file, "utf8");
-  const i = html.indexOf('<main class="ss-static">');
-  const j = html.indexOf("</main>");
-  /* The homepage has no static block; hash its <title> and description so a
-     genuine change to it still registers, without the bundle filename. */
-  const content = i >= 0 && j > i ? html.slice(i, j)
-    : (html.match(/<title>[\s\S]*?<\/title>/) || [""])[0] +
-      (html.match(/<meta name="description"[^>]*>/) || [""])[0];
+  const body = bodyOf(html);
+  const head = pick(html, /<title>[\s\S]*?<\/title>/) + pick(html, /<meta name="description"[^>]*>/);
 
-  const hash = crypto.createHash("sha1").update(content).digest("hex");
+  const hash = sha(head + body);
   const url = urlFor(file);
   const before = prev[url];
 
-  if (!before) { next[url] = { h: hash, d: today }; added++; }
-  else if (before.h !== hash) { next[url] = { h: hash, d: today }; changed++; }
-  else { next[url] = before; kept++; }
+  if (!before) { next[url] = { v: V, h: hash, d: today }; added++; continue; }
+
+  let isChanged;
+  if (before.v === V) {
+    isChanged = before.h !== hash;
+  } else {
+    /* One-time move from v1. A v1 hash is of a different thing, so comparing it
+       to a v2 hash would report every page on the site as changed today — the
+       exact failure this script exists to prevent. Instead: recompute the v1
+       hash to see whether the body changed, and trust --touch for the prefixes
+       whose <title> changed in the same deploy. */
+    const v1 = sha(body || head);
+    isChanged = before.h !== v1;
+  }
+  if (touched(url)) isChanged = true;
+
+  if (isChanged) { next[url] = { v: V, h: hash, d: today }; changed++; }
+  else { next[url] = { v: V, h: hash, d: before.d }; kept++; }
+}
+
+const dead = Object.entries(touchHits).filter(([, n]) => n === 0).map(([p]) => p);
+if (dead.length) {
+  console.error(`make-lastmod: --touch matched no URLs for: ${dead.join(", ")}`);
+  console.error(`  Use a bare section name, e.g. --touch food. Nothing was written.`);
+  process.exit(1);
 }
 
 const gone = Object.keys(prev).filter((u) => !(u in next));

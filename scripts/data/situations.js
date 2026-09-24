@@ -51,6 +51,7 @@ module.exports = [
 
   {
     s: "nothing-sounds-good",
+    qa: ["What should I eat when I can't decide?","Decide on a sensation before a cuisine. Ask one question — hot or cold, sharp or mild — and let the answer narrow it. Menus are organised by cuisine, which is useless when what you actually want is 'something warm but not heavy', and one answered question rules out most of what you've been scrolling past."],
     h1: "What to eat when nothing sounds good",
     title: "What to Eat When Nothing Sounds Good | Savor Scout",
     desc:
@@ -205,6 +206,7 @@ module.exports = [
 
   {
     s: "eating-alone",
+    qa: ["Is it weird to eat alone at a restaurant?","No — and far fewer people notice than you expect. The awkwardness is almost entirely anticipatory, and it comes from the seat rather than the act: a two-top in the middle of a room built for couples feels exposed, while a bar or a counter makes eating alone the normal state. Pick the right room and the rest takes care of itself."],
     h1: "Where to eat when you're eating alone",
     title: "Eating Alone at a Restaurant — Where to Go and How to Enjoy It",
     desc:
@@ -235,6 +237,7 @@ module.exports = [
 
   {
     s: "late-night",
+    qa: ["What restaurants stay open late?","The ones built for it: 24-hour diners, taquerias near nightlife, Korean and Chinese kitchens that run late by design, halal carts, and anywhere near hospitals or shift work. Posted hours are unreliable after 11pm — a place listed until 2am may stop cooking at midnight — so recent reviews that mention a time are the better guide."],
     h1: "Where to eat late at night",
     title: "Late Night Food Near You — What's Actually Open and Worth It",
     desc:
@@ -600,6 +603,7 @@ module.exports = [
 
   {
     s: "sick-with-a-cold",
+    qa: ["What's the best spicy food for a cold?","Hot, sour broths tend to land best — tom yum, hot and sour soup, pho with plenty of chilli and lime. When you're congested, most of what you taste is salt, sour and heat, because smell is what goes, and chilli registers as sensation rather than aroma. This is about what tastes good when you feel rough, not a remedy."],
     h1: "What to eat when you have a cold",
     title: "What to Eat When You Have a Cold — Soup, Spice and What's Open",
     desc:

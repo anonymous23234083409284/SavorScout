@@ -62,6 +62,8 @@ const STYLE = `
     background:linear-gradient(135deg,#FF3D00,#FF9E1F);color:#170F08;font-weight:700;border:0}
   .ss-static .cta:hover{opacity:.92}
   .ss-static .note{font-size:15px;color:#B9B1A6;border-left:2px solid rgba(255,158,31,.45);padding-left:14px;margin:18px 0}
+  .ss-static .qa{font-size:18px;line-height:1.55;color:#FDF8F2;background:rgba(255,158,31,.07);
+    border-left:3px solid #FF9E1F;padding:14px 18px;border-radius:0 8px 8px 0;margin:0 0 20px}
   .ss-static .cols{columns:2;column-gap:26px}
   .ss-static .cols li{break-inside:avoid}
   .ss-static hr{border:0;border-top:1px solid rgba(232,227,220,.14);margin:44px 0}

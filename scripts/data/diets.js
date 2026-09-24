@@ -21,6 +21,7 @@
 module.exports = [
   {
     s: "gluten-free",
+    qa: ["How do you eat out gluten-free?","Tell the restaurant it's a medical requirement, not a preference — that changes how the kitchen handles it. Then ask the three questions that matter: is there a dedicated fryer, is gluten-free pasta cooked in separate water, and what's in the sauce. Cuisines built on corn or rice — Mexican, Vietnamese, South Indian — are structurally easier."],
     n: "gluten-free",
     h1: "Eating out gluten-free",
     title: "Eating Out Gluten-Free — How to Find Restaurants That Get It Right",
@@ -55,6 +56,7 @@ module.exports = [
 
   {
     s: "peanut-and-tree-nut-allergy",
+    qa: ["Which restaurants should you be careful with if you have a peanut allergy?","Be most careful where peanut is a common sauce base or cooking oil: Thai, Vietnamese, Indonesian, Malaysian and West African kitchens, and many Indian and Chinese ones. Bakeries and ice cream shops carry high cross-contact risk from shared equipment. That's a starting point, not a safe list — any kitchen can use nuts, so tell them before you order."],
     n: "peanut and tree nut allergy",
     h1: "Eating out with a peanut or tree nut allergy",
     title: "Eating Out With a Nut Allergy — Finding Restaurants You Can Trust",
@@ -327,6 +329,7 @@ module.exports = [
 
   {
     s: "kosher",
+    qa: ["What is a kosher restaurant?","A kosher restaurant prepares food under Jewish dietary law and is supervised by a certifying agency, which displays its certificate. In practice it serves meat or dairy, never both — so a kosher meat restaurant uses no butter, cream or cheese at all. 'Kosher-style' delis can look identical but are not supervised."],
     n: "kosher",
     h1: "Eating out kosher",
     title: "Eating Out Kosher — Finding Restaurants and What to Check",
@@ -361,6 +364,7 @@ module.exports = [
 
   {
     s: "low-fodmap",
+    qa: ["How do you eat out on a low-FODMAP diet?","Choose formats that cook to order and can leave out garlic and onion — grills, steakhouses, Japanese restaurants, Korean barbecue. Ask for protein grilled plainly, with rice and a simple salad dressed in oil and lemon. Most sauces, stocks and marinades are built on garlic and onion, so a dish description rarely tells you what's actually in it."],
     n: "low-FODMAP",
     h1: "Eating out on a low-FODMAP diet",
     title: "Eating Out Low-FODMAP — Restaurants That Are Easier",

@@ -25,7 +25,7 @@
 const fs = require("fs");
 const path = require("path");
 const {
-  BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie,
+  BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie, fitTitle,
 } = require("./lib/page");
 
 const WHO = "make-guide-pages";
@@ -59,6 +59,49 @@ const defs = (items) => `<ul>\n${items.map(([h, p]) =>
   `        <li><strong>${esc(h)}</strong> — ${esc(p)}</li>`).join("\n")}\n      </ul>`;
 const paras = (ps) => ps.map((p) => `      <p>${esc(p)}</p>`).join("\n");
 
+/* A direct answer to the question the page is most often reached by.
+
+   Each came from Search Console: "is it weird to eat alone at a restaurant",
+   "what is a kosher restaurant", "how to buy sushi". The question goes in as a
+   heading worded the way people type it, and the answer sits immediately under
+   it in forty to sixty words — the shape Google lifts into "People Also Ask"
+   and featured snippets. The rest of the page is the long version; this is the
+   short one, placed where it can be quoted. */
+const qaHtml = (qa) => qa ? `
+      <h2>${esc(qa[0])}</h2>
+      <p class="qa">${esc(qa[1])}</p>` : "";
+
+/* Titles for the food guides, rewritten to the phrasing people actually type.
+
+   Search Console, 24 September: "korean restaurants near me" (22), "korean
+   cuisine near me" (13), "best korean food near me" (11), "korean places near
+   me" (11) — 88 impressions on one page and zero clicks. The title was "How to
+   Find Good Korean Food Near You — Barbecue and Everything Else": a how-to,
+   shown to people looking for restaurants. The same shape on soup and salad.
+
+   Still honest. Every one of these pages does help you pick a good one, and its
+   button runs the search that picks one. The h1 keeps the original wording, so
+   the page carries both phrasings. */
+const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase());
+function dishTitle(x) {
+  if (/-food$/.test(x.s)) {
+    const base = titleCase(x.near || x.n.replace(/ food$/i, ""));
+    return fitTitle([
+      `${base} Restaurants Near You — How to Pick a Good One | Savor Scout`,
+      `${base} Restaurants Near You — How to Pick a Good One`,
+      `${base} Restaurants Near You | Savor Scout`,
+      `${base} Restaurants Near You`,
+    ]);
+  }
+  const dish = titleCase(x.near || x.n);
+  return fitTitle([
+    `Good ${dish} Near You — Where to Find It | Savor Scout`,
+    `Good ${dish} Near You — Where to Find It`,
+    `Good ${dish} Near You | Savor Scout`,
+    `Good ${dish} Near You`,
+  ]);
+}
+
 const write = (dir, slug, html) => {
   fs.mkdirSync(path.join(BUILD, dir), { recursive: true });
   fs.writeFileSync(path.join(BUILD, dir, `${slug}.html`), html);
@@ -79,7 +122,7 @@ function situationPage(x) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
-      <p class="lede">${esc(x.lede)}</p>
+      <p class="lede">${esc(x.lede)}</p>${qaHtml(x.qa)}
 ${paras(x.why)}
 
       <h2>${esc(x.look.intro)}</h2>
@@ -142,7 +185,7 @@ function dishPage(x) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
-      <p class="lede">${esc(x.lede)}</p>
+      <p class="lede">${esc(x.lede)}</p>${qaHtml(x.qa)}
 
       <h2>What separates a good one from a bad one</h2>
       ${defs(x.good)}
@@ -189,7 +232,7 @@ function dishPage(x) {
     breadcrumb: breadcrumb(trail),
   });
 
-  return { url, html: render(shell, { title: x.title, desc: x.desc, url, body, ld, who: WHO }) };
+  return { url, html: render(shell, { title: dishTitle(x), desc: x.desc, url, body, ld, who: WHO }) };
 }
 
 /* ---- diets ---------------------------------------------------------------- */
@@ -209,7 +252,7 @@ function dietPage(x) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
-      <p class="lede">${esc(x.lede)}</p>
+      <p class="lede">${esc(x.lede)}</p>${qaHtml(x.qa)}
 
       <h2>What actually goes wrong</h2>
 ${paras(x.wrong)}

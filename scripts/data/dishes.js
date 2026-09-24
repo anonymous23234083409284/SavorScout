@@ -88,6 +88,7 @@ module.exports = [
 
   {
     s: "sushi",
+    qa: ["How do you order sushi?","Start with nigiri rather than rolls — fish over rice is where the skill shows. At a counter, ask what's good today; it's a real question, not a test. Order omakase if you'd rather the chef choose, eat each piece as it arrives, and if the chef hasn't already seasoned it, dip the fish side in soy, not the rice."],
     n: "sushi",
     h1: "How to find good sushi",
     title: "How to Find Good Sushi Near You — What Actually Matters",
@@ -358,7 +359,7 @@ module.exports = [
     h1: "Where to find genuinely good soup",
     title: "Where to Find Good Soup Near You",
     desc:
-      "Soup is the most-faked thing on a menu. How to find kitchens that actually make it, and the soups worth travelling for.",
+      "Soup is the most-faked thing on a menu. How to find kitchens that actually make it, which soups are worth travelling for, and which ones survive being taken to go.",
     lede:
       "Soup is the single easiest thing on a menu to buy in a bag and reheat, which is why so much restaurant soup tastes broadly the same. The places that make it properly are usually making it as the centre of the business rather than as a starter.",
     good: [
@@ -744,7 +745,7 @@ module.exports = [
     h1: "How to find good Korean food",
     title: "How to Find Good Korean Food Near You — Barbecue and Everything Else",
     desc:
-      "Korean barbecue, stews, noodles and the banchan that tell you everything. How to find a kitchen doing it properly.",
+      "Korean barbecue, stews, noodles and takeout — and the banchan that tell you everything about a kitchen before you order. How to find one doing it properly.",
     lede:
       "The fastest way to judge a Korean restaurant is to look at what arrives before you order anything. Banchan — the small side dishes — are made in-house at good places and bought in at indifferent ones, and the difference is visible immediately.",
     good: [
@@ -830,6 +831,11 @@ module.exports = [
 
   {
     s: "mediterranean-food",
+    /* Title reads "Mediterranean & Middle Eastern Restaurants Near You".
+       "middle eastern foods near me" reaches this page and there is no separate
+       Middle Eastern guide — this page already covers Lebanese, Turkish, Persian,
+       Palestinian and Egyptian cooking, so naming it is accurate, not a stretch. */
+    near: "Mediterranean & Middle Eastern",
     n: "Mediterranean food",
     h1: "How to find good Mediterranean food",
     title: "How to Find Good Mediterranean and Middle Eastern Food Near You",

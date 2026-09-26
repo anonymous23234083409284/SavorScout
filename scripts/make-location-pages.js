@@ -41,7 +41,8 @@ const {
 const WHO = "make-location-pages";
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 const STATES = require("./data/states");
-const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
+const { BY_STATE: CAMPUS_BY_STATE, CAMPUSES } = require("./lib/campuses");
+const STATE_FOOD = require("./data/states-food");
 
 /* Hand-written food identity for the 50 largest cities.
  *
@@ -55,7 +56,22 @@ const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
  * sections are useful on every page regardless. */
 const METROS = require("./data/metros");
 const METRO = new Map(METROS.map((m) => [m.s, m]));
-const DISH_NAME = new Map(require("./data/dishes").map((d) => [d.s, d.n]));
+const DISH_NAME = new Map([
+  ...require("./data/dishes"), ...require("./data/dishes-more"), ...require("./data/dishes-extra"),
+].map((d) => [d.s, d.n]));
+
+/* Every /food/ slug a state or metro entry names must be a real guide, or the
+   page ships a link to a 404. Checked here rather than trusted. */
+for (const [st, f] of Object.entries(STATE_FOOD)) {
+  for (const slug of f.foods) {
+    if (!DISH_NAME.has(slug)) { console.error(`${WHO}: states-food ${st} names unknown guide "${slug}"`); process.exit(1); }
+  }
+}
+for (const m of METROS) {
+  for (const slug of m.foods) {
+    if (!DISH_NAME.has(slug)) { console.error(`${WHO}: metros ${m.s} names unknown guide "${slug}"`); process.exit(1); }
+  }
+}
 
 /* County Business Patterns, fetched once by scripts/fetch-city-dining.js.
    This is what lets a city page state something true about eating in that
@@ -116,6 +132,57 @@ function nearest(city, k = 6) {
   }));
 }
 
+/* Distance in miles, same approximation as nearest(). */
+function miles(a, b) {
+  const cos = Math.cos((a.lat * Math.PI) / 180);
+  const dx = (b.lng - a.lng) * cos, dy = b.lat - a.lat;
+  return Math.sqrt(dx * dx + dy * dy) * 69;
+}
+
+/* Campuses within reach of the city, nearest first.
+   Real coordinates from IPEDS, so the list is a fact about this city, and each
+   link goes to a campus page — the class Search Console shows pulling the most
+   impressions on the site. */
+function campusesNear(city, radius = 15, k = 6) {
+  return CAMPUSES
+    .map((c) => ({ c, d: miles(city, c) }))
+    .filter((x) => x.d <= radius)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, k);
+}
+
+/* The nearest of the 50 cities with a written guide, so a small town's page
+   points at the big city its residents actually drive to for dinner. */
+const METRO_CITIES = CITIES.filter((c) => METRO.has(c.s));
+function nearestMetro(city) {
+  let best = null;
+  for (const m of METRO_CITIES) {
+    if (m.s === city.s) continue;
+    const d = miles(city, m);
+    if (!best || d < best.d) best = { c: m, d };
+  }
+  return best && best.d <= 120 ? best : null;
+}
+
+/* Where the city sits among the others in its state, by size and by how well
+   supplied it is. Both are computed, both differ per page, and both answer a
+   question a local might actually ask. */
+const ordinal = (n) => {
+  const s = ["th", "st", "nd", "rd"], v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+function stateRank(city) {
+  const list = BY_STATE[city.r];
+  const popRank = list.findIndex((c) => c.s === city.s) + 1;
+  const dens = list.filter((c) => DINING.cities[c.s] && DINING.cities[c.s].per10k)
+    .sort((a, b) => DINING.cities[b.s].per10k - DINING.cities[a.s].per10k);
+  /* Standard competition ranking: cities in the same county share a figure, so
+     they share a rank rather than being split by whatever order the sort left. */
+  const mine = DINING.cities[city.s] && DINING.cities[city.s].per10k;
+  const densRank = mine ? 1 + dens.filter((c) => DINING.cities[c.s].per10k > mine).length : 0;
+  return { n: list.length, popRank, densRank: densRank || null, densN: dens.length };
+}
+
 /* Copy chosen by population, so the description is accurate rather than just
    different. A city of 40,000 genuinely does have a different problem from
    one of 4 million: too few obvious options versus far too many. */
@@ -124,22 +191,18 @@ function sizeCopy(city) {
   if (p >= 1000000) return {
     tier: "metro",
     problem: `${city.c} has more restaurants than anyone could work through, which is exactly why picking one is so hard. Every list you open is longer than the last.`,
-    angle: `In a city this size the problem is never a lack of options — it is that thirty good ones look identical on a map.`,
   };
   if (p >= 250000) return {
     tier: "large",
     problem: `${city.c} has plenty of places to eat, and that is the problem. A ranked list of thirty gets you no closer to a decision than you were before you opened it.`,
-    angle: `Enough choice to argue about for twenty minutes, which is usually what happens.`,
   };
   if (p >= 100000) return {
     tier: "mid",
     problem: `${city.c} has more than enough places to eat — the trouble is choosing between them without spending longer deciding than eating.`,
-    angle: `A city this size has real range, and range is what makes the decision slow.`,
   };
   return {
     tier: "small",
     problem: `${city.c} does not have infinite options, and that brings its own problem: you have been to most of them, and picking again is somehow still hard.`,
-    angle: `Somewhere this size rewards knowing which places are actually worth the trip.`,
   };
 }
 
@@ -201,7 +264,12 @@ function diningHtml(city) {
     fast: `Counter service clearly outnumbers sit-down — more a drive-through town than a linger-over-dinner one.`,
   };
 
-  const share = d.cpop && city.p ? Math.round((city.p / d.cpop) * 100) : null;
+  /* The city population and the county population come from different
+     vintages, so a city that is nearly its whole county (Anchorage) can compute
+     to over 100%. Printing "104% of the county" is a figure a reader would
+     rightly stop trusting the page over; drop it instead. */
+  const rawShare = d.cpop && city.p ? Math.round((city.p / d.cpop) * 100) : null;
+  const share = rawShare && rawShare <= 100 ? rawShare : null;
 
   const parts = [];
   parts.push(`      <h2>${esc((HEAD[dBand] || HEAD.level)(city.c))}</h2>`);
@@ -246,6 +314,56 @@ function diningHtml(city) {
   return parts.join("\n");
 }
 
+/* Population, where the city ranks in its state, and the nearest written guide. */
+function factsHtml(city) {
+  const r = stateRank(city);
+  const stName = STATES[city.r] || city.r;
+  const nm = nearestMetro(city);
+  const bits = [];
+  if (r.n > 1) {
+    bits.push(`${esc(city.c)} has about ${fmt(city.p)} people, the ${r.popRank === 1 ? "largest" : `${ordinal(r.popRank)}-largest`}
+        of the ${r.n} ${esc(stName)} cities Savor Scout covers.`);
+    if (r.densRank && r.densN > 2) {
+      bits.push(`By food businesses per resident (a county figure) it ranks ${ordinal(r.densRank)} of ${r.densN}.`);
+    }
+  } else {
+    bits.push(`${esc(city.c)} has about ${fmt(city.p)} people.`);
+  }
+  bits.push(`Searches reach up to 35 miles out, so places just past the city line still count.`);
+  let html = `      <p>\n        ${bits.join(" ")}\n      </p>`;
+  if (nm) {
+    html += `\n      <p>
+        The nearest city with a full written food guide is
+        <a href="/eat/${nm.c.s}">${esc(nm.c.c)}</a>, about ${Math.max(1, Math.round(nm.d))} miles away.
+      </p>`;
+  }
+  return html;
+}
+
+/* What the state eats, from states-food.js. Short on purpose: the full version
+   lives on the state hub, and this points at it. */
+function stateFoodHtml(city) {
+  const f = STATE_FOOD[city.r];
+  if (!f) return "";
+  const stName = STATES[city.r] || city.r;
+  return `      <h2>What ${esc(stName)} is known for</h2>
+      <ul>
+${f.known.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}</li>`).join("\n")}
+      </ul>
+      <p><a href="/eat/${city.r.toLowerCase()}">More on what ${esc(stName)} eats &rarr;</a></p>`;
+}
+
+function campusHtml(city) {
+  const near = campusesNear(city);
+  if (!near.length) return "";
+  return `      <h2>Colleges near ${esc(city.c)}</h2>
+      <ul>
+${near.map(({ c, d }) => `        <li><a href="/campus/${c.s}">${esc(c.n)}</a>${c.c && c.c !== city.c ? ` in ${esc(c.c)}` : ""}` +
+    ` — ${d < 1 ? "under a mile" : `about ${Math.round(d)} ${Math.round(d) === 1 ? "mile" : "miles"}`}</li>`).join("\n")}
+      </ul>
+`;
+}
+
 function page(shell, city) {
   const { c: name, r: region, s: slug, p: pop } = city;
   const place = `${name}, ${region}`;
@@ -276,16 +394,25 @@ function page(shell, city) {
      had already found 1,070 of them sitting under "Alternate page with proper
      canonical tag". Not an error — but every one of those crawls was spent on a
      URL that resolves to the homepage instead of on a page that could rank. */
-  const cravingLinks = CRAVINGS
-    .map(([slug, label]) =>
-      `<li><a href="/food/${slug}">${esc(label)} in ${esc(name)}</a> — what separates` +
-      ` a good one from an average one</li>`)
-    .join("\n        ");
+  /* The state's own dishes and, for the 50 written cities, the city's, come
+     first; the general list fills in behind them. The same sixteen links in the
+     same order with the same trailing phrase on a thousand pages was a large
+     share of what made them read as one page. */
+  const m0 = METRO.get(slug);
+  const firstSlugs = [...(m0 ? m0.foods : []), ...((STATE_FOOD[region] || {}).foods || [])];
+  const seenCraving = new Set();
+  const cravingLinks = [
+    ...firstSlugs.map((s) => [s, DISH_NAME.get(s)]),
+    ...CRAVINGS,
+  ].filter(([s]) => !seenCraving.has(s) && seenCraving.add(s))
+    .slice(0, 14)
+    .map(([s, label]) => `<a href="/food/${s}">${esc(label.toLowerCase())}</a>`)
+    .join(", ");
   const nearLinks = near
     .map((n) => `<li><a href="/eat/${n.s}">${esc(n.c)}, ${esc(n.r)}</a> — about ${n.miles} miles away</li>`)
     .join("\n        ");
 
-  const m = METRO.get(slug);
+  const m = m0;
 
   /* The written opening, for the 50 cities that have one. */
   const intro = m ? `      <p class="lede">${esc(m.identity[0])}</p>
@@ -326,27 +453,14 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
   const body = `      ${crumbHtml(trail)}
       <h1>Where to eat in ${esc(place)}</h1>
 ${intro}
-      <p>
-        ${esc(name)} has a population of about ${fmt(pop)}. ${esc(copy.angle)}
-        Savor Scout searches up to 35 miles around ${esc(name)}, so places just outside the
-        city are still on the table when they are worth the drive.
-      </p>
+${factsHtml(city)}
 
 ${diningHtml(city)}
 
+${stateFoodHtml(city)}
+${campusHtml(city)}
       <h2>What are you craving in ${esc(name)}?</h2>
-      <ul>
-        ${cravingLinks}
-      </ul>
-
-      <h2>Deciding as a group in ${esc(name)}</h2>
-      <p>
-        Group meals stall because everyone stays polite until someone gets annoyed. Savor
-        Scout turns it into a 90-second vote: share a link, everyone taps yes on anything
-        they would eat, and each person gets one veto to remove an option for the whole
-        group. When two options remain the vetoes stop and votes decide. Nobody installs
-        anything.
-      </p>
+      <p>${cravingLinks}.</p>
 
       <h2>Near ${esc(name)}</h2>
       <ul>
@@ -355,25 +469,11 @@ ${diningHtml(city)}
       <p><a href="/eat/${region.toLowerCase()}">All ${BY_STATE[region].length}
          ${esc(STATES[region] || region)} cities &rarr;</a></p>
 
-      <h2>How this differs from Google Maps and Yelp</h2>
-      <p>
-        Maps and Yelp are directories: they rank everything nearby and leave the deciding to
-        you. Savor Scout makes the call and shows its reasoning — the match score, what it
-        beat, and the evidence behind the pick. The underlying place data comes from the
-        same public sources, so the difference is the selection, not the data.
-      </p>
-
-      <h2>Guides</h2>
-      <ul>
-        <li><a href="/what-to-eat/">What to eat when&hellip;</a> — 30 guides by situation, from
-            a first date to a hangover to a group of twelve.</li>
-        <li><a href="/food/">Food guides</a> — what separates a good taco, ramen or pizza from
-            an average one.</li>
-        <li><a href="/diet/">Eating out with a restriction</a> — allergies, halal, kosher, vegan
-            and more.</li>
-        <li><a href="/campus/">Near a campus?</a> — food around 637 US universities.</li>
-      </ul>
       <hr>
+      <p><a href="/what-to-eat/">What to eat when&hellip;</a> &middot;
+         <a href="/food/">Food guides</a> &middot;
+         <a href="/diet/">Dietary guides</a> &middot;
+         <a href="/campus/">Campuses</a></p>
       <p><a href="/eat/">All cities</a> &middot; <a href="/">Savor Scout home</a></p>`;
 
   const ld = JSON.stringify({
@@ -469,6 +569,32 @@ ${top && bottom && top.c.s !== bottom.c.s ? `      <p>
         code. Business counts, not a quality ranking.
       </p>` : "";
 
+  /* The state's food tradition, written per state. This is what gives the hub
+     a reason to exist beyond being a list: "what food is Wisconsin known for"
+     is a real question, and the answer is the same for every city in it. */
+  const f = STATE_FOOD[st];
+  const foodBlock = f ? `
+      <h2>What ${esc(name)} eats</h2>
+      <p>${esc(f.identity)}</p>
+      <ul>
+${f.known.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}</li>`).join("\n")}
+      </ul>
+      <p>
+        Guides worth reading first:
+        ${f.foods.map((s) => `<a href="/food/${s}">${esc(DISH_NAME.get(s))}</a>`).join(", ")}.
+      </p>
+      <p class="note">
+        Regional dishes and traditions, not restaurant recommendations. Savor Scout reads menus
+        and reviews when you search, and shows why it picked what it picked.
+      </p>` : "";
+
+  const metrosHere = list.filter((c) => METRO.has(c.s));
+  const metroBlock = metrosHere.length ? `
+      <h2>Cities with a full food guide</h2>
+      <ul>
+${metrosHere.map((c) => `        <li><a href="/eat/${c.s}">${esc(c.c)}</a> — ${esc(METRO.get(c.s).identity[0].split(". ")[0].replace(/\.$/, ""))}.</li>`).join("\n")}
+      </ul>` : "";
+
   const body = `      ${crumbHtml(trail)}
       <h1>Where to eat in ${esc(name)}</h1>
       <p class="lede">
@@ -477,6 +603,8 @@ ${top && bottom && top.c.s !== bottom.c.s ? `      <p>
         already set.
       </p>
       <p><a class="cta" href="/">Find somewhere to eat &rarr;</a></p>
+${foodBlock}
+${metroBlock}
 ${statsBlock}
 
       <h2>${esc(name)} cities</h2>
@@ -502,8 +630,11 @@ ${CAMPUS_BY_STATE[st] ? `        <li><a href="/campus/${st.toLowerCase()}">Campu
         `Where to Eat in ${name} — ${list.length} Cities`,
         `Where to Eat in ${name}`,
       ]),
-      desc: `Where to eat across ${list.length} ${name} cities. Savor Scout picks one restaurant ` +
-        `instead of a list of thirty, plus Census figures on how well supplied each city is.`,
+      desc: f
+        ? `What ${name} is known for — ${f.known.slice(0, 3).map(([n]) => n.toLowerCase()).join(", ")} — ` +
+          `and where to eat across ${list.length} ${name} ${list.length === 1 ? "city" : "cities"}.`
+        : `Where to eat across ${list.length} ${name} cities. Savor Scout picks one restaurant ` +
+          `instead of a list of thirty, plus Census figures on how well supplied each city is.`,
       url, body, who: WHO,
       ld: JSON.stringify({
         "@context": "https://schema.org",

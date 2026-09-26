@@ -1,7 +1,7 @@
 /* Generates the three written page classes and their hubs:
  *
  *   /what-to-eat/<situation>   30 pages — the decision, by circumstance
- *   /food/<dish>               29 pages — how to judge a dish, and what to order
+ *   /food/<dish>              102 pages — how to judge a dish, and what to order
  *   /diet/<restriction>        12 pages — eating out with a restriction
  *
  * WHY THESE AND NOT MORE CITY PAGES
@@ -34,7 +34,22 @@ const SITUATIONS = require("./data/situations");
    added after Search Console showed /food/korean-food out-pulling all 627
    campus pages combined. Split only so neither file becomes unmanageable to
    edit — the generator sees one array and nothing downstream knows. */
-const DISHES = [...require("./data/dishes"), ...require("./data/dishes-more")];
+const DISHES = [
+  ...require("./data/dishes"), ...require("./data/dishes-more"), ...require("./data/dishes-extra"),
+];
+
+/* A related-guide or situation slug that does not exist would render as
+   "undefined" and a link to a 404. Fail the build instead. */
+{
+  const dishSlugs = new Set(DISHES.map((d) => d.s));
+  const sitSlugs = new Set(require("./data/situations").map((x) => x.s));
+  const dupes = DISHES.map((d) => d.s).filter((s, i, a) => a.indexOf(s) !== i);
+  if (dupes.length) { console.error(`make-guide-pages: duplicate dish slugs: ${dupes.join(", ")}`); process.exit(1); }
+  for (const d of DISHES) {
+    for (const r of d.related || []) if (!dishSlugs.has(r)) { console.error(`make-guide-pages: ${d.s} relates to unknown dish "${r}"`); process.exit(1); }
+    for (const r of d.situations || []) if (!sitSlugs.has(r)) { console.error(`make-guide-pages: ${d.s} names unknown situation "${r}"`); process.exit(1); }
+  }
+}
 
 /* A slug ending in -food is a cuisine; anything else is a dish or a format.
    With 68 entries a flat list on the hub is a wall, so they are grouped. */
@@ -84,6 +99,17 @@ const qaHtml = (qa) => qa ? `
    the page carries both phrasings. */
 const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase());
 function dishTitle(x) {
+  /* `place` is for guides where the search is for a kind of place rather than
+     a dish — "bakery near me", "hibachi near me" — and "Good Bakery Near You"
+     reads like a machine wrote it. */
+  if (x.place) {
+    return fitTitle([
+      `${x.place} Near You — How to Pick a Good One | Savor Scout`,
+      `${x.place} Near You — How to Pick a Good One`,
+      `${x.place} Near You | Savor Scout`,
+      `${x.place} Near You`,
+    ]);
+  }
   if (/-food$/.test(x.s)) {
     const base = titleCase(x.near || x.n.replace(/ food$/i, ""));
     return fitTitle([

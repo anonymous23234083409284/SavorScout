@@ -192,7 +192,9 @@
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
+        "@id": "https://www.savorscout.net/#app",
         "name": "Savor Scout",
+        "publisher": { "@id": "https://www.savorscout.net/#organization" },
         "alternateName": ["SavorScout", "Savour Scout", "SavourScout", "savorscout.net"],
         "url": "https://www.savorscout.net/",
         "applicationCategory": "LifestyleApplication",
@@ -207,6 +209,48 @@
           "Taste quiz that personalises future recommendations"
         ]
       }
+    </script>
+
+    <!-- The entity behind the app, and the site as a whole.
+
+         Organization is what Google's Knowledge Graph and its "About this
+         result" panel read to decide who publishes a site. The generated pages
+         point their publisher at this @id, so all ~1,800 of them are attributed
+         to one entity instead of each naming an anonymous one.
+
+         WebSite with name + alternateName is the documented way to set the site
+         name Google shows above a result, which otherwise may be the bare domain.
+
+         sameAs (official social profiles) and a contactPoint belong on the
+         Organization once they exist; see scripts/data/org.js. Nothing is listed
+         that is not verifiably ours. -->
+    <script type="application/ld+json">
+      [
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "@id": "https://www.savorscout.net/#organization",
+          "name": "Savor Scout",
+          "alternateName": ["SavorScout", "Savour Scout", "SavourScout"],
+          "url": "https://www.savorscout.net/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.savorscout.net/icon-512.png",
+            "width": 512,
+            "height": 512
+          },
+          "description": "Savor Scout is an independent restaurant recommendation tool that picks one place instead of returning a list, and shows its reasoning."
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "@id": "https://www.savorscout.net/#website",
+          "name": "Savor Scout",
+          "alternateName": ["SavorScout", "savorscout.net"],
+          "url": "https://www.savorscout.net/",
+          "publisher": { "@id": "https://www.savorscout.net/#organization" }
+        }
+      ]
     </script>
 
     <!-- FAQ schema, matching the questions answered in the body above.
@@ -354,6 +398,23 @@
       Styled inline because App.css only arrives with the bundle; these rules
       have to hold on their own.
     -->
+    <!--
+      Site-wide links to the pages that say who runs this site.
+
+      In the static shell for the same reason as the badge below: every
+      generated page is built from this file, so these links reach all of them
+      and every SPA route without waiting on the bundle. They are the crawl path
+      to /about, /privacy and /terms, and the first place a reader looks to find
+      out whether a site is a real business.
+    -->
+    <nav class="static-links" aria-label="About Savor Scout"
+         style="position:relative;z-index:2;text-align:center;padding:28px 24px 0;font:13px/1.9 system-ui,-apple-system,sans-serif;">
+      <a href="/about" style="color:#B9B1A6;text-decoration:none;margin:0 9px;">About</a>
+      <a href="/about/data" style="color:#B9B1A6;text-decoration:none;margin:0 9px;">Our data</a>
+      <a href="/contact" style="color:#B9B1A6;text-decoration:none;margin:0 9px;">Contact</a>
+      <a href="/privacy" style="color:#B9B1A6;text-decoration:none;margin:0 9px;">Privacy</a>
+      <a href="/terms" style="color:#B9B1A6;text-decoration:none;margin:0 9px;">Terms</a>
+    </nav>
     <footer class="static-badge" style="text-align:center;padding:26px 24px 44px;">
       <a href="https://maidensail.com/startup/savor-scout" rel="dofollow"
          style="display:inline-block;line-height:0;opacity:0.62;">

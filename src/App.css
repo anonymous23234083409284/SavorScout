@@ -4155,3 +4155,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .consent { transition: none; }
 }.qz-entry-note { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 16px; }
+
+/* Links to /privacy and /terms from the consent banner and the signup form.
+   Plain anchors — those pages are static documents, not app views. */
+.consent-copy a,
+.gate-alt a { color: var(--saffron); text-decoration: underline; text-underline-offset: 2px; }

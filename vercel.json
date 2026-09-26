@@ -35,6 +35,26 @@
       "source": "/about/:slug/",
       "destination": "/about/:slug",
       "permanent": true
+    },
+    {
+      "source": "/about/",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/contact/",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/privacy/",
+      "destination": "/privacy",
+      "permanent": true
+    },
+    {
+      "source": "/terms/",
+      "destination": "/terms",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -117,6 +137,22 @@
     {
       "source": "/about/:slug",
       "destination": "/about/:slug.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
     },
     {
       "source": "/((?!static/|eat/|type/|what-to-eat/|food/|diet/|campus/|about/|.*\\.[a-zA-Z0-9]+$).*)",

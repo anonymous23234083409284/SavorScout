@@ -857,7 +857,8 @@ function ConsentBanner() {
     <div className="consent" role="region" aria-label="Cookie choices">
       <p className="consent-copy">
         We use cookies to measure how SavorScout gets used, which is how the
-        picks get sharper. Declining leaves everything working.
+        picks get sharper. Declining leaves everything working.{" "}
+        <a href="/privacy">Privacy policy</a>
       </p>
       <div className="consent-actions">
         <button type="button" className="btn btn--ghost consent-btn" onClick={() => answer("denied")}>
@@ -2138,6 +2139,13 @@ function App() {
               </p>
             )}
             {resetSent && <p className="notice">If an account exists for that email, a reset link has been sent.</p>}
+
+            {authMode === "signup" && (
+              <p className="gate-alt">
+                By signing up you agree to the <a href="/terms">terms</a> and{" "}
+                <a href="/privacy">privacy policy</a>.
+              </p>
+            )}
 
             <p className="gate-alt">
               {authMode === "signup" ? "Already have an account? " : "Need an account? "}

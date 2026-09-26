@@ -126,6 +126,7 @@ const body = `      ${crumbHtml(trail)}
       <p><a href="/eat/">Cities</a> &middot;
          <a href="/campus/">Campuses</a> &middot;
          <a href="/what-to-eat/">What to eat when&hellip;</a> &middot;
+         <a href="/about">About</a> &middot;
          <a href="/">Savor Scout home</a></p>`;
 
 const outDir = path.join(BUILD, "about");
@@ -142,8 +143,8 @@ fs.writeFileSync(path.join(outDir, "data.html"), render(shell, {
     "@type": "Article",
     headline: "Where the data comes from",
     url,
-    author: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
-    publisher: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
+    author: { "@id": `${ORIGIN}/#organization` },
+    publisher: { "@id": `${ORIGIN}/#organization` },
     mainEntityOfPage: url,
     breadcrumb: breadcrumb(trail),
   }),

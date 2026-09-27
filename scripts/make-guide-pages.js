@@ -174,8 +174,8 @@ ${paras(x.why)}
       <p>
         Savor Scout takes a sentence rather than a category, so the criteria above can go
         straight into the box. For this, something like <strong>&ldquo;${esc(x.query)}&rdquo;</strong>
-        works — it reads menus and reviews for those specific things and comes back with one
-        place and the reasons it picked it.
+        works — it checks menus for the food in it, and reviews for any words about the
+        atmosphere, then comes back with one place and the reasons it picked it.
       </p>
       <p><a class="cta" href="${app(x.query)}">Search &ldquo;${esc(x.query)}&rdquo; &rarr;</a></p>
 
@@ -479,7 +479,7 @@ hub({
     "\n      </ul>",
   extra: `      <p class="note">
         <strong>These are discovery guides, not safety checks.</strong> Savor Scout reads what
-        restaurants and reviewers have written. It has not visited any kitchen and cannot see a
+        restaurants have written on their menus. It has not visited any kitchen and cannot see a
         shared fryer. For a serious allergy, use it to find places worth calling — and then call
         them.
       </p>`,

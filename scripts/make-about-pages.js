@@ -98,8 +98,8 @@ const body = `      ${crumbHtml(trail)}
       </p>
       <p>
         <strong>Savor Scout does not hold a restaurant database.</strong> When you run a search, it
-        queries live place data at that moment, reads menus and reviews for what you actually asked
-        for, and returns one result with its reasoning. It does not store or republish those listings,
+        queries live place data at that moment, reads the menus of the places it shortlists for what
+        you actually asked for, and returns one result with its reasoning. It does not store or republish those listings,
         which is why these pages tell you how many restaurants a place has without naming them.
       </p>
       <p>

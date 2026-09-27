@@ -45,7 +45,7 @@ module.exports = [
       ["The sushi bar, only if it is separate", "Many hibachi restaurants have one. It is usually the weaker half of the menu."],
     ],
     signals:
-      "Hibachi searches read menus for teppanyaki service specifically, so a Japanese restaurant with a griddle table outranks one that only sells a hibachi-style plate from the kitchen. Reviews that mention the chef, birthdays and big tables weigh heavily, because for most people choosing hibachi the table is the point.",
+      "Hibachi is mostly about the table, and Savor Scout treats the table and the food as separate requests. “Steak and shrimp”, “scallops” or “fried rice” are checked on the menus of the last few contenders. “Birthday” or “good for groups” is about the occasion, so it sends Savor Scout to reviews for those exact words; left out, neither is assumed.",
     related: ["japanese-food", "steak", "sushi"],
     situations: ["birthday-dinner", "big-group", "with-picky-eaters"],
   },
@@ -75,7 +75,7 @@ module.exports = [
       ["Naengmyeon to finish", "Cold buckwheat noodles in icy broth. A common way to end a barbecue meal in Korea."],
     ],
     signals:
-      "Korean barbecue searches read menus for tabletop grilling and specific cuts, so a Korean restaurant that grills at the table ranks above one that serves bulgogi from the kitchen. Reviews mentioning charcoal, banchan refills and meat quality count toward the pick; all-you-can-eat is matched when you ask for it rather than assumed.",
+      "Grilling at the table is what most people mean, but the search can only check a menu for the words you give it. Type the cuts — “galbi”, “samgyeopsal”, “chadolbaegi” — and they are checked against each finalist's menu. “All you can eat” is matched only when you type it, and “good for groups” is looked for in reviews, since it describes the room rather than the food.",
     related: ["korean-food", "bibimbap", "steak"],
     situations: ["big-group", "birthday-dinner", "friends-visiting"],
   },
@@ -104,7 +104,7 @@ module.exports = [
       ["Extra corn, potatoes and sausage", "They soak up the sauce and make the meal stretch."],
     ],
     signals:
-      "Seafood boil searches read menus for sale by the pound and named seafood like crawfish, snow crab and head-on shrimp, which separates a boil house from a seafood restaurant with one boil platter. Reviews mentioning the sauce, the heat levels and live crawfish count toward the pick.",
+      "A boil house and a seafood restaurant with one boil platter can look alike from the listing. Name what you want — “live crawfish”, “snow crab”, “head-on shrimp” — and Savor Scout looks for those words on the menus of the few places it ends up comparing. It has no idea whether crawfish is in season; for anything about the food, the menu text is what it reads.",
     related: ["seafood", "cajun-food", "oysters"],
     situations: ["big-group", "friends-visiting", "celebrating"],
   },
@@ -132,7 +132,7 @@ module.exports = [
       ["Mac and cheese or slaw on the side", "Something cool and creamy to eat between bites."],
     ],
     signals:
-      "Hot chicken searches read menus for Nashville-style or named heat levels, which separates a hot chicken shop from a fried chicken place that added a spicy sandwich. Reviews that describe the coating and how hot the top level really is count toward the pick.",
+      "Each finalist's menu is checked for Nashville hot chicken, and for any cut or format you add. “Hot chicken sandwich”, “leg quarter” or “tenders” goes into that check, and a phrase that appears whole counts for more than a single word. How hot the top heat level really is, no search can tell you; that part is up to you.",
     related: ["fried-chicken", "chicken-and-waffles", "sandwiches"],
     situations: ["hungover", "late-night", "friends-visiting"],
   },
@@ -161,7 +161,7 @@ module.exports = [
       ["A pizza steak", "With tomato sauce and mozzarella. A Philadelphia menu fixture."],
     ],
     signals:
-      "Cheesesteak searches read menus for cheesesteaks by name and the cheese choices that go with them, which separates a cheesesteak shop from a deli with a steak sandwich. Reviews mentioning the roll, the ribeye and a real griddle count toward the pick.",
+      "Cheese and onions are the order, and the order is what to type. “Whiz wit”, “provolone” or “chicken cheesesteak” goes into the menu check Savor Scout runs on its top few places alongside cheesesteak itself, so a menu listing your order scores a higher match than one with a generic steak sandwich.",
     related: ["sandwiches", "deli", "burgers"],
     situations: ["hungover", "late-night", "road-trip"],
   },
@@ -188,7 +188,7 @@ module.exports = [
       ["Sweet potato waffle", "Where it is on the menu, usually worth the swap."],
     ],
     signals:
-      "Chicken and waffles searches read menus for the dish by name and for fried chicken made to order, then weigh reviews that mention crisp chicken and the waffle itself. Brunch and late-night hours count, since that is when most people want this.",
+      "The dish name does most of the work here, and Savor Scout looks for it on each finalist's menu. Add “thigh and waffle”, “hot honey” or “sweet potato waffle” and those words are checked too. If you want it at an odd hour, “late night” is about the place rather than the food, so it is looked for in reviews rather than on the menu.",
     related: ["fried-chicken", "brunch", "soul-food"],
     situations: ["hungover", "sunday-night", "birthday-dinner"],
   },
@@ -215,7 +215,7 @@ module.exports = [
       ["A local catch", "In coastal towns, whatever the local white fish is often beats imported cod."],
     ],
     signals:
-      "Fish and chips searches read menus for battered fish by species and for chips alongside it, which separates a fish and chip shop from a seafood restaurant with one fried plate. Reviews that describe the batter as crisp and the fish as fresh count toward the pick.",
+      "Name the fish if it matters to you. “Haddock”, “mushy peas” or “malt vinegar” goes into the same menu check as fish and chips itself, and a shop whose menu names the fish you asked for scores a higher match than one that just says fried fish. Batter, oil and whether the chips are proper chips are for you to judge.",
     related: ["seafood", "oysters", "sandwiches"],
     situations: ["eating-alone", "road-trip", "friends-visiting"],
   },
@@ -243,7 +243,7 @@ module.exports = [
       ["Call ahead", "Some places let you order by phone before you arrive so the pizza is nearly ready when you sit down."],
     ],
     signals:
-      "Deep dish searches read menus for deep dish, pan or stuffed pizza by name, which separates a Chicago-style pizzeria from a place with a thick crust option. Reviews that mention the wait and the crust count as a good sign rather than a complaint.",
+      "A thick-crust option and a Chicago-style pizzeria are different things, and the menu is usually where they part. Savor Scout looks for deep dish on the menus of the finalists, plus whatever you add: “stuffed pizza”, “sausage deep dish” or “tavern-style”. The wait is not something it reads for, as a good sign or a bad one.",
     related: ["pizza", "italian-food", "sandwiches"],
     situations: ["friends-visiting", "big-group", "cold-rainy-night"],
   },
@@ -271,7 +271,7 @@ module.exports = [
       ["Ask what size", "Many places sell a regular and a large. The large is often the better value per ounce."],
     ],
     signals:
-      "Lobster roll searches read menus for lobster rolls by name and the style offered, which separates a seafood shack from a restaurant with one on a specials board. Reviews that mention the amount of meat, claw meat and the bun count toward the pick.",
+      "Say which style. “Maine-style” and “Connecticut-style” are the words that separate a cold, mayonnaise-dressed roll from a warm, buttered one, and Savor Scout looks for them on the menus of the leading few. “Claw and knuckle meat” or “split-top bun” go into the same menu check, and the match percentage shows how much of it turned up.",
     related: ["seafood", "oysters", "sandwiches"],
     situations: ["celebrating", "road-trip", "friends-visiting"],
   },
@@ -300,7 +300,7 @@ module.exports = [
       ["Eat each piece straight away", "Nigiri is best within seconds of being set down."],
     ],
     signals:
-      "Omakase searches read menus for a stated omakase or chef's-choice price and counter service, which separates a real omakase counter from a sushi restaurant with a chef's-choice platter. Reviews describing the rice, the pacing and the seasonality count toward the pick.",
+      "Omakase is a word menus tend to use when they mean it, which makes it a good thing to search for. Savor Scout looks for it on the menus of the few places left at the end, along with anything you add — “lunch omakase”, “nigiri”, “chef's choice” — and a menu with the whole phrase scores a higher match than one with a stray word of it.",
     related: ["sushi", "japanese-food", "seafood"],
     situations: ["celebrating", "first-date", "birthday-dinner"],
   },
@@ -328,7 +328,7 @@ module.exports = [
       ["Onigiri or ochazuke to finish", "A rice dish at the end is the traditional way to close an izakaya night."],
     ],
     signals:
-      "Izakaya searches read menus for small plates, skewers and a real Japanese drinks list, which separates an izakaya from a sushi restaurant. Reviews that mention the grill, the specials and the atmosphere count toward the pick, since a quiet izakaya is missing half the point.",
+      "An izakaya search looks for the word on the menus of the places at the top of the shortlist, and for any dish you add: “karaage”, “yakitori” or “agedashi tofu”. Whether it gets loud is a question about the room, so type “lively” and Savor Scout looks for that word in reviews; leave it out and noise plays no part.",
     related: ["japanese-food", "ramen", "sushi"],
     situations: ["friends-visiting", "after-a-shift", "work-team-lunch"],
   },
@@ -355,7 +355,7 @@ module.exports = [
       ["Double ka meetha to finish", "Hyderabadi bread pudding, if the menu has it."],
     ],
     signals:
-      "Biryani searches read menus for named biryani styles and dum cooking, which separates a biryani specialist from a general Indian menu with one rice dish. Reviews mentioning goat, the rice and portion size count toward the pick, and halal meat is matched when you ask for it.",
+      "Biryani styles differ enough to be worth naming. “Hyderabadi dum biryani”, “goat biryani” or “chicken biryani on the bone” is looked for on the menus of the finalists, read from each restaurant's own website where it has one. “Halal” is matched only when you add it, as a dietary term the card will list if found.",
     related: ["indian-food", "curry", "halal-food"],
     situations: ["big-group", "friends-visiting", "on-a-budget"],
   },
@@ -382,7 +382,7 @@ module.exports = [
       ["Filter coffee", "South Indian coffee with chicory, milk and sugar. Order it to finish."],
     ],
     signals:
-      "Dosa searches read menus for South Indian dishes by name — dosa, idli, vada, uttapam — which separates a South Indian restaurant from a North Indian one with a dosa added.",
+      "Nothing is vegetarian by default here: if that matters, add “vegetarian” and it is matched as a dietary term, exactly as typed, and listed on the card when found. The dishes themselves — “masala dosa”, “Mysore masala dosa”, “idli and vada” — are looked for on the menus of the places left at the end, and the more of them a menu lists, the higher its match.",
     related: ["indian-food", "curry", "breakfast"],
     situations: ["vegetarians-and-meat-eaters", "on-a-budget", "eating-alone"],
   },
@@ -409,7 +409,7 @@ module.exports = [
       ["Tteokbokki on the side", "Spicy rice cakes, a common add-on at Korean chicken places."],
     ],
     signals:
-      "Korean fried chicken searches read menus for Korean-style chicken and glaze names like yangnyeom and soy garlic, which separates a Korean chicken place from a wing shop with a gochujang sauce. Reviews mentioning a crisp crust and the wait count toward the pick.",
+      "Glaze and cut are the details worth typing. “Soy garlic”, “half-and-half” or “yangnyeom” goes into the check each finalist's menu gets, alongside Korean fried chicken itself, and a menu that uses your words scores a higher match. The twenty-minute wait for a proper double fry is not something the search reads for, either way.",
     related: ["fried-chicken", "wings", "korean-food"],
     situations: ["late-night", "friends-visiting", "after-a-shift"],
   },
@@ -436,7 +436,7 @@ module.exports = [
       ["Menudo, if you are there anyway", "The tripe soup that usually shares the weekend board."],
     ],
     signals:
-      "Pozole searches read menus for pozole by name and style. Reviews mentioning the broth and the garnishes count toward the pick.",
+      "Say the colour. “Pozole rojo” and “pozole verde” are different dishes, and either one typed into the search is looked for on the menus of the places at the head of the shortlist, alongside pozole itself. Add “menudo” as well and that goes into the same check, with the match percentage showing how much of it the menu carried.",
     related: ["mexican-food", "soup", "tamales"],
     situations: ["hungover", "sick-with-a-cold", "cold-rainy-night"],
   },
@@ -464,7 +464,7 @@ module.exports = [
       ["A michelada", "Beer with lime, salt and chilli. A common drink with mariscos."],
     ],
     signals:
-      "Mariscos searches read menus for aguachile, ceviche and cocteles, which separates a marisquería from a Mexican restaurant with one shrimp dish. Reviews mentioning freshness and weekend crowds count toward the pick.",
+      "Mariscos menus are specific, and the search looks for the words you give it. “Aguachile”, “coctel de camarón” or “tostada de ceviche” is checked against the menus of the places at the top of the shortlist, Spanish-language menu text included, word for word like anything else. Weekend crowds are not part of it.",
     related: ["mexican-food", "seafood", "tacos"],
     situations: ["hot-day", "hungover", "friends-visiting"],
   },
@@ -491,7 +491,7 @@ module.exports = [
       ["A Polish or a brat", "Most good hot dog places also do one sausage properly."],
     ],
     signals:
-      "Hot dog searches read menus for named regional styles and all-beef or natural casing franks, which separates a hot dog stand from a bar with a hot dog on the kids' menu. Reviews that mention the snap and the style count toward the pick.",
+      "Regional hot dog styles are named things, which makes them easy to search for. Type “Chicago-style”, “Sonoran dog” or “natural casing” and Savor Scout looks for those words on the menus of the finalists; a stand whose menu carries them scores a higher match than a bar with one hot dog on the list.",
     related: ["burgers", "sandwiches", "deli"],
     situations: ["road-trip", "with-a-toddler", "on-a-budget"],
   },
@@ -519,7 +519,7 @@ module.exports = [
       ["Cider on the side", "Dry Breton cider is the traditional drink with galettes."],
     ],
     signals:
-      "Crêpe searches read menus for crêpes and galettes by name and for buckwheat specifically, which separates a crêperie from a café with one dessert crêpe. Reviews mentioning thin crêpes and a visible griddle count toward the pick.",
+      "A crêperie and a café with one dessert crêpe both match the word, so add what only a crêperie would list. “Galette complète”, “buckwheat” or “salted butter caramel” is looked for on the menus of the top few places. Matching is literal: “crepe” and “crêpe” are different spellings to it, so try both if one comes up thin.",
     related: ["brunch", "breakfast", "bakery"],
     situations: ["first-date", "sunday-night", "with-a-toddler"],
   },
@@ -547,7 +547,7 @@ module.exports = [
       ["Go early", "Before nine, for the best choice."],
     ],
     signals:
-      "Donut searches read menus and listings for donut shops and bakeries by name, then weigh reviews that mention freshness, early opening and selling out.",
+      "Donut shops and bakeries are both in play; nothing filters either out. What the search checks is words: “yeast donuts”, “old-fashioned” or “apple fritter” is looked for on the menus of its last few contenders. “Open early” is a detail about the shop, so Savor Scout looks for it in reviews rather than on the menu.",
     related: ["bakery", "breakfast", "bagels"],
     situations: ["road-trip", "with-a-toddler", "moving-day"],
   },
@@ -576,7 +576,7 @@ module.exports = [
       ["Go in the morning", "The first two hours after opening have the best choice."],
     ],
     signals:
-      "Bakery searches read listings and menus for bread and pastry baked in house, and weigh reviews that mention croissants, sourdough and selling out.",
+      "A bakery search is only as specific as your sentence, because Savor Scout looks for what you name on the websites and menus of its finalists. “Croissants”, “sourdough loaf” or “baked on site” all go into that check. Selling out and opening hours are not read, so timing a morning visit is still your call.",
     related: ["donuts", "breakfast", "bagels"],
     situations: ["moving-day", "sunday-night", "friends-visiting"],
   },
@@ -604,7 +604,7 @@ module.exports = [
       ["Soft serve, done well", "Where it is made from real dairy mix, a very good thing in its own right."],
     ],
     signals:
-      "Ice cream searches read listings and menus for small-batch or house-made ice cream and gelato, and weigh reviews that mention flavour, texture and seasonal specials.",
+      "Type what you want in the cup. “House-made”, “gelato” or “soft serve” is looked for on the menus of the top few shops, read from each one's own website where it has one. “Late night” is about the shop rather than the ice cream, so it is looked for in reviews, and a shop is credited with it only if a review uses the words.",
     related: ["bakery", "donuts", "boba"],
     situations: ["hot-day", "with-a-toddler", "first-date"],
   },
@@ -633,7 +633,7 @@ module.exports = [
       ["A pitaya bowl", "Pink dragon fruit, lighter and less sweet. Often on the same menu."],
     ],
     signals:
-      "Açaí bowl searches read menus for açaí bowls by name and for unsweetened options, which separates an açaí shop from a smoothie counter with one bowl. Reviews that mention thickness and fresh fruit count toward the pick.",
+      "An açaí shop and a smoothie counter with one bowl both say açaí, so the details are what separate them. “Unsweetened açaí”, “pitaya bowl” or “almond butter” is looked for on the menus of the finalists. Spelling counts: “acai” without the cedilla is a different word to the search, and menus use both.",
     related: ["salad", "brunch", "breakfast"],
     situations: ["after-a-workout", "hot-day", "hungover"],
   },
@@ -662,7 +662,7 @@ module.exports = [
       ["Churrascaria", "A Brazilian steakhouse serving rodízio: a salad buffet, and grilled meat brought to the table on skewers and carved there."],
     ],
     signals:
-      "Buffet searches read listings and menus for buffet service, then weigh reviews that mention freshness, how often trays are refilled and busy times.",
+      "A buffet's quality depends on how busy it is, and that is not something Savor Scout measures. It reads listings and menus for what you type — “Indian lunch buffet”, “churrascaria”, “carving station” — and review dates play no part. If “family friendly” matters, type it and it is looked for in reviews.",
     related: ["chinese-food", "indian-food", "brazilian-food"],
     situations: ["big-group", "with-picky-eaters", "on-a-budget"],
   },
@@ -692,7 +692,7 @@ module.exports = [
       ["Tell them the occasion", "When booking. Good restaurants notice."],
     ],
     signals:
-      "Fine dining searches read menus for tasting menus, prix fixe and chef-driven cooking, and weigh reviews that describe service, pacing and the value for money.",
+      "For fine dining, what you type is split in two. Food and format — “tasting menu”, “prix fixe”, “wine pairing” — are looked for on the menus of the leading few. Words about the evening, such as “romantic” or “quiet”, send Savor Scout to reviews for those exact words. Reservations and dress codes are not picked up on their own, so check them before you go.",
     related: ["steak", "sushi", "omakase"],
     situations: ["celebrating", "birthday-dinner", "meeting-the-parents"],
   },
@@ -723,7 +723,7 @@ module.exports = [
       ["Peach cobbler or banana pudding", "Cobbler baked under a biscuit or pastry top; pudding layered with vanilla wafers and sliced banana."],
     ],
     signals:
-      "Soul food searches read menus for the dishes that define the cuisine — smothered meats, oxtails, greens, baked macaroni — which separates a soul food kitchen from a restaurant with a Southern-themed brunch. Reviews that mention the sides, daily specials and home cooking count toward the pick.",
+      "Soul food is defined by its dishes, and those are what the search can check. “Smothered pork chops”, “oxtails” or “meat and three” goes into the menu check for the places at the top of the shortlist, and a kitchen whose menu carries them scores a higher match than one with a Southern-themed brunch.",
     related: ["fried-chicken", "chicken-and-waffles", "bbq"],
     situations: ["sunday-night", "sad", "cold-rainy-night"],
   },
@@ -752,7 +752,7 @@ module.exports = [
       ["Red beans and rice", "Traditionally a Monday dish in New Orleans. Red kidney beans cooked down with pork until creamy."],
     ],
     signals:
-      "Cajun and Creole searches read menus for gumbo, étouffée, jambalaya and po'boys by name, which separates a Louisiana kitchen from a restaurant with one blackened chicken dish. Reviews mentioning the roux, the seafood and the andouille count toward the pick.",
+      "Gumbo, étouffée and jambalaya are named on menus that cook them, so they are the words to type. Add “crawfish étouffée”, “red beans and rice” or “po'boy” and Savor Scout looks for them on the menus of its finalists. “Cajun” or “Creole” is treated as the cuisine and checked alongside, in the listing and on the menu.",
     related: ["seafood-boil", "seafood", "soul-food"],
     situations: ["friends-visiting", "cold-rainy-night", "celebrating"],
   },
@@ -781,7 +781,7 @@ module.exports = [
       ["A frozen margarita", "Tex-Mex restaurants are where it was made popular."],
     ],
     signals:
-      "Tex-Mex searches read menus for the dishes that define it — chili gravy enchiladas, fajitas, queso, combination plates — and for house-made flour tortillas. Reviews mentioning the salsa, the tortillas and sizzling fajitas count toward the pick.",
+      "Tex-Mex is its own cuisine, and the search can tell it from regional Mexican only by the words you use. “Enchiladas with chili gravy”, “puffy tacos” or “house-made flour tortillas” is looked for on the menus of the places left at the end, read from each one's own website where it has one, and the match percentage reflects how much of it was there.",
     related: ["mexican-food", "tacos", "bbq"],
     situations: ["big-group", "birthday-dinner", "with-picky-eaters"],
   },
@@ -809,7 +809,7 @@ module.exports = [
       ["Fish-fragrant eggplant", "Sweet, sour and garlicky. No fish in it; the name comes from the seasoning."],
     ],
     signals:
-      "Sichuan searches read menus for regional dishes by name — mapo tofu, dan dan noodles, water-boiled fish — and for mala and Sichuan peppercorn, which separates a Sichuan restaurant from a general Chinese menu with a few spicy dishes. Reviews that mention the numbing heat count toward the pick.",
+      "Sichuan dishes have precise names, and precise names are what the menu check rewards. “Mapo tofu”, “water-boiled fish” or “dry-fried green beans” typed into the search is looked for on each finalist's menu, and so is “Sichuan peppercorn”. Numbing heat is for you to judge; the search can only see whether the menu mentions it.",
     related: ["chinese-food", "hot-pot", "noodles"],
     situations: ["sick-with-a-cold", "cold-rainy-night", "friends-visiting"],
   },
@@ -836,7 +836,7 @@ module.exports = [
       ["Milk tea with boba", "Where it began."],
     ],
     signals:
-      "Taiwanese searches read menus for beef noodle soup, lu rou fan and night-market dishes by name, which separates a Taiwanese restaurant from a bubble tea shop or general Chinese menu. Reviews that mention the broth and the snacks count toward the pick.",
+      "Bubble tea shops use the word Taiwanese too, so a cuisine search alone can land on one. Name the food — “beef noodle soup”, “lu rou fan” or “gua bao” — and Savor Scout looks for it in nearby listings and on the menus of its finalists, so a kitchen that lists those dishes scores a higher match than a tea counter.",
     related: ["chinese-food", "boba", "noodles"],
     situations: ["cold-rainy-night", "late-night", "eating-alone"],
   },
@@ -863,7 +863,7 @@ module.exports = [
       ["A tripleta", "A sandwich of three meats, often pressed."],
     ],
     signals:
-      "Puerto Rican searches read menus for mofongo, pernil and arroz con gandules by name, which separates a Puerto Rican kitchen from a pan-Latin menu. Reviews that mention sofrito, the pernil and the frituras count toward the pick.",
+      "Pan-Latin menus and Puerto Rican kitchens both turn up for the cuisine, and dish names are what separate them. Type “mofongo”, “pernil” or “arroz con gandules” and Savor Scout looks for those words on the menus of the top few places. The match percentage on the card reflects how much of it that menu text carried.",
     related: ["cuban-food", "caribbean-food", "salvadoran-food"],
     situations: ["sunday-night", "friends-visiting", "hungover"],
   },
@@ -890,7 +890,7 @@ module.exports = [
       ["Spam musubi", "The everyday grab-and-go snack of Hawaii, often glazed with soy and sugar."],
     ],
     signals:
-      "Hawaiian searches read menus for plate lunch, kalua pork and loco moco by name, which separates a Hawaiian kitchen from a poke shop. Reviews that mention portion size and the mac salad count toward the pick.",
+      "Hawaiian kitchens and poke shops can look alike in a listing, so the plate lunch is the thing to name. “Mixed plate”, “loco moco” or “kalua pork” is looked for on the menus of the finalists, read from their own websites where they have one, and the match percentage reflects how much of it turned up.",
     related: ["poke", "japanese-food", "filipino-food"],
     situations: ["on-a-budget", "work-team-lunch", "hungover"],
   },
@@ -917,7 +917,7 @@ module.exports = [
       ["Chai", "Strong, milky, sweet. Order it to finish."],
     ],
     signals:
-      "Pakistani searches read menus for karahi, nihari and haleem by name and for halal service, which separates a Pakistani restaurant from a general North Indian menu. Reviews that mention the karahi, the naan and the nihari count toward the pick.",
+      "Pakistani and North Indian menus share a lot, and the dishes that differ are the ones worth typing. “Goat karahi”, “nihari” or “haleem” is looked for on the menus of the places at the top of the shortlist. “Halal” can be added as a dietary term; it is matched word for word and listed on the card when the text contains it.",
     related: ["indian-food", "biryani", "halal-food"],
     situations: ["late-night", "big-group", "friends-visiting"],
   },
@@ -945,7 +945,7 @@ module.exports = [
       ["Chili chicken", "Indo-Chinese, fried and tossed with peppers and chilli."],
     ],
     signals:
-      "Nepali searches read menus for momos, dal bhat and thukpa by name, which separates a Nepali or Himalayan kitchen from an Indian restaurant with momos added. Reviews mentioning hand-made momos and the achar count toward the pick.",
+      "Momos are on plenty of Indian menus, so add what a Nepali kitchen is more likely to list. “Jhol momo”, “dal bhat” or “thukpa” is looked for in nearby listings and then on the menus of the leading few. A place that calls itself Himalayan can still match, if its menu names the dishes you typed.",
     related: ["dumplings", "indian-food", "soup"],
     situations: ["cold-rainy-night", "sick-with-a-cold", "on-a-budget"],
   },
@@ -972,7 +972,7 @@ module.exports = [
       ["Adeni tea or Yemeni coffee", "Spiced milk tea, or qishr made from coffee husks."],
     ],
     signals:
-      "Yemeni searches read menus for mandi, fahsa and saltah by name, which separates a Yemeni restaurant from a general Middle Eastern grill. Reviews that mention the meat, the bread and the coffee count toward the pick, and halal service is matched when asked.",
+      "Yemeni kitchens often share a listing category with other Middle Eastern grills, so name the dish. “Lamb mandi”, “fahsa” or “saltah” is looked for in nearby listings and on the menus of the finalists. The coffee and the bread are yours to judge; the search reads for words, and only the ones you give it.",
     related: ["lebanese-food", "halal-food", "mediterranean-food"],
     situations: ["big-group", "friends-visiting", "celebrating"],
   },

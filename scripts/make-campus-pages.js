@@ -343,9 +343,8 @@ ${bigHtml}${set === "town" || set === "rural" ? `
       <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
       <p class="lede">${esc(note ? note.scene[0] : sc.problem(shortName))}</p>
       <p>
-        Say what you are craving — a budget, a dietary need, or that it has to be open right now —
-        and Savor Scout reads menus and reviews near ${esc(place)}, then picks one place and tells
-        you why.
+        Say what you are craving — a dish, a budget or a dietary need — and Savor Scout checks the
+        menus of places near ${esc(place)} for it, then picks one place and tells you why.
       </p>
       <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
 

@@ -3,7 +3,8 @@
  * THE RULE FOR THIS FILE: NO MEDICAL ADVICE, AND NO SAFETY PROMISES.
  *
  * Several of these cover allergies that put people in hospital. Savor Scout
- * reads menus and reviews for the terms somebody gives it, and that is a
+ * reads menus (and reviews, only when an atmosphere is asked for) for the
+ * terms somebody gives it, and that is a
  * discovery aid — it is not verification, it cannot see a kitchen, and a menu
  * saying "gluten-free" tells you what a restaurant printed, not how it cooks.
  * Every allergy entry below states that limit in its own words rather than
@@ -46,7 +47,7 @@ module.exports = [
       ["Higher risk", "Anywhere built on wheat — Italian, Chinese, most bakeries, most bars with a shared fryer. Also, counter-intuitively, restaurants with extensive gluten-free menus but a single small kitchen, where the intent is genuine and the space to keep things separate is not."],
     ],
     tool:
-      "If you set gluten-free or coeliac as an allergy in Savor Scout, it reads restaurant menus and reviews for those exact terms, does not loosen them into near-matches, and shows you on the card which phrases it found and where. Reviews are frequently more useful than menus here, because other coeliac diners describe how a kitchen actually handled it.",
+      "Type gluten-free into the search, or save gluten-free or coeliac as an allergy on your profile, and Savor Scout looks for that exact phrase in the menu text of the places it shortlists. When a menu uses it, the card says so. A near-match does not count. Reviews are only read when you also ask about the atmosphere, so how a kitchen has handled coeliac diners is still a question for the restaurant.",
     limit:
       "That is a way to find candidates, not a safety check. We have not visited these kitchens and cannot see the fryer. Treat anything Savor Scout surfaces as a place worth calling, and make the call.",
     related: ["dairy-free", "low-fodmap", "vegan"],
@@ -81,7 +82,7 @@ module.exports = [
       ["Generally lower risk, still worth asking", "Italian outside of pesto and dessert, most steakhouses and grills, Mexican taquerias, Japanese outside of certain sauces and desserts, Greek and Levantine grills — though baklava and tahini-adjacent preparations mean the dessert menu needs its own conversation."],
     ],
     tool:
-      "Savor Scout keeps allergy terms strict rather than loosening them — an entry of tree nut is not softened into nut or tree, because narrowing an allergy term is how a matcher quietly hands you something dangerous. It reads menus and reviews for the exact terms and shows which ones it found, including reviews from other people with nut allergies describing how a kitchen handled it.",
+      "Save peanut or tree nut as an allergy on your profile and Savor Scout keeps the phrase exactly as written: tree nut is looked for as tree nut, never loosened into tree or nut, because narrowing an allergy term is how a matcher quietly hands you something dangerous. It checks the menu text of the places it shortlists, and the card lists any allergy term it found with a reminder that a mention is not a safety guarantee.",
     limit:
       "This finds places worth calling. It does not check a kitchen, cannot see shared equipment, and is not a substitute for telling the restaurant directly. For a serious allergy, the phone call is the step that matters and this only tells you who to call.",
     related: ["sesame-allergy", "shellfish-allergy", "dairy-free"],
@@ -115,7 +116,7 @@ module.exports = [
       ["Generally easier", "Indian, particularly North Indian and vegetarian South Indian, where shellfish is largely absent from inland cooking. Ethiopian. Most Middle Eastern and Levantine grills. Mexican taquerias inland, though coastal Mexican cooking is seafood-heavy. Steakhouses, with the caveat that many have a raw bar and a shared kitchen."],
     ],
     tool:
-      "Entering shellfish, shrimp or a specific crustacean as an allergy makes Savor Scout read menus and reviews for those exact terms without broadening them, and the card shows you which terms it matched. It is particularly useful for spotting fish sauce and oyster sauce mentions buried in a menu you would otherwise have to read line by line.",
+      "Shellfish, shrimp, crab or any other crustacean can be saved as allergy terms. Each is matched as written against the menu text Savor Scout finds for the places it shortlists, and any that turn up are listed on the card. Add fish sauce or oyster sauce as terms too and the same check picks them out of a long menu you would otherwise have to read line by line.",
     limit:
       "Reading a menu is not the same as knowing what is in a stockpot. Use this to build a shortlist, then ask the restaurant directly about stock, sauce and the fryer — those three answers decide it, and none of them are reliably written down anywhere.",
     related: ["peanut-and-tree-nut-allergy", "sesame-allergy", "halal"],
@@ -149,7 +150,7 @@ module.exports = [
       ["Harder", "French, northern Italian, and most American fine dining, all of which are built on butter and cream. Indian, where ghee, paneer, cream and yoghurt run through much of the northern menu — though South Indian food is far easier. Bakeries and most desserts."],
     ],
     tool:
-      "Setting dairy-free, lactose or milk as a dietary term makes Savor Scout read menus and reviews for it, and because dairy tends to be discussed in reviews — people mention accommodating kitchens and dairy-free options by name — the review channel does a lot of the work here.",
+      "Type dairy-free, or save it as a dietary preference, and Savor Scout adds it to what it looks for in each shortlisted menu. A menu that uses the phrase gets it listed on the card as confirmed. Lactose-free and no dairy are different phrases, and the match is literal, so if a menu might use either, add both.",
     limit:
       "A menu cannot tell you what a pan was finished with. For an intolerance this is usually a good enough starting point; for a milk protein allergy, treat it the way you would any other allergy and speak to the kitchen.",
     related: ["vegan", "gluten-free", "kosher"],
@@ -183,7 +184,7 @@ module.exports = [
       ["Harder", "French and Italian, because of fresh pasta, emulsified sauces and pastry. Bakeries and brunch places, for obvious reasons. Japanese, where egg appears in tamago, katsu coatings, some ramen and much of the fried menu."],
     ],
     tool:
-      "Entering egg as an allergy keeps the term strict — it is not loosened into eggplant or any other partial match — and Savor Scout reads menus and reviews for it, showing you what it found. It is most useful for ruling in cuisines whose core dishes rarely involve egg, which narrows the shortlist quickly.",
+      "Egg can be saved as an allergy term and is looked for in the menu text of each place Savor Scout shortlists. The match is plain text, so eggplant on a menu also registers as a mention of egg; treat a flagged mention as a reason to read that menu, not as a verdict. The check is most useful for ruling in cuisines whose core dishes rarely involve egg.",
     limit:
       "Egg wash never appears on a menu, so a clean menu read means less here than it does for other restrictions. The questions above, asked directly, are doing the real work.",
     related: ["dairy-free", "vegan", "gluten-free"],
@@ -217,7 +218,7 @@ module.exports = [
       ["Generally easier", "Mexican taquerias, Italian outside of certain breads, Indian, Thai and Vietnamese, most steakhouses and barbecue, and Ethiopian. None of these are sesame-free by definition, but sesame is not structural to them the way it is above."],
     ],
     tool:
-      "Sesame and tahini both work as allergy terms and are kept strict. Because sesame is under-described on menus, the review channel matters more than usual here — other people with sesame allergies frequently write about how a restaurant handled it, and Savor Scout reads reviews alongside menus rather than only one of them.",
+      "Sesame and tahini can both be saved as allergy terms, and each is looked for as written in the menu text of the places Savor Scout shortlists, with anything found listed on the card. Sesame is often left off menus altogether, so a clean result says less than it seems to: the absence of a mention is not evidence that a kitchen avoids it.",
     limit:
       "Finishing oil is never on a menu. A clean match means a place is worth calling, and the call is where you find out.",
     related: ["peanut-and-tree-nut-allergy", "gluten-free", "dairy-free"],
@@ -251,7 +252,7 @@ module.exports = [
       ["Workable with questions", "Thai and Vietnamese, once fish sauce is addressed. Mexican, once lard is addressed. Italian, where pasta e fagioli, pasta with vegetables and pizza marinara are genuine dishes rather than compromises."],
     ],
     tool:
-      "Savor Scout keeps dietary preferences separate from allergies internally, and a vegan search reads menus and reviews for vegan-specific language rather than just filtering a cuisine tag. It will return a South Indian or Ethiopian restaurant for a vegan search when that is the honest answer, rather than restricting you to places with vegan in the name.",
+      "Type vegan and it becomes a dietary term that Savor Scout looks for in each shortlisted menu, confirmed on the card when the menu uses the word. The shortlist itself comes from your whole sentence, so a search like vegan Ethiopian or vegan dosa can surface kitchens whose traditional menu already suits you, not only places with vegan in the name.",
     limit:
       "Menus describe intentions and reviews describe experiences; neither guarantees the stock. If a specific ingredient matters to you for ethical reasons, the question still has to be asked at the restaurant.",
     related: ["vegetarian", "dairy-free", "gluten-free"],
@@ -285,7 +286,7 @@ module.exports = [
       ["Usually thin", "Steakhouses, barbecue, most seafood restaurants, and anywhere whose identity is built around one animal. Not impossible, but you will be eating sides."],
     ],
     tool:
-      "A vegetarian search reads menus and reviews for the depth of the vegetarian offering rather than for the presence of a vegetarian tag, which is what separates a restaurant with one pasta dish from a restaurant where half the menu qualifies. Reviews mentioning good vegetarian options carry real weight here because they are usually written by people in the same position.",
+      "Typed into the search, vegetarian is looked for in the menu text of the places Savor Scout shortlists and confirmed on the card when found. That is a check for the word, not a measure of how much of the menu qualifies, so naming the dishes you want, such as a vegetarian thali, paneer or a falafel plate, is what steers the search towards menus with real depth.",
     limit:
       "Stock is invisible on a menu. If the reason is ethical rather than preference, the stock question is worth asking regardless of how good the match looked.",
     related: ["vegan", "dairy-free", "low-fodmap"],
@@ -319,7 +320,7 @@ module.exports = [
       ["Naturally compatible", "Vegetarian restaurants, particularly South Indian, where the question largely does not arise apart from alcohol in cooking. Kosher restaurants share many but not all requirements and the overlap is not complete, so it depends on your own standard."],
     ],
     tool:
-      "Halal works as a dietary term in Savor Scout, and it reads both menus and reviews for it — reviews matter here because people frequently specify in a review whether a place is fully halal or halal-meat-only, which is exactly the distinction a listing omits.",
+      "Halal can be typed into the search or saved as a dietary preference. Savor Scout looks for the word in each shortlisted menu, and in the reviews it fetches when you also ask about the atmosphere, and the card confirms it when found. It does not check certification, and it cannot tell a fully halal kitchen from one that only serves halal meat.",
     limit:
       "We read what restaurants and reviewers wrote. We do not verify certification, and standards differ between certifying bodies. If a specific standard matters to you, confirm it with the restaurant.",
     related: ["kosher", "vegetarian", "shellfish-allergy"],
@@ -354,7 +355,7 @@ module.exports = [
       ["Naturally compatible, unsupervised", "Vegetarian and vegan restaurants avoid the meat-and-dairy question but are not kosher without supervision, since equipment and ingredients still matter. Whether that works depends entirely on your standard."],
     ],
     tool:
-      "Kosher works as a dietary term and Savor Scout reads menus and reviews for it, including the distinction between kosher and kosher-style where reviewers make it. Certification agency names frequently appear in reviews, which is often the fastest way to find out what a restaurant holds.",
+      "Kosher is matched as a dietary term, looked for as written in the menu text of the places Savor Scout shortlists and confirmed on the card when it appears. Kosher-style contains the same word, so a match can mean either. The restaurant's own site, or the agency that certifies it, is where to find out which.",
     limit:
       "We read text; we do not verify supervision, and a restaurant's certification can lapse or change. Confirm directly if it matters, which for kosher observance it generally does.",
     related: ["halal", "dairy-free", "vegetarian"],
@@ -389,7 +390,7 @@ module.exports = [
       ["Harder", "Italian, Spanish, Indian, Thai and most of the Middle East, where an aromatic base is the foundation of the cooking. Not impossible, but you will be asking for something the kitchen is not set up to do."],
     ],
     tool:
-      "Low-FODMAP, IBS and specific terms like garlic-free work as dietary terms, and Savor Scout will read menus and reviews for them. In practice the more useful approach is to search for the cooking formats above — grilled, cooked to order, plain — because those are properties a kitchen either has or does not, and they matter more here than a label does.",
+      "Low-FODMAP, garlic-free and similar terms can be typed as dietary terms, but few menus use them, so a missing match says little. Describing the cooking works better: grilled fish, plain, or cooked to order puts those words into the check Savor Scout runs against each shortlisted menu, and a format like that is what makes a plain preparation possible.",
     limit:
       "No menu describes its stock or its marinade. This narrows the field to restaurants whose format makes a plain preparation plausible; the conversation with the kitchen is what decides it.",
     related: ["gluten-free", "dairy-free", "vegetarian"],
@@ -423,7 +424,7 @@ module.exports = [
       ["Harder", "Anywhere built on a starch — Italian, Mexican outside of fajitas and grilled plates, most Chinese, most Indian, sandwich shops, and barbecue with sweet sauce, where the meat is fine and the sauce is not."],
     ],
     tool:
-      "Low-carb and keto work as dietary terms, and Savor Scout reads menus and reviews for them. In practice the better search here describes the cooking rather than the diet — grilled protein, sauce on the side, vegetable sides — because those are things the matcher can actually find on a menu, and they are the things that determine whether a restaurant works.",
+      "Low-carb and keto can be typed as dietary terms and are confirmed on the card when a shortlisted menu uses them. The more useful search describes the plate, such as grilled protein, sauce on the side and vegetable sides, because those words go into the check against menu text, and they are what decide whether a restaurant works.",
     limit:
       "Sugar in a marinade is not on any menu. The sauce-on-the-side request handles most of it without needing anyone to look anything up.",
     related: ["gluten-free", "low-fodmap", "dairy-free"],

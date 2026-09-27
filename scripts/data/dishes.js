@@ -51,7 +51,7 @@ module.exports = [
       ["Fish tacos", "A Baja tradition, battered and fried with cabbage and crema. Judge these by whether the batter is still crisp when it reaches you."],
     ],
     signals:
-      "When you search for tacos, Savor Scout reads menus and reviews for the specific things above rather than sorting by star rating. Mentions of handmade or fresh tortillas, a trompo, house salsas, and named cuts like suadero or lengua all push a place up. Reviews describing soft, soggy shells or a huge unfocused menu push it down. The score you see on the card is built from those matches, and the card shows you which ones it found.",
+      "Savor Scout looks for tacos on the menu of each place at the top of its shortlist, read from the restaurant's own website where the listing has one. Anything finer has to be typed. Add “suadero”, “handmade tortillas” or “al pastor from a trompo” and those words become part of the dish it checks that menu text for, and the match percentage reflects how much of it was there.",
     related: ["mexican-food", "burgers", "sandwiches"],
     situations: ["late-night", "on-a-budget", "hungover", "with-picky-eaters"],
   },
@@ -81,7 +81,7 @@ module.exports = [
       ["Deep dish", "Chicago's most famous and least representative pizza. Genuinely good, essentially a different dish, and not what locals eat most often."],
     ],
     signals:
-      "Searching for pizza, the matcher looks for the vocabulary that separates these styles — wood-fired, coal oven, 00 flour, long-fermented, Detroit-style, by the slice — and weighs reviews mentioning crust texture far more heavily than overall rating. If you name a style in your search, it prioritises places whose menus and reviews actually use that style's language rather than places that merely sell pizza.",
+      "Name the style, because the style is what gets checked. Typed into the search, “Neapolitan”, “Detroit-style” or “tavern-style thin crust” becomes part of the dish Savor Scout looks for on the menus of the few pizzerias at the top of its shortlist. Leave it out and the search is matching the word pizza, with rating and distance doing more of the deciding.",
     related: ["italian-food", "sandwiches", "brunch"],
     situations: ["with-a-toddler", "moving-day", "big-group", "with-picky-eaters"],
   },
@@ -111,7 +111,7 @@ module.exports = [
       ["Chirashi, at lunch", "A bowl of assorted sashimi over rice, usually far better value than the equivalent in nigiri."],
     ],
     signals:
-      "A sushi search weights mentions of omakase, counter seating, named chefs, seasonal fish and rice quality much more heavily than a five-star average, because a strip-mall place with fifty five-star reviews for its Dragon Roll is answering a different question than the one you asked. If you search for omakase specifically, places without a counter drop out.",
+      "A search for sushi checks menus for sushi and goes no finer than that. If you want “omakase”, “nigiri” or “chirashi at lunch”, put it in the sentence: those words are sought in the menu text Savor Scout gathers for its last few contenders, and the more of them appear, the higher the match. Asking for “counter seating” sends it to reviews for that exact phrase instead.",
     related: ["japanese-food", "ramen", "seafood"],
     situations: ["eating-alone", "first-date", "celebrating", "hot-day"],
   },
@@ -141,7 +141,7 @@ module.exports = [
       ["Mazemen / abura soba", "Broth-less, dressed with tare and fat. Worth ordering if the shop is confident enough to offer it."],
     ],
     signals:
-      "Ramen searches weight specialisation heavily: a menu that is mostly ramen outranks a broad Japanese menu with one ramen item, regardless of rating. Named broth styles, mentions of house-made noodles, ajitama and counter seating all count. The card will tell you which of those it found rather than just handing you a number.",
+      "Ramen is matched as ramen until you say which. Naming a broth or a format — “tonkotsu”, “shio”, “tsukemen” — makes that word part of what Savor Scout reads for on each finalist's own menu, and a shop whose menu carries it scores a higher match. When it can pull dish names out of that menu, the card quotes a couple of them.",
     related: ["japanese-food", "noodles", "pho"],
     situations: ["hungover", "eating-alone", "cold-rainy-night", "sad"],
   },
@@ -170,7 +170,7 @@ module.exports = [
       ["Add hoisin to the dish, not the bowl", "Squeezing sauce into the broth means the next spoonful of a stock somebody simmered for eight hours tastes of hoisin. Dip the meat instead."],
     ],
     signals:
-      "Searching pho, the matcher looks for reviews describing the broth specifically — clear, rich, fragrant, star anise — because broth quality is what people actually comment on when a place is good, and it never shows up in a star rating. Places whose reviews mention the herb plate and fresh noodles rank higher than places with a higher average and no such detail.",
+      "Broth is what makes pho, and no search can taste it. What Savor Scout can do is read menus for the words you give it. Add “pho tai”, “dac biet” or “pho ga” and those go into the menu check for its last few contenders, alongside pho itself; the match percentage on the card shows how much of that it found.",
     related: ["vietnamese-food", "ramen", "soup", "noodles"],
     situations: ["hungover", "sick-with-a-cold", "on-a-budget", "after-a-shift"],
   },
@@ -199,7 +199,7 @@ module.exports = [
       ["The plain one, first visit", "Cheeseburger, nothing else. It is the only way to judge the kitchen."],
     ],
     signals:
-      "Burger searches read reviews for patty vocabulary — smashed, crusty, griddled, ground in house, cooked to temp — rather than ranking by rating, because the highest-rated burger in a given area is frequently the largest one. If you search for a smash burger specifically, thick pub patties are pushed down even where they score better overall.",
+      "If the kind of burger matters, write it down. “Smash burger”, “ground in house” or “green chile” are folded into the dish and checked against the menu text of each of its top few places — its own website first, a menu page found by web search otherwise. Without them, Savor Scout is looking for burgers in general, and rating and distance do more of the choosing.",
     related: ["sandwiches", "fried-chicken", "bbq"],
     situations: ["hungover", "late-night", "road-trip", "with-picky-eaters"],
   },
@@ -229,7 +229,7 @@ module.exports = [
       ["Alabama", "White sauce — mayonnaise, vinegar, black pepper — on smoked chicken. Regional, strange-sounding, and excellent."],
     ],
     signals:
-      "Barbecue searches read for wood type, cook times, named cuts and regional vocabulary, and treat reviews mentioning selling out early as a positive signal rather than a complaint. If you name a region, places whose menus use a different region's language drop down the list even when their rating is higher.",
+      "Barbecue regions barely overlap, and the search is only as regional as you make it. Type “Central Texas brisket”, “whole hog” or “burnt ends” and Savor Scout reads for those words in the menu of every place still in contention at the end, with a phrase found whole counting for more than scattered words. A region you do not name is not guessed.",
     related: ["burgers", "fried-chicken", "steak"],
     situations: ["big-group", "friends-visiting", "road-trip", "birthday-dinner"],
   },
@@ -258,7 +258,7 @@ module.exports = [
       ["The sandwich", "Judge it on whether the crust survives contact with the sauce and the bun."],
     ],
     signals:
-      "Searching fried chicken, the matcher looks for fried-to-order mentions, named styles, wait times described positively, and specific crust language in reviews. A twenty-minute wait showing up repeatedly in reviews raises a place's score here rather than lowering it, which is the opposite of how a generic ranking treats it.",
+      "On a plain fried chicken search, each finalist's menu is checked for fried chicken and nothing more particular. Adding “Nashville hot”, “dark meat” or “fried to order” puts those words into the same check, and the match percentage rises with how many of them the menu text contains. Crust, seasoning and the state of the oil are still yours to judge.",
     related: ["burgers", "korean-food", "bbq", "sandwiches"],
     situations: ["sad", "on-a-budget", "with-picky-eaters", "moving-day"],
   },
@@ -288,7 +288,7 @@ module.exports = [
       ["Katsu sando, torta, shawarma wrap", "The same principles in other traditions, and frequently the best sandwich in a given neighbourhood."],
     ],
     signals:
-      "Sandwich searches weight bread mentions, house-baked and sliced-to-order language, and named regional styles. Because a sandwich shop's rating is heavily influenced by speed and price, the matcher discounts those and reads for what people actually say about the bread and the filling.",
+      "“Sandwiches” on its own matches nearly any counter, so name the one you mean. An “Italian hoagie”, a “banh mi” or an “Italian beef” goes into the search and is matched against the menus of the top few places, where a phrase that appears whole counts for more than a stray word. Details like “sliced to order” work the same way, if a menu says them.",
     related: ["burgers", "vietnamese-food", "brunch"],
     situations: ["work-team-lunch", "on-a-budget", "before-a-flight", "moving-day"],
   },
@@ -318,7 +318,7 @@ module.exports = [
       ["Pierogi, manti, khinkali, mandu", "The same idea across Poland, Turkey, Georgia and Korea. Khinkali in particular are worth going out of your way for."],
     ],
     signals:
-      "A dumpling search reads for hand-made and hand-folded language, named styles, and reviews describing the wrapper rather than the filling. Dim sum service style is treated as a separate signal, so searching for dim sum prioritises places doing cart or made-to-order service over places that merely list dumplings.",
+      "Dumpling covers everything from xiao long bao to pierogi, and Savor Scout narrows it only when you do. Type “xiao long bao”, “gyoza” or “handmade wrappers” and those words are checked against the menu of each of its top few places, taken from its own website where it has one. The match percentage reflects how much of your request that menu contained.",
     related: ["chinese-food", "japanese-food", "korean-food", "noodles"],
     situations: ["nothing-sounds-good", "with-a-toddler", "big-group"],
   },
@@ -348,7 +348,7 @@ module.exports = [
       ["Bun cha and bun bo Hue", "Vietnamese. The first is grilled pork with cold noodles and dipping broth; the second a lemongrass-and-chilli beef soup that deserves to be as famous as pho."],
     ],
     signals:
-      "Noodle searches key off the specific dish name rather than the category, because “noodles” is close to meaningless as a filter. Naming hand-pulled, dan dan or pad see ew makes the matcher look for that dish on menus and in reviews, and a place that serves it well but rates lower overall will beat a higher-rated restaurant that merely has a noodle section.",
+      "“Noodles” is close to meaningless as a search, and Savor Scout takes it literally. Name the dish — “hand-pulled noodles”, “dan dan mian”, “pad see ew” — and that becomes what it looks for, first in each nearby listing's name and description, then in the menus of the finalists, where a full phrase counts for more than a single matching word.",
     related: ["ramen", "pho", "chinese-food", "thai-food"],
     situations: ["on-a-budget", "eating-alone", "nothing-sounds-good", "finals-week"],
   },
@@ -378,7 +378,7 @@ module.exports = [
       ["Sinigang and bun bo Hue", "Filipino tamarind sour soup and Vietnamese lemongrass beef. Both worth seeking out specifically."],
     ],
     signals:
-      "Soup searches deliberately favour restaurants whose menus are built around a soup rather than restaurants that list one. The matcher reads for named soups and for reviews describing the broth, and it treats weekend-only availability — common for menudo, pozole and birria — as a signal of a kitchen making it properly rather than as a limitation.",
+      "Soup is only as specific as the word you give it. Savor Scout reads its finalists' menus for the words in your request, so “pozole”, “matzo ball soup” or “tom kha” finds kitchens whose menus name it, where a bare “soup” matches anything with a soup section. Somewhere “quiet” is a different kind of request: words about the room are looked for in reviews.",
     related: ["pho", "ramen", "chinese-food", "thai-food"],
     situations: ["sick-with-a-cold", "cold-rainy-night", "hungover", "sad"],
   },
@@ -407,7 +407,7 @@ module.exports = [
       ["Chowder, cioppino, bouillabaisse, gumbo", "Seafood stews where the stock is the skill and freshness is less exposed."],
     ],
     signals:
-      "Seafood searches read menus for species names and seasonality language, and weight reviews mentioning freshness and daily specials heavily. Distance from the coast is factored in: inland, the matcher gives more weight to preparations that are genuinely good with frozen fish rather than pushing you toward raw preparations that are unlikely to be at their best.",
+      "Seafood is too broad to check for anything in particular until you narrow it. Typing “whole grilled fish”, “raw bar” or “cioppino” puts those words into the menu check Savor Scout runs on each of the few places left at the end, read from its own website where one is listed. It knows nothing about where the fish came from beyond what that menu text says.",
     related: ["japanese-food", "steak", "greek-food"],
     situations: ["celebrating", "meeting-the-parents", "friends-visiting", "business-dinner"],
   },
@@ -437,7 +437,7 @@ module.exports = [
       ["Tomahawk, with caution", "A ribeye with a long bone, sold at a premium for the bone. The beef is the same."],
     ],
     signals:
-      "Steakhouse searches read for grade and aging language, named cuts, and reviews that describe the crust and the temperature accuracy. Because steakhouses attract high ratings on atmosphere and service, the matcher discounts that portion of the signal and looks specifically for what people say about the beef.",
+      "Cuts are named things, and named things are what the menu check finds. “Ribeye”, “dry-aged” or “hanger steak” typed in is looked for in each finalist's menu text alongside steak itself, the match percentage rising with how much of it appears. Reviews of the service and the room are only read if you ask for something about them by name.",
     related: ["bbq", "seafood", "italian-food"],
     situations: ["business-dinner", "meeting-the-parents", "celebrating", "first-date"],
   },
@@ -466,7 +466,7 @@ module.exports = [
       ["Go at 9am or 2pm", "The queue is a function of the hour more than the restaurant. The same kitchen at 9am is a completely different experience."],
     ],
     signals:
-      "Brunch searches specifically discount popularity signals that correlate with waiting rather than quality, and read for house-baked goods, egg preparation mentions, and weekday service. If you include a constraint like no wait, the matcher prioritises places with consistent reviews about being seated quickly over the ones with the longest queues and the highest ratings.",
+      "Brunch means different things to different people, and nothing about it is guessed. Food details such as “baked in-house”, “chilaquiles” or “shakshuka” are checked against the menus of the last few contenders. Wishes about the place, like “quiet”, go to reviews instead, where Savor Scout looks for that exact word; if it turns up, the card can say so.",
     related: ["breakfast", "pizza", "sandwiches"],
     situations: ["hungover", "sunday-night", "friends-visiting"],
   },
@@ -494,7 +494,7 @@ module.exports = [
       ["Whatever is on the hand-written board", "It is there because they have it and they want to sell it today."],
     ],
     signals:
-      "Breakfast searches weight early opening hours, counter service and reviews that mention regulars or long-running ownership. The matcher treats an absence of a website as neutral rather than negative, which sounds like a small thing and is the difference between finding the diner and finding the place with the best food photography.",
+      "Breakfast is matched as breakfast unless you add to it. Typed details such as “biscuits and gravy”, “migas” or “scrapple” go into the menu check for the places at the end of the shortlist. The things that mark a good breakfast counter — regulars, a decades-old flat-top, a hand-written board — cannot be seen by a search, so it does not pretend to look for them.",
     related: ["brunch", "sandwiches", "soup"],
     situations: ["hungover", "road-trip", "after-a-shift", "before-a-flight"],
   },
@@ -523,7 +523,7 @@ module.exports = [
       ["A composed salad at a good bistro", "Frisée aux lardons, salade niçoise. Dishes where the salad is the point rather than the alternative."],
     ],
     signals:
-      "Salad searches deliberately avoid ranking by restaurants that sell salad as a category and instead read for cuisines and dishes where vegetables are the tradition. If you search for a salad, the matcher will happily return a Lebanese or Thai restaurant over a salad chain, because that is the honest answer to the question.",
+      "Salad is matched to the word salad, which is why naming the dish helps so much. “Fattoush”, “som tam” or “salade niçoise” are what each finalist's menu is then read for, and a restaurant of any kind whose menu carries them can come through. Anything you type about the dressing is checked against that menu text the same way.",
     related: ["mediterranean-food", "thai-food", "greek-food"],
     situations: ["hot-day", "work-team-lunch", "before-a-flight", "nothing-sounds-good"],
   },
@@ -553,7 +553,7 @@ module.exports = [
       ["The thali or rice-and-curry plate", "Several small curries at once. The best possible introduction to a kitchen you do not know."],
     ],
     signals:
-      "Searching for curry, the matcher asks which one, because the honest answer depends entirely on the cuisine. It reads menus for regional names and for dish-level vocabulary, and weights reviews that mention specific dishes over reviews that praise the buffet. Naming a region in your search is the single biggest improvement you can make to the result.",
+      "Curry means something different in every kitchen that cooks it, and Savor Scout does not choose one for you. Name it — “Chettinad”, “massaman”, “Japanese kare” — and that word is looked for in each nearby listing, then on the menus of the finalists. A named region or dish is the most useful thing you can add to this search.",
     related: ["indian-food", "thai-food", "japanese-food"],
     situations: ["cold-rainy-night", "stressed", "vegetarians-and-meat-eaters", "finals-week"],
   },
@@ -583,7 +583,7 @@ module.exports = [
       ["Whole wings over split", "Where available. More skin, more rendering, better eating."],
     ],
     signals:
-      "Wing searches read for frying technique and skin language in reviews — crispy, double-fried, never frozen, sauced to order — and treat sports-bar ratings with suspicion, since those track the atmosphere and the screens as much as the food. Naming a style narrows it considerably.",
+      "Wing styles differ more than the word suggests, and the search only knows the one you type. Add “salt and pepper wings”, “never frozen” or “Korean” and Savor Scout checks the menus of its top few places for those words; the more of them it finds, the higher the match. Screens and atmosphere are not part of it unless you ask.",
     related: ["fried-chicken", "korean-food", "bbq"],
     situations: ["big-group", "late-night", "on-a-budget"],
   },
@@ -613,7 +613,7 @@ module.exports = [
       ["Tex-Mex, on its own terms", "Queso, fajitas, puffy tacos. Not lesser — just a different cuisine with its own standards."],
     ],
     signals:
-      "Mexican searches read for regional vocabulary and for the words that indicate a kitchen making things from scratch — nixtamal, masa, mole, named chillies. The matcher also distinguishes Tex-Mex from regional Mexican rather than blending them, so a search for mole will not return you a fajita restaurant with a higher rating.",
+      "Regional Mexican cooking has its own vocabulary, and the search uses the words you give it. Type “mole negro”, “cochinita pibil” or “aguachile” and Savor Scout reads for them on each finalist's own website where the listing links one, or on a menu page it finds. A search for Mexican food alone is matched on the cuisine and nothing narrower.",
     related: ["tacos", "salad", "soup"],
     situations: ["with-a-toddler", "birthday-dinner", "moving-day", "after-a-workout"],
   },
@@ -644,7 +644,7 @@ module.exports = [
       ["American Chinese", "General Tso's, crab rangoon, chop suey. A genuine and historically significant American regional cuisine. Judge it on its own terms rather than as a failed imitation."],
     ],
     signals:
-      "Chinese searches key off regional names first. Searching for Sichuan food returns kitchens whose menus and reviews use Sichuan vocabulary rather than the highest-rated restaurant with the word Chinese on the sign, and mentions of a separate or translated menu are treated as a strong positive signal.",
+      "Chinese food covers a dozen cuisines, and the search is as narrow as your sentence. Name a region or a dish — “Sichuan”, “Dongbei dumplings”, “cumin lamb” — and that is what Savor Scout checks for in each nearby listing and then on the menus of its finalists. When the listing itself names what you asked for, the card's first reason says so.",
     related: ["dumplings", "noodles", "soup"],
     situations: ["big-group", "sunday-night", "late-night", "vegetarians-and-meat-eaters"],
   },
@@ -674,7 +674,7 @@ module.exports = [
       ["The thali", "Several dishes at once, often unlimited. The best possible way to judge an unfamiliar kitchen."],
     ],
     signals:
-      "Indian searches read heavily for regional vocabulary and for individual dish names, because the template menu is so widespread that a generic search returns the same restaurant everywhere. Searching for dosa or biryani specifically will surface a South Indian or Hyderabadi kitchen that a general search would bury under higher-rated North Indian restaurants.",
+      "A general Indian search is matched on the cuisine, which most menus share. Naming a dish or a region narrows it: “masala dosa”, “Hyderabadi biryani” or “Chettinad” is looked for on the menus of the few places left at the end. “Vegetarian” works too, as a dietary term matched exactly as typed, and if it turns up the card lists it.",
     related: ["curry", "soup", "noodles"],
     situations: ["vegetarians-and-meat-eaters", "sunday-night", "on-a-budget", "cold-rainy-night"],
   },
@@ -704,7 +704,7 @@ module.exports = [
       ["Pad thai, knowingly", "A genuine dish and a good one, and also the dish most likely to have been sweetened into candy. Judge a kitchen by anything else first."],
     ],
     signals:
-      "Thai searches read for regional terms and for specific dishes rather than ranking by rating, because the highest-rated Thai restaurant in a given area is often the one most adjusted to a general palate. Reviews mentioning real heat, Isaan dishes, or a separate menu push a place up substantially.",
+      "Thai menus are read for the dishes you name and nothing else. Type “som tam”, “khao soi” or “boat noodles” and those words are sought in the menu text of the places that reach the end of the shortlist, with a whole phrase counting for more than part of one. It cannot judge heat from a menu; that is a question for whoever takes your order.",
     related: ["curry", "noodles", "salad", "soup"],
     situations: ["hot-day", "sick-with-a-cold", "work-team-lunch", "vegetarians-and-meat-eaters"],
   },
@@ -734,7 +734,7 @@ module.exports = [
       ["Kissaten and Japanese curry", "Old-style coffee shops and thick, sweet kare raisu. Both comfort food and both excellent."],
     ],
     signals:
-      "Japanese searches weight specialisation strongly: a shop doing one format outranks a general Japanese restaurant with a higher rating. Naming a format — yakitori, tonkatsu, izakaya, soba — filters out the export-menu restaurants that would otherwise dominate on volume of reviews.",
+      "Japanese restaurants tend to specialise, and a search works well when it does too. Name the format — “yakitori”, “tonkatsu”, “handmade soba” — and Savor Scout looks for it in each nearby listing and then on the menus of its finalists, so a shop that names it scores a higher match. Searching Japanese food alone matches the cuisine and nothing more specific.",
     related: ["sushi", "ramen", "noodles", "curry"],
     situations: ["eating-alone", "business-dinner", "before-a-flight", "after-a-workout"],
   },
@@ -764,7 +764,7 @@ module.exports = [
       ["Bossam and jokbal", "Boiled pork belly and braised pig trotter, both for sharing, both underordered."],
     ],
     signals:
-      "Korean searches read reviews for banchan quality and variety, charcoal grilling, and named dishes beyond barbecue. Because Korean barbecue restaurants attract high volumes of reviews, the matcher looks past that to find the stew and noodle kitchens when that is what you asked for.",
+      "Korean barbecue is only one part of the cuisine, and a search for Korean food does not assume it. Name what you want — “kimchi jjigae”, “naengmyeon” or “bossam” — and Savor Scout checks its finalists' menus for those words. If you want somewhere that suits a crowd, “good for groups” is looked for in reviews rather than on the menu.",
     related: ["fried-chicken", "wings", "noodles", "dumplings"],
     situations: ["big-group", "celebrating", "cold-rainy-night", "after-a-workout"],
   },
@@ -794,7 +794,7 @@ module.exports = [
       ["Ca kho to", "Fish braised in a clay pot with caramel and pepper. Home cooking, rarely on export menus, excellent when it is."],
     ],
     signals:
-      "Vietnamese searches read for dish names beyond pho and for regional labels, and treat herb-plate and charcoal mentions in reviews as meaningful. Searching bun cha or com tam will surface kitchens that a generic Vietnamese search would never return, because those places often have fewer reviews and lower visibility.",
+      "Pho is only the start of a Vietnamese menu, so name the dish if you want something else. “Bun cha”, “com tam” or “bun bo Hue” is checked in each nearby listing and then in the menu text of the top few, read from their own sites where they have one. A phrase found whole counts for more than part of it.",
     related: ["pho", "sandwiches", "noodles", "salad"],
     situations: ["hot-day", "work-team-lunch", "before-a-flight", "on-a-budget"],
   },
@@ -824,7 +824,7 @@ module.exports = [
       ["Italian-American, on its own terms", "Chicken parm, baked ziti, Sunday gravy. A genuine and excellent cuisine, and best judged as itself rather than as a bad copy."],
     ],
     signals:
-      "Italian searches read for regional labels and named dishes, and distinguish Italian-American from regional Italian rather than merging them. A search for cacio e pepe will prioritise a Roman kitchen over a higher-rated general Italian restaurant that happens to list it.",
+      "Italian cooking is regional, and the search follows whatever you type. “Cacio e pepe”, “tortellini in brodo” or “chicken parm” goes into the menu check at the end, so a Roman kitchen and an Italian-American one come apart once you name the dish. Italian food on its own matches the cuisine and no further.",
     related: ["pizza", "steak", "seafood"],
     situations: ["first-date", "meeting-the-parents", "birthday-dinner", "business-dinner"],
   },
@@ -859,7 +859,7 @@ module.exports = [
       ["Greek", "Its own tradition, covered separately, and frequently what a Mediterranean sign actually means."],
     ],
     signals:
-      "Searches in this category try to resolve to a specific cuisine, because Mediterranean as a filter returns everything from a Greek diner to a Persian kebab house. The matcher reads for country-specific dish names and for bread and charcoal mentions, which are the two signals that most reliably separate a real kitchen from a wrap counter.",
+      "“Mediterranean” on a sign can mean Greek, Lebanese, Turkish or Persian, and Savor Scout does not pick one on your behalf. Name a country or a dish — “Lebanese”, “koshari”, “musakhan” — and that word is looked for in nearby listings and then on the menus of the finalists. Details like “charcoal grilled” are checked against the same menu text.",
     related: ["greek-food", "salad", "seafood"],
     situations: ["work-team-lunch", "vegetarians-and-meat-eaters", "after-a-workout", "job-interview-lunch"],
   },
@@ -889,7 +889,7 @@ module.exports = [
       ["Loukoumades and galaktoboureko", "The dessert tradition is strong and consistently underordered."],
     ],
     signals:
-      "Greek searches distinguish taverna-style restaurants from gyro counters and Greek-American diners, which are three different things that all match the same keyword. The matcher reads for vegetable dishes, whole fish and mezze depth on menus, so asking for Greek food returns a taverna rather than the highest-rated diner with Greek in the name.",
+      "Taverna, gyro counter and Greek-American diner all use the same word, so a cuisine search matches them alike. Narrow it with the food: “horta”, “whole grilled fish” or “kleftiko” are read for on each finalist's menu, and a menu that carries them scores a higher match than one that only says Greek.",
     related: ["mediterranean-food", "seafood", "salad"],
     situations: ["with-a-toddler", "sunday-night", "vegetarians-and-meat-eaters"],
   },

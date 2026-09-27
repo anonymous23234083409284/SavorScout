@@ -326,7 +326,7 @@ function ledeHtml(city) {
     bits.push(`The nearest big food city is <a href="/eat/${nm.c.s}">${esc(nm.c.c)}</a>, about
         ${Math.max(1, Math.round(nm.d))} miles away.`);
   }
-  bits.push(`Say what you're craving and Savor Scout reads menus and reviews around ${esc(city.c)},
+  bits.push(`Say what you're craving and Savor Scout checks the menus of places around ${esc(city.c)},
         then picks one place and tells you why.`);
   return bits.join(" ");
 }
@@ -476,8 +476,8 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
       <p class="note">
         Neighbourhoods and regional dishes, not restaurant recommendations. We have not eaten in
         ${esc(name)}, and a page claiming the best taco in a city it has never visited is worth
-        nothing. Savor Scout reads menus and reviews when you search, and shows why it picked what
-        it picked.
+        nothing. Savor Scout reads menus when you search, and shows why it picked what it
+        picked.
       </p>
 
       <h2>Read up first</h2>

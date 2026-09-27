@@ -33,14 +33,14 @@ module.exports = [
     good: [
       ["The protein is cooked to order, not just cooked", "Ask for the steak medium-rare and see whether it arrives that way. A good teppanyaki chef times each person's protein separately; a mediocre one cooks everything in one pile until it is all grey."],
       ["Fried rice made on the grill", "Day-old rice, egg cracked on the iron, butter and soy, finished in front of you. Rice brought out of the kitchen pre-made has skipped the one thing the grill does best."],
-      ["The sauces are house-made", "Yum yum sauce (the pink mayonnaise one) and ginger sauce both come from bottles at a lot of chains. A sharp, fresh ginger sauce is the quickest sign someone in the kitchen cares."],
+      ["The sauces are house-made", "Yum yum sauce (the pink mayonnaise one) and ginger sauce are both sold ready-made in bottles. A sharp, fresh ginger sauce is the quickest sign someone in the kitchen cares."],
       ["Fresh vegetables, not a frozen medley", "Zucchini, onion and mushroom cut that day have bite. A bag of frozen stir-fry mix steams on the iron and never browns."],
       ["The grill is clean between courses", "A chef who scrapes and oils the iron between the vegetables and the steak is cooking; one who does not is putting on a show on a dirty pan."],
     ],
     order: [
       ["Steak and shrimp combination", "The standard for a reason: the iron is ideal for both, and it shows whether the chef can time two proteins at once."],
       ["Upgrade to fried rice", "Often a small extra charge over steamed rice. It is the dish the format was built for."],
-      ["Scallops", "Where they are fresh, a good griddle gives them a real sear in under two minutes."],
+      ["Scallops", "Where they are fresh, a hot griddle gives them a real sear in a few minutes."],
       ["Filet over sirloin if the gap is small", "Sliced thin and cooked fast, a better cut makes a visible difference."],
       ["The sushi bar, only if it is separate", "Many hibachi restaurants have one. It is usually the weaker half of the menu."],
     ],
@@ -72,7 +72,7 @@ module.exports = [
       ["Samgyeopsal", "Unmarinated pork belly, grilled until crisp at the edges and dipped in sesame oil and salt."],
       ["Chadolbaegi", "Paper-thin beef brisket that cooks in seconds. Good to start with while the grill heats."],
       ["Doenjang jjigae", "Fermented soybean stew, usually served at the end with rice. Order it."],
-      ["Naengmyeon to finish", "Cold buckwheat noodles in icy broth. The traditional way to end a barbecue meal in Korea."],
+      ["Naengmyeon to finish", "Cold buckwheat noodles in icy broth. A common way to end a barbecue meal in Korea."],
     ],
     signals:
       "Korean barbecue searches read menus for tabletop grilling and specific cuts, so a Korean restaurant that grills at the table ranks above one that serves bulgogi from the kitchen. Reviews mentioning charcoal, banchan refills and meat quality count toward the pick; all-you-can-eat is matched when you ask for it rather than assumed.",
@@ -87,17 +87,17 @@ module.exports = [
     desc:
       "Crawfish, crab legs and shrimp by the pound: how to spot a good Cajun seafood boil restaurant, when crawfish is in season, and what to order.",
     lede:
-      "A seafood boil is shellfish cooked in heavily seasoned water with corn, potatoes and sausage, and eaten with your hands off paper. There are two main American styles: the Louisiana boil, with the spice cooked in, and the Viet-Cajun boil that grew up along the Gulf Coast, where the seafood comes in a bag tossed in garlic butter.",
+      "A seafood boil is shellfish cooked in heavily seasoned water with corn, potatoes and sausage, and eaten with your hands off paper. Most seafood boil restaurants serve one of two styles: the Louisiana boil, with the spice cooked in, and the Viet-Cajun boil that grew up along the Gulf Coast, where the seafood comes in a bag tossed in garlic butter.",
     qa: ["When is crawfish season?", "Louisiana crawfish season runs roughly from January to June, with the best and cheapest crawfish usually from March through May. Outside those months restaurants serve frozen crawfish or none at all, so a place selling live-boiled crawfish in October is worth asking about."],
     good: [
-      ["Live crawfish, in season", "Crawfish should be boiled live and served in season. Frozen whole crawfish are soft and hard to peel. Straight tails and mushy meat are signs of crawfish that were dead before they were cooked."],
+      ["Live crawfish, in season", "Crawfish should be boiled live and served in season. Frozen whole crawfish are soft and hard to peel. Mushy meat is the surest sign of crawfish that were dead before they were cooked; a straight tail on its own is not proof."],
       ["The seasoning goes in, not just on", "In a Louisiana boil the spice is in the water and the seafood soaks in it after cooking. If the shells are spicy and the meat underneath is plain, it was not soaked long enough."],
       ["Sauce you can choose the heat of", "At a Viet-Cajun place the house sauce, usually garlic butter with Cajun spice and lemon pepper, should come at several heat levels. The best ones are heavy on garlic."],
       ["Market price that is actually posted", "Seafood boil prices move with the season. A board showing today's price per pound is honest; a menu that says only 'MP' is fine, but ask before ordering three pounds of crab."],
       ["Corn and potatoes cooked in the boil", "They should taste of the seasoning. Corn that tastes of plain water was boiled separately."],
     ],
     order: [
-      ["Crawfish by the pound, in spring", "Two to three pounds per person if it is the main event."],
+      ["Crawfish by the pound, in spring", "Most of the weight is shell and head, so order more than seems sensible."],
       ["Snow crab or Dungeness clusters", "Sweeter and easier than crawfish for a first-timer."],
       ["Head-on shrimp", "More flavour than peeled, and the heads are the point for many regulars."],
       ["The house sauce at medium", "Order hotter next time once you know the kitchen's scale."],
@@ -125,9 +125,9 @@ module.exports = [
       ["Heat levels that mean something", "Most places run from plain or mild up to something named as a warning. The top level should be genuinely hard to finish; if it is not, the whole scale is timid."],
     ],
     order: [
-      ["A quarter dark or a leg quarter", "Dark meat stays juicy under that much heat. The traditional order."],
+      ["A quarter dark or a leg quarter", "Dark meat stays juicy under that much heat."],
       ["Medium or hot, the first time", "Tell them it is your first visit. Heat levels are not consistent between restaurants."],
-      ["Tenders if you want it easier", "Every coated surface, less bone. The format most chains serve."],
+      ["Tenders if you want it easier", "Every coated surface, less bone."],
       ["A hot chicken sandwich", "On a bun with slaw and pickles. The modern version, and a good one when done properly."],
       ["Mac and cheese or slaw on the side", "Something cool and creamy to eat between bites."],
     ],
@@ -145,16 +145,16 @@ module.exports = [
       "Thin-sliced ribeye, the right roll and Whiz, American or provolone: what makes a real Philly cheesesteak and how to find a good one near you.",
     lede:
       "A Philadelphia cheesesteak is thinly sliced beef cooked on a flat-top, piled into a long Italian roll with melted cheese and usually fried onions. That is the whole recipe, which means the roll, the beef and the cheese each have nowhere to hide.",
-    qa: ["What cheese goes on a Philly cheesesteak?", "Three are traditional: Cheez Whiz, American and provolone. Whiz is the famous one and the most common tourist order; many Philadelphians order American, which melts into the meat. Provolone is sharper. Ordering 'wit' gets fried onions and 'witout' gets none."],
+    qa: ["What cheese goes on a Philly cheesesteak?", "Three are traditional: Cheez Whiz, American and provolone. Whiz is the best known, and popular with visitors; many Philadelphians order American, which melts into the meat. Provolone is sharper. Ordering 'wit' gets fried onions and 'witout' gets none."],
     good: [
       ["The roll", "Long, soft inside, with a slightly chewy crust that holds the grease without going soggy. A hard sub roll or a soft hot dog bun both fail in different ways."],
-      ["Ribeye sliced thin", "Ribeye is the traditional cut, shaved thin and cooked quickly on the griddle, either chopped with a spatula or left in slices. Grey, pre-cooked beef steamed in a tray is the most common shortcut."],
+      ["Ribeye sliced thin", "Ribeye is the traditional cut, shaved thin and cooked quickly on the griddle, either chopped with a spatula or left in slices. Grey, pre-cooked beef steamed in a tray is a common shortcut."],
       ["Cheese melted into the meat", "The cheese should be folded into the beef on the griddle so every bite has some, not laid on top as a cold slice at the end."],
       ["Onions cooked soft on the same griddle", "Sweet, soft and slightly browned, cooked alongside the meat."],
       ["A griddle you can see", "Most good cheesesteak shops cook in view. A menu with forty other sandwiches and no flat-top in sight is a warning."],
     ],
     order: [
-      ["American wit", "American cheese with fried onions. The order most locals would give."],
+      ["American wit", "American cheese with fried onions. A common order among Philadelphians."],
       ["Whiz wit", "The classic tourist order, and not a mistake. Salty and messy."],
       ["Provolone with peppers", "Sharp cheese and sweet or long hot peppers."],
       ["A chicken cheesesteak", "Same method with chopped chicken. A common and respectable alternative."],
@@ -176,7 +176,7 @@ module.exports = [
     good: [
       ["Chicken fried to order", "It should arrive crackling. Chicken held under a lamp and then set on a hot waffle steams and goes soft in minutes."],
       ["A waffle with a crisp outside", "Light inside, crisp at the edges, able to hold syrup without collapsing. A pale, soft waffle is a pancake in a grid."],
-      ["Bone-in or thigh meat", "Wings and thighs stay juicier than breast. Tenders are common and fine, but dark meat is the traditional choice."],
+      ["Bone-in or thigh meat", "Wings and thighs stay juicier than breast. Tenders are common and fine, but bone-in pieces are the traditional choice."],
       ["Real syrup, or a good house one", "Maple, a honey butter or a hot honey. Pancake syrup is cheap and it tastes it."],
       ["Hot sauce on the table", "The sweet-salty-hot combination is the whole point. A good place puts hot sauce down without being asked."],
     ],
@@ -199,10 +199,10 @@ module.exports = [
     desc:
       "Crisp batter, flaky white fish, proper chips and malt vinegar: what separates good fish and chips and how to find them near you.",
     lede:
-      "Fish and chips is white fish in batter, deep-fried, with thick-cut fried potatoes. The British and Irish original is simple enough that the only variables are freshness and frying, which is exactly why a good one is rare.",
+      "Fish and chips is white fish in batter, deep-fried, with thick-cut fried potatoes. The British and Irish original is simple enough that the only variables are freshness and frying.",
     good: [
-      ["Fried to order", "The batter should shatter and the fish should steam when you break it open. Anything pre-fried and held goes soft within ten minutes."],
-      ["Cod or haddock, or a named local fish", "Cod and haddock are traditional. Many American places use pollock, halibut or rockfish, which can all be good. A menu that just says 'white fish' is hiding something."],
+      ["Fried to order", "The batter should shatter and the fish should steam when you break it open. Anything pre-fried and held goes soft quickly."],
+      ["Cod or haddock, or a named local fish", "Cod and haddock are traditional. Many American places use pollock, halibut or rockfish, which can all be good. A menu that just says 'white fish' is worth asking about."],
       ["Thin, crisp batter", "It should be light and golden, clinging to the fish. Thick, bready batter that peels off in one piece is the most common failure."],
       ["Oil that is clean", "Fish from clean, hot oil is pale gold and tastes of nothing but itself. Dark, bitter batter means old oil."],
       ["Chips, not fries", "Thicker than fries and fluffy inside. Thin fries with fish is a fried fish plate, not fish and chips."],
@@ -227,7 +227,7 @@ module.exports = [
     desc:
       "Chicago deep dish, stuffed pizza and tavern-style: what separates a good deep dish from a thick pizza and how to find one near you.",
     lede:
-      "Chicago deep dish is baked in a tall, oiled pan: a buttery crust up the sides, cheese laid directly on the dough, fillings, then chunky tomato sauce on top. It takes the better part of an hour to bake. Chicagoans are quick to point out that most of them eat thin, cracker-crust tavern-style pizza cut in squares far more often.",
+      "Chicago deep dish is baked in a tall, oiled pan: a buttery crust up the sides, cheese laid directly on the dough, fillings, then chunky tomato sauce on top. It takes the better part of an hour to bake. Chicagoans are quick to point out that the everyday local pizza is thin, cracker-crust tavern-style, cut in squares.",
     good: [
       ["The crust is fried in the pan", "Oil or butter in the pan gives the edge a crisp, almost flaky crust. A soft, bready crust means it was baked like a thick regular pizza."],
       ["Sauce on top", "Uncooked or lightly cooked crushed tomato on top of the cheese. It protects the cheese through a long bake and keeps it from burning."],
@@ -257,7 +257,7 @@ module.exports = [
       "A lobster roll is lobster meat in a toasted, buttered hot dog bun. There are two New England schools: Maine-style, cold with a little mayonnaise, and Connecticut-style, warm and dressed in melted butter. Both are simple, both are expensive, and both are easy to do cheaply.",
     qa: ["What is the difference between a Maine and a Connecticut lobster roll?", "A Maine lobster roll is served cold, with the lobster lightly dressed in mayonnaise and sometimes a little celery or lettuce. A Connecticut lobster roll is served warm, with the meat tossed in melted butter. Both come in a toasted, buttered split-top bun."],
     good: [
-      ["Claw and knuckle meat", "Big pieces of claw and knuckle are sweeter and more tender than tail alone. Shredded or tiny pieces often mean frozen or mixed meat."],
+      ["Claw and knuckle meat", "Big pieces of claw and knuckle are sweeter and more tender than tail alone."],
       ["A split-top bun, toasted in butter", "The New England bun is sliced on top with flat sides, so both sides can be griddled golden. A regular hot dog bun is a compromise."],
       ["Barely dressed", "The mayonnaise or butter should coat the meat, not bury it. A lobster roll that is mostly mayonnaise is a lobster salad sandwich."],
       ["The price is market price", "Lobster prices move through the year. A roll far cheaper than every other place near you is likely using less lobster or a substitute."],
@@ -281,7 +281,7 @@ module.exports = [
     n: "omakase",
     h1: "How to find good omakase",
     desc:
-      "What omakase is, what it should cost, how to book one, and how to tell a good sushi omakase from an expensive one.",
+      "What omakase is, how to book one, and how to tell a good sushi omakase from an expensive one.",
     lede:
       "Omakase means 'I leave it to you': a fixed-price meal where the chef decides what you eat and serves it one piece at a time, usually at a sushi counter. It is the most expensive way to eat sushi, and the most reliable way to find out whether a sushi chef is actually good.",
     qa: ["What is omakase?", "Omakase is a chef's-choice meal, most often sushi, where you pay a set price and the chef serves a sequence of dishes one at a time. A typical sushi omakase is twelve to twenty pieces of nigiri plus a few small dishes, served at a counter so each piece can be eaten the moment it is made."],
@@ -312,16 +312,16 @@ module.exports = [
     desc:
       "What an izakaya is, what to order, and how to tell a good Japanese pub from a sushi restaurant with a drinks list.",
     lede:
-      "An izakaya is a Japanese pub: a place to drink beer, sake or highballs and order small plates in rounds over a long evening. The food is cooked to go with drinks — grilled, fried, salty, pickled — and a good one is one of the most relaxed and interesting meals in any city that has one.",
+      "An izakaya is a Japanese pub: a place to drink beer, sake or highballs and order small plates in rounds over a long evening. The food is cooked to go with drinks: grilled, fried, salty or pickled.",
     good: [
       ["A grill", "Yakitori or robata grilling over charcoal is the heart of many izakaya menus. A charcoal grill in view is a good sign."],
-      ["A long menu of small plates", "Thirty or more small dishes, many under ten dollars. A menu that is mostly rolls is a sushi restaurant."],
+      ["A long menu of small plates", "A long list of small dishes, ordered a few at a time. A menu that is mostly rolls is a sushi restaurant."],
       ["A daily specials board", "Handwritten specials in Japanese and English suggest a kitchen cooking what is good that day."],
       ["Real drinks", "Several sakes, shochu, Japanese whisky highballs, draft Japanese beer. The drinks are half the point."],
       ["It gets loud", "An izakaya is supposed to be busy and noisy. A quiet one at nine on a Friday is not doing it right."],
     ],
     order: [
-      ["Karaage", "Japanese fried chicken, marinated in soy and ginger. The standard first order."],
+      ["Karaage", "Japanese fried chicken, marinated in soy and ginger. A fixture of izakaya menus."],
       ["Yakitori", "Skewered chicken parts over charcoal. Thigh with scallion, skin, meatballs. Order by the skewer."],
       ["Agedashi tofu", "Fried tofu in warm dashi broth. Simple and a good test of the kitchen."],
       ["Something pickled", "Tsukemono, the house pickles, to go with the drink."],
@@ -339,17 +339,17 @@ module.exports = [
     desc:
       "Hyderabadi, Lucknowi, Kolkata or Karachi: what separates a real biryani from spiced rice with meat, and how to find good biryani near you.",
     lede:
-      "Biryani is long-grain rice and marinated meat cooked together, sealed, so the rice takes on the flavour of the meat and spices. It is one of the most argued-over dishes in South Asia, with distinct versions from Hyderabad, Lucknow, Kolkata, Karachi and the Tamil south. The worst versions are just rice fried with curry, and they are everywhere.",
+      "Biryani is rice, usually long-grain basmati, and marinated meat cooked together, sealed, so the rice takes on the flavour of the meat and spices. It is one of the most argued-over dishes in South Asia, with distinct versions from Hyderabad, Lucknow, Kolkata, Karachi and the Tamil south. The weakest versions are just rice fried with curry.",
     good: [
-      ["Separate, long grains", "Every grain of basmati should be whole and separate, not mushy or broken. Some grains stay white and some take on saffron or spice."],
+      ["Separate, whole grains", "Every grain should be whole and separate, not mushy or broken, whether it is long basmati or the short seeraga samba used in some Tamil biryanis. Some grains stay white and some take on saffron or spice."],
       ["The meat cooked with the rice", "In dum biryani the rice and meat are layered and sealed to finish cooking together. Rice with curry stirred in afterwards is not biryani."],
       ["Fried onions, saffron and whole spices", "Crisp browned onions, saffron streaks, and whole cardamom, bay leaf or cinnamon in the rice. They show it was built in layers."],
       ["Meat on the bone", "Goat and chicken are traditionally cooked on the bone, which gives the rice much more flavour."],
       ["Raita and salan on the side", "Cooling yoghurt raita and, for Hyderabadi biryani, mirchi ka salan, a chilli and peanut gravy. A place that serves both is serving it properly."],
     ],
     order: [
-      ["Goat biryani", "Where it is available, the version many regulars consider the real one."],
-      ["Hyderabadi dum biryani", "The most common style in American Indian restaurants, and the one with the strongest spice."],
+      ["Goat biryani", "Where it is available. Goat, often listed as mutton, is the traditional meat of Hyderabadi kacchi biryani."],
+      ["Hyderabadi dum biryani", "A widely served style in the US, and usually a spicy one."],
       ["Chicken biryani on the bone", "The everyday order, and a good test."],
       ["Family pack", "Many biryani specialists sell large trays for a group. Usually the best value."],
       ["Double ka meetha to finish", "Hyderabadi bread pudding, if the menu has it."],
@@ -364,9 +364,9 @@ module.exports = [
     n: "dosa",
     h1: "How to find a good dosa",
     desc:
-      "Crisp, fermented and the size of the table: what separates a good South Indian dosa and what to order at a South Indian restaurant.",
+      "Crisp, thin and fermented: what separates a good South Indian dosa and what to order at a South Indian restaurant.",
     lede:
-      "A dosa is a thin, crisp crepe made from fermented rice and lentil batter, the everyday breakfast and snack food of South India. It usually comes rolled around spiced potato, with coconut chutney and sambar, a lentil and vegetable stew, on the side. Most of a South Indian menu is vegetarian, and most of it is very good value.",
+      "A dosa is a thin, crisp crepe made from fermented rice and lentil batter, the everyday breakfast and snack food of South India. It often comes rolled around spiced potato, as a masala dosa, with coconut chutney and sambar, a lentil and vegetable stew, on the side. Many dosa restaurants, especially those in the Udupi tradition, are entirely vegetarian.",
     good: [
       ["The batter is fermented", "A good dosa has a gentle sourness from overnight fermentation. A flat, starchy taste means a quick batter."],
       ["Crisp and golden, thin enough to see light through", "A paper dosa can be nearly two feet long. It should crackle when you tear it."],
@@ -376,13 +376,13 @@ module.exports = [
     ],
     order: [
       ["Masala dosa", "Filled with spiced potato and onion. The standard."],
-      ["Mysore masala dosa", "Spread inside with a red chilli and garlic chutney before the potato goes in. Hotter and better."],
-      ["Idli and vada", "Steamed rice cakes and a savoury lentil doughnut, both for dipping in sambar."],
+      ["Mysore masala dosa", "Spread inside with a red chilli and garlic chutney before the potato goes in. Hotter, with more garlic."],
+      ["Idli and vada", "Steamed rice and lentil cakes and a savoury lentil doughnut, both for dipping in sambar."],
       ["Uttapam", "A thick dosa with onion, tomato and chilli cooked into it."],
       ["Filter coffee", "South Indian coffee with chicory, milk and sugar. Order it to finish."],
     ],
     signals:
-      "Dosa searches read menus for South Indian dishes by name — dosa, idli, vada, uttapam — which separates a South Indian restaurant from a North Indian one with a dosa added. Vegetarian menus are matched here by default, and reviews that mention the chutney and sambar count toward the pick.",
+      "Dosa searches read menus for South Indian dishes by name — dosa, idli, vada, uttapam — which separates a South Indian restaurant from a North Indian one with a dosa added.",
     related: ["indian-food", "curry", "breakfast"],
     situations: ["vegetarians-and-meat-eaters", "on-a-budget", "eating-alone"],
   },
@@ -395,16 +395,16 @@ module.exports = [
     lede:
       "Korean fried chicken is fried twice, which renders out the fat under the skin and leaves a thin, glassy crust that stays crisp even under a sticky glaze. It is eaten in Korea with beer, a combination known as chimaek, and often late at night.",
     good: [
-      ["Double-fried", "The second fry is what makes the crust thin and crackling instead of thick and bready. It is the entire difference from American fried chicken."],
+      ["Double-fried", "The second fry is what makes the crust thin and crackling instead of thick and bready. With a thin batter of starch and flour, it is what sets it apart from American fried chicken."],
       ["It takes twenty to thirty minutes", "Made to order, a batch takes time. Chicken that arrives in five minutes was fried earlier."],
       ["Glaze that coats without soaking", "Yangnyeom sauce, sweet and spicy with gochujang, should cling to the crust and leave it crisp. A soggy crust means the sauce was poured on too early."],
       ["Pickled radish on the side", "Cubes of sweet pickled daikon, chikin-mu, cut through the grease. It is standard, and its absence is a sign."],
-      ["Half-and-half offered", "Half plain fried, half glazed. Every good Korean chicken place offers it."],
+      ["Half-and-half offered", "Half plain fried, half glazed. Most Korean chicken places offer it; in Korea it is called banban."],
     ],
     order: [
       ["Half-and-half", "Plain and yangnyeom, so you can taste both."],
       ["Soy garlic", "Sweet and salty, less messy than the red glaze."],
-      ["Wings and drumsticks", "More crust to meat than boneless."],
+      ["Wings and drumsticks", "Bone-in pieces keep their skin, which the double fry turns into crust."],
       ["A beer", "The traditional pairing, for a reason."],
       ["Tteokbokki on the side", "Spicy rice cakes, a common add-on at Korean chicken places."],
     ],
@@ -420,23 +420,23 @@ module.exports = [
     desc:
       "Red, green or white: what separates good pozole from a thin soup with hominy, and how to find a Mexican restaurant that makes it properly.",
     lede:
-      "Pozole is a Mexican stew of pork or chicken and hominy, big chewy kernels of nixtamalised corn, in a broth coloured red with dried chillies, green with tomatillo and pepita, or left white. It is served with a spread of garnishes you add yourself, and at many restaurants only on weekends.",
+      "Pozole is a Mexican stew of pork or chicken and hominy, big chewy kernels of nixtamalised corn, in a broth coloured red with dried chillies, green with tomatillo and pepita, or left white. It is served with a spread of garnishes you add yourself, and at some restaurants only at weekends.",
     good: [
       ["Hominy that has burst open", "The kernels should have flowered open and be soft and chewy. Hard, tinned-tasting hominy means a short cook."],
       ["Broth with body", "Pork pozole should have a rich, slightly gelatinous broth from bones and shoulder simmered for hours."],
       ["Meat that falls apart", "Pork shoulder and often head meat, cooked until it shreds."],
       ["A full plate of garnishes", "Shredded cabbage or lettuce, sliced radish, diced onion, dried oregano, lime and ground chilli. Tostadas on the side. The garnishes are half the dish."],
-      ["Weekends-only is a good sign", "It takes all day to make, so many good kitchens only serve it on Saturday and Sunday."],
+      ["Often a weekend dish", "It takes hours to cook, so many kitchens make one large batch for the weekend."],
     ],
     order: [
-      ["Pozole rojo", "Red, with guajillo and ancho chillies. The most common style."],
+      ["Pozole rojo", "Red, with guajillo and ancho chillies. Associated with Jalisco."],
       ["Pozole verde", "Green, with tomatillo, pepitas and herbs. Associated with Guerrero."],
       ["A large bowl", "It is a meal, and leftovers improve."],
       ["Tostadas with crema", "To eat alongside, or crumble into the bowl."],
       ["Menudo, if you are there anyway", "The tripe soup that usually shares the weekend board."],
     ],
     signals:
-      "Pozole searches read menus for pozole by name and style, and treat weekend-only availability as a sign of a kitchen that makes it properly. Reviews mentioning the broth and the garnishes count toward the pick.",
+      "Pozole searches read menus for pozole by name and style. Reviews mentioning the broth and the garnishes count toward the pick.",
     related: ["mexican-food", "soup", "tamales"],
     situations: ["hungover", "sick-with-a-cold", "cold-rainy-night"],
   },
@@ -448,11 +448,11 @@ module.exports = [
     desc:
       "Aguachile, ceviche, cocteles and whole grilled fish: what separates a good Mexican seafood restaurant, and what to order at one.",
     lede:
-      "Mariscos is Mexican seafood cooking, mostly from the Pacific coast states of Sinaloa, Nayarit and Jalisco: raw shrimp cured in lime, cold seafood cocktails, tostadas piled with ceviche, and whole fish split and grilled. A good marisquería is loud, bright, cheap for what it serves and full on weekend afternoons.",
+      "Mariscos is Mexican seafood cooking, mostly from the Pacific coast states of Sinaloa, Nayarit and Jalisco: raw shrimp cured in lime, cold seafood cocktails, tostadas piled with ceviche, and whole fish split and grilled.",
     good: [
       ["Shrimp that is raw and cured to order", "Aguachile is raw shrimp dressed in lime, chilli and cucumber just before serving. It should still be translucent in the middle. Shrimp that is fully opaque has sat too long."],
       ["Lime juice, not bottled", "Fresh lime is the backbone of every cold dish here. Bottled juice tastes flat and bitter."],
-      ["Cocteles that are not just ketchup", "A good coctel de camarón has tomato, lime, onion, cilantro, avocado and chilli in a cold broth. Ketchup-heavy versions are the shortcut."],
+      ["Cocteles that are not just ketchup", "Most recipes use some ketchup, but a good coctel de camarón loosens it with the shrimp's chilled cooking broth and lime, with onion, cilantro, avocado and chilli. A glass of sweet red sauce with a few shrimp in it is the shortcut."],
       ["Whole fish on the menu", "Pescado zarandeado, butterflied and grilled over charcoal, is a sign of a serious kitchen."],
       ["Busy at lunch", "Mariscos is daytime food. A place that is full at two in the afternoon on a Saturday is the one to trust."],
     ],
@@ -461,7 +461,7 @@ module.exports = [
       ["Tostada de ceviche", "A crisp tortilla heaped with lime-cured fish or shrimp."],
       ["Coctel de camarón", "Cold shrimp cocktail in a tall glass with crackers."],
       ["Campechana", "A mixed seafood cocktail, often with octopus and oyster."],
-      ["A michelada", "Beer with lime, chilli and salt. The standard drink."],
+      ["A michelada", "Beer with lime, salt and chilli. A common drink with mariscos."],
     ],
     signals:
       "Mariscos searches read menus for aguachile, ceviche and cocteles, which separates a marisquería from a Mexican restaurant with one shrimp dish. Reviews mentioning freshness and weekend crowds count toward the pick.",
@@ -481,12 +481,12 @@ module.exports = [
       ["Cooked the way the style demands", "Griddled, grilled, steamed or simmered, depending on the city. A place that knows its style knows which."],
       ["A steamed or toasted bun", "Warm and soft, or poppy seed for Chicago. A cold bun from the bag is the fastest giveaway."],
       ["Toppings that are fresh and specific", "A real Chicago dog has seven toppings; a Coney has a particular meat sauce. Generic relish and ketchup is a baseball stadium, not a hot dog stand."],
-      ["A short menu", "The best hot dog places sell hot dogs, maybe a sausage, maybe fries. Everything else is a distraction."],
+      ["Hot dogs at the centre of the menu", "The hot dogs should be the point, not an extra. What else is on the menu depends on the style: a Chicago stand usually does Italian beef too, and a Detroit Coney Island is a full diner."],
     ],
     order: [
       ["Chicago-style", "Poppy seed bun, yellow mustard, bright green relish, onion, tomato, a pickle spear, sport peppers and celery salt. No ketchup."],
       ["A Coney", "A hot dog in a steamed bun with a loose meat chilli sauce, mustard and onion. Detroit and Flint argue over the details."],
-      ["A Sonoran dog", "Wrapped in bacon, in a soft bolillo roll, with beans, onions, tomato, mayonnaise and jalapeño salsa. Tucson's own."],
+      ["A Sonoran dog", "Wrapped in bacon, in a soft bolillo roll, with beans, onions, tomato, mayonnaise and jalapeño salsa. Born in Hermosillo, Sonora, and a Tucson staple."],
       ["New York style", "With sauerkraut or a sweet onion sauce and spicy brown mustard."],
       ["A Polish or a brat", "Most good hot dog places also do one sausage properly."],
     ],
@@ -531,7 +531,7 @@ module.exports = [
     desc:
       "Yeast-raised or cake, fresh or from yesterday: how to find a good donut shop near you and what to order when you get there.",
     lede:
-      "There are two families of donut: yeast-raised, which are light, airy and chewy, and cake donuts, which are denser, crumbly and made from a batter. A good donut shop does both well, fries through the morning, and usually sells out of the best ones before noon.",
+      "There are two families of donut: yeast-raised, which are light, airy and chewy, and cake donuts, which are denser, crumbly and made from a batter. A good donut shop does both well.",
     good: [
       ["Fried that morning", "Donuts are at their best within a few hours. A shop that fries only at four in the morning and sells until close is serving stale donuts by afternoon."],
       ["Yeast donuts that are light", "They should squash easily and spring back, with a thin white band around the middle from floating in the oil. Heavy, greasy ones were fried at too low a temperature."],
@@ -541,13 +541,13 @@ module.exports = [
     ],
     order: [
       ["A plain glazed yeast donut", "The simplest, and the best test of any shop."],
-      ["An old-fashioned", "A cracked, crisp-edged cake donut. The best one for coffee."],
+      ["An old-fashioned", "A cake donut with a cracked, crisp surface that holds up to dunking in coffee."],
       ["Something filled", "Custard or jam, filled that day."],
-      ["An apple fritter", "Big, craggy, full of apple. Often the best value in the case."],
+      ["An apple fritter", "Big, craggy, full of apple."],
       ["Go early", "Before nine, for the best choice."],
     ],
     signals:
-      "Donut searches read menus and listings for donut shops and bakeries by name, then weigh reviews that mention freshness, early opening and selling out. Morning hours count, since a donut shop that opens at ten is usually not frying at dawn.",
+      "Donut searches read menus and listings for donut shops and bakeries by name, then weigh reviews that mention freshness, early opening and selling out.",
     related: ["bakery", "breakfast", "bagels"],
     situations: ["road-trip", "with-a-toddler", "moving-day"],
   },
@@ -563,20 +563,20 @@ module.exports = [
       "A lot of places that look like bakeries are cafés reselling pastry baked somewhere else, or baking frozen dough from a factory. A real bakery bakes on site, early, in small batches, and is honest about when things run out.",
     good: [
       ["They bake on site", "Ovens you can see, or the smell when you walk in. A café that receives a delivery of croissants every morning is a café."],
-      ["Croissants with layers you can see", "Cut one open: a good croissant has a honeycomb of open layers and shatters into flakes. A bready, uniform inside means poor lamination or frozen dough."],
-      ["Bread with a dark crust", "A well-baked loaf has a deep brown, crackling crust. Pale bread was pulled early to look soft."],
-      ["A menu that changes", "Seasonal fruit, a weekend special, something that runs out. A bakery with the same forty items all year is likely buying some of them in."],
+      ["Croissants with layers you can see", "Cut one open: a good croissant has a honeycomb of open layers and shatters into flakes. A bready, uniform inside means poor lamination."],
+      ["Bread with a dark crust", "A well-baked sourdough or country loaf has a deep brown, crackling crust. A pale one was pulled early."],
+      ["A menu that changes", "Seasonal fruit, a weekend special, something that runs out."],
       ["It runs out", "A bakery that sells out of croissants by noon is baking the right amount. One that has full trays at close is baking too much, or baking yesterday's."],
     ],
     order: [
-      ["A plain croissant", "The test of any bakery. If this is good, everything laminated will be."],
+      ["A plain croissant", "The clearest test of a French-style bakery's lamination."],
       ["A loaf to take home", "Sourdough or a country loaf. Bread is where a bakery shows its skill."],
       ["Whatever is seasonal", "The fruit tart, the weekend special, the thing on the board."],
       ["Something savoury", "A ham and cheese croissant or a savoury galette, if lunch is the plan."],
       ["Go in the morning", "The first two hours after opening have the best choice."],
     ],
     signals:
-      "Bakery searches read listings and menus for bread and pastry baked in house, and weigh reviews that mention croissants, sourdough and selling out. Early opening hours count toward the pick, since that is when a real bakery is at its best.",
+      "Bakery searches read listings and menus for bread and pastry baked in house, and weigh reviews that mention croissants, sourdough and selling out.",
     related: ["donuts", "breakfast", "bagels"],
     situations: ["moving-day", "sunday-night", "friends-visiting"],
   },
@@ -590,8 +590,8 @@ module.exports = [
     lede:
       "Most of what separates good ice cream from ordinary ice cream is air and ingredients. Commercial ice cream can be half air by volume; good ice cream is dense, made with real dairy, and tastes of what it says it is. Gelato is denser still and served slightly warmer.",
     good: [
-      ["Made in the shop", "Small-batch ice cream made on the premises, often with a machine visible behind the counter. Tubs from a distributor are the norm at most scoop shops."],
-      ["Dense, not fluffy", "A scoop should feel heavy for its size and melt slowly. Light, fluffy ice cream is mostly air."],
+      ["Made in the shop", "Small-batch ice cream made on the premises, often with a machine visible behind the counter. Many scoop shops buy tubs from a distributor instead."],
+      ["Dense, not fluffy", "A scoop should feel heavy for its size. Light, fluffy ice cream is mostly air."],
       ["Flavours that taste of the thing", "Pistachio that tastes of pistachio, not almond extract and green colouring. Strawberry that is pink, not red."],
       ["Gelato that is not piled high", "Traditional gelato is often kept flat in covered tins. Towering mounds decorated with fruit can mean a lot of air and stabilisers."],
       ["A seasonal board", "Peach in summer, pumpkin in autumn. A shop that changes with the season is buying ingredients rather than bases."],
@@ -599,12 +599,12 @@ module.exports = [
     order: [
       ["Vanilla or chocolate first", "The simplest flavours show the quality of the base most clearly."],
       ["Whatever is seasonal", "The flavour that is only there this month."],
-      ["Ask for a taste", "Every good scoop shop expects it."],
+      ["Ask for a taste", "Most scoop shops will offer one."],
       ["A cup, not a cone, to judge it", "The cone is fun; the cup lets you taste the ice cream."],
       ["Soft serve, done well", "Where it is made from real dairy mix, a very good thing in its own right."],
     ],
     signals:
-      "Ice cream searches read listings and menus for small-batch or house-made ice cream and gelato, and weigh reviews that mention flavour, texture and seasonal specials. Late opening hours count, since ice cream is an after-dinner errand for most people.",
+      "Ice cream searches read listings and menus for small-batch or house-made ice cream and gelato, and weigh reviews that mention flavour, texture and seasonal specials.",
     related: ["bakery", "donuts", "boba"],
     situations: ["hot-day", "with-a-toddler", "first-date"],
   },
@@ -617,7 +617,7 @@ module.exports = [
     desc:
       "Thick enough to eat with a spoon, not too sweet, with real fruit: how to find a good açaí bowl near you and what to order.",
     lede:
-      "An açaí bowl is frozen açaí berry pulp from the Brazilian Amazon, blended thick and topped with granola, fruit and honey. In Brazil it is a post-beach snack. In the US it is sold as health food, and how healthy it is depends almost entirely on which açaí the shop buys and how much sugar it adds.",
+      "An açaí bowl is frozen açaí berry pulp from the Brazilian Amazon, blended thick and topped with granola, fruit and honey. In the Amazon state of Pará, where most of it is grown, açaí is eaten unsweetened, often with fish and cassava flour; the sweet frozen bowl is the version popular on the beaches of Rio de Janeiro. In the US it is sold as health food, and how healthy it is depends mostly on the sugar, in the açaí pack, the granola and the honey, and on the size of the bowl.",
     good: [
       ["Thick enough to hold a spoon upright", "Good açaí is blended with very little liquid and eaten with a spoon. A runny bowl is a smoothie in a bowl."],
       ["Unsweetened or lightly sweetened açaí", "Shops buy frozen açaí packs that are either unsweetened or sweetened with cane sugar or guaraná syrup. Good ones say which, and many let you choose."],
@@ -659,10 +659,10 @@ module.exports = [
       ["Walk the whole line first", "See what is fresh before you fill a plate."],
       ["Start with what is cooked to order", "The station food is always the freshest thing there."],
       ["Indian lunch buffets", "Often very good value and a good way to try dishes you would not order."],
-      ["Churrascaria", "A Brazilian steakhouse is really a buffet with the meat carved at the table."],
+      ["Churrascaria", "A Brazilian steakhouse serving rodízio: a salad buffet, and grilled meat brought to the table on skewers and carved there."],
     ],
     signals:
-      "Buffet searches read listings and menus for buffet service and its hours, then weigh reviews that mention freshness, how often trays are refilled and busy times. Recent reviews count more here than anywhere else, because a buffet's quality depends on how busy it is now.",
+      "Buffet searches read listings and menus for buffet service, then weigh reviews that mention freshness, how often trays are refilled and busy times.",
     related: ["chinese-food", "indian-food", "brazilian-food"],
     situations: ["big-group", "with-picky-eaters", "on-a-budget"],
   },
@@ -673,10 +673,10 @@ module.exports = [
     near: "Fine Dining",
     h1: "How to find good fine dining",
     desc:
-      "Tasting menus, prices, dress codes and reservations: how to choose a fine dining restaurant worth the money, and what to expect.",
+      "Tasting menus, prices, pacing and service: how to choose a fine dining restaurant worth the money, and what to expect.",
     lede:
-      "Fine dining is less about expensive ingredients than about control: a kitchen and dining room where everything, from the bread to the pacing of courses, is deliberate. At its best it is the most memorable meal of a year. At its worst it is a very expensive dinner with good lighting.",
-    qa: ["How much does fine dining cost?", "In most US cities, a fine dining tasting menu runs from around $100 to well over $300 per person before drinks, tax and tip. À la carte fine dining is usually less. Lunch, a bar menu or a shorter tasting menu is often the cheapest way to try an expensive restaurant."],
+      "Fine dining is less about expensive ingredients than about control: a kitchen and dining room where everything, from the bread to the pacing of courses, is deliberate. Without that control, it is just an expensive dinner.",
+    qa: ["How much does fine dining cost?", "Prices vary widely and change often, so check the restaurant's own site or booking page, and budget separately for drinks, tax and tip. À la carte fine dining is usually less. Lunch, a bar menu or a shorter tasting menu is often the cheapest way to try an expensive restaurant."],
     good: [
       ["A kitchen with a point of view", "The best restaurants are cooking something specific, a place, a season, a tradition. A menu that could belong to any expensive restaurant anywhere is a warning."],
       ["Bread and the small things are excellent", "The bread, the butter, the first bite from the kitchen. A restaurant that gets the free things right usually gets the rest right."],
@@ -692,7 +692,7 @@ module.exports = [
       ["Tell them the occasion", "When booking. Good restaurants notice."],
     ],
     signals:
-      "Fine dining searches read menus for tasting menus, prix fixe and chef-driven cooking, and weigh reviews that describe service, pacing and the value for money. Reservation and dress-code details are surfaced where they exist, because they decide whether a place works for tonight.",
+      "Fine dining searches read menus for tasting menus, prix fixe and chef-driven cooking, and weigh reviews that describe service, pacing and the value for money.",
     related: ["steak", "sushi", "omakase"],
     situations: ["celebrating", "birthday-dinner", "meeting-the-parents"],
   },
@@ -706,21 +706,21 @@ module.exports = [
     desc:
       "Fried chicken, smothered pork chops, greens and mac and cheese: what separates good soul food and how to find it near you.",
     lede:
-      "Soul food is the cooking of Black Southern Americans, carried north and west during the Great Migration and kept alive in family restaurants, church kitchens and cafeterias in every American city. It is built on long-cooked vegetables, fried and smothered meats, and sides that are the real test of the kitchen.",
+      "Soul food is the cooking of Black Southern Americans, carried north and west during the Great Migration and kept alive in family restaurants, church kitchens and cafeterias in the cities where Black Southerners settled. It is built on long-cooked vegetables, fried and smothered meats, and sides that are the real test of the kitchen.",
     qa: ["What is soul food?", "Soul food is the traditional cooking of African Americans from the American South: fried chicken, smothered pork chops, oxtails, catfish, collard greens cooked with smoked meat, baked macaroni and cheese, candied yams, black-eyed peas, cornbread and peach cobbler. It grew out of making the most of limited ingredients and is closely tied to family and Sunday meals."],
     good: [
       ["Greens cooked low and slow", "Collards or mixed greens simmered for hours with smoked turkey or ham hock, with a pot liquor worth drinking. Bright green, squeaky greens were rushed."],
       ["Baked mac and cheese", "Baked in a pan, set firm enough to cut, with a browned top. Creamy stovetop macaroni is a different dish."],
-      ["Food made that day, in a steam line", "Many great soul food restaurants serve from a cafeteria-style line. That is not a warning; a busy line means fresh pans."],
-      ["Daily specials", "Oxtails on Friday, chitlins on the weekend, a Sunday dinner plate. A daily board is a sign of home-style cooking."],
+      ["Food made that day, in a steam line", "Many soul food restaurants serve from a cafeteria-style line. That is not a warning; a busy line means fresh pans."],
+      ["Daily specials", "Oxtails, chitlins or a Sunday dinner plate on set days of the week. A daily board is a sign of home-style cooking."],
       ["Cornbread with some texture", "Crumbly, a little crisp at the edge. Whether sweet or savoury is a family argument."],
     ],
     order: [
-      ["A meat and three", "One meat and three sides. The standard order and the best way to judge a kitchen."],
+      ["A meat and three", "One meat and three sides. A common way to order, and the best way to judge a kitchen."],
       ["Fried chicken or smothered pork chops", "Smothered means cooked slowly in a thick onion gravy."],
       ["Oxtails", "Braised until they fall apart, often a weekend special."],
-      ["Greens, mac and cheese, candied yams", "The three sides most regulars would choose."],
-      ["Peach cobbler or banana pudding", "Save room."],
+      ["Greens, mac and cheese, candied yams", "Three of the sides that define a soul food menu."],
+      ["Peach cobbler or banana pudding", "Cobbler baked under a biscuit or pastry top; pudding layered with vanilla wafers and sliced banana."],
     ],
     signals:
       "Soul food searches read menus for the dishes that define the cuisine — smothered meats, oxtails, greens, baked macaroni — which separates a soul food kitchen from a restaurant with a Southern-themed brunch. Reviews that mention the sides, daily specials and home cooking count toward the pick.",
@@ -735,7 +735,7 @@ module.exports = [
     desc:
       "Gumbo, étouffée, jambalaya and po'boys: what separates good Cajun and Creole cooking, the difference between them, and what to order.",
     lede:
-      "Cajun and Creole are the two great cooking traditions of south Louisiana. Cajun cooking comes from the rural Acadian communities of the bayou country; Creole cooking comes from New Orleans itself, with French, Spanish, African and Caribbean roots. They share a base of dark roux and the 'holy trinity' of onion, celery and green pepper.",
+      "Cajun and Creole are the two great cooking traditions of south Louisiana. Cajun cooking comes from the rural Acadian communities of the bayou country; Creole cooking comes from New Orleans itself, with French, Spanish, African and Caribbean roots. They share roux, which Cajun cooks usually take darker, and the 'holy trinity' of onion, celery and green pepper.",
     qa: ["What is the difference between Cajun and Creole food?", "Cajun food is the rustic country cooking of Louisiana's Acadian descendants, usually heavier on pork, game and dark roux. Creole food is the city cooking of New Orleans, with more tomatoes, butter and cream and more European and Caribbean influence. A Creole jambalaya is red with tomato; a Cajun one is brown."],
     good: [
       ["A dark roux", "Flour and fat cooked slowly until it is the colour of chocolate. It gives gumbo its depth. A pale, floury gumbo skipped the most important step."],
@@ -749,7 +749,7 @@ module.exports = [
       ["Crawfish étouffée", "Crawfish tails smothered in a buttery roux sauce over rice."],
       ["Jambalaya", "Rice cooked with sausage, chicken and often shrimp."],
       ["A po'boy", "Fried shrimp or oysters, or roast beef debris, on crusty New Orleans French bread, dressed."],
-      ["Red beans and rice", "Traditionally a Monday dish in New Orleans. Simple and often the best thing on the menu."],
+      ["Red beans and rice", "Traditionally a Monday dish in New Orleans. Red kidney beans cooked down with pork until creamy."],
     ],
     signals:
       "Cajun and Creole searches read menus for gumbo, étouffée, jambalaya and po'boys by name, which separates a Louisiana kitchen from a restaurant with one blackened chicken dish. Reviews mentioning the roux, the seafood and the andouille count toward the pick.",
@@ -764,7 +764,7 @@ module.exports = [
     desc:
       "Enchiladas in chili gravy, fajitas, queso and puffy tacos: what separates good Tex-Mex from generic Mexican food, and what to order.",
     lede:
-      "Tex-Mex is its own cuisine, not a lesser version of Mexican food: the cooking of Tejano families in Texas, built on beef, yellow cheese, cumin, chili gravy and flour tortillas. Done well it is some of the most satisfying food in America. Done badly it is a combination plate that tastes the same whatever you ordered.",
+      "Tex-Mex is its own cuisine, not a lesser version of Mexican food: the cooking of Tejano families in Texas, built on beef, yellow cheese, cumin, chili gravy and flour tortillas. A weak kitchen turns it into a combination plate that tastes the same whatever you ordered.",
     qa: ["What is the difference between Tex-Mex and Mexican food?", "Tex-Mex is the Texan cooking of Tejano communities. It uses more beef, cumin, yellow cheese and flour tortillas than most Mexican regional cooking, and is known for combination plates, chili con queso, fajitas and enchiladas in chili gravy. Mexican food covers dozens of regional cuisines, most of which use little cumin or yellow cheese."],
     good: [
       ["Chili gravy on the enchiladas", "Classic Tex-Mex enchiladas come in a brown, cumin-heavy chili gravy, with melted yellow cheese and raw onion. It is the defining sauce."],
@@ -777,7 +777,7 @@ module.exports = [
       ["Cheese enchiladas with chili gravy", "The classic, and the best test of a Tex-Mex kitchen."],
       ["Beef fajitas", "Skirt steak, with warm flour tortillas and the fixings."],
       ["Puffy tacos", "A fried masa shell that puffs up in the oil. A San Antonio speciality."],
-      ["Queso with ground beef", "Often called a bob or a Bob Armstrong in Texas, depending on the add-ins."],
+      ["Queso with ground beef", "Queso with seasoned ground beef and guacamole is known in Austin as a Bob Armstrong dip, after a former Texas land commissioner."],
       ["A frozen margarita", "Tex-Mex restaurants are where it was made popular."],
     ],
     signals:
@@ -793,11 +793,11 @@ module.exports = [
     desc:
       "Mapo tofu, dan dan noodles and the numbing heat of Sichuan peppercorn: what separates a real Sichuan restaurant and what to order.",
     lede:
-      "Sichuan cooking, from southwest China, is known for mala: the combination of chilli heat and the tingling, numbing effect of Sichuan peppercorn. But it is not all heat. A good Sichuan menu covers sour, sweet, smoky and garlicky dishes too, and the best restaurants balance them across a meal.",
+      "Sichuan cooking, from southwest China, is known for mala: the combination of chilli heat and the tingling, numbing effect of Sichuan peppercorn. But it is not all heat. A good Sichuan menu covers sour, sweet, smoky and garlicky dishes too, and a good Sichuan meal balances them.",
     good: [
-      ["Real Sichuan peppercorn", "Your lips should tingle and go slightly numb. Chilli heat without the numbing is not Sichuan cooking."],
-      ["Chilli oil made in house", "Fragrant, dark red, with sediment at the bottom. It is in half the dishes, so it matters."],
-      ["Doubanjiang in the sauces", "Fermented broad bean and chilli paste gives Sichuan sauces their deep red colour and savoury flavour."],
+      ["Real Sichuan peppercorn", "In the mala dishes your lips should tingle and go slightly numb. Chilli heat without the numbing is not mala."],
+      ["Chilli oil made in house", "Fragrant, dark red, with sediment at the bottom. It dresses many of the cold dishes and noodles, so it matters."],
+      ["Doubanjiang in the sauces", "Fermented broad bean and chilli paste gives many Sichuan sauces, mapo tofu's among them, their deep red colour and savoury flavour."],
       ["A menu with cold dishes", "Mouth-watering chicken, wood ear salad, spicy beef tendon. A cold starter section is a sign of a regional kitchen."],
       ["Balance across the menu", "Not everything should be red. Garlicky greens, a mild soup and plain rice are part of a proper Sichuan meal."],
     ],
@@ -820,9 +820,9 @@ module.exports = [
     desc:
       "Beef noodle soup, braised pork rice, gua bao and popcorn chicken: what separates a good Taiwanese restaurant and what to order.",
     lede:
-      "Taiwanese food mixes Fujianese home cooking, Japanese influence and the cooking of mainland Chinese who arrived after 1949, and it is best known outside Taiwan for its night-market snacks. It is also the home of bubble tea, which is often the reason people first walk into a Taiwanese café.",
+      "Taiwanese food mixes Fujianese home cooking, Japanese influence and the cooking of mainland Chinese who arrived around 1949, and it is best known outside Taiwan for its night-market snacks. It is also the home of bubble tea.",
     good: [
-      ["Beef noodle soup with a deep broth", "Braised beef shank or tendon in a dark, spiced broth with thick wheat noodles. It is the national dish, and a thin broth is the giveaway."],
+      ["Beef noodle soup with a deep broth", "Braised beef shank or tendon in a dark, spiced broth with thick wheat noodles. It is often called Taiwan's national dish, and a thin broth is the giveaway."],
       ["Braised pork rice done slowly", "Lu rou fan: fatty pork braised in soy and spice over white rice. Rich and glossy, not dry."],
       ["Night-market snacks made to order", "Popcorn chicken fried with basil, scallion pancakes, oyster omelettes. They should arrive hot."],
       ["A Taiwanese breakfast menu", "Soy milk, youtiao and egg crepes. A place that does breakfast is cooking the full tradition."],
@@ -830,7 +830,7 @@ module.exports = [
     ],
     order: [
       ["Beef noodle soup", "The first order at any Taiwanese restaurant."],
-      ["Lu rou fan", "Braised pork rice. Cheap, filling and addictive."],
+      ["Lu rou fan", "Braised pork rice. Filling, and a staple of Taiwanese home and street food."],
       ["Popcorn chicken", "Salt and pepper chicken, fried with basil leaves."],
       ["Gua bao", "A steamed bun with braised pork belly, pickled greens and peanut powder."],
       ["Milk tea with boba", "Where it began."],
@@ -852,7 +852,7 @@ module.exports = [
       ["Sofrito made fresh", "Bright green, herbal and garlicky. A place making its own sofrito tastes completely different from one using a jar."],
       ["Mofongo mashed to order", "Fried green plantain mashed with garlic and chicharrón in a wooden pilón. It should be warm, garlicky and hold together."],
       ["Pernil with crackling", "Slow-roasted pork shoulder with crisp, salty skin. The crackling is the prize."],
-      ["Arroz con gandules with pegao", "Rice with pigeon peas, sofrito and pork. The crisp rice at the bottom of the pot, pegao, is what regulars ask for."],
+      ["Arroz con gandules with pegao", "Rice with pigeon peas, sofrito and pork. The crisp rice at the bottom of the pot, pegao, is prized."],
       ["Frituras fried fresh", "Alcapurrias, bacalaítos and empanadillas, fried that day and hot."],
     ],
     order: [
@@ -860,7 +860,7 @@ module.exports = [
       ["Pernil with arroz con gandules", "The Sunday and Christmas plate."],
       ["Tostones", "Twice-fried green plantain, with garlic dipping sauce."],
       ["Alcapurrias", "Fried fritters of green banana and taro, filled with meat."],
-      ["A tripleta", "A pressed sandwich with three meats. The Puerto Rican lunch counter classic."],
+      ["A tripleta", "A sandwich of three meats, often pressed."],
     ],
     signals:
       "Puerto Rican searches read menus for mofongo, pernil and arroz con gandules by name, which separates a Puerto Rican kitchen from a pan-Latin menu. Reviews that mention sofrito, the pernil and the frituras count toward the pick.",
@@ -874,7 +874,7 @@ module.exports = [
     desc:
       "Plate lunch, kalua pork, loco moco and spam musubi: what separates good Hawaiian food and what to order at a Hawaiian restaurant.",
     lede:
-      "Most Hawaiian food on the mainland is local Hawaii food: the plate lunch culture that grew out of the plantation era, mixing Native Hawaiian, Japanese, Chinese, Filipino, Korean and Portuguese cooking. It is generous, salty, cheap and built around rice.",
+      "Most Hawaiian food on the mainland is local Hawaii food: the plate lunch culture that grew out of the plantation era, mixing Native Hawaiian, Japanese, Chinese, Filipino, Korean and Portuguese cooking. It is generous, salty and built around rice.",
     good: [
       ["Two scoops rice, one scoop mac", "The plate lunch standard. Mac salad should be soft macaroni in a plain mayonnaise dressing, not a pasta salad."],
       ["Kalua pork that tastes smoky", "Traditionally cooked in an underground imu, now usually slow-roasted with Hawaiian salt and liquid smoke. It should be moist and deeply salty."],
@@ -885,9 +885,9 @@ module.exports = [
     order: [
       ["A mixed plate", "Two proteins, rice and mac salad. The best way to try a kitchen."],
       ["Loco moco", "Rice, a hamburger patty, a fried egg and brown gravy."],
-      ["Kalua pork and cabbage", "The Native Hawaiian classic, on a plate lunch."],
+      ["Kalua pork and cabbage", "Kalua pig is the Native Hawaiian luau dish; cooked down with cabbage it is a plate-lunch staple."],
       ["Garlic shrimp", "Shell-on shrimp in garlic butter, North Shore style."],
-      ["Spam musubi", "Order two."],
+      ["Spam musubi", "The everyday grab-and-go snack of Hawaii, often glazed with soy and sugar."],
     ],
     signals:
       "Hawaiian searches read menus for plate lunch, kalua pork and loco moco by name, which separates a Hawaiian kitchen from a poke shop. Reviews that mention portion size and the mac salad count toward the pick.",
@@ -901,23 +901,23 @@ module.exports = [
     desc:
       "Nihari, karahi, haleem and seekh kebabs: what separates good Pakistani food from a generic Indian menu, and what to order.",
     lede:
-      "Pakistani food shares a lot with North Indian cooking, but it is more meat-centred, cooked in bigger, bolder portions, and nearly always halal. The best Pakistani restaurants in the US are often plain, busy and open late, and the menu is built around slow-cooked meat and the tandoor.",
+      "Pakistani food shares a lot with North Indian cooking, but it is more meat-centred and nearly always halal. The menu is built around slow-cooked meat, the karahi and the tandoor.",
     good: [
-      ["Karahi cooked to order", "Chicken or goat cooked fast in a wok-like karahi with tomato, ginger and green chilli. It takes twenty minutes and should arrive sizzling."],
-      ["Nihari with marrow", "Beef shank slow-cooked overnight in a rich, spiced gravy, finished with ginger and lemon. Traditionally a breakfast dish, and often weekend-only."],
+      ["Karahi cooked to order", "Chicken or goat cooked fast in a wok-like karahi with tomato, ginger and green chilli. Cooked to order, it takes a while and should arrive sizzling."],
+      ["Nihari with marrow", "Beef shank slow-cooked overnight in a rich, spiced gravy, finished with ginger and lemon. Traditionally a breakfast dish, and not made every day everywhere."],
       ["Bread from a tandoor", "Naan and roti slapped on the wall of a clay oven, blistered and charred. Naan from a grill or oven is flat by comparison."],
       ["Kebabs grilled over charcoal", "Seekh kebabs of minced meat on skewers should be smoky, juicy and spiced."],
       ["Halal, and says so", "Most Pakistani restaurants are halal and state it plainly."],
     ],
     order: [
       ["Chicken or goat karahi", "The dish to judge the kitchen by."],
-      ["Nihari", "If it is on, especially on a weekend morning."],
+      ["Nihari", "If it is on, ideally in the morning, when it is traditionally eaten."],
       ["Seekh kebab", "With naan, onions and mint chutney."],
       ["Haleem", "A thick, slow-cooked stew of wheat, lentils and meat."],
       ["Chai", "Strong, milky, sweet. Order it to finish."],
     ],
     signals:
-      "Pakistani searches read menus for karahi, nihari and haleem by name and for halal service, which separates a Pakistani restaurant from a general North Indian menu. Reviews that mention the karahi, the naan and weekend nihari count toward the pick.",
+      "Pakistani searches read menus for karahi, nihari and haleem by name and for halal service, which separates a Pakistani restaurant from a general North Indian menu. Reviews that mention the karahi, the naan and the nihari count toward the pick.",
     related: ["indian-food", "biryani", "halal-food"],
     situations: ["late-night", "big-group", "friends-visiting"],
   },
@@ -935,14 +935,14 @@ module.exports = [
       ["Achar that is made there", "The dipping sauce, usually tomato, sesame and chilli, should be fresh and bright. It is half the dish."],
       ["Dal bhat as a full set", "Rice, lentils, vegetable curry, pickles and greens on one tray. The everyday Nepali meal, and a sign of a real Nepali kitchen."],
       ["Himalayan dishes, not just curry", "Thukpa, chow mein, sekuwa, chili chicken. A menu that is almost all tikka masala is an Indian restaurant."],
-      ["Jhol momo", "Momos served in a spiced, soupy sauce. A menu that has them is cooking the current Kathmandu version."],
+      ["Jhol momo", "Momos served in a spiced, soupy sauce. A menu that has them is following a style popular in Kathmandu."],
     ],
     order: [
       ["Steamed momos", "Chicken or vegetable, with achar. The first order."],
       ["Jhol momo", "In a warm, tangy soup."],
       ["Dal bhat", "The full set, for a real meal."],
-      ["Thukpa", "Tibetan noodle soup. Good on a cold day."],
-      ["Chili chicken", "Indo-Chinese, fried and tossed with peppers and chilli. Very popular for good reason."],
+      ["Thukpa", "Tibetan noodle soup, with meat or vegetables in a spiced broth."],
+      ["Chili chicken", "Indo-Chinese, fried and tossed with peppers and chilli."],
     ],
     signals:
       "Nepali searches read menus for momos, dal bhat and thukpa by name, which separates a Nepali or Himalayan kitchen from an Indian restaurant with momos added. Reviews mentioning hand-made momos and the achar count toward the pick.",
@@ -956,12 +956,12 @@ module.exports = [
     desc:
       "Mandi, saltah, fahsa and honey bread: what separates good Yemeni food, and what to order at a Yemeni restaurant.",
     lede:
-      "Yemeni restaurants have spread across American cities in the last decade, many with a Yemeni coffee house alongside. The food centres on slow-cooked meat and rice, bubbling stone bowls of stew and huge flatbreads, and it is almost always halal and meant to be shared.",
+      "Yemeni restaurants and Yemeni coffee houses have spread well beyond the long-established Yemeni communities of Michigan and New York. The food centres on slow-cooked meat and rice, bubbling stone bowls of stew and huge flatbreads, and it is almost always halal and meant to be shared.",
     good: [
       ["Mandi meat that falls off the bone", "Lamb or chicken slow-cooked over spiced rice, traditionally in a sealed pit so the smoke flavours the rice. The meat should pull apart and the rice should taste of it."],
       ["Stews served bubbling", "Saltah and fahsa arrive boiling in a stone or iron bowl. They should still be bubbling when they reach the table."],
       ["Hilbeh on top", "Whipped fenugreek froth, spooned over saltah. It is the defining touch."],
-      ["Bread from a tandoor", "Huge, thin, blistered flatbreads, torn and used to scoop."],
+      ["Bread from a tannour", "Huge, thin, blistered flatbreads, torn and used to scoop."],
       ["Built for sharing", "Large platters for the table. A Yemeni meal is a group meal."],
     ],
     order: [

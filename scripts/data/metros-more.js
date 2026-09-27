@@ -4,8 +4,8 @@
  *
  * Each entry was drafted from published sources and then fact-checked claim by
  * claim by a second pass that cut anything it could not confirm, then read
- * again by hand. Nineteen so far. The rest of the next hundred are drafted but
- * held back until they have been checked the same way.
+ * again by hand. Twenty-seven so far. The rest of the next hundred are drafted
+ * but held back until they have been checked the same way.
  */
 
 module.exports = [
@@ -545,6 +545,62 @@ module.exports = [
     ]
   },
   {
+    s: "lexington-fayette-ky",
+    identity: [
+      "Lexington eats Bluegrass food: country ham, beer cheese, burgoo, and lamb fries in cream gravy. The horse industry runs through the food too. Burgoo was cooked for the crowds at the thoroughbred sales in the 1800s, and it is still served by the gallon at the spring and autumn race meets.",
+      "Beer cheese was first served in the 1940s at a restaurant in neighbouring Clark County, which the state legislature declared its birthplace in 2013. Bourbon has local history as well: the warehouses on Manchester Street, a few minutes from downtown, belonged to a working distillery from the late nineteenth century until the 1960s, and the area has since been redeveloped as the Distillery District, with bars, restaurants and small distilleries.",
+      "The newer layer is Latino. Cardinal Valley, in north-west Lexington along Versailles Road and Alexandria Drive, has become the centre of the city's Hispanic community, with tortillerías, panaderías and Mexican groceries. Much of that community settled from the late 1990s, as workers moved from seasonal tobacco farming to year-round jobs on the horse farms and in the barns at the tracks."
+    ],
+    dishes: [
+      [
+        "Beer cheese",
+        "Cheddar blended with beer, garlic and spices such as cayenne and dry mustard, served with crackers or raw vegetables. First made in neighbouring Clark County."
+      ],
+      [
+        "Burgoo",
+        "A thick, slow-cooked stew of several meats, usually chicken, beef and pork, with corn, lima beans and okra. A fixture of the horse sales and race meets."
+      ],
+      [
+        "Lamb fries",
+        "Breaded and fried lamb testicles, often with cream gravy. A Bluegrass dish that some experts tie to the Lexington area in particular."
+      ],
+      [
+        "Country ham",
+        "Dry-cured, salty ham, and the breakfast meat across most of Kentucky."
+      ],
+      [
+        "Tacos and fresh tortillas",
+        "From the tortillerías, taquerías and Mexican groceries of Cardinal Valley."
+      ]
+    ],
+    areas: [
+      [
+        "Cardinal Valley and Alexandria Drive",
+        "Tortillerías, Mexican bakeries, taquerías and grocers in north-west Lexington."
+      ],
+      [
+        "The Distillery District",
+        "The old distillery warehouses on Manchester Street, now bars, restaurants and small distilleries."
+      ],
+      [
+        "Downtown and the farmers' market",
+        "The Lexington Farmers Market, founded in 1975 after farmers fought for the right to sell downtown, still trades on Main Street."
+      ]
+    ],
+    searches: [
+      "beer cheese",
+      "burgoo",
+      "tacos on Alexandria Drive",
+      "lamb fries"
+    ],
+    foods: [
+      "mexican-food",
+      "tacos",
+      "soup",
+      "breakfast"
+    ]
+  },
+  {
     s: "lincoln-ne",
     identity: [
       "Lincoln is Nebraska's capital and home to the state university's main campus. The city also shares the Nebraska habit, learned in school cafeterias, of eating chili with a cinnamon roll.",
@@ -1022,6 +1078,367 @@ module.exports = [
       "breakfast",
       "mexican-food",
       "tex-mex-food"
+    ]
+  },
+  {
+    s: "norfolk-va",
+    identity: [
+      "Norfolk is a Navy city first. Naval Station Norfolk, the world's largest naval station, was established at Sewell's Point in 1917, and for more than a century the base has shaped who lives in the city and what they cook.",
+      "The clearest example is the Filipino community. Between 1952 and 1991 about 35,000 Filipino nationals joined the US Navy, and many settled around its Hampton Roads bases. The region now has tens of thousands of Filipino Americans, most of them in Virginia Beach and Norfolk, and lumpia, longganisa, pandesal and ube pastries are part of how it eats.",
+      "The rest comes from the water. The city is bordered almost entirely by water, from the Chesapeake Bay to the Elizabeth River, and the small panfish spot was long sold as 'Norfolk spot'. An older Greek community at the Annunciation Greek Orthodox Cathedral, whose women's club began a Greek food bazaar in the early 1950s, turned it into the Norfolk Greek Festival in 1986."
+    ],
+    dishes: [
+      [
+        "Filipino food",
+        "Lumpia, longganisa, pandesal, ensaymada and ube hopia, from a community built by Navy enlistment between 1952 and 1991."
+      ],
+      [
+        "Norfolk spot",
+        "A small croaker-family panfish, scaled, rolled in flour and fried whole, then eaten 'hard' with the bones or 'soft'. Historically marketed under the city's name."
+      ],
+      [
+        "Rockfish",
+        "The Chesapeake name for striped bass, from its habit of hiding among oyster reefs and rocks. The bay is the species' main nursery."
+      ],
+      [
+        "Crab, oysters and flounder",
+        "Seafood from the waters around the city, and a fixture of downtown Norfolk's menus."
+      ],
+      [
+        "Greek festival food",
+        "Greek dishes and pastries at the Norfolk Greek Festival, from recipes first chosen for the cathedral women's club bazaar in the early 1950s."
+      ]
+    ],
+    areas: [
+      [
+        "Ghent, Colley Avenue and 21st Street",
+        "Ghent was laid out on farmland in the 1890s; Colley Avenue and 21st Street, running through it and to its north, carry much of the city's restaurant life."
+      ],
+      [
+        "Downtown and Granby Street",
+        "Norfolk's main shopping street by 1910, and now the centre of downtown dining, with seafood prominent."
+      ],
+      [
+        "Ocean View",
+        "Norfolk's beachfront on the Chesapeake Bay, with a 1,690-foot public fishing pier."
+      ]
+    ],
+    searches: [
+      "fresh oysters",
+      "filipino lumpia",
+      "fried spot",
+      "seafood on Granby Street"
+    ],
+    foods: [
+      "seafood",
+      "filipino-food",
+      "oysters",
+      "greek-food"
+    ]
+  },
+  {
+    s: "chesapeake-va",
+    identity: [
+      "Chesapeake was created in 1963 when Norfolk County consolidated with the city of South Norfolk, and it still divides along those lines: developed neighbourhoods in the north next to Norfolk and Portsmouth, and farmland, forest and a large part of the Great Dismal Swamp in the south, running to the North Carolina line. That farmland is why the city has pick-your-own strawberry fields in spring and corn mazes and pumpkin patches in autumn.",
+      "The rest of its eating is Tidewater Virginia's: blue crab from the Chesapeake Bay, long-cured country ham from nearby Smithfield, and peanuts from Suffolk next door. Then there is the Navy. Hampton Roads has the largest Filipino-American community on the East Coast, built largely by Filipino sailors and their families, and at the 2010 census Chesapeake had the region's second-largest Filipino population after Virginia Beach."
+    ],
+    dishes: [
+      [
+        "Blue crab",
+        "Steamed by the dozen, spiced and picked at the table, or made into crab cakes. Chesapeake Bay crabs are potted from spring to late autumn."
+      ],
+      [
+        "Pick-your-own strawberries",
+        "Farms across the city open their fields in spring, with peach picking, pumpkin patches and corn mazes later in the year."
+      ],
+      [
+        "Filipino food",
+        "Lumpia, pancit and adobo from a Hampton Roads community rooted in generations of Navy service."
+      ],
+      [
+        "Virginia peanuts",
+        "A major crop of south-eastern Virginia. Suffolk, next door, had been declared the Peanut Capital of the World by 1941 and is still a major peanut-processing centre."
+      ],
+      [
+        "Country ham",
+        "Dry-salt cured and long-aged in the tradition centred on nearby Smithfield. Sliced thin and served on biscuits."
+      ]
+    ],
+    areas: [
+      [
+        "Great Bridge",
+        "Site of a 1775 Revolutionary War battle and of the lock where the Albemarle and Chesapeake Canal meets the Elizabeth River, and one of the city's main dining areas."
+      ],
+      [
+        "Greenbrier",
+        "The city's commercial hub, around its mall and shopping centres, with a range of cuisines from Thai to Jamaican."
+      ],
+      [
+        "Southern Chesapeake",
+        "The rural south of the city towards the North Carolina line, farmland that includes some of the pick-your-own strawberry farms."
+      ]
+    ],
+    searches: [
+      "steamed crabs",
+      "filipino lumpia",
+      "strawberry picking",
+      "crab cakes"
+    ],
+    foods: [
+      "seafood",
+      "filipino-food",
+      "seafood-boil",
+      "sandwiches"
+    ]
+  },
+  {
+    s: "birmingham-al",
+    identity: [
+      "Birmingham was founded in 1871 and grew up as an iron and steel town, and a large share of the people who fed its workers were Greek. Greeks began arriving in the 1880s, made their first money at sidewalk fruit stands, and went on to run lunchrooms, hot dog stands and plate-lunch cafés. Most cooked Southern food rather than Greek, which is why so much of the city's everyday eating has Greek roots without looking Greek.",
+      "Two dishes came out of that history. The Birmingham hot dog is dressed with mustard, onions, sauerkraut and a special sauce spiced with cinnamon and allspice, and Greek-run hot dog stands go back to at least 1919. The meat-and-three plate lunch became a fixture of the Greek-owned cafés. The Greek Orthodox community has held an annual Greek Festival at Holy Trinity-Holy Cross Cathedral on 19th Street South since 1972."
+    ],
+    dishes: [
+      [
+        "The Birmingham hot dog",
+        "A beef frank with mustard, onions, sauerkraut and a special sauce seasoned with cinnamon, allspice and other Greek spices."
+      ],
+      [
+        "Hot beef",
+        "Ground beef and the hot dog's rust-coloured seasoned sauce on white bread. It is the Birmingham dog without the frank, first made for customers who could not manage one, and the city's long-standing hot dog counters still serve it."
+      ],
+      [
+        "Meat-and-three",
+        "One meat and three vegetables, the plate lunch that Birmingham's Greek-owned cafés served to the city's industrial workers."
+      ],
+      [
+        "Greek-Southern cooking",
+        "Greek-style snapper, chicken cooked in lemon broth and okra done Greek style, seasoned with garlic, oregano, lemon and olive oil and served alongside Southern sides."
+      ]
+    ],
+    areas: [
+      [
+        "Lakeview and Pepper Place",
+        "The Saturday farmers market that has run since 2000 in and around the former Dr Pepper and Martin Biscuit buildings, with produce and prepared food from Alabama vendors."
+      ],
+      [
+        "Five Points South and Southside",
+        "Southside's dining and nightlife district, centred on Five Points Circle near the UAB campus."
+      ],
+      [
+        "Avondale",
+        "A former company town built around Avondale Mills, redeveloped since about 2011 with restaurants, breweries and music venues."
+      ]
+    ],
+    searches: [
+      "birmingham hot dog with special sauce",
+      "meat and three lunch",
+      "hot beef sandwich",
+      "greek festival food"
+    ],
+    foods: [
+      "hot-dogs",
+      "greek-food",
+      "diner",
+      "soul-food",
+      "sandwiches"
+    ]
+  },
+  {
+    s: "montgomery-al",
+    identity: [
+      "Montgomery sits in Alabama's traditional Black Belt, the band of former cotton country named for its dark soil, and about three in five of its residents are Black. Its best-known food story comes from the 1955 to 1956 bus boycott, when home cooking helped pay for the carpools that let people stay off the city's buses.",
+      "The cook Georgia Gilmore organised a group of women into the Club from Nowhere, named to keep its purpose hidden. They sold fried chicken sandwiches, chicken dinners, cakes and pies at churches, beauty shops and cabstands, and gave the money to the Montgomery Improvement Association. Gilmore also cooked for movement leaders from her own home, and a state historical marker now stands at her later house on Dericote Street.",
+      "A newer community arrived with Hyundai, which began production at its Montgomery plant in May 2005 and drew Korean-owned suppliers along Interstate 85. The Southern Foodways Alliance has put the Korean community at 10,000 to 13,000 people, with Korean restaurants and a Korean grocery clustered along Eastern Boulevard and around the corner of Bell and Vaughn Roads."
+    ],
+    dishes: [
+      [
+        "Fried chicken dinners",
+        "Sandwiches and full chicken dinners were what the Club from Nowhere sold to keep the boycott carpools running."
+      ],
+      [
+        "Cakes and pies",
+        "Baked at home by the club's members and sold across town, with the takings handed over at the Monday night mass meetings."
+      ],
+      [
+        "Korean food",
+        "Restaurants and groceries along Eastern Boulevard, serving a community that grew around the Hyundai plant after 2005."
+      ]
+    ],
+    areas: [
+      [
+        "Downtown and the Alley",
+        "The Alley on Commerce Street is downtown's entertainment district, and several restaurants near the riverfront occupy restored historic warehouses."
+      ],
+      [
+        "Old Cloverdale",
+        "A historic district since 1996, with restaurants and cafes on Cloverdale Road, where Montgomery's first suburban shopping strip opened in 1910."
+      ],
+      [
+        "The Curb Market",
+        "At its Madison Avenue site since 1947, with more than 30 farmers and vendors selling seasonal produce, canned goods and baked goods."
+      ]
+    ],
+    searches: [
+      "fried chicken dinner",
+      "korean bbq",
+      "soul food",
+      "curb market produce"
+    ],
+    foods: [
+      "fried-chicken",
+      "soul-food",
+      "korean-food",
+      "korean-bbq"
+    ]
+  },
+  {
+    s: "glendale-ca",
+    identity: [
+      "One historian of the diaspora calls Glendale the most demographically concentrated hub of the Armenian diaspora. The 2000 census counted Armenian Americans as about a third of the city's residents, and by 2005 estimates put the share near 40 per cent. That community shapes much of how Glendale eats, from lahmajoun and boreg to basturma and grilled khorovats.",
+      "The Armenians came in waves: Lebanese and Iranian Armenians from the late 1970s, leaving the Lebanese Civil War and the Iranian Revolution, then Armenians from the Soviet Union from the late 1980s. Iranians settled here too, which is why Persian kebab is as much a part of the city as Armenian baking. Filipino Americans and a Mexican American community established by the 1960s add their own cooking."
+    ],
+    dishes: [
+      [
+        "Lahmajoun",
+        "A round of thin dough topped with minced meat and vegetables, often called Armenian pizza and sold by Glendale's Armenian bakeries."
+      ],
+      [
+        "Khorovats",
+        "Armenian grilled meat, usually chunks of pork, lamb, beef or chicken cooked on skewers."
+      ],
+      [
+        "Basturma and sujuk",
+        "Air-dried beef in a fenugreek and cumin paste, and a dry, garlicky spiced sausage. Basturma with eggs is a common Armenian breakfast."
+      ],
+      [
+        "Zhingyalov hats",
+        "Armenian flatbread filled with more than a dozen chopped herbs and greens, one of the more distinctive dishes cooked in Glendale."
+      ],
+      [
+        "Armenian pastries",
+        "Nazook rolled around a walnut filling, pakhlava in many nut variations, cheese and spinach boreg, and custard-filled ponchik."
+      ],
+      [
+        "Persian kebab",
+        "Koobideh and barg skewers from the grills that serve the city's Iranian and Iranian Armenian families."
+      ]
+    ],
+    areas: [
+      [
+        "Brand Boulevard",
+        "Downtown Glendale's main street since the developer Leslie C. Brand widened and renamed it in 1903, with restaurants along much of its downtown stretch."
+      ]
+    ],
+    searches: [
+      "fresh lahmajoun",
+      "khorovats platter",
+      "Armenian bakery",
+      "koobideh plate"
+    ],
+    foods: [
+      "mediterranean-food",
+      "persian-food",
+      "lebanese-food",
+      "shawarma",
+      "filipino-food",
+      "bakery"
+    ]
+  },
+  {
+    s: "overland-park-ks",
+    identity: [
+      "Overland Park is the largest city in Johnson County and the largest suburb on the Kansas side of the Kansas City metro, so its food starts with Kansas City barbecue: meat smoked over hickory and oak, burnt ends cut from the point of the brisket, and a tomato-based sauce sweetened with molasses. It is the tradition Henry Perry started from a barbecue stand in Kansas City, Missouri, in the early 1900s.",
+      "Asian residents made up more than 9 per cent of the city at the 2020 census, and several of the metro's South Asian restaurants are here, serving biryani, tikka masala, tandoori dishes and dosa alongside the barbecue. Downtown, the old centre along Santa Fe Drive, has held a farmers market for more than 40 years."
+    ],
+    dishes: [
+      [
+        "Burnt ends",
+        "Charred pieces cut from the point half of a smoked brisket, the dish most closely tied to Kansas City barbecue."
+      ],
+      [
+        "Ribs with Kansas City sauce",
+        "Ribs smoked over hickory or oak and finished with the tomato-based, molasses-sweetened sauce of Kansas City barbecue."
+      ],
+      [
+        "Kansas City strip",
+        "The strip steak that carries the metro's name, which traces its birthplace to the old Kansas City stockyards."
+      ],
+      [
+        "Indian and South Asian cooking",
+        "Biryani, tikka masala, tandoori dishes and dosa from the South Asian restaurants that have opened across Johnson County."
+      ]
+    ],
+    areas: [
+      [
+        "Historic Downtown Overland Park",
+        "The old town centre along Santa Fe Drive, with the farmers market at Clock Tower Landing and locally owned restaurants cooking Mexican, Thai, Italian and Mediterranean food."
+      ],
+      [
+        "Metcalf Avenue",
+        "The city's main north-south road, where redevelopment under the 2008 Vision Metcalf plan has added offices, apartments and restaurants to an older retail strip."
+      ]
+    ],
+    searches: [
+      "burnt ends",
+      "ribs with kc sauce",
+      "dosa",
+      "dinner downtown overland park"
+    ],
+    foods: [
+      "bbq",
+      "steak",
+      "indian-food",
+      "dosa",
+      "biryani"
+    ]
+  },
+  {
+    s: "tempe-az",
+    identity: [
+      "Tempe grew from two settlements founded around 1870 on either side of Hayden Butte: Hayden's Ferry, named after Charles T. Hayden's ferry across the Salt River, and San Pablo, a Mexican community of Sonoran-style adobe houses to the east. The flour mill at the ferry was first built in 1874 and kept milling until 1998, and its 1951 concrete silos still stand at Mill Avenue and Rio Salado Parkway.",
+      "The city is organised around Arizona State University, one of the largest public universities in the country by enrollment. The stretch of Apache Boulevard between Rural and Price roads, near campus, has a cluster of northeastern Chinese, Pakistani, Indian, Middle Eastern, Vietnamese and Japanese cooking. Underneath is the Sonoran-Mexican cooking of the Phoenix area, and Guadalupe, a Yaqui town founded in the early 1900s by families fleeing Sonora, is surrounded by Tempe on three sides."
+    ],
+    dishes: [
+      [
+        "Sonoran hot dog",
+        "Bacon-wrapped and grilled, in a bolillo-style bun, with pinto beans, onions, tomatoes, mayonnaise, mustard and jalapeño salsa. It came from Hermosillo in the late 1980s and caught on in Tucson and Phoenix."
+      ],
+      [
+        "Chimichanga",
+        "A deep-fried burrito, generally agreed to be an Arizona invention; Tucson and Phoenix both claim it."
+      ],
+      [
+        "Carne asada and Sonoran flour tortillas",
+        "Flour, water, fat and salt, rolled nearly paper-thin. In Sonoran cattle country the flour tortilla is the usual choice for grilled beef."
+      ],
+      [
+        "Pakistani and Indian cooking",
+        "Two of the cuisines clustered on Apache Boulevard near the ASU campus, alongside northeastern Chinese and Middle Eastern kitchens."
+      ]
+    ],
+    areas: [
+      [
+        "Mill Avenue",
+        "The old town centre below Hayden Butte, running down to the mill silos by the river, and the city's main shopping and entertainment street for students and visitors."
+      ],
+      [
+        "Apache Boulevard",
+        "The stretch between Rural and Price roads close to ASU, which Tempe's tourism office calls the Spice Trail for its cluster of international kitchens."
+      ]
+    ],
+    searches: [
+      "sonoran hot dog",
+      "late night near ASU",
+      "indian food on apache",
+      "carne asada burrito"
+    ],
+    foods: [
+      "mexican-food",
+      "hot-dogs",
+      "tacos",
+      "indian-food",
+      "pakistani-food",
+      "mediterranean-food"
     ]
   }
 ];

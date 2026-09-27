@@ -61,6 +61,22 @@ for (const [slug, n] of Object.entries(NOTES)) {
   }
 }
 const fmt = (n) => n.toLocaleString("en-US");
+
+/* A dish name dropped mid-sentence into the description loses its capital
+   ("Apple stack cake" → "apple stack cake") unless it starts with a name: a
+   state or a city in the list ("Texas wieners", "Springfield-style"), the
+   first half of a two-word name ("Hot Brown"), or a word the notes capitalise
+   mid-sentence and no prose on the site ever writes in lower case. */
+const prose = (v) => (typeof v === "string" ? (/^[a-z0-9-]+$/.test(v) ? [] : [v]) : Object.values(v || {}).flatMap(prose));
+const LOWER_TEXT = prose([NOTES, STATE_FOOD, require("./data/dishes"), require("./data/dishes-more"), require("./data/dishes-extra")]).join(" ");
+const NOTE_TEXT = prose(NOTES).join(" ");
+const PLACE_NAMES = [...Object.values(STATES), ...CITIES.map((c) => c.c)];
+const NAME_WORDS = new Set((NOTE_TEXT.match(/(?<![.!?]\s)(?<!^)\b[A-Z][a-zé'.]+/g) || [])
+  .filter((w) => !new RegExp(`\\b${w.toLowerCase()}\\b`).test(LOWER_TEXT)));
+const midSentence = (n) =>
+  PLACE_NAMES.some((p) => n === p || n.startsWith(p + " ") || n.startsWith(p + "-")) ||
+  NAME_WORDS.has(n.split(/[\s-]/)[0]) || /^\S+\s[A-Z]/.test(n)
+    ? n : n.charAt(0).toLowerCase() + n.slice(1);
 const CITY_STATES = new Set(CITIES.map((c) => c.r));
 
 const shell = shellOrDie(WHO);
@@ -244,7 +260,11 @@ function page(c) {
      that campus. The old one was one sentence with the name swapped. */
   const desc = note && note.areas.length
     ? `Restaurants near ${shortName} in ${place}: ${note.areas.slice(0, 2).map((a) => a[0]).join(" and ")}` +
-      `${note.local.length ? `, local food like ${note.local[0][0].charAt(0).toLowerCase() + note.local[0][0].slice(1)}` : ""}` +
+      `${note.local.length ? `, local food like ${midSentence(note.local[0][0])}` : ""}` +
+      `, and one pick for what you're craving.`
+    : note && note.local.length
+    ? `Restaurants near ${shortName} in ${place}: local food like ` +
+      `${note.local.slice(0, 2).map(([n]) => midSentence(n)).join(" and ")}` +
       `, and one pick for what you're craving.`
     : `Restaurants near ${shortName} in ${place}: what eating near a ${sz.short} campus ${sc.label} is like` +
       `${big && big.c !== c.c ? `, ${big.c} ${big.miles} miles away` : ""}, and one pick for what you're craving.`;

@@ -43,6 +43,20 @@ const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-citie
 const STATES = require("./data/states");
 const { BY_STATE: CAMPUS_BY_STATE, CAMPUSES } = require("./lib/campuses");
 const STATE_FOOD = require("./data/states-food");
+/* Dish names go mid-sentence in the state hub's description, so "Pierogies"
+   becomes "pierogies" — but "Philly cheesesteak" must not become "philly".
+   A first word is kept capitalised when it is a place (a state, or a city in
+   the list), when the state writing capitalises it mid-sentence and never
+   uses it in lower case, or when the second word is capitalised too ("Hot
+   Brown"). Hyphenated words ("Detroit-style") go by their first part. */
+const FOOD_TEXT = Object.values(STATE_FOOD).map((f) => [f.identity, ...f.known.map(([, t]) => t)].join(" ")).join(" ");
+const PROPER = new Set([
+  ...Object.values(STATES).flatMap((n) => n.split(" ")),
+  ...CITIES.map((c) => c.c.split(/[\s-]/)[0]),
+  ...(FOOD_TEXT.match(/(?<![.!?]\s)(?<!^)\b[A-Z][a-zé'.]+/g) || []),
+  "Philly", "Cuban", "Chinatown",
+].filter((w) => !new RegExp(`\\b${w.toLowerCase()}\\b`).test(FOOD_TEXT)));
+const midSentence = (n) => (PROPER.has(n.split(/[\s-]/)[0]) || /^\S+\s[A-Z]/.test(n) ? n : n.charAt(0).toLowerCase() + n.slice(1));
 
 /* Hand-written food identity for the 50 largest cities.
  *
@@ -662,7 +676,7 @@ ${CAMPUS_BY_STATE[st] ? `        <li><a href="/campus/${st.toLowerCase()}">Campu
         `Where to Eat in ${name}`,
       ]),
       desc: f
-        ? `What ${name} is known for — ${f.known.slice(0, 3).map(([n]) => n.toLowerCase()).join(", ")} — ` +
+        ? `What ${name} is known for — ${f.known.slice(0, 3).map(([n]) => midSentence(n)).join(", ")} — ` +
           `and where to eat across ${list.length} ${name} ${list.length === 1 ? "city" : "cities"}.`
         : `Where to eat across ${list.length} ${name} cities. Savor Scout picks one restaurant ` +
           `instead of a list of thirty, plus Census figures on how well supplied each city is.`,

@@ -84,6 +84,26 @@
 
     <meta charset="utf-8" />
 
+    <!-- Fonts, requested from the head instead of an @import at the top of
+         App.css. The @import could not start until the app's 100 kB stylesheet
+         had downloaded and parsed, so every page waited two round trips longer
+         than it needed to for its type. preconnect opens both connections
+         while the HTML is still arriving.
+
+         media="print" + onload is the standard non-blocking stylesheet pattern:
+         the browser fetches it at low priority without holding up first paint,
+         and display=swap shows the fallback font until it lands. On the
+         generated pages the headline IS the largest paint, so not blocking it
+         on a third-party stylesheet is most of the win.
+
+         No noscript fallback on purpose: scripts/lib/page.js swaps out the
+         FIRST noscript element in this file for each generated page, and it has to
+         stay the one in the body. Without JavaScript the fallback font shows. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" media="print" onload="this.media='all'"
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" />
+
     <!-- Icons, generated from src/assets/logo-flame.png by scripts/make-icons.js.
 
          These were the Create React App defaults until now, which is what Google

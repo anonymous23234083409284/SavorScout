@@ -54,7 +54,7 @@ const STATE_FOOD = require("./data/states-food");
  * The written body replaces the generic opening only. Everything below it —
  * Census figures, cravings, nearby cities, guides — is shared, because those
  * sections are useful on every page regardless. */
-const METROS = require("./data/metros");
+const METROS = [...require("./data/metros"), ...require("./data/metros-more")];
 const METRO = new Map(METROS.map((m) => [m.s, m]));
 const DISH_NAME = new Map([
   ...require("./data/dishes"), ...require("./data/dishes-more"), ...require("./data/dishes-extra"),
@@ -183,29 +183,6 @@ function stateRank(city) {
   return { n: list.length, popRank, densRank: densRank || null, densN: dens.length };
 }
 
-/* Copy chosen by population, so the description is accurate rather than just
-   different. A city of 40,000 genuinely does have a different problem from
-   one of 4 million: too few obvious options versus far too many. */
-function sizeCopy(city) {
-  const p = city.p;
-  if (p >= 1000000) return {
-    tier: "metro",
-    problem: `${city.c} has more restaurants than anyone could work through, which is exactly why picking one is so hard. Every list you open is longer than the last.`,
-  };
-  if (p >= 250000) return {
-    tier: "large",
-    problem: `${city.c} has plenty of places to eat, and that is the problem. A ranked list of thirty gets you no closer to a decision than you were before you opened it.`,
-  };
-  if (p >= 100000) return {
-    tier: "mid",
-    problem: `${city.c} has more than enough places to eat — the trouble is choosing between them without spending longer deciding than eating.`,
-  };
-  return {
-    tier: "small",
-    problem: `${city.c} does not have infinite options, and that brings its own problem: you have been to most of them, and picking again is somehow still hard.`,
-  };
-}
-
 /* The dining paragraph.
  *
  * Every number here is from the Census and is stated as what it is: a COUNTY
@@ -314,13 +291,69 @@ function diningHtml(city) {
   return parts.join("\n");
 }
 
-/* Population, where the city ranks in its state, and the nearest written guide. */
-function factsHtml(city) {
+/* The opening for the 950 cities without a written entry.
+
+   It used to be one of four sentences chosen by population band ("Toledo has
+   plenty of places to eat, and that is the problem..."), which meant 400-odd
+   pages opened with the same words and a different name. The lede is the text
+   Google weighs most and is the likeliest to be quoted as the snippet, so it is
+   now built from facts about the city itself: how big it is against the rest
+   of its state, and which written city guide is nearest. */
+function ledeHtml(city) {
   const r = stateRank(city);
   const stName = STATES[city.r] || city.r;
   const nm = nearestMetro(city);
   const bits = [];
-  if (r.n > 1) {
+  bits.push(r.n > 1
+    ? `${esc(city.c)} is the ${r.popRank === 1 ? "largest" : `${ordinal(r.popRank)}-largest`} of the
+        ${r.n} ${esc(stName)} cities Savor Scout covers, with about ${fmt(city.p)} people.`
+    : `${esc(city.c)} is the one ${esc(stName)} city Savor Scout covers, with about ${fmt(city.p)} people.`);
+  if (nm) {
+    bits.push(`The nearest big food city is <a href="/eat/${nm.c.s}">${esc(nm.c.c)}</a>, about
+        ${Math.max(1, Math.round(nm.d))} miles away.`);
+  }
+  bits.push(`Say what you're craving and Savor Scout reads menus and reviews around ${esc(city.c)},
+        then picks one place and tells you why.`);
+  return bits.join(" ");
+}
+
+/* A description written from the page's own facts, so the snippet under each
+   result says something about that city. The old one was the same sentence
+   with the name swapped, which Google tends to replace with text of its own
+   choosing — usually the least useful sentence on the page. */
+function describe(city) {
+  const place = `${city.c}, ${city.r}`;
+  const m = METRO.get(city.s);
+  if (m) {
+    /* Dish names keep their case: half of them start with a place name
+       ("Central Texas brisket"), and a list reads fine capitalised. */
+    const dishes = m.dishes.slice(0, 3).map(([n]) => n);
+    return `Where to eat in ${place}. Known for: ${dishes.join(", ")}. Where to look, ` +
+      `and one pick for what you're craving.`;
+  }
+  const d = DINING.cities[city.s];
+  const f = STATE_FOOD[city.r];
+  const bits = [`Where to eat in ${place}`];
+  if (d && d.total) bits.push(`${fmt(d.total)} places to eat or drink in ${d.county}` +
+    (d.per10k ? `, ${d.per10k} per 10,000 people` : ""));
+  let out = bits.join(": ") + ".";
+  if (f) out += ` What ${STATES[city.r] || city.r} is known for, and one pick for what you're craving.`;
+  else out += ` Savor Scout picks one place for what you're craving.`;
+  return out;
+}
+
+/* Where the city ranks for density, and — on the written pages, which have no
+   data lede — its size and the nearest written guide. */
+function factsHtml(city, isMetro) {
+  const r = stateRank(city);
+  const stName = STATES[city.r] || city.r;
+  const nm = isMetro ? nearestMetro(city) : null;
+  const bits = [];
+  if (!isMetro) {
+    if (r.densRank && r.densN > 2) {
+      bits.push(`By food businesses per resident (a county figure) it ranks ${ordinal(r.densRank)} of the ${r.densN} ${esc(stName)} cities here.`);
+    }
+  } else if (r.n > 1) {
     bits.push(`${esc(city.c)} has about ${fmt(city.p)} people, the ${r.popRank === 1 ? "largest" : `${ordinal(r.popRank)}-largest`}
         of the ${r.n} ${esc(stName)} cities Savor Scout covers.`);
     if (r.densRank && r.densN > 2) {
@@ -368,7 +401,6 @@ function page(shell, city) {
   const { c: name, r: region, s: slug, p: pop } = city;
   const place = `${name}, ${region}`;
   const near = nearest(city);
-  const copy = sizeCopy(city);
 
   const title = fitTitle([
     `Where to Eat in ${place} — One Pick, Not a List | Savor Scout`,
@@ -376,8 +408,7 @@ function page(shell, city) {
     `Where to Eat in ${place} | Savor Scout`,
     `Where to Eat in ${place}`,
   ]);
-  const desc = `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${place} ` +
-    `based on what you're craving and shows why it chose it. Free, no app, no signup.`;
+  const desc = describe(city);
   const url = `${ORIGIN}/eat/${slug}`;
   const app = `/?near=${encodeURIComponent(place)}`;
 
@@ -439,13 +470,7 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
       <p>
         ${m.foods.map((f) => `<a href="/food/${f}">${esc(DISH_NAME.get(f))}</a>`).join(", ")} — what
         separates a good one from an average one, and what to order.
-      </p>` : `      <p class="lede">${esc(copy.problem)}</p>
-      <p>
-        Savor Scout picks <strong>one</strong> restaurant in ${esc(name)} and tells you why it
-        picked it. Say what you're craving and it reads menus and reviews for that specific
-        dish, rather than sorting places by overall star rating. Free, runs in the browser,
-        and one search needs no account.
-      </p>
+      </p>` : `      <p class="lede">${ledeHtml(city)}</p>
       <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
 
       <h2>Eating out in ${esc(name)}</h2>`;
@@ -453,7 +478,7 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
   const body = `      ${crumbHtml(trail)}
       <h1>Where to eat in ${esc(place)}</h1>
 ${intro}
-${factsHtml(city)}
+${factsHtml(city, !!m)}
 
 ${diningHtml(city)}
 
@@ -625,7 +650,13 @@ ${CAMPUS_BY_STATE[st] ? `        <li><a href="/campus/${st.toLowerCase()}">Campu
   return {
     url,
     html: render(shell, {
-      title: fitTitle([
+      /* "What food is Ohio known for" is asked far more than "where to eat in
+         Ohio", and the page now answers it, so the title says so. */
+      title: fitTitle(f ? [
+        `${name} Food — What It's Known For and Where to Eat | Savor Scout`,
+        `${name} Food — What It's Known For and Where to Eat`,
+        `${name} Food — What It's Known For`,
+      ] : [
         `Where to Eat in ${name} — ${list.length} Cities | Savor Scout`,
         `Where to Eat in ${name} — ${list.length} Cities`,
         `Where to Eat in ${name}`,

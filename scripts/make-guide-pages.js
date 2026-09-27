@@ -67,6 +67,22 @@ const dietMap = new Map(DIETS.map((x) => [x.s, x]));
    to the city pages rather than to the app so the link graph actually connects
    the two classes — a dish page is the hub a thousand city pages were missing. */
 const TOP_CITIES = [...CITIES].sort((a, b) => b.p - a.p).slice(0, 60);
+const CITY_BY_SLUG = new Map(CITIES.map((c) => [c.s, c]));
+const STATES = require("./data/states");
+const STATE_FOOD = require("./data/states-food");
+const METROS = [...require("./data/metros"), ...require("./data/metros-more")];
+
+/* Where this dish is a local speciality, from the written city and state
+   entries. The block used to be the same sixty largest cities on all 102 food
+   pages — sixty identical links and a paragraph, which was most of what the
+   food pages shared with each other. Now the Nashville hot chicken page leads
+   with Nashville and Tennessee, and the top cities only fill in behind. */
+function whereFor(slug) {
+  const cities = METROS.filter((m) => m.foods.includes(slug))
+    .map((m) => CITY_BY_SLUG.get(m.s)).filter(Boolean);
+  const states = Object.entries(STATE_FOOD).filter(([, f]) => f.foods.includes(slug)).map(([st]) => st);
+  return { cities, states };
+}
 
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
 const list = (items) => `<ul>\n${items.map((i) => `        <li>${i}</li>`).join("\n")}\n      </ul>`;
@@ -202,8 +218,20 @@ function dishPage(x) {
   const url = `${ORIGIN}/food/${x.s}`;
   const trail = [HOME, FOOD_HUB, { name: x.n, url }];
 
-  const cityLinks = TOP_CITIES.map((c) =>
-    `<li><a href="/eat/${c.s}">${esc(c.c)}, ${esc(c.r)}</a></li>`).join("\n        ");
+  const where = whereFor(x.s);
+  const localSet = new Set(where.cities.map((c) => c.s));
+  const fill = TOP_CITIES.filter((c) => !localSet.has(c.s)).slice(0, Math.max(0, 16 - where.cities.length));
+  const cityLi = (c) => `<li><a href="/eat/${c.s}">${esc(c.c)}, ${esc(c.r)}</a></li>`;
+  const localHtml = where.cities.length || where.states.length ? `
+      <h2>Where ${esc(x.n)} is a local speciality</h2>
+${where.cities.length ? `      <p>Our written city guides that name it as part of the local food:</p>
+      <ul class="cols">
+        ${where.cities.map(cityLi).join("\n        ")}
+      </ul>` : ""}
+${where.states.length ? `      <p>
+        And states where it is part of what people eat:
+        ${where.states.map((st) => `<a href="/eat/${st.toLowerCase()}">${esc(STATES[st] || st)}</a>`).join(", ")}.
+      </p>` : ""}` : "";
   const relDish = (x.related || []).map((d) =>
     `<a href="/food/${d}">${esc(dishMap.get(d).n)}</a>`).join(", ");
   const relSit = (x.situations || []).map((s) =>
@@ -223,14 +251,10 @@ function dishPage(x) {
       <p>${esc(x.signals)}</p>
       <p><a class="cta" href="${app(x.n)}">Find ${esc(x.n)} near you &rarr;</a></p>
 
+${localHtml}
       <h2>Looking in a particular city?</h2>
-      <p>
-        Each of these opens Savor Scout with the location already set, so you can say what
-        you want and it searches from there. It covers ${CITIES.length.toLocaleString("en-US")}
-        US cities in total &mdash; these are simply the largest.
-      </p>
       <ul class="cols">
-        ${cityLinks}
+        ${fill.map(cityLi).join("\n        ")}
       </ul>
       <p><a href="/eat/">All ${CITIES.length.toLocaleString("en-US")} cities &rarr;</a></p>
 

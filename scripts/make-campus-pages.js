@@ -45,6 +45,23 @@ const WHO = "make-campus-pages";
 const { CAMPUSES, BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
+const DINING = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "city-dining.json"), "utf8"));
+const STATE_FOOD = require("./data/states-food");
+const NOTES = require("./data/campus-notes");
+const DISH_NAME = new Map([
+  ...require("./data/dishes"), ...require("./data/dishes-more"), ...require("./data/dishes-extra"),
+].map((d) => [d.s, d.n]));
+
+/* A note naming a guide that does not exist would ship a link to a 404, and a
+   note keyed to a slug that is not a campus would silently never appear. */
+for (const [slug, n] of Object.entries(NOTES)) {
+  if (!CAMPUSES.some((c) => c.s === slug)) { console.error(`${WHO}: campus-notes names unknown campus "${slug}"`); process.exit(1); }
+  for (const f of n.foods || []) {
+    if (!DISH_NAME.has(f)) { console.error(`${WHO}: campus-notes ${slug} names unknown guide "${f}"`); process.exit(1); }
+  }
+}
+const fmt = (n) => n.toLocaleString("en-US");
+const CITY_STATES = new Set(CITIES.map((c) => c.r));
 
 const shell = shellOrDie(WHO);
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
@@ -55,24 +72,14 @@ const HUB = { name: "Campuses", url: `${ORIGIN}/campus/` };
 const SIZE = {
   3: {
     label: "5,000 to 9,999 students", short: "mid-sized",
-    /* Size is not decoration here. A student body is a restaurant's customer
-       base, and the three brackets genuinely support different economies —
-       which is the difference between a page that states a number and a page
-       that says something because of it. */
-    angle:
-      "A student body this size supports a real cluster of restaurants without supporting a huge one, which tends to produce a small number of very good places rather than a wide field of average ones. The upside is that the good ones are easy to find. The downside is that you will have been to all of them by your second year.",
     craving: "somewhere we haven't already been",
   },
   4: {
     label: "10,000 to 19,999 students", short: "large",
-    angle:
-      "At this size the area around campus supports enough restaurants that they start to specialise rather than all trying to serve everyone. That is when the good cheap food appears — a kitchen can survive selling one thing well, which is nearly always better than a long menu at the same price.",
     craving: "one thing done well, cheap",
   },
   5: {
     label: "20,000 students or more", short: "very large",
-    angle:
-      "A student body this large is a city-sized customer base on its own, which means the restaurants nearby are genuinely competitive and the weak ones do not last. It also means the obvious places are permanently crowded, and the ones worth knowing are usually a few blocks past where the crowd stops.",
     craving: "good food without the queue",
   },
 };
@@ -157,10 +164,42 @@ function nearestBigCity(c) {
   return best ? { ...best.o, miles: Math.max(1, Math.round(Math.sqrt(best.d2) * 69)) } : null;
 }
 
+const milesBetween = (a, b) => {
+  const cos = Math.cos((a.lat * Math.PI) / 180);
+  const dx = (b.lng - a.lng) * cos, dy = b.lat - a.lat;
+  return Math.sqrt(dx * dx + dy * dy) * 69;
+};
+
+/* Other campuses within a short drive, nearest first. Real coordinates, so the
+   list is a fact about this campus — and a student at one school very often
+   eats in the neighbourhood of the one next to it. */
+function campusesNear(c, radius = 10, k = 5) {
+  return CAMPUSES.filter((o) => o.s !== c.s)
+    .map((o) => ({ o, d: milesBetween(c, o) }))
+    .filter((x) => x.d <= radius)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, k);
+}
+
 /* Other campuses in the same state, so the set is browsable sideways rather
-   than only up to the hub. */
-function siblings(c, k = 6) {
-  return CAMPUSES.filter((o) => o.r === c.r && o.s !== c.s).slice(0, k);
+   than only up to the hub. Nearest first rather than alphabetical: the old list
+   was the same first six names on every page in the state. */
+function siblings(c, exclude, k = 6) {
+  return CAMPUSES.filter((o) => o.r === c.r && o.s !== c.s && !exclude.has(o.s))
+    .map((o) => ({ ...o, d: milesBetween(c, o) }))
+    .sort((a, b) => a.d - b.d)
+    .slice(0, k);
+}
+
+/* The Census county figures for the campus's own town, when that town is one
+   of the 1,000 covered cities. Matched on name and state, not on distance: a
+   campus is in its town, and borrowing the nearest city's county when the town
+   is not covered would put the wrong county's numbers on the page. */
+const CITY_BY_NAME = new Map(CITIES.map((o) => [`${o.c}|${o.r}`, o]));
+function townDining(c) {
+  const city = CITY_BY_NAME.get(`${c.c}|${c.r}`);
+  const d = city && DINING.cities[city.s];
+  return d ? { city, d } : null;
 }
 
 function page(c) {
@@ -171,8 +210,12 @@ function page(c) {
   const sz = SIZE[c.sz];
   const near = nearestCities(c, 5);
   const big = nearestBigCity(c);
-  const sibs = siblings(c);
+  const close = campusesNear(c);
+  const sibs = siblings(c, new Set(close.map((x) => x.o.s)));
   const shortName = c.a || c.n;
+  const note = NOTES[c.s];
+  const town = townDining(c);
+  const sf = STATE_FOOD[c.r];
 
   /* Led by "Restaurants Near", not "Where to Eat Near".
      Search Console, 24 September: of the campus queries reaching these pages,
@@ -197,9 +240,14 @@ function page(c) {
     `Restaurants Near ${c.n}`,
     `Food Near ${c.n}`,
   ]);
-  const desc =
-    `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
-    `what you're craving instead of handing you a list. Free, no app, no signup.`;
+  /* Written from the page's own content, so each result's snippet is about
+     that campus. The old one was one sentence with the name swapped. */
+  const desc = note && note.areas.length
+    ? `Restaurants near ${shortName} in ${place}: ${note.areas.slice(0, 2).map((a) => a[0]).join(" and ")}` +
+      `${note.local.length ? `, local food like ${note.local[0][0].charAt(0).toLowerCase() + note.local[0][0].slice(1)}` : ""}` +
+      `, and one pick for what you're craving.`
+    : `Restaurants near ${shortName} in ${place}: what eating near a ${sz.short} campus ${sc.label} is like` +
+      `${big && big.c !== c.c ? `, ${big.c} ${big.miles} miles away` : ""}, and one pick for what you're craving.`;
 
   const stateNode = { name: STATES[c.r] || c.r, url: `${ORIGIN}/campus/${c.r.toLowerCase()}` };
   const trail = [HOME, HUB, stateNode, { name: c.n, url }];
@@ -216,15 +264,68 @@ function page(c) {
      searcher using them can be matched to it. */
   const otherNames = (c.al || []).filter((s) => s && s !== c.n);
 
+  const bigHtml = big ? `      <p>
+        The nearest city of any real size is <a href="/eat/${big.s}">${esc(big.c)}, ${esc(big.r)}</a>,
+        about ${big.miles} ${big.miles === 1 ? "mile" : "miles"} away — worth knowing for the nights
+        when the usual options near campus have run out.
+      </p>` : "";
+
+  /* Written note for the campuses that have one; the setting-and-size copy for
+     the rest. The generic copy is not shown alongside a note: it was written
+     for campuses we knew nothing specific about. */
+  const eatHtml = note ? `      <h2>Where students eat near ${esc(shortName)}</h2>
+${note.scene.slice(1).map((p) => `      <p>${esc(p)}</p>`).join("\n")}
+      <ul>
+${note.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}</li>`).join("\n")}
+      </ul>
+${note.local.length ? `
+      <h2>Local food around ${esc(c.c)}</h2>
+      <ul>
+${note.local.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}</li>`).join("\n")}
+      </ul>` : ""}
+      <p class="note">
+        Streets, districts and local dishes, not restaurant recommendations. Savor Scout reads menus
+        and reviews when you search, and shows why it picked what it picked.
+      </p>
+${bigHtml}` : `      <h2>Eating near a ${esc(sz.short)} campus ${esc(sc.label)}</h2>
+      <p>${esc(sc.advice)}</p>
+${bigHtml}${set === "town" || set === "rural" ? `
+      <p>
+        Term time and break are different towns here. Hours shrink, some places close entirely,
+        and the listings almost never keep up — so a place that shows as open in July may not be.
+      </p>` : ""}`;
+
+  const townHtml = town ? `
+      <h2>How many places to eat are there in ${esc(c.c)}?</h2>
+      <p>
+        ${esc(c.c)} is in ${esc(town.d.county)}, where the Census counts ${fmt(town.d.total)} places to
+        eat or drink${town.d.per10k ? ` — ${town.d.per10k} for every 10,000 residents, against a national
+        median of ${DINING.national.per10k}` : ""}.
+        <a href="/eat/${town.city.s}">More on eating in ${esc(c.c)} &rarr;</a>
+      </p>` : "";
+
+  const closeHtml = close.length ? `
+      <h2>Other campuses within 10 miles</h2>
+      <ul>
+        ${close.map(({ o, d }) => `<li><a href="/campus/${o.s}">${esc(o.n)}</a> — about ${Math.max(1, Math.round(d))} ${Math.max(1, Math.round(d)) === 1 ? "mile" : "miles"}</li>`).join("\n        ")}
+      </ul>` : "";
+
+  const stateHtml = sf && CITY_STATES.has(c.r) ? `
+      <h2>What ${esc(STATES[c.r] || c.r)} is known for</h2>
+      <p>
+        ${sf.known.map(([n]) => esc(n)).join(" &middot; ")} &mdash;
+        <a href="/eat/${c.r.toLowerCase()}">what ${esc(STATES[c.r] || c.r)} eats</a>.
+      </p>` : "";
+
+  const guideSlugs = [...new Set([...(note ? note.foods : []), ...(sf ? sf.foods.slice(0, 2) : [])])].slice(0, 5);
+
   const body = `      ${crumbHtml(trail)}
       <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
-      <p class="lede">${esc(sc.problem(shortName))}</p>
-
+      <p class="lede">${esc(note ? note.scene[0] : sc.problem(shortName))}</p>
       <p>
-        Savor Scout picks <strong>one</strong> restaurant near ${esc(place)} and shows you why it
-        picked it. Say what you are craving — including a budget, a dietary need, or that it has
-        to be open right now — and it reads menus and reviews for those specific things rather
-        than sorting places by overall star rating.
+        Say what you are craving — a budget, a dietary need, or that it has to be open right now —
+        and Savor Scout reads menus and reviews near ${esc(place)}, then picks one place and tells
+        you why.
       </p>
       <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
 
@@ -235,25 +336,13 @@ ${otherNames.length ? `        <li><strong>Also known as</strong> — ${otherNam
         <li><strong>Size</strong> — ${esc(sz.label)}</li>
         <li><strong>Type</strong> — ${c.pub ? "Public" : "Private, not-for-profit"} four-year institution</li>
       </ul>
-      <p class="note">
-        Campus figures are from IPEDS, the US Department of Education's institutional survey.
-        Size is reported as the survey's own bracket rather than an exact headcount, because
-        that is what the public dataset gives and we would rather quote it than estimate.
-      </p>
+      <p class="note">From IPEDS, the US Department of Education's survey, which reports size as a bracket.</p>
 
-      <h2>Eating near a ${esc(sz.short)} campus ${esc(sc.label)}</h2>
-      <p>${esc(sc.advice)}</p>
-      <p>${esc(sz.angle)}</p>
-${big ? `      <p>
-        The nearest city of any real size is <a href="/eat/${big.s}">${esc(big.c)}, ${esc(big.r)}</a>,
-        about ${big.miles} ${big.miles === 1 ? "mile" : "miles"} away — worth knowing for the nights
-        when the usual options near campus have run out.
-      </p>` : ""}
-      <p>
-        One thing that catches everyone out: term time and break are different towns. Hours shrink,
-        some places close entirely, and the listings almost never keep up — so a place that shows as
-        open in July may not be.
-      </p>
+${eatHtml}
+${townHtml}
+${guideSlugs.length ? `
+      <h2>Read up first</h2>
+      <p>${guideSlugs.map((f) => `<a href="/food/${f}">${esc(DISH_NAME.get(f))}</a>`).join(", ")} — what separates a good one from an average one.</p>` : ""}
 
       <h2>Common searches near ${esc(shortName)}</h2>
       <ul>
@@ -261,36 +350,26 @@ ${big ? `      <p>
           `<li><a href="${appLink}&craving=${encodeURIComponent(k)}">${esc(k)} near ${esc(shortName)}</a></li>`
         ).join("\n        ")}
       </ul>
+${closeHtml}
 
       <h2>Nearby cities</h2>
-      <p>Savor Scout searches a wide radius, so these are all in range:</p>
       <ul>
         ${near.map((n) =>
           `<li><a href="/eat/${n.s}">${esc(n.c)}, ${esc(n.r)}</a> — about ${n.miles} ${n.miles === 1 ? "mile" : "miles"} away</li>`
         ).join("\n        ")}
       </ul>
-
-      <h2>Deciding as a group</h2>
-      <p>
-        Most campus meals are group meals, and a group chat is the worst possible way to choose a
-        restaurant. Savor Scout turns it into a 90-second vote with one veto each —
-        <a href="/what-to-eat/big-group">how that works, and why the veto is the move that matters</a>.
-      </p>
-
-      <h2>Guides worth reading</h2>
-      <ul>
-        <li><a href="/what-to-eat/finals-week">What to eat during finals week</a></li>
-        <li><a href="/what-to-eat/on-a-budget">Where to eat when you're broke</a></li>
-        <li><a href="/what-to-eat/late-night">Where to eat late at night</a></li>
-        <li><a href="/what-to-eat/friends-visiting">Where to take visiting family and friends</a></li>
-        <li><a href="/diet/">Eating out with a dietary restriction</a></li>
-      </ul>
+${stateHtml}
 ${sibs.length ? `
-      <h2>Other campuses in ${esc(c.r)}</h2>
+      <h2>More campuses in ${esc(STATES[c.r] || c.r)}</h2>
       <ul>
         ${sibs.map((o) => `<li><a href="/campus/${o.s}">${esc(o.n)}</a> — ${esc(o.c)}</li>`).join("\n        ")}
       </ul>` : ""}
       <hr>
+      <p><a href="/what-to-eat/finals-week">Finals week</a> &middot;
+         <a href="/what-to-eat/on-a-budget">On a budget</a> &middot;
+         <a href="/what-to-eat/late-night">Late night</a> &middot;
+         <a href="/what-to-eat/big-group">Big group</a> &middot;
+         <a href="/diet/">Dietary guides</a></p>
       <p><a href="/campus/">All ${CAMPUSES.length} campuses</a> &middot;
          <a href="/eat/">Cities</a> &middot;
          <a href="/">Savor Scout home</a></p>`;
@@ -337,7 +416,6 @@ CAMPUSES.forEach((c) => {
    Two clicks from the homepage either way, but the links concentrate. */
 const byState = CAMPUS_BY_STATE;
 const stateCodes = Object.keys(byState).sort();
-const CITY_STATES = new Set(CITIES.map((c) => c.r));
 
 function stateHub(st) {
   const list = byState[st];

@@ -273,11 +273,11 @@ function page(c) {
   /* Written note for the campuses that have one; the setting-and-size copy for
      the rest. The generic copy is not shown alongside a note: it was written
      for campuses we knew nothing specific about. */
-  const eatHtml = note ? `      <h2>Where students eat near ${esc(shortName)}</h2>
-${note.scene.slice(1).map((p) => `      <p>${esc(p)}</p>`).join("\n")}
-      <ul>
+  const eatHtml = note ? `${note.scene.length > 1 || note.areas.length ? `      <h2>Where students eat near ${esc(shortName)}</h2>
+${note.scene.slice(1).map((p) => `      <p>${esc(p)}</p>`).join("\n")}` : ""}
+${note.areas.length ? `      <ul>
 ${note.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}</li>`).join("\n")}
-      </ul>
+      </ul>` : ""}
 ${note.local.length ? `
       <h2>Local food around ${esc(c.c)}</h2>
       <ul>

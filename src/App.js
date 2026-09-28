@@ -1,9 +1,17 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, lazy, Suspense } from "react";
 import "./App.css";
-import { supabase } from "./supabaseClient";
-import { renderShareCard, canvasToBlob, buildCaption } from "./shareCard";
-import logoFlame from "./assets/logo-flame.png";
-import Quiz, { quizStatus } from "./quiz/Quiz";
+import { getSupabase } from "./supabaseClient";
+/* 128px WebP cut of logo-flame.png for the 46px header tile (3x covers every
+   phone). The full PNG stays in assets as the source scripts/make-icons.js
+   reads; shipping it here cost 54 kB on every page view for a 40px image. */
+import logoFlame from "./assets/logo-flame-128.webp";
+import { quizStatus } from "./quiz/status";
+
+/* The quiz modal (with framer-motion) and the share card are opened by a tap,
+   never on first paint, so they load as separate chunks when first needed
+   instead of riding along in the script every landing page downloads. */
+const Quiz = lazy(() => import("./quiz/Quiz"));
+const loadShareCard = () => import("./shareCard");
 
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
@@ -13,6 +21,22 @@ function slugify(s) {
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // optional upgrade, never required
+
+/* Wake the API while the visitor is still reading.
+
+   The API host spins down when idle, and the first request after that waits
+   for it to boot. Left alone, that wait landed on the visitor's first search,
+   the worst possible moment. One tiny request as the page loads starts the
+   boot in the background, so by the time someone has typed a craving the
+   server is usually up. no-cors because only the side effect matters; once per
+   tab so browsing between pages doesn't repeat it. */
+function warmApi() {
+  try {
+    if (sessionStorage.getItem("ss_api_warm")) return;
+    sessionStorage.setItem("ss_api_warm", "1");
+  } catch { /* private mode: warm anyway */ }
+  fetch(`${API_BASE_URL}/`, { mode: "no-cors", cache: "no-store" }).catch(() => {});
+}
 
 /* ===========================================================================
    THE FLAME
@@ -1197,7 +1221,7 @@ function App() {
 
     setRoomBusy(true); setRoomError(""); setRoomStage("searching");
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await (await getSupabase()).auth.getSession();
       const token = session?.access_token || null;
       const sres = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
@@ -1509,23 +1533,30 @@ function App() {
 
   const searchAbortRef = useRef(null);
 
+  useEffect(() => { warmApi(); }, []);
+
   /* ---- auth ---- */
 
   useEffect(() => {
     let cancelled = false;
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let listener = null;
+    getSupabase().then((supabase) => {
       if (cancelled) return;
-      setUser(session?.user ?? null);
-      setAuthChecked(true);
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (cancelled) return;
+        setUser(session?.user ?? null);
+        setAuthChecked(true);
+      });
+      ({ data: listener } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null)));
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null));
-    return () => { cancelled = true; listener.subscription.unsubscribe(); };
+    return () => { cancelled = true; listener?.subscription.unsubscribe(); };
   }, []);
 
   useEffect(() => {
     if (!user) { setOnboardingChecked(false); setNeedsOnboarding(false); return undefined; }
     let cancelled = false;
-    supabase.from("profiles").select("onboarding_completed").eq("id", user.id).maybeSingle()
+    getSupabase()
+      .then((supabase) => supabase.from("profiles").select("onboarding_completed").eq("id", user.id).maybeSingle())
       .then(({ data, error }) => {
         if (cancelled) return;
         if (error) console.error("onboarding check:", error);
@@ -1538,7 +1569,7 @@ function App() {
   useEffect(() => () => searchAbortRef.current?.abort(), []);
 
   const authedFetch = useCallback(async (path, init = {}) => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await (await getSupabase()).auth.getSession();
     const token = session?.access_token;
     if (!token) return null;
     const res = await fetch(`${API_BASE_URL}${path}`, {
@@ -1603,6 +1634,10 @@ function App() {
   });
   const [quizState, setQuizState] = useState(() => quizStatus());
   const quizAutoShown = useRef(false);
+  /* The modal's chunk is only fetched the first time it opens, and it stays
+     mounted afterwards so its exit animation still plays on close. */
+  const [quizMounted, setQuizMounted] = useState(quizOpen);
+  if (quizOpen && !quizMounted) setQuizMounted(true);
 
   useEffect(() => {
     if (!user || !onboardingChecked || needsOnboarding) return;
@@ -1651,7 +1686,8 @@ function App() {
     setShare({ busy: true });
     track("share_open", { verdictId: winner?.id, name: winner?.name });
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await (await getSupabase()).auth.getSession();
+      const { renderShareCard, canvasToBlob, buildCaption } = await loadShareCard();
       const { canvas, fields, usedPhoto } = await renderShareCard(winner, query, {
         apiBase: API_BASE_URL,
         token: session?.access_token || "",
@@ -1762,7 +1798,7 @@ function App() {
           }
         } catch (err) { console.error("email check:", err); }
 
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await (await getSupabase()).auth.signUp({ email, password });
         if (error) { setAuthError(error.message); return; }
         const ids = data?.user?.identities;
         if (data?.user && Array.isArray(ids) && ids.length === 0) {
@@ -1770,7 +1806,7 @@ function App() {
         }
         setAuthNotice("Check your email to confirm your account, then sign in.");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await (await getSupabase()).auth.signInWithPassword({ email, password });
         if (error) setAuthError(error.message);
       }
     } finally { setAuthBusy(false); }
@@ -1778,14 +1814,14 @@ function App() {
 
   const handleGoogleSignIn = async () => {
     setAuthError(""); setAuthNotice("");
-    const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+    const { error } = await (await getSupabase()).auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
     if (error) setAuthError(error.message);
   };
 
   const handleForgotPassword = async () => {
     setAuthError(""); setAuthNotice(""); setResetSent(false);
     if (!email.trim()) { setAuthError('Enter your email above first, then click "Forgot password?"'); return; }
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
+    const { error } = await (await getSupabase()).auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
     if (error) setAuthError(error.message); else setResetSent(true);
   };
 
@@ -1793,7 +1829,7 @@ function App() {
 
   const handleSignOut = async () => {
     searchAbortRef.current?.abort();
-    await supabase.auth.signOut();
+    await (await getSupabase()).auth.signOut();
     setResults([]); setQuery(""); setSubmittedQuery(""); setErrorMsg("");
     setSearchesRemaining(null); setOnboardingChecked(false); setNeedsOnboarding(false);
     setAllergies(""); setDietaryPreferences(""); setOnboardingError("");
@@ -1814,10 +1850,10 @@ function App() {
       onboarding_completed: true,
     };
 
-    let { error } = await supabase.from("profiles").upsert({ ...base, email: user.email ?? null }, { onConflict: "id" });
+    let { error } = await (await getSupabase()).from("profiles").upsert({ ...base, email: user.email ?? null }, { onConflict: "id" });
     if (error && (error.code === "PGRST204" || /email/i.test(error.message || ""))) {
       console.warn("profiles has no email column — saving without it.");
-      ({ error } = await supabase.from("profiles").upsert(base, { onConflict: "id" }));
+      ({ error } = await (await getSupabase()).from("profiles").upsert(base, { onConflict: "id" }));
     }
     if (error) { console.error("save prefs:", error); setOnboardingError(explainSaveError(error)); }
     else setNeedsOnboarding(false);
@@ -1991,7 +2027,7 @@ function App() {
       /* Signed out is a legitimate state here: the first search is free. The
          Authorization header is simply omitted and the server decides, which
          is the only place that decision can actually be enforced. */
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await (await getSupabase()).auth.getSession();
       const token = session?.access_token || null;
 
       searchAbortRef.current?.abort();
@@ -3132,12 +3168,16 @@ function App() {
           </main>
         )}
 
-        <Quiz
-          open={quizOpen}
-          onClose={() => { setQuizOpen(false); setQuizState(quizStatus()); }}
-          onComplete={onQuizComplete}
-          onShare={onQuizShare}
-        />
+        {quizMounted && (
+          <Suspense fallback={null}>
+            <Quiz
+              open={quizOpen}
+              onClose={() => { setQuizOpen(false); setQuizState(quizStatus()); }}
+              onComplete={onQuizComplete}
+              onShare={onQuizShare}
+            />
+          </Suspense>
+        )}
 
         <footer className="foot">© 2026 SavorScout</footer>
       </div>

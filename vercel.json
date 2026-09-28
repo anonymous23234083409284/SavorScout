@@ -52,6 +52,56 @@
       "permanent": true
     },
     {
+      "source": "/campus/purdue-university-global",
+      "destination": "/campus/in",
+      "permanent": true
+    },
+    {
+      "source": "/campus/university-of-the-people",
+      "destination": "/campus/ca",
+      "permanent": true
+    },
+    {
+      "source": "/campus/western-governors-university",
+      "destination": "/campus/ut",
+      "permanent": true
+    },
+    {
+      "source": "/campus/excelsior-university",
+      "destination": "/campus/ny",
+      "permanent": true
+    },
+    {
+      "source": "/campus/indiana-wesleyan-university-national-and-global",
+      "destination": "/campus/in",
+      "permanent": true
+    },
+    {
+      "source": "/campus/national-university",
+      "destination": "/campus/ca",
+      "permanent": true
+    },
+    {
+      "source": "/campus/colorado-state-university-global",
+      "destination": "/campus/co",
+      "permanent": true
+    },
+    {
+      "source": "/campus/empire-state-university",
+      "destination": "/campus/ny",
+      "permanent": true
+    },
+    {
+      "source": "/campus/thomas-edison-state-university",
+      "destination": "/campus/nj",
+      "permanent": true
+    },
+    {
+      "source": "/campus/university-of-massachusetts-global",
+      "destination": "/campus/ca",
+      "permanent": true
+    },
+    {
       "source": "/about/:slug/",
       "destination": "/about/:slug",
       "permanent": true

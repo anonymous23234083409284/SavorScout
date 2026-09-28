@@ -43,7 +43,7 @@ module.exports = [
       ["Arthur Avenue, the Bronx", "The Italian market district locals will tell you beats Little Italy, and they are right."],
     ],
     searches: ["a slice worth the trip", "regional Chinese in Flushing", "old-school deli", "cheap eats near me"],
-    foods: ["pizza", "sandwiches", "dumplings", "chinese-food", "noodles"],
+    foods: ["pizza", "sandwiches", "dumplings", "chinese-food", "noodles", "bagels"],
   },
   {
     s: "los-angeles-ca",
@@ -64,7 +64,7 @@ module.exports = [
       ["Boyle Heights and East LA", "Mexican cooking with no concessions."],
     ],
     searches: ["al pastor from a trompo", "Sichuan in the SGV", "Thai spicy, not American spicy", "open past midnight"],
-    foods: ["tacos", "korean-food", "thai-food", "chinese-food", "mexican-food"],
+    foods: ["tacos", "korean-food", "thai-food", "chinese-food", "mexican-food", "korean-bbq"],
   },
   {
     s: "chicago-il",
@@ -85,7 +85,7 @@ module.exports = [
       ["Bridgeport and Chinatown", "One of the few US Chinatowns still growing rather than shrinking."],
     ],
     searches: ["italian beef, dipped", "tavern-style thin crust", "birria in Little Village", "late night after a show"],
-    foods: ["pizza", "sandwiches", "mexican-food", "chinese-food", "indian-food"],
+    foods: ["pizza", "sandwiches", "mexican-food", "chinese-food", "indian-food", "deep-dish-pizza", "hot-dogs"],
   },
   {
     s: "houston-tx",
@@ -105,7 +105,7 @@ module.exports = [
       ["The Heights", "Where much of the newer independent cooking has landed."],
     ],
     searches: ["viet-cajun crawfish", "brisket, fatty", "banh mi", "somewhere with parking"],
-    foods: ["bbq", "vietnamese-food", "seafood", "tacos", "sandwiches"],
+    foods: ["bbq", "vietnamese-food", "seafood", "tacos", "sandwiches", "seafood-boil", "tex-mex-food"],
   },
   {
     s: "philadelphia-pa",
@@ -126,7 +126,7 @@ module.exports = [
       ["Reading Terminal Market", "Pennsylvania Dutch, soul food, and a hundred and thirty years of trading."],
     ],
     searches: ["roast pork with rabe", "BYOB, mid-priced", "pho on Washington Ave", "cheesesteak done right"],
-    foods: ["sandwiches", "vietnamese-food", "italian-food", "pho"],
+    foods: ["sandwiches", "vietnamese-food", "italian-food", "pho", "cheesesteak"],
   },
   {
     s: "phoenix-az",
@@ -166,7 +166,7 @@ module.exports = [
       ["Southtown", "Newer independent kitchens alongside older institutions."],
     ],
     searches: ["puffy tacos", "breakfast tacos before 8am", "weekend barbacoa", "somewhere that's been here 50 years"],
-    foods: ["tacos", "mexican-food", "bbq", "breakfast"],
+    foods: ["tacos", "mexican-food", "bbq", "breakfast", "tex-mex-food"],
   },
   {
     s: "san-diego-ca",
@@ -206,7 +206,7 @@ module.exports = [
       ["Oak Cliff", "Mexican bakeries, taquerias and newer independent kitchens."],
     ],
     searches: ["brisket, fatty end", "tex-mex with queso", "pho in the suburbs", "steakhouse for a client"],
-    foods: ["bbq", "steak", "tacos", "vietnamese-food", "mexican-food"],
+    foods: ["bbq", "steak", "tacos", "vietnamese-food", "mexican-food", "tex-mex-food"],
   },
   {
     s: "san-jose-ca",
@@ -226,7 +226,7 @@ module.exports = [
       ["East San Jose", "Mexican bakeries, taquerias and mariscos."],
     ],
     searches: ["bun bo hue", "com tam", "cheap and fast, strip mall", "filipino lechon"],
-    foods: ["pho", "vietnamese-food", "mexican-food", "noodles", "sandwiches"],
+    foods: ["pho", "vietnamese-food", "mexican-food", "noodles", "sandwiches", "biryani"],
   },
   {
     s: "austin-tx",
@@ -246,7 +246,7 @@ module.exports = [
       ["North Lamar and Rundberg", "The genuinely international corridor — Vietnamese, Indian, Ethiopian, Mexican."],
     ],
     searches: ["brisket without a three hour queue", "breakfast tacos", "food truck dinner", "queso and a margarita"],
-    foods: ["bbq", "tacos", "breakfast", "mexican-food"],
+    foods: ["bbq", "tacos", "breakfast", "mexican-food", "tex-mex-food"],
   },
   {
     s: "indianapolis-in",
@@ -257,7 +257,7 @@ module.exports = [
     dishes: [
       ["Breaded pork tenderloin", "Pounded thin, breaded, fried, served on a bun far too small for it. The state dish in everything but name."],
       ["Burmese food", "Indianapolis has one of the largest Burmese and Chin populations in the US. Tea leaf salad and mohinga are widely available."],
-      ["Sugar cream pie", "Indiana's state pie. No eggs, just cream, sugar and nutmeg."],
+      ["Sugar cream pie", "Named Indiana's state pie by a 2009 Senate resolution. Traditionally no eggs, just cream, sugar and nutmeg."],
       ["Midwestern steak and chophouse cooking", "An older tradition the city still does well."],
       ["Mexican on the near west side", "A long-established community with taquerias to match."],
     ],
@@ -367,7 +367,7 @@ module.exports = [
       ["Magnolia Avenue", "Where most of the independent kitchens are."],
     ],
     searches: ["steak, properly cooked", "chicken fried steak", "brisket", "breakfast burrito"],
-    foods: ["steak", "bbq", "tacos", "mexican-food", "breakfast"],
+    foods: ["steak", "bbq", "tacos", "mexican-food", "breakfast", "tex-mex-food"],
   },
   {
     s: "detroit-mi",
@@ -388,7 +388,7 @@ module.exports = [
       ["Eastern Market", "A working produce market since 1891."],
     ],
     searches: ["detroit-style pizza", "shawarma in Dearborn", "coney dog", "pierogi in Hamtramck"],
-    foods: ["pizza", "mediterranean-food", "sandwiches", "bbq"],
+    foods: ["pizza", "mediterranean-food", "sandwiches", "bbq", "hot-dogs"],
   },
   {
     s: "el-paso-tx",
@@ -428,7 +428,7 @@ module.exports = [
       ["Cooper-Young", "Most of the newer independent restaurants."],
     ],
     searches: ["dry rub ribs", "soul food plate", "barbecue spaghetti", "fried catfish"],
-    foods: ["bbq", "fried-chicken", "wings", "seafood"],
+    foods: ["bbq", "fried-chicken", "wings", "seafood", "soul-food"],
   },
   {
     s: "seattle-wa",
@@ -488,7 +488,7 @@ module.exports = [
       ["Columbia Heights and Mount Pleasant", "Salvadoran, Mexican and Caribbean."],
     ],
     searches: ["ethiopian fasting platter", "half-smoke", "pupusas", "quiet enough for a work dinner"],
-    foods: ["mediterranean-food", "sandwiches", "seafood", "fried-chicken"],
+    foods: ["mediterranean-food", "sandwiches", "seafood", "fried-chicken", "ethiopian-food"],
   },
   {
     s: "boston-ma",
@@ -509,7 +509,7 @@ module.exports = [
       ["East Boston", "Salvadoran, Colombian and Mexican."],
     ],
     searches: ["lobster roll, warm with butter", "whole belly clams", "pho in Dorchester", "north end dinner"],
-    foods: ["seafood", "italian-food", "pho", "sandwiches", "soup"],
+    foods: ["seafood", "italian-food", "pho", "sandwiches", "soup", "lobster-roll"],
   },
   {
     s: "nashville-tn",
@@ -529,7 +529,7 @@ module.exports = [
       ["Nolensville Pike", "Kurdish, Mexican, Ethiopian and Vietnamese for several miles. The best eating corridor in the city."],
     ],
     searches: ["hot chicken, medium", "meat and three", "kurdish food on Nolensville", "biscuits for breakfast"],
-    foods: ["fried-chicken", "bbq", "breakfast", "mediterranean-food"],
+    foods: ["fried-chicken", "bbq", "breakfast", "mediterranean-food", "hot-chicken", "soul-food"],
   },
   {
     s: "baltimore-md",
@@ -549,7 +549,7 @@ module.exports = [
       ["Hampden and Highlandtown", "Independent kitchens, plus Greek and Latin American cooking in the southeast."],
     ],
     searches: ["steamed crabs by the dozen", "crab cake, no filler", "pit beef", "somewhere for a group"],
-    foods: ["seafood", "sandwiches", "greek-food", "bbq"],
+    foods: ["seafood", "sandwiches", "greek-food", "bbq", "seafood-boil"],
   },
   {
     s: "oklahoma-city-ok",
@@ -629,7 +629,7 @@ module.exports = [
       ["Downtown and the Arts District", "Independent kitchens away from the Strip."],
     ],
     searches: ["open at 3am", "korean barbecue on Spring Mountain", "somewhere off the Strip", "big group dinner"],
-    foods: ["korean-food", "ramen", "japanese-food", "steak", "chinese-food"],
+    foods: ["korean-food", "ramen", "japanese-food", "steak", "chinese-food", "buffet"],
   },
   {
     s: "milwaukee-wi",
@@ -689,7 +689,7 @@ module.exports = [
       ["Fourth Avenue and downtown", "Student-priced and independent kitchens."],
     ],
     searches: ["sonoran hot dog", "carne seca", "handmade flour tortillas", "cheap eats near campus"],
-    foods: ["mexican-food", "tacos", "burgers", "breakfast"],
+    foods: ["mexican-food", "tacos", "burgers", "breakfast", "hot-dogs"],
   },
   {
     s: "fresno-ca",
@@ -829,7 +829,7 @@ module.exports = [
       ["West End and the Old Fourth Ward", "Soul food, vegan Southern cooking, and newer independents."],
     ],
     searches: ["lemon pepper wet wings", "soul food plate", "korean on Buford Highway", "vegan southern food"],
-    foods: ["fried-chicken", "wings", "korean-food", "vietnamese-food", "breakfast"],
+    foods: ["fried-chicken", "wings", "korean-food", "vietnamese-food", "breakfast", "soul-food"],
   },
   {
     s: "colorado-springs-co",
@@ -889,7 +889,7 @@ module.exports = [
       ["Cary and Morrisville", "South Indian, Chinese and Korean at real depth."],
     ],
     searches: ["eastern nc barbecue", "dosa in Morrisville", "fried chicken and biscuits", "quiet business dinner"],
-    foods: ["bbq", "fried-chicken", "indian-food", "seafood"],
+    foods: ["bbq", "fried-chicken", "indian-food", "seafood", "soul-food"],
   },
   {
     s: "miami-fl",
@@ -910,7 +910,7 @@ module.exports = [
       ["Doral and Sweetwater", "Venezuelan and Colombian at real depth."],
     ],
     searches: ["cuban sandwich", "cafecito and pastelitos", "haitian griot", "arepas in Doral"],
-    foods: ["sandwiches", "seafood", "breakfast", "steak"],
+    foods: ["sandwiches", "seafood", "breakfast", "steak", "cuban-food"],
   },
   {
     s: "oakland-ca",
@@ -991,7 +991,7 @@ module.exports = [
       ["Slavic Village and Parma", "Polish and Eastern European at depth."],
     ],
     searches: ["polish boy", "pierogi", "lake perch fry", "west side market lunch"],
-    foods: ["sandwiches", "dumplings", "seafood", "soup"],
+    foods: ["sandwiches", "dumplings", "seafood", "soup", "polish-food"],
   },
   {
     s: "wichita-ks",

@@ -1,7 +1,7 @@
 /* Generates the three written page classes and their hubs:
  *
  *   /what-to-eat/<situation>   30 pages — the decision, by circumstance
- *   /food/<dish>               29 pages — how to judge a dish, and what to order
+ *   /food/<dish>              102 pages — how to judge a dish, and what to order
  *   /diet/<restriction>        12 pages — eating out with a restriction
  *
  * WHY THESE AND NOT MORE CITY PAGES
@@ -34,7 +34,22 @@ const SITUATIONS = require("./data/situations");
    added after Search Console showed /food/korean-food out-pulling all 627
    campus pages combined. Split only so neither file becomes unmanageable to
    edit — the generator sees one array and nothing downstream knows. */
-const DISHES = [...require("./data/dishes"), ...require("./data/dishes-more")];
+const DISHES = [
+  ...require("./data/dishes"), ...require("./data/dishes-more"), ...require("./data/dishes-extra"),
+];
+
+/* A related-guide or situation slug that does not exist would render as
+   "undefined" and a link to a 404. Fail the build instead. */
+{
+  const dishSlugs = new Set(DISHES.map((d) => d.s));
+  const sitSlugs = new Set(require("./data/situations").map((x) => x.s));
+  const dupes = DISHES.map((d) => d.s).filter((s, i, a) => a.indexOf(s) !== i);
+  if (dupes.length) { console.error(`make-guide-pages: duplicate dish slugs: ${dupes.join(", ")}`); process.exit(1); }
+  for (const d of DISHES) {
+    for (const r of d.related || []) if (!dishSlugs.has(r)) { console.error(`make-guide-pages: ${d.s} relates to unknown dish "${r}"`); process.exit(1); }
+    for (const r of d.situations || []) if (!sitSlugs.has(r)) { console.error(`make-guide-pages: ${d.s} names unknown situation "${r}"`); process.exit(1); }
+  }
+}
 
 /* A slug ending in -food is a cuisine; anything else is a dish or a format.
    With 68 entries a flat list on the hub is a wall, so they are grouped. */
@@ -52,6 +67,22 @@ const dietMap = new Map(DIETS.map((x) => [x.s, x]));
    to the city pages rather than to the app so the link graph actually connects
    the two classes — a dish page is the hub a thousand city pages were missing. */
 const TOP_CITIES = [...CITIES].sort((a, b) => b.p - a.p).slice(0, 60);
+const CITY_BY_SLUG = new Map(CITIES.map((c) => [c.s, c]));
+const STATES = require("./data/states");
+const STATE_FOOD = require("./data/states-food");
+const METROS = [...require("./data/metros"), ...require("./data/metros-more")];
+
+/* Where this dish is a local speciality, from the written city and state
+   entries. The block used to be the same sixty largest cities on all 102 food
+   pages — sixty identical links and a paragraph, which was most of what the
+   food pages shared with each other. Now the Nashville hot chicken page leads
+   with Nashville and Tennessee, and the top cities only fill in behind. */
+function whereFor(slug) {
+  const cities = METROS.filter((m) => m.foods.includes(slug))
+    .map((m) => CITY_BY_SLUG.get(m.s)).filter(Boolean);
+  const states = Object.entries(STATE_FOOD).filter(([, f]) => f.foods.includes(slug)).map(([st]) => st);
+  return { cities, states };
+}
 
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
 const list = (items) => `<ul>\n${items.map((i) => `        <li>${i}</li>`).join("\n")}\n      </ul>`;
@@ -84,6 +115,17 @@ const qaHtml = (qa) => qa ? `
    the page carries both phrasings. */
 const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase());
 function dishTitle(x) {
+  /* `place` is for guides where the search is for a kind of place rather than
+     a dish — "bakery near me", "hibachi near me" — and "Good Bakery Near You"
+     reads like a machine wrote it. */
+  if (x.place) {
+    return fitTitle([
+      `${x.place} Near You — How to Pick a Good One | Savor Scout`,
+      `${x.place} Near You — How to Pick a Good One`,
+      `${x.place} Near You | Savor Scout`,
+      `${x.place} Near You`,
+    ]);
+  }
   if (/-food$/.test(x.s)) {
     const base = titleCase(x.near || x.n.replace(/ food$/i, ""));
     return fitTitle([
@@ -132,8 +174,8 @@ ${paras(x.why)}
       <p>
         Savor Scout takes a sentence rather than a category, so the criteria above can go
         straight into the box. For this, something like <strong>&ldquo;${esc(x.query)}&rdquo;</strong>
-        works — it reads menus and reviews for those specific things and comes back with one
-        place and the reasons it picked it.
+        works — it checks menus for the food in it, and reviews for any words about the
+        atmosphere, then comes back with one place and the reasons it picked it.
       </p>
       <p><a class="cta" href="${app(x.query)}">Search &ldquo;${esc(x.query)}&rdquo; &rarr;</a></p>
 
@@ -176,8 +218,20 @@ function dishPage(x) {
   const url = `${ORIGIN}/food/${x.s}`;
   const trail = [HOME, FOOD_HUB, { name: x.n, url }];
 
-  const cityLinks = TOP_CITIES.map((c) =>
-    `<li><a href="/eat/${c.s}">${esc(c.c)}, ${esc(c.r)}</a></li>`).join("\n        ");
+  const where = whereFor(x.s);
+  const localSet = new Set(where.cities.map((c) => c.s));
+  const fill = TOP_CITIES.filter((c) => !localSet.has(c.s)).slice(0, Math.max(0, 16 - where.cities.length));
+  const cityLi = (c) => `<li><a href="/eat/${c.s}">${esc(c.c)}, ${esc(c.r)}</a></li>`;
+  const localHtml = where.cities.length || where.states.length ? `
+      <h2>Where ${esc(x.n)} is a local speciality</h2>
+${where.cities.length ? `      <p>Our written city guides that name it as part of the local food:</p>
+      <ul class="cols">
+        ${where.cities.map(cityLi).join("\n        ")}
+      </ul>` : ""}
+${where.states.length ? `      <p>
+        And states where it is part of what people eat:
+        ${where.states.map((st) => `<a href="/eat/${st.toLowerCase()}">${esc(STATES[st] || st)}</a>`).join(", ")}.
+      </p>` : ""}` : "";
   const relDish = (x.related || []).map((d) =>
     `<a href="/food/${d}">${esc(dishMap.get(d).n)}</a>`).join(", ");
   const relSit = (x.situations || []).map((s) =>
@@ -197,14 +251,10 @@ function dishPage(x) {
       <p>${esc(x.signals)}</p>
       <p><a class="cta" href="${app(x.n)}">Find ${esc(x.n)} near you &rarr;</a></p>
 
+${localHtml}
       <h2>Looking in a particular city?</h2>
-      <p>
-        Each of these opens Savor Scout with the location already set, so you can say what
-        you want and it searches from there. It covers ${CITIES.length.toLocaleString("en-US")}
-        US cities in total &mdash; these are simply the largest.
-      </p>
       <ul class="cols">
-        ${cityLinks}
+        ${fill.map(cityLi).join("\n        ")}
       </ul>
       <p><a href="/eat/">All ${CITIES.length.toLocaleString("en-US")} cities &rarr;</a></p>
 
@@ -429,7 +479,7 @@ hub({
     "\n      </ul>",
   extra: `      <p class="note">
         <strong>These are discovery guides, not safety checks.</strong> Savor Scout reads what
-        restaurants and reviewers have written. It has not visited any kitchen and cannot see a
+        restaurants have written on their menus. It has not visited any kitchen and cannot see a
         shared fryer. For a serious allergy, use it to find places worth calling — and then call
         them.
       </p>`,

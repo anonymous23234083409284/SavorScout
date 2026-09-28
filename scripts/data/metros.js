@@ -257,7 +257,7 @@ module.exports = [
     dishes: [
       ["Breaded pork tenderloin", "Pounded thin, breaded, fried, served on a bun far too small for it. The state dish in everything but name."],
       ["Burmese food", "Indianapolis has one of the largest Burmese and Chin populations in the US. Tea leaf salad and mohinga are widely available."],
-      ["Sugar cream pie", "Indiana's state pie. No eggs, just cream, sugar and nutmeg."],
+      ["Sugar cream pie", "Named Indiana's state pie by a 2009 Senate resolution. Traditionally no eggs, just cream, sugar and nutmeg."],
       ["Midwestern steak and chophouse cooking", "An older tradition the city still does well."],
       ["Mexican on the near west side", "A long-established community with taquerias to match."],
     ],

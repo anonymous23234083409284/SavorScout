@@ -87,10 +87,10 @@ module.exports = [
     desc:
       "Crawfish, crab legs and shrimp by the pound: how to spot a good Cajun seafood boil restaurant, when crawfish is in season, and what to order.",
     lede:
-      "A seafood boil is shellfish cooked in heavily seasoned water with corn, potatoes and sausage, and eaten with your hands off paper. Most seafood boil restaurants serve one of two styles: the Louisiana boil, with the spice cooked in, and the Viet-Cajun boil that grew up along the Gulf Coast, where the seafood comes in a bag tossed in garlic butter.",
+      "A seafood boil is shellfish cooked in heavily seasoned water with corn, potatoes and sausage, and eaten with your hands off paper. Two styles are widely served: the Louisiana boil, with the spice cooked in, and the Viet-Cajun boil that grew up along the Gulf Coast, where the seafood comes in a bag tossed in garlic butter.",
     qa: ["When is crawfish season?", "Louisiana crawfish season runs roughly from January to June, with the best and cheapest crawfish usually from March through May. Outside those months restaurants serve frozen crawfish or none at all, so a place selling live-boiled crawfish in October is worth asking about."],
     good: [
-      ["Live crawfish, in season", "Crawfish should be boiled live and served in season. Frozen whole crawfish are soft and hard to peel. Mushy meat is the surest sign of crawfish that were dead before they were cooked; a straight tail on its own is not proof."],
+      ["Live crawfish, in season", "Crawfish should be boiled live and served in season. Frozen whole crawfish are soft and hard to peel. Mushy or crumbly meat is the warning sign; a straight tail on its own is not proof."],
       ["The seasoning goes in, not just on", "In a Louisiana boil the spice is in the water and the seafood soaks in it after cooking. If the shells are spicy and the meat underneath is plain, it was not soaked long enough."],
       ["Sauce you can choose the heat of", "At a Viet-Cajun place the house sauce, usually garlic butter with Cajun spice and lemon pepper, should come at several heat levels. The best ones are heavy on garlic."],
       ["Market price that is actually posted", "Seafood boil prices move with the season. A board showing today's price per pound is honest; a menu that says only 'MP' is fine, but ask before ordering three pounds of crab."],
@@ -720,7 +720,7 @@ module.exports = [
       ["Fried chicken or smothered pork chops", "Smothered means cooked slowly in a thick onion gravy."],
       ["Oxtails", "Braised until they fall apart, often a weekend special."],
       ["Greens, mac and cheese, candied yams", "Three of the sides that define a soul food menu."],
-      ["Peach cobbler or banana pudding", "Cobbler baked under a biscuit or pastry top; pudding layered with vanilla wafers and sliced banana."],
+      ["Peach cobbler or banana pudding", "Cobbler baked under a biscuit or batter topping; pudding layered with vanilla wafers and sliced banana."],
     ],
     signals:
       "Soul food is defined by its dishes, and those are what the search can check. “Smothered pork chops”, “oxtails” or “meat and three” goes into the menu check for the places at the top of the shortlist, and a kitchen whose menu carries them scores a higher match than one with a Southern-themed brunch.",

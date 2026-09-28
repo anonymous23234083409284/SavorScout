@@ -49,7 +49,7 @@ module.exports = {
   AR: {
     identity: "Arkansas cooking is Southern and rural, shaped by the Delta in the east and the Ozarks in the northwest. It is catfish, barbecue and rice country — Arkansas grows more rice than any other state — and cheese dip, a fixture of Arkansas's Mexican restaurants, is claimed as an Arkansas invention.",
     known: [
-      ["Cheese dip", "Warm, smooth queso with tortilla chips, traced by Arkansans to Hot Springs in the 1930s."],
+      ["Cheese dip", "Warm, smooth queso with tortilla chips. It was on a Hot Springs menu by 1935, though North Little Rock also claims it."],
       ["Fried catfish", "Cornmeal-crusted, with hushpuppies and slaw. Catfish are pond-farmed across the Arkansas Delta."],
       ["Chocolate gravy", "Cocoa gravy over biscuits. A breakfast tradition in the Ozarks."],
       ["Fried pickles", "Battered, deep-fried dill pickle slices, claimed as an invention of Atkins, Arkansas, in the 1960s."],
@@ -157,10 +157,10 @@ module.exports = {
     foods: ["deep-dish-pizza", "hot-dogs", "sandwiches", "mexican-food"],
   },
   IN: {
-    identity: "Indiana is Midwestern farm cooking: the breaded pork tenderloin sandwich, pounded out far wider than its bun, is the state's signature, and sugar cream pie is its official one. Indianapolis also has a sizeable Burmese community, which makes it one of the few places in the US to find Chin cooking.",
+    identity: "Indiana is Midwestern farm cooking: the breaded pork tenderloin sandwich, pounded out far wider than its bun, is the state's signature, and sugar cream pie is its dessert, named the state pie by a 2009 Indiana Senate resolution. Indianapolis also has a sizeable Burmese community, which makes it one of the few places in the US to find Chin cooking.",
     known: [
       ["Breaded pork tenderloin", "Pounded thin, breaded, fried and much bigger than the bun."],
-      ["Sugar cream pie", "A simple eggless pie of cream and sugar, thickened with flour and dusted with nutmeg. The state pie."],
+      ["Sugar cream pie", "A simple eggless pie of cream and sugar, thickened with flour and dusted with nutmeg."],
       ["Fried biscuits and apple butter", "A southern Indiana tradition."],
       ["Persimmon pudding", "A baked pudding of wild persimmon pulp, the autumn dessert of southern Indiana."],
     ],
@@ -287,7 +287,7 @@ module.exports = {
     foods: ["steak", "burgers", "diner", "breakfast"],
   },
   NE: {
-    identity: "Nebraska is beef country, and Omaha has a steakhouse tradition to match. The runza — Nebraska's name for the Volga German bread pocket of beef, cabbage and onion — is the state's signature, and the Reuben sandwich is one of Omaha's claims to food history.",
+    identity: "Nebraska is beef country, and Omaha has a steakhouse tradition to match. The bierock — the Volga German bread pocket of beef, cabbage and onion — is a Nebraska staple, and the Reuben sandwich is one of Omaha's claims to food history.",
     known: [
       ["Bierock", "A yeast bread pocket of beef, cabbage and onion."],
       ["Steak", "Nebraska corn-fed beef, served in Omaha's long-established steakhouses."],
@@ -517,7 +517,7 @@ module.exports = {
     foods: ["fish-and-chips", "burgers", "german-food", "steak"],
   },
   WY: {
-    identity: "Wyoming, the least populous state, is ranch country and eats like it: steak, bison, elk and trout. Green chile from Colorado and chicken-fried steak from the southern Plains both turn up on menus.",
+    identity: "Wyoming, the least populous state, is ranch country and eats like it: steak, bison, elk and trout. Green chile, as in neighbouring Colorado, and chicken-fried steak both turn up on menus.",
     known: [
       ["Steak and bison", "Beef from the state's ranches, and bison, the state mammal."],
       ["Rocky Mountain oysters", "Fried bull calf testicles. A ranch tradition."],

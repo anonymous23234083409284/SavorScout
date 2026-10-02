@@ -374,7 +374,29 @@
       Styled inline because App.css only arrives with the bundle; these rules
       have to hold on their own.
     -->
-    <footer class="static-badge" style="text-align:center;padding:26px 24px 44px;">
+    <footer class="static-badge" style="position:relative;z-index:2;text-align:center;padding:26px 24px 44px;">
+      <!-- Site navigation, in the shell so it is on every page — including the
+           homepage, which until now linked to none of the site's content.
+
+           The homepage is the strongest page on the domain: brand searches land
+           on it and every external link points at it. A page the homepage links
+           to gets crawled more often and inherits some of that authority; a page
+           it does not link to is reachable only through the sitemap and its
+           neighbours. On 1 October that described all 1,856 of them.
+
+           position/z-index for the same reason as .ss-static: the app paints two
+           fixed full-viewport layers at z-index 0 and 1 that would otherwise sit
+           on top of anything outside #root. -->
+      <nav aria-label="Guides" style="max-width:760px;margin:0 auto 22px;font:14px/1.9 'Space Grotesk',system-ui,sans-serif;">
+        <div id="ss-home-popular"></div>
+        <a href="/eat/" style="color:#E8E3DC;margin:0 10px;text-decoration:none">Cities</a>
+        <a href="/campus/" style="color:#E8E3DC;margin:0 10px;text-decoration:none">Near campus</a>
+        <a href="/food/" style="color:#E8E3DC;margin:0 10px;text-decoration:none">Food guides</a>
+        <a href="/what-to-eat/" style="color:#E8E3DC;margin:0 10px;text-decoration:none">What to eat when&hellip;</a>
+        <a href="/diet/" style="color:#E8E3DC;margin:0 10px;text-decoration:none">Dietary guides</a>
+        <a href="/type/" style="color:#E8E3DC;margin:0 10px;text-decoration:none">Food personalities</a>
+        <a href="/about/data" style="color:#B9B1A6;margin:0 10px;text-decoration:none">Where our data comes from</a>
+      </nav>
       <a href="https://maidensail.com/startup/savor-scout" rel="dofollow"
          style="display:inline-block;line-height:0;opacity:0.62;">
         <img src="https://maidensail.com/badge/savor-scout.svg?theme=dark"

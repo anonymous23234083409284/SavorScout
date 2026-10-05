@@ -26,9 +26,13 @@
  *   - Real geography, computed from real coordinates: which of our 1,000 city
  *     pages are actually nearest, and how far.
  *
- * Filtered to institutions of 5,000 students and up. Below that the query does
- * not really exist and we would be padding the count, which is the thing this
- * whole architecture is trying not to do.
+ * The original 637 are four-year institutions of 5,000 students and up. The
+ * second batch (data/campuses-more.json, see fetch-campuses-more.js) adds every
+ * two-year college of that size — community colleges were already earning
+ * impressions through their four-year neighbours' pages — plus the forty
+ * largest four-year campuses just under 5,000. Below that the query thins out
+ * fast and we would be padding the count, which is the thing this whole
+ * architecture is trying not to do.
  */
 const fs = require("fs");
 const path = require("path");
@@ -53,6 +57,12 @@ const HUB = { name: "Campuses", url: `${ORIGIN}/campus/` };
 /* IPEDS institution size categories 3-5. The brackets are the survey's own, so
    quoting them is accurate in a way an estimated headcount would not be. */
 const SIZE = {
+  2: {
+    label: "1,000 to 4,999 students", short: "smaller",
+    angle:
+      "A campus this size cannot carry a restaurant strip of its own, so the places nearby are the town's restaurants first and the students' second. That is usually good news: they have to be good enough for locals who are not on a meal plan, and the town's longest-running places are often the best ones to know.",
+    craving: "somewhere the locals actually go",
+  },
   3: {
     label: "5,000 to 9,999 students", short: "mid-sized",
     /* Size is not decoration here. A student body is a restaurant's customer
@@ -126,6 +136,37 @@ const SETTING_COPY = {
   },
 };
 
+/* Two-year colleges are a different question, not a smaller one. Most students
+   commute and many work, so the meal that matters is the one between a class
+   and a shift — quick, cheap, and on the way somewhere — rather than the
+   late-night one a residential campus is built around. The page says so, and
+   its guide links follow. */
+const LEVEL = {
+  4: {
+    type: (pub) => `${pub ? "Public" : "Private, not-for-profit"} four-year institution`,
+    guides: [
+      ["/what-to-eat/finals-week", "What to eat during finals week"],
+      ["/what-to-eat/on-a-budget", "Where to eat when you're broke"],
+      ["/what-to-eat/late-night", "Where to eat late at night"],
+      ["/what-to-eat/friends-visiting", "Where to take visiting family and friends"],
+      ["/diet/", "Eating out with a dietary restriction"],
+    ],
+  },
+  2: {
+    type: (pub, lv) => `${pub ? "Public" : "Private, not-for-profit"} two-year college${lv === 4
+      ? " that also awards some bachelor's degrees" : ""}`,
+    commute: (n) =>
+      `Most students at ${n} commute, and a lot of them work, which changes what a good restaurant near campus is. The useful places are the ones between campus, work and home, fast enough to fit between a class and a shift, and cheap enough to be a habit. Late-night matters less than a lunch that takes twenty minutes.`,
+    guides: [
+      ["/what-to-eat/quick-lunch", "Where to get a quick lunch"],
+      ["/what-to-eat/on-a-budget", "Where to eat when you're broke"],
+      ["/what-to-eat/after-a-shift", "What to eat after a shift"],
+      ["/what-to-eat/finals-week", "What to eat during finals week"],
+      ["/diet/", "Eating out with a dietary restriction"],
+    ],
+  },
+};
+
 function nearestCities(c, k) {
   const cos = Math.cos((c.lat * Math.PI) / 180);
   return CITIES
@@ -173,6 +214,14 @@ function page(c) {
   const big = nearestBigCity(c);
   const sibs = siblings(c);
   const shortName = c.a || c.n;
+  /* IPEDS files a college as four-year once it awards any bachelor's degree,
+     which now includes many community colleges. Calling Glendale Community
+     College a "four-year institution" is the survey's category, not how anyone
+     there would describe it — so the name decides the copy, and the type line
+     keeps the survey's fact. */
+  const lv = c.lv || 4;
+  const twoYearish = lv === 2 || /community college|junior college|technical college/i.test(c.n);
+  const lvl = LEVEL[twoYearish ? 2 : 4];
 
   /* Led by "Restaurants Near", not "Where to Eat Near".
      Search Console, 24 September: of the campus queries reaching these pages,
@@ -193,9 +242,13 @@ function page(c) {
       `Restaurants Near ${abbr} — ${place} | Savor Scout`,
     ] : []),
     `Restaurants Near ${c.n} — ${place} | Savor Scout`,
+    /* Two schools share this name (the slug carries the state), so the state
+       goes in the title before anything shorter is allowed to drop it. */
+    ...(c.s.endsWith(`-${c.r.toLowerCase()}`) ? [`Restaurants Near ${c.n}, ${c.r} | Savor Scout`] : []),
     `Restaurants Near ${c.n} | Savor Scout`,
     `Restaurants Near ${c.n}`,
     `Food Near ${c.n}`,
+    ...(c.a && c.a !== c.n ? [`Restaurants Near ${c.a} — ${place} | Savor Scout`] : []),
   ]);
   const desc =
     `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
@@ -233,7 +286,7 @@ function page(c) {
         <li><strong>Location</strong> — ${esc(place)}</li>
 ${otherNames.length ? `        <li><strong>Also known as</strong> — ${otherNames.map(esc).join(", ")}</li>\n` : ""}        <li><strong>Setting</strong> — ${esc(sc.label)}</li>
         <li><strong>Size</strong> — ${esc(sz.label)}</li>
-        <li><strong>Type</strong> — ${c.pub ? "Public" : "Private, not-for-profit"} four-year institution</li>
+        <li><strong>Type</strong> — ${esc(lvl.type(c.pub, lv))}</li>
       </ul>
       <p class="note">
         Campus figures are from IPEDS, the US Department of Education's institutional survey.
@@ -243,7 +296,7 @@ ${otherNames.length ? `        <li><strong>Also known as</strong> — ${otherNam
 
       <h2>Eating near a ${esc(sz.short)} campus ${esc(sc.label)}</h2>
       <p>${esc(sc.advice)}</p>
-      <p>${esc(sz.angle)}</p>
+${lvl.commute ? `      <p>${esc(lvl.commute(shortName))}</p>\n` : ""}      <p>${esc(sz.angle)}</p>
 ${big ? `      <p>
         The nearest city of any real size is <a href="/eat/${big.s}">${esc(big.c)}, ${esc(big.r)}</a>,
         about ${big.miles} ${big.miles === 1 ? "mile" : "miles"} away — worth knowing for the nights
@@ -279,11 +332,7 @@ ${big ? `      <p>
 
       <h2>Guides worth reading</h2>
       <ul>
-        <li><a href="/what-to-eat/finals-week">What to eat during finals week</a></li>
-        <li><a href="/what-to-eat/on-a-budget">Where to eat when you're broke</a></li>
-        <li><a href="/what-to-eat/late-night">Where to eat late at night</a></li>
-        <li><a href="/what-to-eat/friends-visiting">Where to take visiting family and friends</a></li>
-        <li><a href="/diet/">Eating out with a dietary restriction</a></li>
+        ${lvl.guides.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("\n        ")}
       </ul>
 ${sibs.length ? `
       <h2>Other campuses in ${esc(c.r)}</h2>
@@ -346,6 +395,8 @@ function stateHub(st) {
   const trail = [HOME, HUB, { name, url }];
 
   const big = list.filter((c) => c.sz === 5).length;
+  const twoYear = list.filter((c) => c.lv === 2).length;
+  const kind = twoYear ? "Colleges" : "Universities";
   const settings = list.reduce((m, c) => {
     const g = setting(c.lc); m[g] = (m[g] || 0) + 1; return m;
   }, {});
@@ -360,8 +411,9 @@ function stateHub(st) {
   const body = `      ${crumbHtml(trail)}
       <h1>Where to eat near ${esc(name)} campuses</h1>
       <p class="lede">
-        ${list.length} ${esc(name)} ${list.length === 1 ? "campus" : "campuses"} of 5,000 students
-        and up${big ? `, ${big} of them with 20,000 or more` : ""}. Pick yours and Savor Scout opens
+        ${list.length} ${esc(name)} ${list.length === 1 ? "campus" : "campuses"}${twoYear
+          ? `, ${twoYear} of them two-year ${twoYear === 1 ? "college" : "colleges"}` : ""}${big
+          ? `, and ${big} with 20,000 students or more` : ""}. Pick yours and Savor Scout opens
         with the location already set.
       </p>
       <p><a class="cta" href="/">Find somewhere to eat &rarr;</a></p>
@@ -392,11 +444,11 @@ ${CITY_STATES.has(st) ? `        <li><a href="/eat/${st.toLowerCase()}">${esc(na
     url,
     html: render(shell, {
       title: fitTitle([
-        `Where to Eat Near ${name} Campuses — ${list.length} Universities | Savor Scout`,
-        `Where to Eat Near ${name} Campuses — ${list.length} Universities`,
+        `Where to Eat Near ${name} Campuses — ${list.length} ${kind} | Savor Scout`,
+        `Where to Eat Near ${name} Campuses — ${list.length} ${kind}`,
         `Where to Eat Near ${name} Campuses`,
       ]),
-      desc: `Food near ${list.length} ${name} university campuses. Savor Scout picks one restaurant ` +
+      desc: `Food near ${list.length} ${name} ${twoYear ? "college and university" : "university"} campuses. Savor Scout picks one restaurant ` +
         `based on what you're craving instead of handing you a list.`,
       url, body, who: WHO,
       ld: JSON.stringify({
@@ -425,8 +477,8 @@ const stateRows = stateCodes.map((st) =>
 const hubBody = `      ${crumbHtml(hubTrail)}
       <h1>Where to eat near campus</h1>
       <p class="lede">
-        ${CAMPUSES.length} US campuses of 5,000 students and up, across ${stateCodes.length}
-        states. Pick yours and Savor Scout opens with the location already set — say what you are
+        ${CAMPUSES.length} US campuses across ${stateCodes.length} states, from community colleges
+        to universities of 20,000 students and more. Pick yours and Savor Scout opens with the location already set — say what you are
         craving and it finds one place, then shows why it chose it.
       </p>
       <p>
@@ -437,7 +489,9 @@ const hubBody = `      ${crumbHtml(hubTrail)}
       <p><a class="cta" href="/">Try it &rarr;</a></p>
       <p class="note">
         Campus data from IPEDS, the US Department of Education's institutional survey (public
-        domain). Four-year, degree-granting, public and private not-for-profit institutions.
+        domain). Degree-granting public and private not-for-profit institutions: four-year
+        campuses and two-year colleges of 5,000 students and up, plus the largest four-year
+        campuses just under that.
       </p>
 
       <h2>Browse by state</h2>
@@ -450,8 +504,8 @@ ${stateRows}
          <a href="/">Savor Scout home</a></p>`;
 
 fs.writeFileSync(path.join(outDir, "index.html"), render(shell, {
-  title: `Where to Eat Near Campus — ${CAMPUSES.length} US Universities | Savor Scout`,
-  desc: `Food near your university: ${CAMPUSES.length} US campuses, with one restaurant pick instead of a list of thirty. Free, no app, no signup.`,
+  title: `Where to Eat Near Campus — ${CAMPUSES.length.toLocaleString("en-US")} US Colleges | Savor Scout`,
+  desc: `Food near your college or university: ${CAMPUSES.length.toLocaleString("en-US")} US campuses, with one restaurant pick instead of a list of thirty. Free, no app, no signup.`,
   url: HUB.url,
   who: WHO,
   body: hubBody,

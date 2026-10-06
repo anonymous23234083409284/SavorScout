@@ -1102,6 +1102,17 @@ function App() {
   const [authBusy, setAuthBusy] = useState(false);
   const [authMode, setAuthMode] = useState("signin");
   const [resetSent, setResetSent] = useState(false);
+  /* A password-reset link lands on /reset-password with a recovery session.
+     Supabase signs the visitor in from that link, so without this flag they
+     arrived signed in, saw the normal app, and never got asked for the new
+     password — the reset silently did nothing. */
+  const [recovering, setRecovering] = useState(() => {
+    try { return window.location.pathname === "/reset-password"; }
+    catch { return false; }
+  });
+  const [newPassword, setNewPassword] = useState("");
+  const [newPassword2, setNewPassword2] = useState("");
+  const [recoveryDone, setRecoveryDone] = useState(false);
   /* Signed out, the app is browsable rather than walled off — the gate appears
      once the one free search has been spent. */
   const [showAuth, setShowAuth] = useState(false);
@@ -1547,7 +1558,10 @@ function App() {
         setUser(session?.user ?? null);
         setAuthChecked(true);
       });
-      ({ data: listener } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null)));
+      ({ data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "PASSWORD_RECOVERY") setRecovering(true);
+        setUser(session?.user ?? null);
+      }));
     });
     return () => { cancelled = true; listener?.subscription.unsubscribe(); };
   }, []);
@@ -1778,6 +1792,23 @@ function App() {
 
   /* ---- auth handlers ---- */
 
+  /* Supabase's raw messages, as a visitor reads them. "Failed to fetch" told
+     nobody anything; "Email not confirmed" did not say what to do about it. */
+  const authMessage = (err) => {
+    const m = String(err?.message || err || "");
+    if (/failed to fetch|network|load failed|fetch/i.test(m))
+      return "Couldn't reach the sign-in service. Check your connection and try again.";
+    if (/email not confirmed/i.test(m))
+      return "Confirm your email first — open the link we sent when you signed up, then sign in. Check spam if it isn't there.";
+    if (/invalid login credentials/i.test(m))
+      return "That email and password don't match. Try again, or use \"Forgot password?\" below.";
+    if (/rate limit|too many/i.test(m))
+      return "Too many attempts. Wait a minute and try again.";
+    if (/password should be at least/i.test(m))
+      return "Use a password of at least 6 characters.";
+    return m || "Something went wrong. Try again.";
+  };
+
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     if (authBusy) return;
@@ -1798,31 +1829,63 @@ function App() {
           }
         } catch (err) { console.error("email check:", err); }
 
-        const { data, error } = await (await getSupabase()).auth.signUp({ email, password });
-        if (error) { setAuthError(error.message); return; }
+        const { data, error } = await (await getSupabase()).auth.signUp({
+          email, password, options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) { setAuthError(authMessage(error)); return; }
         const ids = data?.user?.identities;
         if (data?.user && Array.isArray(ids) && ids.length === 0) {
           setAuthError("An account with this email already exists. Try signing in."); setAuthMode("signin"); return;
         }
-        setAuthNotice("Check your email to confirm your account, then sign in.");
+        /* With email confirmation off, signUp returns a live session and the
+           auth listener has already signed them in — telling them to check
+           their email would send them looking for a message that never comes. */
+        if (!data?.session) setAuthNotice("Check your email to confirm your account, then sign in.");
       } else {
         const { error } = await (await getSupabase()).auth.signInWithPassword({ email, password });
-        if (error) setAuthError(error.message);
+        if (error) setAuthError(authMessage(error));
       }
+    } catch (err) {
+      setAuthError(authMessage(err));
     } finally { setAuthBusy(false); }
   };
 
   const handleGoogleSignIn = async () => {
     setAuthError(""); setAuthNotice("");
-    const { error } = await (await getSupabase()).auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
-    if (error) setAuthError(error.message);
+    try {
+      const { error } = await (await getSupabase()).auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+      if (error) setAuthError(authMessage(error));
+    } catch (err) { setAuthError(authMessage(err)); }
   };
 
   const handleForgotPassword = async () => {
     setAuthError(""); setAuthNotice(""); setResetSent(false);
     if (!email.trim()) { setAuthError('Enter your email above first, then click "Forgot password?"'); return; }
-    const { error } = await (await getSupabase()).auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
-    if (error) setAuthError(error.message); else setResetSent(true);
+    try {
+      const { error } = await (await getSupabase()).auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/reset-password` });
+      if (error) setAuthError(authMessage(error)); else setResetSent(true);
+    } catch (err) { setAuthError(authMessage(err)); }
+  };
+
+  const handleSetNewPassword = async (e) => {
+    e.preventDefault();
+    if (authBusy) return;
+    setAuthError("");
+    if (newPassword.length < 6) { setAuthError("Use a password of at least 6 characters."); return; }
+    if (newPassword !== newPassword2) { setAuthError("Those two passwords don't match."); return; }
+    setAuthBusy(true);
+    try {
+      const { error } = await (await getSupabase()).auth.updateUser({ password: newPassword });
+      if (error) { setAuthError(authMessage(error)); return; }
+      setRecoveryDone(true); setNewPassword(""); setNewPassword2("");
+    } catch (err) {
+      setAuthError(authMessage(err));
+    } finally { setAuthBusy(false); }
+  };
+
+  const finishRecovery = () => {
+    setRecovering(false); setRecoveryDone(false); setAuthError("");
+    try { window.history.replaceState(null, "", "/"); } catch { /* older browsers: harmless */ }
   };
 
   const switchAuthMode = (m) => { setAuthMode(m); setAuthError(""); setAuthNotice(""); setResetSent(false); };
@@ -2119,6 +2182,69 @@ function App() {
 
   if (!authChecked) {
     return <div className="app">{Ambient}<p className="center-note">Loading…</p></div>;
+  }
+
+  /* ---- password reset ----
+
+     Reached from the link in a reset email. A valid link arrives with a
+     recovery session (so `user` is set); an expired or already-used one
+     arrives with none, and says so rather than showing a form that cannot
+     work. */
+
+  if (recovering) {
+    return (
+      <div className="app">
+        {Ambient}
+        <div className="shell">
+          <header className="topbar">
+            <div className="logo">
+              <LogoMark />
+              <span className="logo-word">SavorScout</span>
+            </div>
+          </header>
+
+          <section className="gate">
+            {recoveryDone ? (
+              <>
+                <p className="hero-kicker">Password updated</p>
+                <h1 className="hero-title">You're all set.<em>Go find your one.</em></h1>
+                <button type="button" className="btn btn--hot btn--block" onClick={finishRecovery}>Continue</button>
+              </>
+            ) : user ? (
+              <>
+                <p className="hero-kicker">Reset your password</p>
+                <h1 className="hero-title">Choose a new password.</h1>
+                <form onSubmit={handleSetNewPassword} className="gate-form">
+                  <input type="password" placeholder="New password" value={newPassword} autoComplete="new-password"
+                         onChange={(e) => setNewPassword(e.target.value)} />
+                  <input type="password" placeholder="New password again" value={newPassword2} autoComplete="new-password"
+                         onChange={(e) => setNewPassword2(e.target.value)} />
+                  <button type="submit" className="btn btn--hot btn--block" disabled={authBusy}>
+                    {authBusy ? "Working…" : "Save new password"}
+                  </button>
+                </form>
+                {authError && <p className="err">{authError}</p>}
+              </>
+            ) : (
+              <>
+                <p className="hero-kicker">Reset your password</p>
+                <h1 className="hero-title">That link has expired.</h1>
+                <p className="notice">
+                  Reset links work once and only for a short while. Request a new one from the sign-in
+                  screen and use it straight away.
+                </p>
+                <button type="button" className="btn btn--hot btn--block"
+                        onClick={() => { finishRecovery(); setShowAuth(true); setAuthMode("signin"); }}>
+                  Back to sign in
+                </button>
+              </>
+            )}
+          </section>
+
+        <footer className="foot">© 2026 SavorScout</footer>
+        </div>
+      </div>
+    );
   }
 
   /* ---- the gate ----

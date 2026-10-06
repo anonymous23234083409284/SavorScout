@@ -23,6 +23,19 @@ const path = require("path");
  * no flag that separates them. */
 const NO_CAMPUS = /digital immersion|\bonline\b|global campus|world campus|\bdistrict\b|system office|\bvirtual\b/i;
 
+/* Universities that teach almost entirely online, listed by slug because their
+   names carry none of the words NO_CAMPUS looks for. IPEDS gives each one a
+   headquarters address, so their pages were "restaurants near" an office
+   building no student attends. Removed on Charan's call, 26 September 2026;
+   each old URL 301s to its state's campus list in vercel.json. A school here
+   that later opens a residential campus should come off the list. */
+const ONLINE_ONLY = new Set([
+  "purdue-university-global", "university-of-the-people", "western-governors-university",
+  "excelsior-university", "indiana-wesleyan-university-national-and-global", "national-university",
+  "colorado-state-university-global", "empire-state-university", "thomas-edison-state-university",
+  "university-of-massachusetts-global",
+]);
+
 /* IPEDS aliases, plus the handful of abbreviations people search by that IPEDS
    leaves blank — see data/campus-aliases.js. Merged here so every generator
    sees the same list. `a` is the one short name a page uses in running text:
@@ -32,7 +45,7 @@ const EXTRA = require("../data/campus-aliases");
 
 const CAMPUSES = JSON.parse(
   fs.readFileSync(path.join(__dirname, "..", "data", "campuses.json"), "utf8")
-).filter((c) => !NO_CAMPUS.test(c.n)).map((c) => {
+).filter((c) => !NO_CAMPUS.test(c.n) && !ONLINE_ONLY.has(c.s)).map((c) => {
   const al = [...new Set([...(c.al || []), ...(EXTRA[c.s] || [])])];
   const abbr = al.find((s) => /^[A-Z&]{2,6}$/.test(s));
   return { ...c, al, a: abbr || c.a || al[0] || "" };
@@ -42,4 +55,4 @@ const BY_STATE = {};
 CAMPUSES.forEach((c) => { (BY_STATE[c.r] = BY_STATE[c.r] || []).push(c); });
 Object.values(BY_STATE).forEach((l) => l.sort((a, b) => a.n.localeCompare(b.n)));
 
-module.exports = { CAMPUSES, BY_STATE, NO_CAMPUS };
+module.exports = { CAMPUSES, BY_STATE, NO_CAMPUS, ONLINE_ONLY };

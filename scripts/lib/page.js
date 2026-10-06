@@ -192,13 +192,44 @@ function emit(name, urls) {
   fs.writeFileSync(path.join(MANIFEST_DIR, `${name}.json`), JSON.stringify(urls));
 }
 
+/* Links from the homepage to the five hubs, written into build/index.html.
+
+   Before this the homepage — the page with nearly all of the domain's
+   authority — did not link to a single generated page. The only way Google
+   found the 1,900 of them was the sitemap and each other, and a page reachable
+   only through a sitemap is exactly the one that sits in "Discovered, currently
+   not indexed". A plain nav in the static shell fixes that on the homepage and
+   on every SPA route, and the generators copy it into their pages too, so the
+   hubs are one click from everywhere.
+
+   It goes into the built file rather than public/index.html so the generators
+   own it, and it is idempotent: whichever generator reads the shell first adds
+   it, and the rest find it already there. */
+const HUB_NAV = `<nav class="static-hubs" aria-label="Guides"
+     style="position:relative;z-index:2;text-align:center;padding:36px 24px 0;font:14px/2 system-ui,-apple-system,sans-serif;">
+  <a href="/eat/" style="color:#B9B1A6;text-decoration:none;margin:0 10px;">Where to eat, by city</a>
+  <a href="/food/" style="color:#B9B1A6;text-decoration:none;margin:0 10px;">Food guides</a>
+  <a href="/what-to-eat/" style="color:#B9B1A6;text-decoration:none;margin:0 10px;">What to eat when&hellip;</a>
+  <a href="/diet/" style="color:#B9B1A6;text-decoration:none;margin:0 10px;">Dietary guides</a>
+  <a href="/campus/" style="color:#B9B1A6;text-decoration:none;margin:0 10px;">Near campus</a>
+</nav>`;
+
 function shellOrDie(who) {
   const src = path.join(BUILD, "index.html");
   if (!fs.existsSync(src)) {
     console.error(`${who}: build/index.html missing — did the build run?`);
     process.exit(1);
   }
-  return fs.readFileSync(src, "utf8");
+  let html = fs.readFileSync(src, "utf8");
+  if (!html.includes('class="static-hubs"')) {
+    if (!html.includes('<div id="root"></div>')) {
+      console.error(`${who}: could not find <div id="root"></div> in index.html`);
+      process.exit(1);
+    }
+    html = html.replace('<div id="root"></div>', `<div id="root"></div>\n${HUB_NAV}`);
+    fs.writeFileSync(src, html);
+  }
+  return html;
 }
 
 module.exports = {

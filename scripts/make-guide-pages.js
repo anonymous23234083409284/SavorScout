@@ -1,8 +1,8 @@
 /* Generates the three written page classes and their hubs:
  *
- *   /what-to-eat/<situation>   30 pages — the decision, by circumstance
- *   /food/<dish>               29 pages — how to judge a dish, and what to order
- *   /diet/<restriction>        12 pages — eating out with a restriction
+ *   /what-to-eat/<situation>   60 pages — the decision, by circumstance
+ *   /food/<dish>              228 pages — how to judge a dish, and what to order
+ *   /diet/<restriction>        22 pages — eating out with a restriction
  *
  * WHY THESE AND NOT MORE CITY PAGES
  * The city pages compete for local intent against Yelp, TripAdvisor and
@@ -29,17 +29,26 @@ const {
 } = require("./lib/page");
 
 const WHO = "make-guide-pages";
-const SITUATIONS = require("./data/situations");
+/* Each class is split across an original file and the later batches written
+   from Search Console data — see the header of each *-more / dishes-* file.
+   The generator sees one array per class and nothing downstream knows. */
+const SITUATIONS = [...require("./data/situations"), ...require("./data/situations-more")];
 /* Two files, one list. dishes.js is the original 29; dishes-more.js is the 39
    added after Search Console showed /food/korean-food out-pulling all 627
    campus pages combined. Split only so neither file becomes unmanageable to
    edit — the generator sees one array and nothing downstream knows. */
-const DISHES = [...require("./data/dishes"), ...require("./data/dishes-more")];
+const DISHES = [
+  ...require("./data/dishes"),
+  ...require("./data/dishes-more"),
+  ...require("./data/dishes-cuisines"),
+  ...require("./data/dishes-formats"),
+  ...require("./data/dishes-formats-2"),
+];
 
 /* A slug ending in -food is a cuisine; anything else is a dish or a format.
    With 68 entries a flat list on the hub is a wall, so they are grouped. */
 const isCuisine = (d) => /-food$/.test(d.s);
-const DIETS = require("./data/diets");
+const DIETS = [...require("./data/diets"), ...require("./data/diets-more")];
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 
 const shell = shellOrDie(WHO);
@@ -82,7 +91,11 @@ const qaHtml = (qa) => qa ? `
    Still honest. Every one of these pages does help you pick a good one, and its
    button runs the search that picks one. The h1 keeps the original wording, so
    the page carries both phrasings. */
-const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase());
+/* Small joining words stay lower case after the first word — "Fish and Chips",
+   not "Fish And Chips" — since several dish names now carry them. */
+const SMALL = new Set(["and", "or", "of", "the", "a", "with"]);
+const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase())
+  .replace(/ (And|Or|Of|The|A|With)\b/g, (m, w) => (SMALL.has(w.toLowerCase()) ? " " + w.toLowerCase() : m));
 function dishTitle(x) {
   if (/-food$/.test(x.s)) {
     const base = titleCase(x.near || x.n.replace(/ food$/i, ""));
@@ -331,14 +344,21 @@ ${extra || ""}
    column is a wall and the groupings are how somebody actually arrives: by how
    they feel, by who they are with, or by what the day is doing to them. */
 const SIT_GROUPS = [
-  ["When you can't decide", ["cant-decide", "nothing-sounds-good", "stressed", "sad"]],
-  ["How you're feeling", ["hungover", "sick-with-a-cold", "after-a-workout", "hot-day", "cold-rainy-night"]],
-  ["Who you're with", ["first-date", "meeting-the-parents", "with-picky-eaters", "with-a-toddler",
-    "vegetarians-and-meat-eaters", "big-group", "friends-visiting", "eating-alone"]],
-  ["Work", ["work-team-lunch", "business-dinner", "job-interview-lunch"]],
-  ["Occasions", ["birthday-dinner", "celebrating"]],
-  ["Time and money", ["late-night", "after-a-shift", "on-a-budget", "finals-week", "sunday-night"]],
-  ["On the move", ["road-trip", "before-a-flight", "moving-day"]],
+  ["When you can't decide", ["cant-decide", "nothing-sounds-good", "too-tired-to-cook", "trying-something-new",
+    "stressed", "sad"]],
+  ["How you're feeling", ["hungover", "sick-with-a-cold", "after-a-workout", "eating-healthy", "cheat-day",
+    "pregnant", "hot-day", "cold-rainy-night"]],
+  ["Who you're with", ["first-date", "second-date", "date-night", "meeting-the-parents", "with-picky-eaters",
+    "with-a-toddler", "with-teenagers", "with-grandparents", "with-a-dog", "wheelchair-access",
+    "vegetarians-and-meat-eaters", "big-group", "friends-visiting", "catching-up", "eating-alone"]],
+  ["Work", ["work-team-lunch", "quick-lunch", "breakfast-meeting", "business-dinner", "job-interview-lunch",
+    "traveling-for-work"]],
+  ["Occasions", ["birthday-dinner", "anniversary", "proposal", "graduation", "celebrating", "after-a-funeral"]],
+  ["Holidays", ["valentines-day", "mothers-day", "fathers-day", "thanksgiving", "christmas-day",
+    "new-years-eve", "watching-the-game"]],
+  ["Time, place and money", ["early-morning", "late-night", "after-a-shift", "on-a-budget", "finals-week",
+    "sunday-night", "somewhere-quiet", "outdoor-dining"]],
+  ["On the move", ["road-trip", "before-a-flight", "moving-day", "new-in-town"]],
 ];
 
 /* ---- write everything ------------------------------------------------------ */
@@ -376,7 +396,7 @@ if (ungrouped.length) {
 hub({
   dir: "what-to-eat",
   hubNode: SIT_HUB,
-  title: "What to Eat When… — 30 Guides to Deciding | Savor Scout",
+  title: `What to Eat When… — ${SITUATIONS.length} Guides to Deciding | Savor Scout`,
   desc: `Can't decide what to eat? ${SITUATIONS.length} guides to picking a restaurant by situation — hungover, on a first date, with a big group, broke, or when nothing sounds good.`,
   h1: "What to eat when…",
   intro:
@@ -421,10 +441,15 @@ hub({
   intro:
     "These cover what actually goes wrong in a restaurant kitchen, the questions that get a useful answer, and which cuisines are structurally easier — which differs enormously depending on what you are avoiding.",
   groups: `      <h2>Allergies</h2>\n      <ul>\n` +
-    ["gluten-free", "peanut-and-tree-nut-allergy", "shellfish-allergy", "dairy-free", "egg-allergy", "sesame-allergy"]
+    ["gluten-free", "peanut-and-tree-nut-allergy", "shellfish-allergy", "fish-allergy", "dairy-free", "egg-allergy",
+      "sesame-allergy", "soy-allergy", "alpha-gal"]
       .map((s) => `        <li><a href="/diet/${s}">${esc(dietMap.get(s).h1)}</a></li>`).join("\n") +
     `\n      </ul>\n      <h2>Diets and observance</h2>\n      <ul>\n` +
-    ["vegan", "vegetarian", "halal", "kosher", "low-fodmap", "keto-and-low-carb"]
+    ["vegan", "vegetarian", "pescatarian", "jain", "halal", "kosher", "low-fodmap", "keto-and-low-carb", "paleo",
+      "high-protein"]
+      .map((s) => `        <li><a href="/diet/${s}">${esc(dietMap.get(s).h1)}</a></li>`).join("\n") +
+    `\n      </ul>\n      <h2>Health</h2>\n      <ul>\n` +
+    ["heart-healthy", "low-sodium", "diabetes-friendly"]
       .map((s) => `        <li><a href="/diet/${s}">${esc(dietMap.get(s).h1)}</a></li>`).join("\n") +
     "\n      </ul>",
   extra: `      <p class="note">

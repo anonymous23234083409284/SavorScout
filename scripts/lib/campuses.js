@@ -30,9 +30,16 @@ const NO_CAMPUS = /digital immersion|\bonline\b|global campus|world campus|\bdis
    alias, otherwise nothing and the page uses the full name. */
 const EXTRA = require("../data/campus-aliases");
 
-const CAMPUSES = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "..", "data", "campuses.json"), "utf8")
-).filter((c) => !NO_CAMPUS.test(c.n)).map((c) => {
+/* Two files, one list. campuses.json is the original 637 four-year schools
+   (IPEDS 2022); campuses-more.json is the second batch, community colleges
+   included, written by fetch-campuses-more.js from IPEDS 2024. A record with no
+   `lv` is a four-year institution, which every original one is. */
+const read = (f) => {
+  const p = path.join(__dirname, "..", "data", f);
+  return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : [];
+};
+const CAMPUSES = [...read("campuses.json"), ...read("campuses-more.json")]
+.filter((c) => !NO_CAMPUS.test(c.n)).map((c) => {
   const al = [...new Set([...(c.al || []), ...(EXTRA[c.s] || [])])];
   const abbr = al.find((s) => /^[A-Z&]{2,6}$/.test(s));
   return { ...c, al, a: abbr || c.a || al[0] || "" };

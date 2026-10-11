@@ -204,6 +204,29 @@ function siblings(c, k = 6) {
   return CAMPUSES.filter((o) => o.r === c.r && o.s !== c.s).slice(0, k);
 }
 
+/* Title/description test, started 11 October 2026.
+   These 28 are the campus pages that had earned at least one click by then.
+   They get a title that adds "Food" (the second most common phrasing in their
+   queries) and a description that names what a student can filter by. Every
+   other campus page keeps the old copy, so it serves as the comparison: check
+   CTR for these against the rest in Search Console on or after 25 October.
+   Deliberately not "10 Best Places to Eat": these pages list no restaurants,
+   and a title promising a list the page does not have loses the click back. */
+const CTR_TEST = new Set([
+  "cuny-new-york-city-college-of-technology", "foothill-college", "lewis-university",
+  "indiana-wesleyan-university-national-and-global", "bellevue-college", "kean-university",
+  "concordia-university-chicago", "university-of-southern-indiana",
+  "university-of-cincinnati-main-campus", "western-kentucky-university",
+  "university-of-the-incarnate-word", "fairleigh-dickinson-university-metropolitan-campus",
+  "the-university-of-west-florida", "san-jacinto-community-college", "merrimack-college",
+  "college-of-staten-island-cuny", "lincoln-memorial-university",
+  "prairie-view-a-and-m-university", "marquette-university", "fayetteville-state-university",
+  "cuny-john-jay-college-of-criminal-justice", "university-of-wisconsin-la-crosse",
+  "university-of-puerto-rico-rio-piedras", "university-of-nevada-reno",
+  "wichita-state-university", "university-of-northern-iowa", "bradley-university",
+  "minnesota-state-university-mankato",
+]);
+
 function page(c) {
   const url = `${ORIGIN}/campus/${c.s}`;
   const place = `${c.c}, ${c.r}`;
@@ -234,7 +257,14 @@ function page(c) {
      "gvsu restaurants". A title naming only "Florida Atlantic University" has
      to rely on Google inferring that FAU means the same thing. */
   const abbr = c.a && c.a !== c.n && /^[A-Z&]{2,6}$/.test(c.a) ? c.a : null;
+  const test = CTR_TEST.has(c.s);
   const title = fitTitle([
+    ...(test ? [
+      ...(abbr ? [`Restaurants & Food Near ${abbr} (${c.n}) | Savor Scout`] : []),
+      `Restaurants & Food Near ${c.n} | Savor Scout`,
+      ...(abbr ? [`Restaurants & Food Near ${abbr} — ${c.n}`] : []),
+      `Restaurants & Food Near ${c.n}`,
+    ] : []),
     ...(abbr ? [
       `Restaurants Near ${abbr} — Where to Eat Near ${c.n} | Savor Scout`,
       `Restaurants Near ${abbr} (${c.n}) | Savor Scout`,
@@ -250,7 +280,10 @@ function page(c) {
     `Food Near ${c.n}`,
     ...(c.a && c.a !== c.n ? [`Restaurants Near ${c.a} — ${place} | Savor Scout`] : []),
   ]);
-  const desc =
+  const desc = test
+    ? `Where to eat near ${abbr || c.n}: tell Savor Scout your budget, craving, diet, or that ` +
+      `it has to be open late, and it picks one spot near ${place} and shows why. Free, no signup.`
+    :
     `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
     `what you're craving instead of handing you a list. Free, no app, no signup.`;
 

@@ -42,6 +42,7 @@ const WHO = "make-location-pages";
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
+const { GROUP_ENABLED } = require("./lib/features");
 const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 /* Hand-written food identity for the 50 largest cities.
@@ -351,6 +352,7 @@ ${diningHtml(city)}
         ${cravingLinks}
       </ul>
 
+${GROUP_ENABLED ? `
       <h2>Deciding as a group in ${esc(name)}</h2>
       <p>
         Group meals stall because everyone stays polite until someone gets annoyed. Savor
@@ -359,7 +361,7 @@ ${diningHtml(city)}
         group. When two options remain the vetoes stop and votes decide. Nobody installs
         anything.
       </p>
-
+` : ""}
       <h2>Near ${esc(name)}</h2>
       <ul>
         ${nearLinks}

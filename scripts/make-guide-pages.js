@@ -32,6 +32,10 @@ const WHO = "make-guide-pages";
 /* Each class is split across an original file and the later batches written
    from Search Console data — see the header of each *-more / dishes-* file.
    The generator sees one array per class and nothing downstream knows. */
+const { GROUP_ENABLED } = require("./lib/features");
+/* Group advice that is really a pitch for the parked rooms feature. Shown only
+   while rooms are switched on; plain advice about eating as a group stays. */
+const ROOM_PITCH = /\broom\b|\brooms\b|veto|share (a|the) link/i;
 const SITUATIONS = [...require("./data/situations"), ...require("./data/situations-more")];
 /* Two files, one list. dishes.js is the original 29; dishes-more.js is the 39
    added after Search Console showed /food/korean-food out-pulling all 627
@@ -152,7 +156,7 @@ ${paras(x.why)}
 
       <h2>What usually goes wrong</h2>
       <p>${esc(x.avoid)}</p>
-${x.group ? `
+${x.group && (GROUP_ENABLED || !ROOM_PITCH.test(x.group)) ? `
       <h2>If you're deciding as a group</h2>
       <p>${esc(x.group)}</p>` : ""}
 

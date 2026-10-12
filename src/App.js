@@ -747,11 +747,22 @@ function verdictTone(h) {
   return h.outcome === "worse" ? "bad" : "good";
 }
 
-/* Two tabs. Search is the product, so search is the front door on every
-   visit; You is where the picks land and get graded. */
+/* GROUP ROOMS ARE PARKED, not deleted (12 October 2026). Every line of the
+   feature below is intact: the tab, the room screens, the server routes and
+   shared /r/CODE links. With this false the Group tab is hidden, its place in
+   the header goes to About, and a shared room link opens the normal homepage
+   instead of joining. Set it back to true to bring the feature back as it was,
+   together with GROUP_ENABLED in scripts/lib/features.js, which does the same
+   for the group-vote copy on the generated campus, city and guide pages. */
+const GROUP_ENABLED = false;
+const GROUP_TAB = { id: "group", label: "Group", minLevel: 1 };
+
+/* Search is the product, so search is the front door on every visit; About
+   says in one screen why it exists; You is where the picks land and get graded. */
 const TABS = [
   { id: "find", label: "Find", minLevel: 1 },
-  { id: "group", label: "Group", minLevel: 1 },
+  ...(GROUP_ENABLED ? [GROUP_TAB] : []),
+  { id: "about", label: "About", minLevel: 1 },
   { id: "you", label: "You", minLevel: 1 },
 ];
 
@@ -769,6 +780,7 @@ const TABS = [
 
 const ROOM_PATH = /^\/r\/([23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6})\/?$/i;
 const roomCodeFromUrl = () => {
+  if (!GROUP_ENABLED) return null;
   const m = ROOM_PATH.exec(window.location.pathname);
   return m ? m[1].toUpperCase() : null;
 };
@@ -904,8 +916,6 @@ function ConsentBanner() {
    survives contact with someone who checks.
    =========================================================================== */
 
-const ABOUT_KEY = "ss_about_seen";
-
 const ABOUT_POINTS = [
   {
     k: "one",
@@ -929,16 +939,18 @@ const ABOUT_POINTS = [
   },
 ];
 
-function AboutPanel({ onClose }) {
+function AboutPanel({ onClose = null }) {
   return (
     <section className="about" aria-labelledby="about-h">
       <div className="about-head">
         <h2 className="about-title" id="about-h">
           Why not just use <em>Google Maps</em>?
         </h2>
-        <button type="button" className="about-close" onClick={onClose} aria-label="Close about">
-          ×
-        </button>
+        {onClose && (
+          <button type="button" className="about-close" onClick={onClose} aria-label="Close about">
+            ×
+          </button>
+        )}
       </div>
 
       <div className="about-grid">
@@ -1063,6 +1075,7 @@ const VIEW_TITLES = {
   "sign-in": "Sign in — Savor Scout",
   find: "Find somewhere to eat — Savor Scout",
   group: "Dinner Roulette — Savor Scout",
+  about: "Why Savor Scout — Savor Scout",
   you: "Your picks — Savor Scout",
 };
 
@@ -1104,17 +1117,9 @@ function App() {
     try { return Boolean(window.localStorage.getItem("ss_trial_spent")); }
     catch { return false; }
   });
-  /* Open on arrival until it has been dismissed once. The pitch is the first
-     thing a new visitor sees; after that it stays one tap away in the header
-     rather than re-announcing itself every session. */
-  const [aboutOpen, setAboutOpen] = useState(() => {
-    try { return window.localStorage.getItem(ABOUT_KEY) !== "1"; }
-    catch { return true; }
-  });
-  const closeAbout = useCallback(() => {
-    setAboutOpen(false);
-    try { window.localStorage.setItem(ABOUT_KEY, "1"); } catch { /* private mode */ }
-  }, []);
+  /* The "Why not just use Google Maps?" pitch used to open on arrival for every
+     new visitor, above the search box, and pushed the headline and search off
+     a phone screen entirely. It now lives in the About tab, opened on request. */
 
   /* ---- group rooms ---- */
   const [roomCode, setRoomCode] = useState(roomCodeFromUrl);
@@ -1465,6 +1470,7 @@ function App() {
     ? tab
     : showAuth ? "sign-in"
     : tab === "group" ? "group"
+    : tab === "about" ? "about"
     : "browse";
   const firstViewSent = useRef(false);
   useEffect(() => {
@@ -2252,7 +2258,7 @@ function App() {
      to be able to play without an account, or the whole loop dies at the door.
      You still needs an account, since it has nothing to show without one. */
   const visibleTabs = signedOut
-    ? TABS.filter((t) => t.id === "find" || t.id === "group")
+    ? TABS.filter((t) => t.id !== "you")
     : TABS.filter((t) => (level?.level ?? 1) >= t.minLevel);
   const activeTab = signedOut && tab === "you" ? "find" : tab;
   // The only outstanding thing left is an ungraded pick.
@@ -2285,13 +2291,6 @@ function App() {
           </nav>
 
           <div className="topbar-right">
-            <button
-              className={`about-btn${aboutOpen ? " about-btn--on" : ""}`}
-              onClick={() => (aboutOpen ? closeAbout() : setAboutOpen(true))}
-              aria-expanded={aboutOpen}
-            >
-              About
-            </button>
             {signedOut ? (
               <button className="btn btn--hot topbar-signin" onClick={() => setShowAuth(true)}>
                 Sign in
@@ -2355,7 +2354,14 @@ function App() {
             panel pushed the first card below the fold, so the pitch was
             physically standing between them and voting. The room IS the pitch
             at that point; About is one tap away in the header afterwards. */}
-        {aboutOpen && !room && <AboutPanel onClose={closeAbout} />}
+        {activeTab === "about" && (
+          <main className="page">
+            <AboutPanel />
+            <button className="btn btn--hot" onClick={() => setTab("find")}>
+              Find somewhere to eat →
+            </button>
+          </main>
+        )}
 
         {/* ================= TODAY ================= */}
         {/* activeTab, not tab: signing out while on You would otherwise leave

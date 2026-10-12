@@ -41,6 +41,7 @@ const {
 } = require("./lib/page");
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
+const { GROUP_ENABLED } = require("./lib/features");
 
 const WHO = "make-campus-pages";
 
@@ -366,13 +367,14 @@ ${big ? `      <p>
         ).join("\n        ")}
       </ul>
 
+${GROUP_ENABLED ? `
       <h2>Deciding as a group</h2>
       <p>
         Most campus meals are group meals, and a group chat is the worst possible way to choose a
         restaurant. Savor Scout turns it into a 90-second vote with one veto each —
         <a href="/what-to-eat/big-group">how that works, and why the veto is the move that matters</a>.
       </p>
-
+` : ""}
       <h2>Guides worth reading</h2>
       <ul>
         ${lvl.guides.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("\n        ")}

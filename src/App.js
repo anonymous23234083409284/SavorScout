@@ -428,11 +428,6 @@ function mapsUrl(r) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${r.name} ${r.address || ""}`.trim())}`;
 }
 
-function osmEmbedUrl(lat, lng) {
-  const d = 0.006;
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - d},${lat - d},${lng + d},${lat + d}&layer=mapnik&marker=${lat},${lng}`;
-}
-
 /* beatCount is how many others it BEAT, so the size of the pool is beatCount+1.
    "Best of the {beat}" was off by one and contradicted the share card, which
    says "Best of {beat + 1}" — the same pick appearing to have been chosen from
@@ -1529,8 +1524,6 @@ function App() {
   useEffect(() => { shareRef.current = share; }, [share]);
   const [toast, setToast] = useState(null);
 
-  const [showMap, setShowMap] = useState(false);
-
   const searchAbortRef = useRef(null);
 
   useEffect(() => { warmApi(); }, []);
@@ -2021,7 +2014,6 @@ function App() {
     if (!resolvedLocation) { setErrorMsg("Set your ZIP code first."); return; }
 
     setErrorMsg(""); setLoading(true);
-    setShowMap(false);
 
     try {
       /* Signed out is a legitimate state here: the first search is free. The
@@ -2544,20 +2536,6 @@ function App() {
                           Share
                         </button>
                       </div>
-
-                      {typeof winner.lat === "number" && (
-                        <div style={{ padding: "14px 22px 0" }}>
-                          <button className="toggle" onClick={() => { setShowMap((s) => !s); track("map_open", { verdictId: winner.id }); }}>
-                            {showMap ? "Hide map" : "Show map"}
-                          </button>
-                          {showMap && (
-                            <div className="mapbox">
-                              <iframe title={`Map of ${winner.name}`} src={osmEmbedUrl(winner.lat, winner.lng)}
-                                      width="100%" height="180" style={{ border: 0, display: "block" }} loading="lazy" />
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
 
                     <div className="pane-detail">

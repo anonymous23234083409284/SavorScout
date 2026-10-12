@@ -64,6 +64,9 @@ const STYLE = `
   .ss-static .note{font-size:15px;color:#B9B1A6;border-left:2px solid rgba(255,158,31,.45);padding-left:14px;margin:18px 0}
   .ss-static .qa{font-size:18px;line-height:1.55;color:#FDF8F2;background:rgba(255,158,31,.07);
     border-left:3px solid #FF9E1F;padding:14px 18px;border-radius:0 8px 8px 0;margin:0 0 20px}
+  .ss-static .spots{list-style:none;padding-left:0}
+  .ss-static .spots li{margin:0 0 14px}
+  .ss-static .spots .addr{font-size:15px;color:#B9B1A6}
   .ss-static .cols{columns:2;column-gap:26px}
   .ss-static .cols li{break-inside:avoid}
   .ss-static hr{border:0;border-top:1px solid rgba(232,227,220,.14);margin:44px 0}

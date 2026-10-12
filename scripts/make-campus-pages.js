@@ -40,6 +40,7 @@ const {
   BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie, fitTitle,
 } = require("./lib/page");
 const STATES = require("./data/states");
+const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 
 const WHO = "make-campus-pages";
 
@@ -302,6 +303,9 @@ function page(c) {
      searcher using them can be matched to it. */
   const otherNames = (c.al || []).filter((s) => s && s !== c.n);
 
+  const spots = spotsFor(`campus/${c.s}`);
+  const list = spotsLd(spots, `Places to eat near ${c.n}`);
+
   const body = `      ${crumbHtml(trail)}
       <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
       <p class="lede">${esc(sc.problem(shortName))}</p>
@@ -313,6 +317,12 @@ function page(c) {
         than sorting places by overall star rating.
       </p>
       <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
+${spotsHtml(spots, {
+  heading: `A few places to eat near ${shortName}`,
+  from: "campus",
+  appLink,
+  ctaText: `Ask Savor Scout near ${shortName}`,
+})}
 
       <h2>The campus</h2>
       <ul>
@@ -393,6 +403,7 @@ ${sibs.length ? `
       address: { "@type": "PostalAddress", addressLocality: c.c, addressRegion: c.r, addressCountry: "US" },
       geo: { "@type": "GeoCoordinates", latitude: c.lat, longitude: c.lng },
     },
+    ...(list ? { mainEntity: list } : {}),
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
     breadcrumb: breadcrumb(trail),
   });

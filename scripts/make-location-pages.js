@@ -41,6 +41,7 @@ const {
 const WHO = "make-location-pages";
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 const STATES = require("./data/states");
+const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 /* Hand-written food identity for the 50 largest cities.
@@ -287,10 +288,20 @@ function page(shell, city) {
 
   const m = METRO.get(slug);
 
+  const nearby = spotsFor(`eat/${slug}`);
+  const spots = spotsHtml(nearby, {
+    heading: `A few places to eat in ${name}`,
+    from: `central ${name}`,
+    appLink: app,
+    ctaText: `Ask Savor Scout in ${name}`,
+  });
+  const list = spotsLd(nearby, `Places to eat in ${place}`);
+
   /* The written opening, for the 50 cities that have one. */
   const intro = m ? `      <p class="lede">${esc(m.identity[0])}</p>
 ${m.identity.slice(1).map((x) => `      <p>${esc(x)}</p>`).join("\n")}
       <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
+${spots}
 
       <h2>What to eat in ${esc(name)}</h2>
       <ul>
@@ -320,6 +331,7 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
         and one search needs no account.
       </p>
       <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
+${spots}
 
       <h2>Eating out in ${esc(name)}</h2>`;
 
@@ -387,6 +399,7 @@ ${diningHtml(city)}
       name: place,
       geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lng },
     },
+    ...(list ? { mainEntity: list } : {}),
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
     breadcrumb: breadcrumb(trail),
   });

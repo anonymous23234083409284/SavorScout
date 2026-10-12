@@ -136,6 +136,15 @@ def town_agrees(p):
 places = [p for p in places if pinned_right(p) and town_agrees(p)]
 print("after ZIP check", len(places), file=sys.stderr)
 
+# A chain is a name that turns up 15 or more times across the country. The
+# data's own brand field misses most of them (Denny's, KFC, Round Table), so
+# counting names is the more honest test.
+def norm(n):
+    return re.sub(r"[^a-z0-9]", "", n.lower())
+name_count = Counter(norm(p["n"]) for p in places)
+for p in places:
+    p["chain"] = p["brand"] or name_count[norm(p["n"])] >= 15
+
 # Grid index, 0.1 degree cells.
 grid = {}
 for p in places:
@@ -159,6 +168,84 @@ def near(lat, lng, radius):
                     out.append((d, p))
     return out
 
+# Restaurant type in the data -> the food guide that covers it. Types with no
+# guide still count in the food-scene numbers; they just get no link.
+TAX_GUIDE = {
+    "mexican_restaurant": "mexican-food", "pizza_restaurant": "pizza", "bakery": "bakery", "cafe": "coffee",
+    "sandwich_shop": "sandwiches", "american_restaurant": "american-food", "seafood_restaurant": "seafood",
+    "burger_restaurant": "burgers", "ice_cream_shop": "ice-cream", "chinese_restaurant": "chinese-food",
+    "italian_restaurant": "italian-food", "taco_restaurant": "tacos", "barbecue_restaurant": "bbq",
+    "chicken_restaurant": "fried-chicken", "sushi_restaurant": "sushi", "breakfast_and_brunch_restaurant": "breakfast",
+    "delicatessen": "deli", "diner": "diner", "donut_shop": "donuts", "japanese_restaurant": "japanese-food",
+    "dessert_shop": "dessert", "steakhouse": "steak", "indian_restaurant": "indian-food", "thai_restaurant": "thai-food",
+    "vietnamese_restaurant": "vietnamese-food", "mediterranean_restaurant": "mediterranean-food",
+    "asian_fusion_restaurant": "asian-fusion-food", "bagel_shop": "bagels", "chicken_wings_restaurant": "wings",
+    "gastropub": "gastropub", "korean_restaurant": "korean-food", "buffet_restaurant": "buffet",
+    "texmex_restaurant": "tex-mex-food", "hot_dog_restaurant": "hot-dogs", "greek_restaurant": "greek-food",
+    "caribbean_restaurant": "caribbean-food", "frozen_yogurt_shop": "dessert", "salad_bar": "salad",
+    "southern_american_restaurant": "southern-food", "french_restaurant": "french-food",
+    "cajun_and_creole_restaurant": "cajun-food", "shaved_ice_shop": "shaved-ice", "pancake_house": "pancakes",
+    "tapas_bar": "tapas", "middle_eastern_restaurant": "mezze", "soul_food": "soul-food", "ramen_restaurant": "ramen",
+    "peruvian_restaurant": "peruvian-food", "poke_restaurant": "poke", "cuban_restaurant": "cuban-food",
+    "salvadoran_restaurant": "salvadoran-food", "jamaican_restaurant": "jamaican-food",
+    "filipino_restaurant": "filipino-food", "halal_restaurant": "halal-food", "hawaiian_restaurant": "hawaiian-food",
+    "brazilian_restaurant": "brazilian-food", "spanish_restaurant": "spanish-food", "lebanese_restaurant": "lebanese-food",
+    "gelato_shop": "gelato", "argentine_restaurant": "argentinian-food", "colombian_restaurant": "colombian-food",
+    "fish_and_chips_restaurant": "fish-and-chips", "puerto_rican_restaurant": "puerto-rican-food",
+    "soup_restaurant": "soup", "dominican_restaurant": "dominican-food", "german_restaurant": "german-food",
+    "venezuelan_restaurant": "venezuelan-food", "dim_sum_restaurant": "dim-sum", "ethiopian_restaurant": "ethiopian-food",
+    "turkish_restaurant": "turkish-food", "persian_restaurant": "persian-food", "honduran_restaurant": "honduran-food",
+    "pakistani_restaurant": "pakistani-food", "portuguese_restaurant": "portuguese-food",
+    "doner_kebab_restaurant": "kebabs", "taiwanese_restaurant": "taiwanese-food",
+    "cheesesteak_restaurant": "cheesesteak", "afghani_restaurant": "afghan-food", "nepalese_restaurant": "nepali-food",
+    "haitian_restaurant": "haitian-food", "mongolian_restaurant": "mongolian-food", "polish_restaurant": "polish-food",
+    "falafel_restaurant": "falafel", "guatemalan_restaurant": "guatemalan-food", "ecuadorian_restaurant": "ecuadorian-food",
+    "acai_bowls": "acai-bowls", "moroccan_restaurant": "moroccan-food", "malaysian_restaurant": "malaysian-food",
+    "dumpling_restaurant": "dumplings", "cambodian_restaurant": "cambodian-food", "burmese_restaurant": "burmese-food",
+    "russian_restaurant": "russian-food", "indonesian_restaurant": "indonesian-food",
+    "bangladeshi_restaurant": "bangladeshi-food", "nigerian_restaurant": "nigerian-food", "syrian_restaurant": "syrian-food",
+    "egyptian_restaurant": "egyptian-food", "armenian_restaurant": "armenian-food", "empanada_restaurant": "empanadas",
+    "ukrainian_restaurant": "ukrainian-food", "irish_restaurant": "irish-food", "georgian_restaurant": "georgian-food",
+    "uzbek_restaurant": "uzbek-food", "sri_lankan_restaurant": "sri-lankan-food", "israeli_restaurant": "israeli-food",
+    "cantonese_restaurant": "cantonese-food", "west_african_restaurant": "west-african-food",
+    "waffle_restaurant": "waffles", "hungarian_restaurant": "hungarian-food", "trinidadian_restaurant": "trinidadian-food",
+    "sichuan_restaurant": "sichuan-food", "laotian_restaurant": "laotian-food", "tibetan_restaurant": "tibetan-food",
+    "yemenite_restaurant": "yemeni-food", "wrap_restaurant": "wraps", "rotisserie_chicken_restaurant": "rotisserie-chicken",
+    "vegetarian_restaurant": "diet:vegetarian", "vegan_restaurant": "diet:vegan",
+    "gluten_free_restaurant": "diet:gluten-free", "kosher_restaurant": "diet:kosher",
+}
+
+# Dishes no restaurant type names on its own, and the kind of place that serves
+# them. Their guides show where those places are, and say so.
+DISH_VIA = {
+    "mexican_restaurant": "birria al-pastor carnitas mole pozole menudo burritos enchiladas tortas chilaquiles carne-asada "
+                          "nachos quesadillas tamales churros breakfast-burritos oaxacan-food mariscos fish-tacos",
+    "taco_restaurant": "birria al-pastor carnitas fish-tacos",
+    "salvadoran_restaurant": "pupusas", "venezuelan_restaurant": "arepas", "colombian_restaurant": "arepas",
+    "vietnamese_restaurant": "banh-mi pho bun-bo-hue spring-rolls",
+    "indian_restaurant": "biryani dosa tandoori chaat butter-chicken thali curry",
+    "nepalese_restaurant": "momos", "tibetan_restaurant": "momos",
+    "japanese_restaurant": "udon soba katsu tempura yakitori izakaya omakase teriyaki okonomiyaki matcha mochi",
+    "korean_restaurant": "korean-bbq bibimbap tteokbokki sundubu korean-fried-chicken",
+    "chinese_restaurant": "soup-dumplings peking-duck hand-pulled-noodles chinese-bbq fried-rice congee noodles dumplings",
+    "thai_restaurant": "pad-thai khao-soi curry",
+    "jamaican_restaurant": "jerk-chicken oxtail", "caribbean_restaurant": "jerk-chicken oxtail roti",
+    "trinidadian_restaurant": "roti",
+    "middle_eastern_restaurant": "hummus shawarma", "lebanese_restaurant": "hummus shawarma",
+    "mediterranean_restaurant": "hummus shawarma gyros", "greek_restaurant": "gyros",
+    "pizza_restaurant": "neapolitan-pizza new-york-pizza deep-dish-pizza detroit-style-pizza",
+    "italian_restaurant": "pasta italian-beef", "burger_restaurant": "smash-burgers",
+    "barbecue_restaurant": "brisket ribs pulled-pork", "steakhouse": "prime-rib",
+    "breakfast_and_brunch_restaurant": "pancakes waffles chicken-and-waffles biscuits-and-gravy eggs-benedict brunch",
+    "seafood_restaurant": "oysters lobster crab lobster-rolls clam-chowder seafood-boil crawfish fried-catfish ceviche",
+    "cajun_and_creole_restaurant": "gumbo jambalaya po-boys beignets crawfish shrimp-and-grits",
+    "southern_american_restaurant": "shrimp-and-grits meat-and-three biscuits-and-gravy",
+    "chicken_restaurant": "hot-chicken chicken-sandwich",
+    "dessert_shop": "cheesecake crepes", "ice_cream_shop": "gelato",
+    "polish_restaurant": "pierogi", "cuban_restaurant": "cuban-sandwich", "peruvian_restaurant": "ceviche",
+    "sandwich_shop": "cheesesteak cuban-sandwich wraps", "delicatessen": "bagels",
+}
+
 GENERIC = {"restaurant", "casual_eatery", "fast_food_restaurant", "cafe", "food_and_drink", ""}
 
 def cuisine(p):
@@ -167,6 +254,12 @@ def cuisine(p):
         return {"cafe": "Café", "fast_food_restaurant": "Fast food"}.get(p["cat"], "")
     words = tax.replace("_restaurant", "").split("_")
     return " ".join(w if w in ("and", "or") else w.capitalize() for w in words if w)
+
+def guide_of(p):
+    g = TAX_GUIDE.get(p["tax"])
+    if g:
+        return g
+    return "coffee" if p["cat"] == "cafe" else None
 
 def pick(lat, lng, radii):
     for radius in radii:
@@ -178,7 +271,7 @@ def pick(lat, lng, radii):
     def rank(dp):
         d, p = dp
         vague = not cuisine(p) and not FOODISH.search(p["n"])  # "Faith & Work Chicago": maybe not a restaurant at all
-        return (p["brand"], not p["web"], vague, p["cat"] in ("fast_food_restaurant", "cafe"), round(d, 2), -p["conf"], p["n"])
+        return (p["chain"], not p["web"], vague, p["cat"] in ("fast_food_restaurant", "cafe"), round(d, 2), -p["conf"], p["n"])
     cands.sort(key=rank)
     chosen, names, cuisines, streets = [], set(), {}, {}
     for d, p in cands:
@@ -201,6 +294,7 @@ def pick(lat, lng, radii):
     return [{
         "n": p["n"], "c": cu, "st": p["st"], "loc": p["loc"], "reg": p["reg"], "zip": p["zip"],
         "lat": p["lat"], "lng": p["lng"], "mi": round(d, 1),
+        **({"g": guide_of(p)} if guide_of(p) else {}),
     } for d, p, cu in chosen]
 
 result, short = {}, 0
@@ -213,4 +307,184 @@ for key, lat, lng, radii in targets:
 print("pages with a list", len(result), "without", short, file=sys.stderr)
 with open(OUT, "w") as f:
     json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "pages": result},
+              f, separators=(",", ":"), ensure_ascii=False)
+
+
+# ---------------------------------------------------------------------------
+# Food scene: what is around each campus and city, and where each food is.
+# Written to scripts/data/food-scene.json.
+# ---------------------------------------------------------------------------
+
+LABEL_FIX = {
+    "Texmex": "Tex-Mex", "Afghani": "Afghan", "Yemenite": "Yemeni", "Chicken Wings": "Wings",
+    "Delicatessen": "Deli", "Southern American": "Southern", "Ice Cream Shop": "Ice cream",
+    "Salad Bar": "Salad", "Tapas Bar": "Tapas", "Sandwich Shop": "Sandwiches", "Donut Shop": "Donuts",
+    "Bagel Shop": "Bagels", "Taco": "Tacos", "Dessert Shop": "Dessert", "Frozen Yogurt Shop": "Frozen yogurt",
+    "Gelato Shop": "Gelato", "Shaved Ice Shop": "Shaved ice", "Pancake House": "Pancakes",
+    "Acai Bowls": "Açaí bowls", "Doner Kebab": "Kebabs", "Breakfast and Brunch": "Breakfast & brunch",
+    "Bar and Grill": "Bar & grill", "Cajun and Creole": "Cajun & Creole", "Asian Fusion": "Asian fusion",
+    "Fish and Chips": "Fish & chips", "Hot Dog": "Hot dogs", "Burger": "Burgers", "Chicken": "Chicken",
+    "Soul Food": "Soul food", "Dim Sum": "Dim sum", "Candy Store": None, "Internet Cafe": None,
+    "Chocolatier": "Chocolate", "Cupcake Shop": "Cupcakes", "Pretzel Shop": "Pretzels", "Popcorn Shop": None,
+    "Theme": None, "Comfort Food": "Comfort food", "Health Food": "Health food", "Pop Up": None,
+    "Latin American": "Latin American", "Pan Asian": "Pan-Asian", "Middle Eastern": "Middle Eastern",
+}
+
+def scene_label(p):
+    if p["tax"] == "cafe" or (p["cat"] == "cafe" and p["tax"] in GENERIC):
+        return "Coffee"
+    if p["tax"] in GENERIC or not p["tax"]:
+        return None
+    lab = cuisine(p)
+    return LABEL_FIX.get(lab, lab)
+
+KIND_FIX = {
+    "bakery": "bakeries", "cafe": "coffee shops and cafés", "sandwich_shop": "sandwich shops",
+    "ice_cream_shop": "ice cream shops", "delicatessen": "delis", "diner": "diners", "donut_shop": "donut shops",
+    "dessert_shop": "dessert shops", "steakhouse": "steakhouses", "bagel_shop": "bagel shops", "gastropub": "gastropubs",
+    "salad_bar": "salad bars", "frozen_yogurt_shop": "frozen yogurt shops", "shaved_ice_shop": "shaved ice shops",
+    "pancake_house": "pancake houses", "tapas_bar": "tapas bars", "soul_food": "soul food restaurants",
+    "gelato_shop": "gelato shops", "acai_bowls": "açaí bowl shops", "texmex_restaurant": "Tex-Mex restaurants",
+    "chicken_wings_restaurant": "wing spots", "chicken_restaurant": "chicken restaurants",
+    "breakfast_and_brunch_restaurant": "breakfast and brunch spots", "middle_eastern_restaurant": "Middle Eastern restaurants",
+    "afghani_restaurant": "Afghan restaurants", "argentine_restaurant": "Argentine restaurants",
+    "yemenite_restaurant": "Yemeni restaurants", "southern_american_restaurant": "Southern restaurants",
+    "cajun_and_creole_restaurant": "Cajun and Creole restaurants", "doner_kebab_restaurant": "kebab shops",
+    "fish_and_chips_restaurant": "fish and chips shops", "asian_fusion_restaurant": "Asian fusion restaurants",
+    "dim_sum_restaurant": "dim sum restaurants", "hot_dog_restaurant": "hot dog spots", "burger_restaurant": "burger joints",
+    "pizza_restaurant": "pizzerias", "taco_restaurant": "taquerias and taco shops", "barbecue_restaurant": "barbecue joints",
+    "empanada_restaurant": "empanada shops", "wrap_restaurant": "wrap shops", "waffle_restaurant": "waffle houses",
+    "rotisserie_chicken_restaurant": "rotisserie chicken spots", "dumpling_restaurant": "dumpling houses",
+    "falafel_restaurant": "falafel shops", "poke_restaurant": "poké shops", "ramen_restaurant": "ramen shops",
+    "sushi_restaurant": "sushi restaurants", "soup_restaurant": "soup restaurants",
+    "cheesesteak_restaurant": "cheesesteak shops", "vegetarian_restaurant": "vegetarian restaurants",
+    "vegan_restaurant": "vegan restaurants", "gluten_free_restaurant": "gluten-free restaurants",
+    "kosher_restaurant": "kosher restaurants", "halal_restaurant": "halal restaurants",
+    "american_restaurant": "American restaurants", "seafood_restaurant": "seafood restaurants",
+    "mexican_restaurant": "Mexican restaurants", "comfort_food_restaurant": "comfort food restaurants",
+    "health_food_restaurant": "health food restaurants", "buffet_restaurant": "buffets",
+}
+
+def kind(tax):
+    if tax in KIND_FIX:
+        return KIND_FIX[tax]
+    words = tax.replace("_restaurant", "").split("_")
+    return " ".join(w.capitalize() for w in words) + " restaurants"
+
+for p in places:
+    p["g"] = guide_of(p)
+    p["lab"] = scene_label(p)
+
+national_lab = Counter(p["lab"] for p in places if p["lab"])
+national_labeled = sum(national_lab.values())
+lab_guide = {}
+for p in places:
+    if p["lab"] and p["g"] and p["lab"] not in lab_guide:
+        lab_guide[p["lab"]] = p["g"]
+
+def scene(lat, lng, radius, walk):
+    ps = near(lat, lng, radius)
+    if len(ps) < 5:
+        return None
+    labs = Counter(p["lab"] for d, p in ps if p["lab"])
+    labeled = sum(labs.values()) or 1
+    top = [[l, lab_guide.get(l, ""), n] for l, n in labs.most_common(12) if n >= 2][:10]
+    hi = []
+    for l, n in labs.items():
+        if n < 3 or l == "Coffee" or national_lab[l] < 500:
+            continue  # a rare type makes a silly multiple out of three places
+        ratio = (n / labeled) / (national_lab[l] / national_labeled)
+        if ratio >= 2:
+            hi.append([l, lab_guide.get(l, ""), round(ratio, 1), n])
+    hi.sort(key=lambda x: -x[2])
+    return {
+        "r": radius, "n": len(ps), "w": sum(1 for d, p in ps if d <= walk),
+        "loc": round(100 * sum(1 for d, p in ps if not p["chain"]) / len(ps)),
+        "ff": sum(1 for d, p in ps if p["cat"] == "fast_food_restaurant"),
+        "cof": labs.get("Coffee", 0), "top": top, "hi": hi[:3],
+    }
+
+pages_scene = {}
+city_g, city_t, camp_g, camp_t, city_own = {}, {}, {}, {}, {}
+def in_city(p, c):
+    return p["loc"].lower() == c["c"].lower() and p["reg"].upper() == c["r"]
+cities = load("us-cities.json")
+campuses = load("campuses.json") + load("campuses-more.json")
+def scene_at(lat, lng, radii, walk):
+    for r in radii:
+        sc = scene(lat, lng, r, walk)
+        if sc:
+            return sc
+    return None
+
+for c in campuses:
+    sc = scene_at(c["lat"], c["lng"], (1.0, 2.0, 4.0), 0.5)
+    if sc:
+        pages_scene["campus/" + c["s"]] = sc
+    ps = near(c["lat"], c["lng"], 1.0)
+    camp_g[c["s"]] = Counter(p["g"] for d, p in ps if p["g"])
+    camp_t[c["s"]] = Counter(p["tax"] for d, p in ps if p["tax"])
+for c in cities:
+    sc = scene_at(c["lat"], c["lng"], (2.0, 4.0), 0.5)
+    if sc:
+        pages_scene["eat/" + c["s"]] = sc
+    # A city's own restaurants are the ones whose address names it. A radius
+    # would hand Hoboken half of Manhattan.
+    ps = [p for d, p in near(c["lat"], c["lng"], 12.0) if in_city(p, c)]
+    city_own[c["s"]] = ps
+    city_g[c["s"]] = Counter(p["g"] for p in ps if p["g"])
+    city_t[c["s"]] = Counter(p["tax"] for p in ps if p["tax"])
+city_by = {c["s"]: c for c in cities}
+
+# Each guide: the restaurant types that serve it, directly or as "where it is usually found".
+guide_direct = {}
+for tax, g in TAX_GUIDE.items():
+    guide_direct.setdefault(g, []).append(tax)
+guide_direct.setdefault("coffee", []).append("cafe")
+guide_via = {}
+for tax, gs in DISH_VIA.items():
+    for g in gs.split():
+        guide_via.setdefault(g, []).append(tax)
+
+natl_g = Counter(p["g"] for p in places if p["g"])
+natl_t = Counter(p["tax"] for p in places if p["tax"])
+
+guides = {}
+for g in set(guide_direct) | set(guide_via):
+    direct = g in natl_g and natl_g[g] >= 20
+    if direct:
+        taxes = sorted(set(guide_direct.get(g, [])), key=lambda t: -natl_t.get(t, 0))
+        count_city = lambda s: city_g[s][g]
+        count_camp = lambda s: camp_g[s][g]
+        match = lambda p: p["g"] == g
+        natl = natl_g[g]
+    else:
+        taxes = sorted(set(guide_via.get(g, [])), key=lambda t: -natl_t.get(t, 0))
+        if not taxes:
+            continue
+        count_city = lambda s, T=tuple(taxes): sum(city_t[s][t] for t in T)
+        count_camp = lambda s, T=tuple(taxes): sum(camp_t[s][t] for t in T)
+        match = lambda p, T=tuple(taxes): p["tax"] in T
+        natl = sum(natl_t.get(t, 0) for t in taxes)
+    top_cities = sorted(((count_city(c["s"]), c["s"]) for c in cities), reverse=True)
+    top_cities = [[s, n] for n, s in top_cities if n >= 3][:8]
+    top_camps = sorted(((count_camp(c["s"]), c["s"]) for c in campuses), reverse=True)
+    top_camps = [[s, n] for n, s in top_camps if n >= 2][:6]
+    examples = []
+    for s, n in top_cities[:6]:
+        c = city_by[s]
+        cands = [(miles(c["lat"], c["lng"], p["lat"], p["lng"]), p) for p in city_own[s] if match(p) and not p["chain"]]
+        cands.sort(key=lambda dp: (not dp[1]["web"], round(dp[0], 1), -dp[1]["conf"]))
+        if cands:
+            d, p = cands[0]
+            examples.append({"n": p["n"], "st": p["st"], "loc": p["loc"], "reg": p["reg"], "zip": p["zip"],
+                             "lat": p["lat"], "lng": p["lng"], "city": s, "c": cuisine(p)})
+    if not top_cities and not top_camps:
+        continue
+    guides[g] = {"via": not direct, "kinds": [kind(t) for t in taxes[:2]], "natl": natl,
+                 "cities": top_cities, "campuses": top_camps, "ex": examples}
+
+print("scene pages", len(pages_scene), "guides with data", len(guides), file=sys.stderr)
+with open(os.path.join(REPO, "scripts", "data", "food-scene.json"), "w") as f:
+    json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "pages": pages_scene, "guides": guides},
               f, separators=(",", ":"), ensure_ascii=False)

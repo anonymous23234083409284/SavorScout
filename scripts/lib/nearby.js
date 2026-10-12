@@ -31,6 +31,15 @@ function distance(mi) {
   return `${mi} ${mi === 1 ? "mile" : "miles"}`;
 }
 
+/* The cuisine as a tag. Where a food guide covers it, the tag is a link to
+   that guide, so every restaurant listed on a campus or city page points into
+   the guides; elsewhere it is plain text. */
+function cuisinePill(p) {
+  if (!p.g) return `<span class="pill pill--sm pill--plain">${esc(p.c)}</span>`;
+  const href = p.g.startsWith("diet:") ? `/diet/${p.g.slice(5)}` : `/food/${p.g}`;
+  return `<a class="pill pill--sm" href="${href}">${esc(p.c)}</a>`;
+}
+
 /* `from` finishes the sentence "distance from …": "campus", "downtown Waco". */
 function spotsHtml(spots, { heading, from, appLink, ctaText }) {
   if (!spots) return "";
@@ -38,7 +47,7 @@ function spotsHtml(spots, { heading, from, appLink, ctaText }) {
       <h2>${esc(heading)}</h2>
       <ul class="spots">
         ${spots.map((p) => `<li><a href="${mapsLink(p)}" rel="nofollow noopener" target="_blank"><strong>${esc(p.n)}</strong></a>` +
-          `${p.c ? ` — ${esc(p.c)}` : ""} · ${distance(p.mi)}` +
+          `${p.c ? ` ${cuisinePill(p)}` : ""} · ${distance(p.mi)}` +
           `<br><span class="addr">${esc([p.st, p.loc].filter(Boolean).join(", "))}</span></li>`).join("\n        ")}
       </ul>
       <p class="note">

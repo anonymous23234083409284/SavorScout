@@ -64,6 +64,23 @@ const STYLE = `
   .ss-static .note{font-size:15px;color:#B9B1A6;border-left:2px solid rgba(255,158,31,.45);padding-left:14px;margin:18px 0}
   .ss-static .qa{font-size:18px;line-height:1.55;color:#FDF8F2;background:rgba(255,158,31,.07);
     border-left:3px solid #FF9E1F;padding:14px 18px;border-radius:0 8px 8px 0;margin:0 0 20px}
+  .ss-static .pills{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+  .ss-static .pills-label{font-size:15px;color:#B9B1A6;margin:6px 0 10px}
+  .ss-static a.pill,.ss-static .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:999px;
+    border:1px solid rgba(255,158,31,.38);background:rgba(255,158,31,.09);color:#FFD9A8;font-size:15px;line-height:1.3}
+  .ss-static a.pill:hover{background:rgba(255,158,31,.2);border-color:#FF9E1F}
+  .ss-static .pill--plain{border-color:rgba(232,227,220,.18);background:transparent;color:#B9B1A6}
+  .ss-static .pill--sm{padding:1px 9px;font-size:13px;vertical-align:1px}
+  .ss-static .pill .ct{font-size:12px;opacity:.7}
+  .ss-static .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 18px}
+  .ss-static .stat{border:1px solid rgba(232,227,220,.14);border-radius:12px;padding:12px 12px 10px;background:rgba(255,255,255,.02)}
+  .ss-static .stat b{display:block;font-size:clamp(22px,4.6vw,30px);line-height:1.1;color:#FDF8F2;letter-spacing:-.02em}
+  .ss-static .stat span{display:block;font-size:13px;line-height:1.35;color:#B9B1A6;margin-top:4px}
+  .ss-static .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;list-style:none;padding:0;margin:0 0 20px}
+  .ss-static .card{margin:0;border:1px solid rgba(232,227,220,.14);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)}
+  .ss-static .card a{border:0;font-weight:600;color:#FDF8F2}
+  .ss-static .card a:hover{color:#FF9E1F}
+  .ss-static .card .meta{display:block;font-size:14px;color:#B9B1A6;margin-top:2px}
   .ss-static .spots{list-style:none;padding-left:0}
   .ss-static .spots li{margin:0 0 14px}
   .ss-static .spots .addr{font-size:15px;color:#B9B1A6}

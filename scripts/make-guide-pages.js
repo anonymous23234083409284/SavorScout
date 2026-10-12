@@ -33,6 +33,10 @@ const WHO = "make-guide-pages";
    from Search Console data — see the header of each *-more / dishes-* file.
    The generator sees one array per class and nothing downstream knows. */
 const { GROUP_ENABLED } = require("./lib/features");
+const { guideFor, whereHtml, whereLd } = require("./lib/scene");
+/* Diet guides whose restriction is also a kind of restaurant in the data. */
+const DIET_DATA = { vegetarian: "diet:vegetarian", vegan: "diet:vegan", "gluten-free": "diet:gluten-free",
+  kosher: "diet:kosher", halal: "halal-food" };
 /* Group advice that is really a pitch for the parked rooms feature. Shown only
    while rooms are switched on; plain advice about eating as a group stays. */
 const ROOM_PITCH = /\broom\b|\brooms\b|veto|share (a|the) link/i;
@@ -211,6 +215,7 @@ function dishPage(x) {
 
       <h2>What to order</h2>
       ${defs(x.order)}
+${whereHtml(guideFor(x.s), x.n)}
 
       <h2>How Savor Scout looks for it</h2>
       <p>${esc(x.signals)}</p>
@@ -248,6 +253,7 @@ function dishPage(x) {
     author: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     publisher: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     mainEntityOfPage: url,
+    ...(whereLd(guideFor(x.s), x.n) ? { mentions: whereLd(guideFor(x.s), x.n) } : {}),
     breadcrumb: breadcrumb(trail),
   });
 
@@ -283,6 +289,8 @@ ${paras(x.wrong)}
       <h2>Which cuisines make this easier</h2>
       ${defs(x.cuisines)}
 
+${whereHtml(guideFor(DIET_DATA[x.s]), `${x.n} restaurants`)}
+
       <h2>How Savor Scout helps</h2>
       <p>${esc(x.tool)}</p>
       <p class="note"><strong>What this does not do.</strong> ${esc(x.limit)}</p>
@@ -310,6 +318,8 @@ ${paras(x.wrong)}
     author: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     publisher: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     mainEntityOfPage: url,
+    ...(whereLd(guideFor(DIET_DATA[x.s]), `${x.n} restaurants`)
+      ? { mentions: whereLd(guideFor(DIET_DATA[x.s]), `${x.n} restaurants`) } : {}),
     breadcrumb: breadcrumb(trail),
   });
 

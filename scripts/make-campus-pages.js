@@ -42,6 +42,7 @@ const {
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
+const { sceneFor, sceneHtml, neighboursHtml } = require("./lib/scene");
 
 const WHO = "make-campus-pages";
 
@@ -51,6 +52,7 @@ const WHO = "make-campus-pages";
 const { CAMPUSES, BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
+const CITY_PAGE = new Map(CITIES.map((x) => [`${x.c}|${x.r}`, x]));
 
 const shell = shellOrDie(WHO);
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
@@ -200,12 +202,6 @@ function nearestBigCity(c) {
   return best ? { ...best.o, miles: Math.max(1, Math.round(Math.sqrt(best.d2) * 69)) } : null;
 }
 
-/* Other campuses in the same state, so the set is browsable sideways rather
-   than only up to the hub. */
-function siblings(c, k = 6) {
-  return CAMPUSES.filter((o) => o.r === c.r && o.s !== c.s).slice(0, k);
-}
-
 /* Title/description test, started 11 October 2026.
    These 28 are the campus pages that had earned at least one click by then.
    They get a title that adds "Food" (the second most common phrasing in their
@@ -237,7 +233,6 @@ function page(c) {
   const sz = SIZE[c.sz];
   const near = nearestCities(c, 5);
   const big = nearestBigCity(c);
-  const sibs = siblings(c);
   const shortName = c.a || c.n;
   /* IPEDS files a college as four-year once it awards any bachelor's degree,
      which now includes many community colleges. Calling Glendale Community
@@ -290,7 +285,12 @@ function page(c) {
     `what you're craving instead of handing you a list. Free, no app, no signup.`;
 
   const stateNode = { name: STATES[c.r] || c.r, url: `${ORIGIN}/campus/${c.r.toLowerCase()}` };
-  const trail = [HOME, HUB, stateNode, { name: c.n, url }];
+  /* Home > Campuses > State > Town > Campus. The town step only where the town
+     has its own page, so every crumb is a real place to go. */
+  const town = CITY_PAGE.get(`${c.c}|${c.r}`);
+  const trail = [HOME, HUB, stateNode,
+    ...(town ? [{ name: `${town.c}, ${town.r}`, url: `${ORIGIN}/eat/${town.s}` }] : []),
+    { name: c.n, url }];
   const appLink = `/?near=${encodeURIComponent(place)}`;
 
   /* Drawn from the setting rather than a fixed list, plus one that follows from
@@ -316,6 +316,7 @@ ${spotsHtml(spots, {
   appLink,
   ctaText: `Ask Savor Scout near ${shortName}`,
 })}
+${sceneHtml(sceneFor(`campus/${c.s}`), { where: shortName, around: `around ${shortName}`, isCampus: true })}
 
       <h2>Eating around ${esc(shortName)}</h2>
       <p class="lede">${esc(sc.problem(shortName))}</p>
@@ -381,13 +382,10 @@ ${GROUP_ENABLED ? `
       <ul>
         ${lvl.guides.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("\n        ")}
       </ul>
-${sibs.length ? `
-      <h2>Other campuses in ${esc(c.r)}</h2>
-      <ul>
-        ${sibs.map((o) => `<li><a href="/campus/${o.s}">${esc(o.n)}</a> — ${esc(o.c)}</li>`).join("\n        ")}
-      </ul>` : ""}
+${neighboursHtml(c)}
       <hr>
-      <p><a href="/campus/">All ${CAMPUSES.length} campuses</a> &middot;
+      <p><a href="/campus/${c.r.toLowerCase()}">All campuses in ${esc(STATES[c.r] || c.r)}</a> &middot;
+         <a href="/campus/">All ${CAMPUSES.length} campuses</a> &middot;
          <a href="/eat/">Cities</a> &middot;
          <a href="/">Savor Scout home</a></p>`;
 

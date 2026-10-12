@@ -43,6 +43,7 @@ const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-citie
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
+const { sceneFor, sceneHtml, cityCampusesHtml } = require("./lib/scene");
 const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 /* Hand-written food identity for the 50 largest cities.
@@ -336,6 +337,7 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
       <h1>Where to eat in ${esc(place)}</h1>
       <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
 ${spots}
+${sceneHtml(sceneFor(`eat/${slug}`), { where: `central ${name}`, around: `in ${name}`, isCampus: false })}
 
       <h2>The food in ${esc(name)}</h2>
 ${intro}
@@ -368,6 +370,7 @@ ${GROUP_ENABLED ? `
       </ul>
       <p><a href="/eat/${region.toLowerCase()}">All ${BY_STATE[region].length}
          ${esc(STATES[region] || region)} cities &rarr;</a></p>
+${cityCampusesHtml(city)}
 
       <h2>How this differs from Google Maps and Yelp</h2>
       <p>

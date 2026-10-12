@@ -2146,7 +2146,7 @@ function App() {
               ← Back to browsing
             </button>
             <p className="hero-kicker">Sign in to find your one</p>
-            <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>
+            <h1 className="hero-title">Find the best restaurant<em>for you.</em></h1>
 
             <form onSubmit={handleAuthSubmit} className="gate-form">
               <input type="email" placeholder="Email" value={email} autoComplete="email" onChange={(e) => setEmail(e.target.value)} />
@@ -2378,8 +2378,8 @@ function App() {
                   page's own heading as the single h1. Styling is unchanged —
                   .hero-title carries it either way. */}
               {STATIC_PAGE
-                ? <h2 className="hero-title">Skip the scroll.<em>Get the one.</em></h2>
-                : <h1 className="hero-title">Skip the scroll.<em>Get the one.</em></h1>}
+                ? <h2 className="hero-title">Find the best restaurant<em>for you.</em></h2>
+                : <h1 className="hero-title">Find the best restaurant<em>for you.</em></h1>}
 
               <div className="searchbar">
                 <input

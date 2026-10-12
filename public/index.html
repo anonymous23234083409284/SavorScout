@@ -31,6 +31,7 @@
             /^192\.168\./.test(h) ||
             /^172\.(1[6-9]|2[0-9]|3[01])\./.test(h)) {
           window['ga-disable-G-YYT8CPXNXS'] = true;
+          window['ga-disable-G-H8ZSJM5DC4'] = true;
         }
       })();
 
@@ -79,6 +80,11 @@
          look for. App.js then sends a page_view for each subsequent view and
          skips the first, so the two never double count. */
       gtag('config', 'G-YYT8CPXNXS');
+      /* A second GA4 property, added 12 October 2026. One gtag.js serves both:
+         a second config line is Google's documented way to send to two
+         properties, and every event below that names no send_to reaches both.
+         Remove either line to stop sending to that property. */
+      gtag('config', 'G-H8ZSJM5DC4');
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YYT8CPXNXS"></script>
 

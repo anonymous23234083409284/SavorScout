@@ -94,8 +94,9 @@ function page(shell, t, all) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(t.name)}</h1>
-      ${characterSvg(t)}
       <p><strong>${esc(t.tagline)}</strong></p>
+      <p><a class="cta" href="/?quiz=1">Take the taste quiz &rarr;</a></p>
+      ${characterSvg(t)}
       <p>${esc(t.blurb)}</p>
 
       <h2>What being ${esc(t.name)} actually means</h2>

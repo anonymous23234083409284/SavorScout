@@ -139,7 +139,8 @@ function situationPage(x) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
-      <p class="lede">${esc(x.lede)}</p>${qaHtml(x.qa)}
+      <p class="lede">${esc(x.lede)}</p>
+      <p><a class="cta" href="${app(x.query)}">Search &ldquo;${esc(x.query)}&rdquo; &rarr;</a></p>${qaHtml(x.qa)}
 ${paras(x.why)}
 
       <h2>${esc(x.look.intro)}</h2>
@@ -202,7 +203,8 @@ function dishPage(x) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
-      <p class="lede">${esc(x.lede)}</p>${qaHtml(x.qa)}
+      <p class="lede">${esc(x.lede)}</p>
+      <p><a class="cta" href="${app(x.n)}">Find ${esc(x.n)} near you &rarr;</a></p>${qaHtml(x.qa)}
 
       <h2>What separates a good one from a bad one</h2>
       ${defs(x.good)}
@@ -269,7 +271,8 @@ function dietPage(x) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
-      <p class="lede">${esc(x.lede)}</p>${qaHtml(x.qa)}
+      <p class="lede">${esc(x.lede)}</p>
+      <p><a class="cta" href="${app(x.n)}">Search ${esc(x.n)} options near you &rarr;</a></p>${qaHtml(x.qa)}
 
       <h2>What actually goes wrong</h2>
 ${paras(x.wrong)}

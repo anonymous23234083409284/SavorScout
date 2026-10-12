@@ -301,8 +301,6 @@ function page(shell, city) {
   /* The written opening, for the 50 cities that have one. */
   const intro = m ? `      <p class="lede">${esc(m.identity[0])}</p>
 ${m.identity.slice(1).map((x) => `      <p>${esc(x)}</p>`).join("\n")}
-      <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
-${spots}
 
       <h2>What to eat in ${esc(name)}</h2>
       <ul>
@@ -331,13 +329,15 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
         dish, rather than sorting places by overall star rating. Free, runs in the browser,
         and one search needs no account.
       </p>
-      <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
-${spots}
 
       <h2>Eating out in ${esc(name)}</h2>`;
 
   const body = `      ${crumbHtml(trail)}
       <h1>Where to eat in ${esc(place)}</h1>
+      <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
+${spots}
+
+      <h2>The food in ${esc(name)}</h2>
 ${intro}
       <p>
         ${esc(name)} has a population of about ${fmt(pop)}. ${esc(copy.angle)}

@@ -309,6 +309,15 @@ function page(c) {
 
   const body = `      ${crumbHtml(trail)}
       <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
+      <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
+${spotsHtml(spots, {
+  heading: `A few places to eat near ${shortName}`,
+  from: "campus",
+  appLink,
+  ctaText: `Ask Savor Scout near ${shortName}`,
+})}
+
+      <h2>Eating around ${esc(shortName)}</h2>
       <p class="lede">${esc(sc.problem(shortName))}</p>
 
       <p>
@@ -317,13 +326,6 @@ function page(c) {
         to be open right now — and it reads menus and reviews for those specific things rather
         than sorting places by overall star rating.
       </p>
-      <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
-${spotsHtml(spots, {
-  heading: `A few places to eat near ${shortName}`,
-  from: "campus",
-  appLink,
-  ctaText: `Ask Savor Scout near ${shortName}`,
-})}
 
       <h2>The campus</h2>
       <ul>

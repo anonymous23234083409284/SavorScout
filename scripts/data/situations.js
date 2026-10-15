@@ -45,7 +45,7 @@ module.exports = [
       "The two classic errors are ordering for the person you were last night — a giant plate you will look at once and push away — and going somewhere fashionable, where brunch means a ninety-minute wait in direct sunlight. Also: anything that arrives on a wooden board.",
     group:
       "Hungover groups are the worst decision-makers alive, because everyone is agreeable and nobody is willing to be the one who picks. This is the single best use of a Savor Scout room — share a link, everyone taps what they would eat, and it is settled in ninety seconds without anyone having to form an opinion out loud.",
-    dishes: ["pho", "ramen", "breakfast", "tacos", "burgers"],
+    dishes: ["pho", "ramen", "soup", "breakfast", "tacos", "burgers"],
     related: ["late-night", "nothing-sounds-good", "cant-decide"],
   },
 

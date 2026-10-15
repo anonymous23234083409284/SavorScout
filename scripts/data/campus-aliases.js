@@ -21,6 +21,7 @@ module.exports = {
   "university-of-missouri-kansas-city": ["UMKC"],
   "saint-louis-university": ["SLU"],
   "new-york-university": ["NYU"],
+  "azusa-pacific-university": ["APU"],
   "university-of-nevada-reno": ["UNR"],
   "the-university-of-west-florida": ["UWF"],
   "california-state-university-fullerton": ["CSUF", "Cal State Fullerton"],

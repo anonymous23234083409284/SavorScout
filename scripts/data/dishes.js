@@ -142,7 +142,7 @@ module.exports = [
     ],
     signals:
       "Ramen searches weight specialisation heavily: a menu that is mostly ramen outranks a broad Japanese menu with one ramen item, regardless of rating. Named broth styles, mentions of house-made noodles, ajitama and counter seating all count. The card will tell you which of those it found rather than just handing you a number.",
-    related: ["japanese-food", "noodles", "pho"],
+    related: ["japanese-food", "noodles", "pho", "soup"],
     situations: ["hungover", "eating-alone", "cold-rainy-night", "sad"],
   },
 

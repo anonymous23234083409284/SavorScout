@@ -357,6 +357,7 @@ KIND_FIX = {
     "rotisserie_chicken_restaurant": "rotisserie chicken spots", "dumpling_restaurant": "dumpling houses",
     "falafel_restaurant": "falafel shops", "poke_restaurant": "poké shops", "ramen_restaurant": "ramen shops",
     "sushi_restaurant": "sushi restaurants", "soup_restaurant": "soup restaurants",
+    "vietnamese_restaurant": "Vietnamese pho and noodle houses",
     "cheesesteak_restaurant": "cheesesteak shops", "vegetarian_restaurant": "vegetarian restaurants",
     "vegan_restaurant": "vegan restaurants", "gluten_free_restaurant": "gluten-free restaurants",
     "kosher_restaurant": "kosher restaurants", "halal_restaurant": "halal restaurants",
@@ -449,9 +450,16 @@ for tax, gs in DISH_VIA.items():
 natl_g = Counter(p["g"] for p in places if p["g"])
 natl_t = Counter(p["tax"] for p in places if p["tax"])
 
+# Guides whose food lives at several kinds of place, as the guide itself says.
+# Soup: "pho shops, ramen shops ... when the soup is the reason the restaurant
+# exists". Dedicated soup restaurants alone are 656 listings, mostly one chain.
+GUIDE_SET = {"soup": ["soup_restaurant", "ramen_restaurant", "vietnamese_restaurant"]}
+for g, T in GUIDE_SET.items():
+    guide_via[g] = T
+
 guides = {}
 for g in set(guide_direct) | set(guide_via):
-    direct = g in natl_g and natl_g[g] >= 20
+    direct = g in natl_g and natl_g[g] >= 20 and g not in GUIDE_SET
     if direct:
         taxes = sorted(set(guide_direct.get(g, [])), key=lambda t: -natl_t.get(t, 0))
         count_city = lambda s: city_g[s][g]
@@ -459,7 +467,7 @@ for g in set(guide_direct) | set(guide_via):
         match = lambda p: p["g"] == g
         natl = natl_g[g]
     else:
-        taxes = sorted(set(guide_via.get(g, [])), key=lambda t: -natl_t.get(t, 0))
+        taxes = list(GUIDE_SET[g]) if g in GUIDE_SET else sorted(set(guide_via.get(g, [])), key=lambda t: -natl_t.get(t, 0))
         if not taxes:
             continue
         count_city = lambda s, T=tuple(taxes): sum(city_t[s][t] for t in T)
@@ -467,9 +475,9 @@ for g in set(guide_direct) | set(guide_via):
         match = lambda p, T=tuple(taxes): p["tax"] in T
         natl = sum(natl_t.get(t, 0) for t in taxes)
     top_cities = sorted(((count_city(c["s"]), c["s"]) for c in cities), reverse=True)
-    top_cities = [[s, n] for n, s in top_cities if n >= 3][:8]
+    top_cities = [[s, n] for n, s in top_cities if n >= 3][:12]
     top_camps = sorted(((count_camp(c["s"]), c["s"]) for c in campuses), reverse=True)
-    top_camps = [[s, n] for n, s in top_camps if n >= 2][:6]
+    top_camps = [[s, n] for n, s in top_camps if n >= 2][:10]
     examples = []
     for s, n in top_cities[:6]:
         c = city_by[s]
@@ -481,7 +489,7 @@ for g in set(guide_direct) | set(guide_via):
                              "lat": p["lat"], "lng": p["lng"], "city": s, "c": cuisine(p)})
     if not top_cities and not top_camps:
         continue
-    guides[g] = {"via": not direct, "kinds": [kind(t) for t in taxes[:2]], "natl": natl,
+    guides[g] = {"via": not direct, "kinds": [kind(t) for t in taxes[:3 if g in GUIDE_SET else 2]], "natl": natl,
                  "cities": top_cities, "campuses": top_camps, "ex": examples}
 
 print("scene pages", len(pages_scene), "guides with data", len(guides), file=sys.stderr)

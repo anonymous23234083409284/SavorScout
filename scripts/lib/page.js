@@ -76,6 +76,9 @@ const STYLE = `
   .ss-static .stat{border:1px solid rgba(232,227,220,.14);border-radius:12px;padding:12px 12px 10px;background:rgba(255,255,255,.02)}
   .ss-static .stat b{display:block;font-size:clamp(22px,4.6vw,30px);line-height:1.1;color:#FDF8F2;letter-spacing:-.02em}
   .ss-static .stat span{display:block;font-size:13px;line-height:1.35;color:#B9B1A6;margin-top:4px}
+  .ss-static .ranks{list-style:none;padding-left:0}
+  .ss-static .ranks li{margin:0 0 8px}
+  .ss-static .ranks b{display:inline-block;min-width:38px;color:#FF9E1F;font-variant-numeric:tabular-nums}
   .ss-static .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;list-style:none;padding:0;margin:0 0 20px}
   .ss-static .card{margin:0;border:1px solid rgba(232,227,220,.14);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)}
   .ss-static .card a{border:0;font-weight:600;color:#FDF8F2}

@@ -916,7 +916,7 @@ module.exports = [
     ],
     signals:
       "Udon searches weight specialisation heavily — a shop doing only udon and tempura over a general Japanese menu — and read for handmade and dashi language in reviews, which is what people mention when a shop is genuinely good.",
-    related: ["japanese-food", "ramen", "noodles"],
+    related: ["japanese-food", "ramen", "noodles", "soup"],
     situations: ["cold-rainy-night", "eating-alone", "stressed"],
   },
   {

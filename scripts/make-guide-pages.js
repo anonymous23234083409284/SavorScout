@@ -104,7 +104,32 @@ const qaHtml = (qa) => qa ? `
 const SMALL = new Set(["and", "or", "of", "the", "a", "with"]);
 const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase())
   .replace(/ (And|Or|Of|The|A|With)\b/g, (m, w) => (SMALL.has(w.toLowerCase()) ? " " + w.toLowerCase() : m));
+/* Search copy for guides Google already shows but nobody clicks, written to the
+   words people search with (Search Console, 15 October 2026):
+     /food/korean-food  108 impressions, position 39, 0 clicks
+     /food/soup          68 impressions, position 33, 0 clicks
+   The title leads with the query, the description promises what the page has. */
+const SEARCH_COPY = {
+  "korean-food": {
+    seoTitle: [
+      "Korean Food & Korean BBQ Near You — What to Order | Savor Scout",
+      "Korean Food & Korean BBQ Near You — What to Order",
+    ],
+    h1: "Korean food near you: how to find a good one",
+    desc: "Korean BBQ, sundubu, bibimbap and fried chicken: what to order, how the banchan tells you a kitchen is good, and where the most Korean restaurants are.",
+  },
+  soup: {
+    seoTitle: [
+      "Good Soup Near You — Pho, Ramen & Where to Find It | Savor Scout",
+      "Good Soup Near You — Pho, Ramen & Where to Find It",
+    ],
+    h1: "Good soup near you, and how to find it",
+    desc: "Pho, ramen, pozole, matzo ball: where good soup actually is, how to tell a kitchen makes its own, and which soups survive being taken to go.",
+  },
+};
+
 function dishTitle(x) {
+  if (x.seoTitle) return fitTitle(x.seoTitle);
   if (/-food$/.test(x.s)) {
     const base = titleCase(x.near || x.n.replace(/ food$/i, ""));
     return fitTitle([
@@ -195,6 +220,7 @@ ${x.group && (GROUP_ENABLED || !ROOM_PITCH.test(x.group)) ? `
 const FOOD_HUB = { name: "Food guides", url: `${ORIGIN}/food/` };
 
 function dishPage(x) {
+  if (SEARCH_COPY[x.s]) x = { ...x, ...SEARCH_COPY[x.s] };
   const url = `${ORIGIN}/food/${x.s}`;
   const trail = [HOME, FOOD_HUB, { name: x.n, url }];
 

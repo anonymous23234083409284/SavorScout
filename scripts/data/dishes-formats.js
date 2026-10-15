@@ -688,7 +688,7 @@ module.exports = [
       ["Soba-yu", "To finish."],
     ],
     signals: "The search reads for handmade, buckwheat, juwari and soba-ya, and separates soba restaurants from ramen and general Japanese menus.",
-    related: ["udon", "noodles", "japanese-food"],
+    related: ["udon", "noodles", "japanese-food", "soup"],
     situations: ["hot-day", "eating-healthy", "eating-alone"],
   },
   {
@@ -986,7 +986,7 @@ module.exports = [
       ["Vietnamese iced coffee", "To finish."],
     ],
     signals: "The search reads for bún bò Huế, lemongrass and spicy broth, and favours Vietnamese restaurants where reviewers mention it specifically, since many pho shops make it only as an afterthought.",
-    related: ["pho", "vietnamese-food", "noodles"],
+    related: ["pho", "vietnamese-food", "noodles", "soup"],
     situations: ["hungover", "cold-rainy-night", "sick-with-a-cold"],
   },
   {

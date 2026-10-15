@@ -42,7 +42,21 @@ const {
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
-const { sceneFor, sceneHtml, neighboursHtml } = require("./lib/scene");
+const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, ranksHtml } = require("./lib/scene");
+
+/* Pages Google ranks on page one without anyone clicking get a description
+   built from their own numbers: a count and three cuisines say more about what
+   is on the page than any general line can. Search Console, 15 October 2026:
+   /campus/azusa-pacific-university, 54 impressions, position 10.1, 0 clicks. */
+const DATA_DESC = new Set(["azusa-pacific-university"]);
+function dataDesc(c, sc) {
+  const r = sc.r === 1 ? "a mile" : `${sc.r} miles`;
+  const top = sc.top.filter((t) => t[0] !== "Coffee").slice(0, 3).map((t) => inline(t[0], t[1]));
+  const lead = top.length ? ` ${top[0][0].toUpperCase()}${listSentence(top).slice(1)} lead the list.` : "";
+  return `${sc.n.toLocaleString("en-US")} places to eat within ${r} of ${c.n}` +
+    `${sc.w ? `, ${sc.w.toLocaleString("en-US")} of them a ten-minute walk away` : ""}.${lead}` +
+    ` Five to start with, or one picked for your craving. Free.`;
+}
 
 const WHO = "make-campus-pages";
 
@@ -277,7 +291,9 @@ function page(c) {
     `Food Near ${c.n}`,
     ...(c.a && c.a !== c.n ? [`Restaurants Near ${c.a} — ${place} | Savor Scout`] : []),
   ]);
-  const desc = test
+  const sc0 = sceneFor(`campus/${c.s}`);
+  const desc = DATA_DESC.has(c.s) && sc0 ? dataDesc(c, sc0)
+    : test
     ? `Where to eat near ${abbr || c.n}: tell Savor Scout your budget, craving, diet, or that ` +
       `it has to be open late, and it picks one spot near ${place} and shows why. Free, no signup.`
     :
@@ -317,6 +333,7 @@ ${spotsHtml(spots, {
   ctaText: `Ask Savor Scout near ${shortName}`,
 })}
 ${sceneHtml(sceneFor(`campus/${c.s}`), { where: shortName, around: `around ${shortName}`, isCampus: true })}
+${ranksHtml("campus", c.s, shortName)}
 
       <h2>Eating around ${esc(shortName)}</h2>
       <p class="lede">${esc(sc.problem(shortName))}</p>

@@ -180,6 +180,46 @@ function cityCampusesHtml(city) {
       </ul>`;
 }
 
+/* ---- the way back: guide -> place, and place -> guide ------------------ */
+
+/* Each food guide lists the cities and campuses with the most of its food.
+   This is the reverse: on those city and campus pages, a line per guide saying
+   where the place ranks, linking back. Every link in the guide now has a link
+   returning to it, so the guide and the places it names reinforce each other.
+   Only guides counted from their own restaurant type: a dish found "at Mexican
+   restaurants" would repeat the same Mexican count a dozen times. */
+const DISH_NAME = new Map([
+  ...require("../data/dishes"), ...require("../data/dishes-more"), ...require("../data/dishes-cuisines"),
+  ...require("../data/dishes-formats"), ...require("../data/dishes-formats-2"),
+].map((d) => [d.s, d.n]));
+const guideName = (g) => (g.startsWith("diet:") ? `${g.slice(5)} food` : DISH_NAME.get(g));
+
+const RANKS = { city: new Map(), campus: new Map() };
+for (const [g, d] of Object.entries(DATA.guides)) {
+  if (d.via || !guideName(g)) continue;
+  for (const [type, list] of [["city", d.cities], ["campus", d.campuses]]) {
+    list.forEach(([s, n], i) => {
+      if (!RANKS[type].has(s)) RANKS[type].set(s, []);
+      RANKS[type].get(s).push({ g, rank: i + 1, n, kind: d.kinds[0] });
+    });
+  }
+}
+
+function ranksHtml(type, slug, name) {
+  const list = (RANKS[type].get(slug) || []).sort((a, b) => a.rank - b.rank || b.n - a.n).slice(0, 8);
+  if (!list.length) return "";
+  const among = type === "city"
+    ? `the ${fmt(CITIES.length)} US cities on Savor Scout`
+    : `the ${fmt(CAMPUSES.length)} campuses on Savor Scout, counting what is within a mile`;
+  return `
+      <h2>Where ${esc(name)} stands out</h2>
+      <p>Among ${among}, ${esc(name)} ranks near the top for these. Each guide covers what to order and how to tell a good one.</p>
+      <ul class="ranks">
+        ${list.map((r) => `<li><b>#${r.rank}</b> for <a href="${guideHref(r.g)}">${esc(guideName(r.g))}</a>` +
+          ` — ${fmt(r.n)} ${esc(r.kind)} listed</li>`).join("\n        ")}
+      </ul>`;
+}
+
 /* ---- food and diet guides ----------------------------------------------- */
 
 function guideFor(key) {
@@ -257,5 +297,5 @@ function whereLd(g, name) {
 
 module.exports = {
   sceneFor, sceneHtml, neighboursHtml, cityCampusesHtml, guideFor, whereHtml, whereLd, guideHref, pill,
-  systemOf,
+  systemOf, inline, listSentence, ranksHtml,
 };

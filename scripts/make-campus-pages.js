@@ -42,7 +42,8 @@ const {
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
-const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, leaders, ranksHtml, faq, withFaq } = require("./lib/scene");
+const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, leaders, ranksHtml, faq, withFaq,
+  cravingsHtml, budgetHtml, openNowHtml } = require("./lib/scene");
 
 /* Pages Google ranks on page one without anyone clicking get a description
    built from their own numbers: a count and three cuisines say more about what
@@ -411,7 +412,10 @@ ${spotsHtml(spots, {
   ctaText: `Ask Savor Scout near ${shortName}`,
 })}
 ${sceneHtml(sceneFor(`campus/${c.s}`), { where: shortName, around: `around ${shortName}`, isCampus: true })}
+${cravingsHtml(sc0, `near ${shortName}`)}
 ${ranksHtml("campus", c.s, shortName)}
+${budgetHtml(sc0, shortName, appLink)}
+${openNowHtml(shortName, appLink)}
 
       <h2>Eating around ${esc(shortName)}</h2>
       <p class="lede">${esc(sc.problem(shortName))}</p>

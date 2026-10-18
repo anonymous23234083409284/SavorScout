@@ -43,7 +43,7 @@ const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-citie
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
-const { sceneFor, sceneHtml, cityCampusesHtml, ranksHtml, faq, withFaq } = require("./lib/scene");
+const { sceneFor, sceneHtml, cityCampusesHtml, ranksHtml, faq, withFaq, cravingsHtml, openNowHtml } = require("./lib/scene");
 const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 /* Hand-written food identity for the 50 largest cities.
@@ -339,7 +339,9 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
       <p><a class="cta" href="${app}">Find somewhere to eat in ${esc(name)} &rarr;</a></p>
 ${spots}
 ${sceneHtml(sceneFor(`eat/${slug}`), { where: `central ${name}`, around: `in ${name}`, isCampus: false })}
+${cravingsHtml(sceneFor(`eat/${slug}`), `in ${name}`)}
 ${ranksHtml("city", slug, name)}
+${openNowHtml(name, app)}
 
       <h2>The food in ${esc(name)}</h2>
 ${intro}

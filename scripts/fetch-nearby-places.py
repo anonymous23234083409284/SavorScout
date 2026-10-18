@@ -421,6 +421,15 @@ def street_of(addr):
     st = " ".join(out)
     return st if 3 <= len(st) <= 40 and not re.search(r"\d{3,}", st.split()[0]) else None
 
+# East and Southeast Asian kitchens, for /food/asian-food and the line on each
+# campus and city page that points to it. South Asian is its own guide set.
+ASIAN = {"chinese_restaurant", "japanese_restaurant", "korean_restaurant", "thai_restaurant", "vietnamese_restaurant",
+         "asian_restaurant", "asian_fusion_restaurant", "pan_asian_restaurant", "sushi_restaurant", "ramen_restaurant",
+         "dim_sum_restaurant", "filipino_restaurant", "taiwanese_restaurant", "cantonese_restaurant", "sichuan_restaurant",
+         "malaysian_restaurant", "indonesian_restaurant", "burmese_restaurant", "cambodian_restaurant", "laotian_restaurant",
+         "mongolian_restaurant", "hong_kong_style_cafe", "dumpling_restaurant", "shanghainese_restaurant", "hunan_restaurant",
+         "singaporean_restaurant", "southeast_asian_restaurant", "fujian_restaurant", "wok_restaurant"}
+
 def scene(lat, lng, radius, walk):
     ps = near(lat, lng, radius)
     if len(ps) < 5:
@@ -456,7 +465,10 @@ def scene(lat, lng, radius, walk):
     # handful: three miles is a short drive or bus ride, and says more.
     wide = len(near(lat, lng, 3.0)) if radius < 3 else len(ps)
     return {
-        "st": food_streets, "n3": wide,
+        "st": food_streets, "n3": wide, "as": sum(1 for d, p in ps if p["tax"] in ASIAN),
+        # Counts for the core cuisine guides, so a page links to one only where
+        # that cuisine is actually there, whatever its place in the top ten.
+        "cz": {k: labs.get(k, 0) for k in ("Mexican", "Korean", "Vietnamese")},
         "r": radius, "n": len(ps), "w": sum(1 for d, p in ps if d <= walk),
         "loc": round(100 * sum(1 for d, p in ps if not p["chain"]) / len(ps)),
         "ff": sum(1 for d, p in ps if p["cat"] == "fast_food_restaurant"),
@@ -512,7 +524,10 @@ natl_t = Counter(p["tax"] for p in places if p["tax"])
 # Guides whose food lives at several kinds of place, as the guide itself says.
 # Soup: "pho shops, ramen shops ... when the soup is the reason the restaurant
 # exists". Dedicated soup restaurants alone are 656 listings, mostly one chain.
-GUIDE_SET = {"soup": ["soup_restaurant", "ramen_restaurant", "vietnamese_restaurant"]}
+GUIDE_SET = {"soup": ["soup_restaurant", "ramen_restaurant", "vietnamese_restaurant"],
+             "asian-food": sorted(ASIAN)}
+# How a guide names what it counts, where one type's label would not do.
+GUIDE_KINDS = {"asian-food": ["Chinese, Japanese, Korean, Thai, Vietnamese and other East and Southeast Asian restaurants"]}
 # Within those types, the places that are actually about the soup. A
 # Vietnamese grill or banh mi shop is not a pho house.
 SOUP_NAME = re.compile(r"(?i)\b(pho|phở|bun bo|bún|hu tieu|hủ tiếu|noodle|soup|ramen|udon|menudo|pozole|caldo)")
@@ -562,7 +577,8 @@ for g in set(guide_direct) | set(guide_via):
                              "lat": p["lat"], "lng": p["lng"], "city": s, "c": cuisine(p)})
     if not top_cities and not top_camps:
         continue
-    guides[g] = {"via": not direct, "kinds": [kind(t) for t in taxes[:3 if g in GUIDE_SET else 2]], "natl": natl,
+    guides[g] = {"via": not direct and g not in GUIDE_KINDS,
+                 "kinds": GUIDE_KINDS.get(g) or [kind(t) for t in taxes[:3 if g in GUIDE_SET else 2]], "natl": natl,
                  "cities": top_cities, "campuses": top_camps, "ex": examples}
 
 print("scene pages", len(pages_scene), "guides with data", len(guides), file=sys.stderr)

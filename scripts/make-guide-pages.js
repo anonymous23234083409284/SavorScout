@@ -127,6 +127,28 @@ const SEARCH_COPY = {
     h1: "How to find a good fried chicken sandwich near you",
     desc: "Brined thigh, a craggy crust, a toasted bun, sour pickles: what makes a good fried chicken sandwich. Savor Scout favors chicken shops over burger places.",
   },
+  /* The cuisine guides with the biggest "near me" searches behind them (Semrush,
+     October 2026): Mexican food near me 1.2M a month, Asian 301K, Vietnamese
+     165K, Korean 135K. Titles lead with exactly that phrase. */
+  "asian-food": {
+    seoTitle: ["Asian Food Near You: Chinese, Japanese, Korean, Thai & More"],
+  },
+  "mexican-food": {
+    seoTitle: [
+      "Mexican Food Near You: Birria, Mole & What to Order | Savor Scout",
+      "Mexican Food Near You: Birria, Mole & What to Order",
+    ],
+    h1: "Mexican food near you: how to find a good one",
+    desc: "Oaxacan moles, Yucatecan cochinita, birria and barbacoa: how to tell a serious Mexican kitchen from a combo-plate menu, what to order, and where to look.",
+  },
+  "vietnamese-food": {
+    seoTitle: [
+      "Vietnamese Food Near You: Pho, Bánh Mì & Beyond | Savor Scout",
+      "Vietnamese Food Near You: Pho, Bánh Mì & Beyond",
+    ],
+    h1: "Vietnamese food near you: beyond pho",
+    desc: "Bun cha, bun bo Hue, com tam, banh mi: the Vietnamese dishes worth knowing beyond pho, and how to tell a serious kitchen near you.",
+  },
   "venezuelan-food": {
     seoTitle: ["Venezuelan Food Near You: Pabellón, Cachapas and Tequeños"],
     h1: "How to find good Venezuelan food near you",
@@ -175,6 +197,22 @@ function inSentence(n) {
 const SHELLFISH = new Set(["seafood", "sushi", "oysters", "crab", "lobster", "lobster-rolls", "seafood-boil", "crawfish",
   "shrimp-and-grits", "poke", "ceviche", "mariscos", "fish-tacos", "thai-food", "vietnamese-food", "gumbo", "jambalaya",
   "po-boys", "cajun-food", "pad-thai", "dim-sum", "paella", "tempura"]);
+
+/* A guide that gathers others (/food/asian-food): every guide inside it, with
+   how many of that kind of place open listings put in the US. */
+function hubHtml(x) {
+  const rows = x.hub.filter((h) => dishMap.has(h)).map((h) => {
+    const g = guideFor(h);
+    const n = g && !g.via ? ` <span class="ct">${g.natl.toLocaleString("en-US")}</span>` : "";
+    return `<a class="pill" href="/food/${h}">${esc(dishMap.get(h).n)}${n}</a>`;
+  });
+  return `
+      <h2>The ${esc(x.n)} guides</h2>
+      <p>Each of these goes deeper on one cuisine or dish: what to order and how to spot a good kitchen. Numbers are US listings in open map data.</p>
+      <p class="pills">
+        ${rows.join("\n        ")}
+      </p>`;
+}
 
 const SEARCH_COPY_DIET = {
   "shellfish-allergy": {
@@ -301,6 +339,7 @@ function dishPage(x) {
 
       <h2>What to order</h2>
       ${defs(x.order)}
+${x.hub ? hubHtml(x) : ""}
 ${whereHtml(guideFor(x.s), x.n)}
 
       <h2>How Savor Scout looks for it</h2>

@@ -42,6 +42,10 @@ const ANCHOR = {
 };
 const POPULAR = [
   ...FOCUS.pages.map(([p]) => p).filter((p) => ANCHOR[p]).map((p) => [p, ANCHOR[p]]),
+  /* New, and behind the biggest searches the site can match (Semrush, October
+     2026): Mexican food near me 1.2M a month, Asian food near me 301K. */
+  ["/food/mexican-food", "Mexican food near you"],
+  ["/food/asian-food", "Asian food near you"],
   ["/what-to-eat/eating-alone", "Eating alone at a restaurant"],
   ["/diet/gluten-free", "Eating out gluten-free"],
   ["/what-to-eat/cant-decide", "Can't decide where to eat"],

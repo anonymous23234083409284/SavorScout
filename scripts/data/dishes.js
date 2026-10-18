@@ -645,7 +645,7 @@ module.exports = [
     ],
     signals:
       "Chinese searches key off regional names first. Searching for Sichuan food returns kitchens whose menus and reviews use Sichuan vocabulary rather than the highest-rated restaurant with the word Chinese on the sign, and mentions of a separate or translated menu are treated as a strong positive signal.",
-    related: ["dumplings", "noodles", "soup"],
+    related: ["dumplings", "noodles", "soup", "asian-food"],
     situations: ["big-group", "sunday-night", "late-night", "vegetarians-and-meat-eaters"],
   },
 
@@ -705,7 +705,7 @@ module.exports = [
     ],
     signals:
       "Thai searches read for regional terms and for specific dishes rather than ranking by rating, because the highest-rated Thai restaurant in a given area is often the one most adjusted to a general palate. Reviews mentioning real heat, Isaan dishes, or a separate menu push a place up substantially.",
-    related: ["curry", "noodles", "salad", "soup"],
+    related: ["curry", "noodles", "salad", "soup", "asian-food"],
     situations: ["hot-day", "sick-with-a-cold", "work-team-lunch", "vegetarians-and-meat-eaters"],
   },
 
@@ -735,7 +735,7 @@ module.exports = [
     ],
     signals:
       "Japanese searches weight specialisation strongly: a shop doing one format outranks a general Japanese restaurant with a higher rating. Naming a format — yakitori, tonkatsu, izakaya, soba — filters out the export-menu restaurants that would otherwise dominate on volume of reviews.",
-    related: ["sushi", "ramen", "noodles", "curry"],
+    related: ["sushi", "ramen", "noodles", "curry", "asian-food"],
     situations: ["eating-alone", "business-dinner", "before-a-flight", "after-a-workout"],
   },
 
@@ -765,7 +765,7 @@ module.exports = [
     ],
     signals:
       "Korean searches read reviews for banchan quality and variety, charcoal grilling, and named dishes beyond barbecue. Because Korean barbecue restaurants attract high volumes of reviews, the matcher looks past that to find the stew and noodle kitchens when that is what you asked for.",
-    related: ["fried-chicken", "wings", "noodles", "dumplings", "korean-bbq", "korean-fried-chicken"],
+    related: ["fried-chicken", "wings", "noodles", "dumplings", "korean-bbq", "korean-fried-chicken", "asian-food"],
     situations: ["big-group", "celebrating", "cold-rainy-night", "after-a-workout"],
   },
 
@@ -795,7 +795,7 @@ module.exports = [
     ],
     signals:
       "Vietnamese searches read for dish names beyond pho and for regional labels, and treat herb-plate and charcoal mentions in reviews as meaningful. Searching bun cha or com tam will surface kitchens that a generic Vietnamese search would never return, because those places often have fewer reviews and lower visibility.",
-    related: ["pho", "sandwiches", "noodles", "salad"],
+    related: ["pho", "sandwiches", "noodles", "salad", "asian-food"],
     situations: ["hot-day", "work-team-lunch", "before-a-flight", "on-a-budget"],
   },
 

@@ -184,6 +184,61 @@ function withFaq(pageLd, f) {
   return { "@context": ctx || "https://schema.org", "@graph": [page, f.ld] };
 }
 
+/* ---- links into the core cuisine guides, the budget guide, and late night */
+
+/* The four cuisine guides with the biggest "near me" searches behind them
+   (Mexican 1.2M a month, Asian 301K, Vietnamese 165K, Korean 135K), linked
+   from a campus or city page only where that food is actually there. */
+const CORE = [
+  ["Mexican food", "/food/mexican-food", (sc) => (sc.cz || {}).Mexican || 0, 3],
+  ["Asian food", "/food/asian-food", (sc) => sc.as || 0, 5],
+  ["Korean food", "/food/korean-food", (sc) => (sc.cz || {}).Korean || 0, 2],
+  ["Vietnamese food", "/food/vietnamese-food", (sc) => (sc.cz || {}).Vietnamese || 0, 2],
+];
+
+function cravingsHtml(sc, where) {
+  if (!sc) return "";
+  const radius = `${sc.r} ${sc.r === 1 ? "mile" : "miles"}`;
+  const hits = CORE.map(([label, href, n, min]) => [label, href, n(sc), min]).filter(([, , n, min]) => n >= min)
+    .sort((a, b) => b[2] - a[2]);
+  if (!hits.length) return "";
+  return `
+      <p>
+        <strong>Popular cravings ${esc(where)}</strong>, within ${radius}:
+        ${listSentence(hits.map(([label, href, n], i) => `<a href="${href}">${label}</a> (${fmt(n)}${i === 0 ? ` ${n === 1 ? "place" : "places"}` : ""})`))}.
+        Each guide covers what to order and how to tell a good kitchen from an average one.
+      </p>`;
+}
+
+/* Every campus page: where the cheap meals are, and the guide to finding them. */
+function budgetHtml(sc, name, appLink) {
+  const fast = sc && sc.ff
+    ? ` Of the places listed nearby, ${fmt(sc.ff)} ${sc.ff === 1 ? "is a fast-food counter" : "are fast-food counters"}: the cheapest default, rarely the cheapest good meal.`
+    : "";
+  return `
+      <h2>Eating on a student budget near ${esc(name)}</h2>
+      <p>
+        Cheap and bad overlap much less than price filters suggest.${fast} The value is usually in lunch
+        specials, counter service, short menus and dishes built on rice, noodles, bread or beans.
+        <a href="/what-to-eat/on-a-budget">Where to eat when you're broke</a> covers what to look for, or
+        <a href="${appLink}&craving=${encodeURIComponent("cheap eats")}">search cheap eats near ${esc(name)}</a>.
+      </p>`;
+}
+
+/* "Open now" searches are real and big, but nothing here knows live hours, so
+   this sends them where the honest help is: the late-night guide on how to
+   check, and a search, with the caveat said out loud. */
+function openNowHtml(name, appLink) {
+  return `
+      <p class="note">
+        <strong>Need somewhere open right now?</strong> These listings do not carry live opening hours, and
+        late at night a fair share of what is listed as open is not. The
+        <a href="/what-to-eat/late-night">late-night guide</a> covers how to check before you go, or
+        <a href="${appLink}&craving=${encodeURIComponent("late night food")}">search late-night food near ${esc(name)}</a>
+        and call ahead.
+      </p>`;
+}
+
 /* ---- campus neighbours -------------------------------------------------- */
 
 /* "University of California-Davis" and "University of California-Irvine" are
@@ -389,5 +444,5 @@ function whereLd(g, name, slug) {
 
 module.exports = {
   sceneFor, sceneHtml, neighboursHtml, cityCampusesHtml, guideFor, whereHtml, whereLd, guideHref, pill,
-  systemOf, inline, listSentence, leaders, ranksHtml, faq, withFaq,
+  systemOf, inline, listSentence, leaders, ranksHtml, faq, withFaq, cravingsHtml, budgetHtml, openNowHtml,
 };

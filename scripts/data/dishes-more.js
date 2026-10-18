@@ -74,7 +74,7 @@ module.exports = [
     ],
     signals:
       "Filipino searches read for named dishes rather than the cuisine label, because a lot of Filipino food is sold from counters and bakeries that do not describe themselves as restaurants. Mentions of kamayan, turo-turo or lechon in reviews are strong signals, and they surface places a category filter would miss entirely.",
-    related: ["chinese-food", "vietnamese-food", "bbq"],
+    related: ["chinese-food", "vietnamese-food", "bbq", "asian-food"],
     situations: ["big-group", "friends-visiting", "celebrating"],
   },
   {

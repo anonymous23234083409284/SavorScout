@@ -1,0 +1,7 @@
+{
+  "_why": "IPEDS places some schools at an office no student attends. These override the point a campus page measures from. Read by scripts/lib/campuses.js and scripts/fetch-nearby-places.py. Coordinates from Overture Maps places (release 2026-09-23.1).",
+  "pima-community-college": {
+    "lat": 32.23701, "lng": -110.97265,
+    "at": "the Downtown Campus, 1255 N Stone Ave (IPEDS lists the district office; Pima has several campuses)"
+  }
+}

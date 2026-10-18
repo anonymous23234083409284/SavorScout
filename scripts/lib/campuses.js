@@ -30,6 +30,15 @@ const NO_CAMPUS = /digital immersion|\bonline\b|global campus|world campus|\bdis
    alias, otherwise nothing and the page uses the full name. */
 const EXTRA = require("../data/campus-aliases");
 
+/* How students actually search for a school, where that is not an all-caps
+   abbreviation the rule below can find: "WashU", "Cal State LA", "Idaho State
+   (ISU)". `short` replaces `a` in running text; `title` is how the school is
+   named after "Restaurants Near" in a page title. */
+const SEARCH_NAMES = require("../data/campus-search-names");
+
+/* Where a page measures from, where IPEDS has an office rather than a campus. */
+const LOCATIONS = require("../data/campus-locations.json");
+
 /* Two files, one list. campuses.json is the original 637 four-year schools
    (IPEDS 2022); campuses-more.json is the second batch, community colleges
    included, written by fetch-campuses-more.js from IPEDS 2024. A record with no
@@ -39,10 +48,18 @@ const read = (f) => {
   return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : [];
 };
 const CAMPUSES = [...read("campuses.json"), ...read("campuses-more.json")]
-.filter((c) => !NO_CAMPUS.test(c.n)).map((c) => {
+.filter((c) => !NO_CAMPUS.test(c.n)).map((c) => (LOCATIONS[c.s] ? { ...c, ...LOCATIONS[c.s] } : c)).map((c) => {
   const al = [...new Set([...(c.al || []), ...(EXTRA[c.s] || [])])];
   const abbr = al.find((s) => /^[A-Z&]{2,6}$/.test(s));
-  return { ...c, al, a: abbr || c.a || al[0] || "" };
+  const sn = SEARCH_NAMES[c.s];
+  /* A settled search name wins outright. With no common short form it is the
+     plain name, so an ambiguous abbreviation never reaches the page. */
+  if (sn) {
+    const n = sn.name || c.n;
+    return { ...c, n, al: sn.name ? [...new Set([c.n, ...al])] : al,
+      a: sn.short || sn.title.replace(/\s*\(.*\)$/, ""), t: sn.title, d: sn.desc || "" };
+  }
+  return { ...c, al, a: abbr || c.a || al[0] || "", t: "" };
 });
 
 const BY_STATE = {};

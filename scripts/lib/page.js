@@ -70,15 +70,18 @@ const STYLE = `
     border:1px solid rgba(255,158,31,.38);background:rgba(255,158,31,.09);color:#FFD9A8;font-size:15px;line-height:1.3}
   .ss-static a.pill:hover{background:rgba(255,158,31,.2);border-color:#FF9E1F}
   .ss-static .pill--plain{border-color:rgba(232,227,220,.18);background:transparent;color:#B9B1A6}
-  .ss-static .pill--sm{padding:1px 9px;font-size:13px;vertical-align:1px}
+  .ss-static .pill.pill--sm,.ss-static a.pill.pill--sm{padding:1px 9px;font-size:13px;vertical-align:1px}
   .ss-static .pill .ct{font-size:12px;opacity:.7}
   .ss-static .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 18px}
   .ss-static .stat{border:1px solid rgba(232,227,220,.14);border-radius:12px;padding:12px 12px 10px;background:rgba(255,255,255,.02)}
   .ss-static .stat b{display:block;font-size:clamp(22px,4.6vw,30px);line-height:1.1;color:#FDF8F2;letter-spacing:-.02em}
   .ss-static .stat span{display:block;font-size:13px;line-height:1.35;color:#B9B1A6;margin-top:4px}
+  .ss-static .faq{margin:0 0 20px}
+  .ss-static .faq dt{font-weight:600;color:#FDF8F2;margin:16px 0 4px}
+  .ss-static .faq dd{margin:0;color:#E8E3DC}
   .ss-static .ranks{list-style:none;padding-left:0}
-  .ss-static .ranks li{margin:0 0 8px}
-  .ss-static .ranks b{display:inline-block;min-width:38px;color:#FF9E1F;font-variant-numeric:tabular-nums}
+  .ss-static .ranks li{margin:0 0 8px;display:grid;grid-template-columns:42px 1fr}
+  .ss-static .ranks b{color:#FF9E1F;font-variant-numeric:tabular-nums}
   .ss-static .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;list-style:none;padding:0;margin:0 0 20px}
   .ss-static .card{margin:0;border:1px solid rgba(232,227,220,.14);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)}
   .ss-static .card a{border:0;font-weight:600;color:#FDF8F2}
@@ -92,7 +95,7 @@ const STYLE = `
   .ss-static hr{border:0;border-top:1px solid rgba(232,227,220,.14);margin:44px 0}
   .ss-static .crumb{font-size:14px;color:#B9B1A6;margin-bottom:22px}
   .ss-static .crumb a{border:0;color:#B9B1A6}
-  @media(max-width:620px){.ss-static{padding:38px 18px 72px}.ss-static .cols{columns:1}}
+  @media(max-width:620px){.ss-static{padding:38px 18px 72px}.ss-static .cols{column-gap:16px;font-size:15px}}
 </style>`;
 
 /* The head tags every page must carry. A generator that cannot find one of
@@ -133,6 +136,16 @@ function render(shell, { title, desc, url, body, ld, who }) {
     console.error(`${who}: could not find <div id="root"></div> in index.html`);
     process.exit(1);
   }
+  /* The homepage's FAQ schema answers questions that are on the homepage and
+     nowhere else. Inherited by a generated page it describes content that page
+     does not show (Google's structured-data rules call that misleading), and on
+     campus and city pages it made a second FAQPage beside the page's own. */
+  html = html.replace(/<script type="application\/ld\+json">(?:(?!<\/script>)[\s\S])*?"FAQPage"[\s\S]*?<\/script>/, "");
+  if (/"FAQPage"/.test(html) && !/"FAQPage"/.test(ld || "")) {
+    console.error(`${who}: the homepage FAQ schema survived into a generated page`);
+    process.exit(1);
+  }
+
   /* The copy goes BEFORE #root, not after.
      Everybody who reaches one of these pages arrived from a search for the
      thing it is about. Putting the app first means that on a phone they land on
@@ -191,11 +204,15 @@ function fitTitle(variants) {
   return variants.find((t) => t.length <= TITLE_MAX) || variants[variants.length - 1];
 }
 
+/* Crumbs start with a capital: "Soup", not "soup". Google can show the trail
+   in place of the URL in a result. */
+const crumbName = (n) => n.charAt(0).toUpperCase() + n.slice(1);
+
 function breadcrumb(trail) {
   return {
     "@type": "BreadcrumbList",
     itemListElement: trail.map((t, i) => ({
-      "@type": "ListItem", position: i + 1, name: t.name, item: t.url,
+      "@type": "ListItem", position: i + 1, name: crumbName(t.name), item: t.url,
     })),
   };
 }
@@ -205,8 +222,8 @@ function breadcrumb(trail) {
    the thing a reader needs when they land three levels deep from a search. */
 function crumbHtml(trail) {
   return `<p class="crumb">` + trail.map((t, i) =>
-    i === trail.length - 1 ? esc(t.name)
-      : `<a href="${t.url.replace(ORIGIN, "") || "/"}">${esc(t.name)}</a>`
+    i === trail.length - 1 ? esc(crumbName(t.name))
+      : `<a href="${t.url.replace(ORIGIN, "") || "/"}">${esc(crumbName(t.name))}</a>`
   ).join(" &rsaquo; ") + `</p>`;
 }
 

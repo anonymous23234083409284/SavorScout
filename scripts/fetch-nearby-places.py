@@ -53,7 +53,13 @@ import pyarrow.parquet as pq
 
 def load(name):
     with open(os.path.join(REPO, "scripts", "data", name)) as f:
-        return json.load(f)
+        rows = json.load(f)
+    if name.startswith("campuses"):
+        # Same overrides as scripts/lib/campuses.js: where IPEDS has an office, not a campus.
+        with open(os.path.join(REPO, "scripts", "data", "campus-locations.json")) as f:
+            fix = json.load(f)
+        rows = [{**c, **{k: v for k, v in fix.get(c["s"], {}).items() if k in ("lat", "lng")}} for c in rows]
+    return rows
 
 targets = []
 for c in load("campuses.json") + load("campuses-more.json"):
@@ -67,7 +73,8 @@ BAD_NAME = re.compile(
     r"(?i)\b(closed|permanently|ghost kitchen|test|wholesale|distribut\w*|bakeries|warehouse|supply|"
     r"headquarters|corporate|commissary|inc|llc|l\.l\.c|corp|corporation|ltd|dba|d/b/a|sba|enterprises?|"
     r"consulting|management|marketing|properties|technology|holdings|advisors|services|investments?|"
-    r"partners|group|ventures|solutions|hospitality|vending|janitorial)\b|https?://|@|\d{6,}")
+    r"partners|group|ventures|solutions|hospitality|vending|janitorial|liquors?|wine & spirits|spirits|"
+    r"candy|candies|smoke shop|vape|tobacco|cigars?|convenience|gas station|fuel|lottery)\b|https?://|@|\d{6,}")
 CATERING_ONLY = re.compile(r"(?i)catering")
 FOODISH = re.compile(r"(?i)restaurant|cafe|café|grill|kitchen|diner|pizz|bbq|bar\b|deli|taco|bistro|eatery|"
                      r"trattoria|osteria|cantina|taqueria|sushi|ramen|pho|noodle|burger|wings|chicken|bagel|bakery|"
@@ -97,6 +104,8 @@ def clean(r):
         return None
     if re.search(r"(?i)\b(apartment|apt)\b", a["freeform"]):
         return None  # a home address: a home business or a bad record, not somewhere to eat
+    if not re.match(r"^\d", a["freeform"].strip()):
+        return None  # no street number: a mall, a campus building or a bad record, not a findable door
     return {
         "n": name, "lat": round(r["y"], 5), "lng": round(r["x"], 5),
         "cat": r["cat"], "tax": r["tax"] or "", "brand": bool(r["brand"]),
@@ -331,7 +340,9 @@ LABEL_FIX = {
 }
 
 def scene_label(p):
-    if p["tax"] == "cafe" or (p["cat"] == "cafe" and p["tax"] in GENERIC):
+    # The same test the coffee guide counts by, so a page's coffee tile and the
+    # coffee guide's count for that page agree.
+    if guide_of(p) == "coffee":
         return "Coffee"
     if p["tax"] in GENERIC or not p["tax"]:
         return None
@@ -357,7 +368,7 @@ KIND_FIX = {
     "rotisserie_chicken_restaurant": "rotisserie chicken spots", "dumpling_restaurant": "dumpling houses",
     "falafel_restaurant": "falafel shops", "poke_restaurant": "poké shops", "ramen_restaurant": "ramen shops",
     "sushi_restaurant": "sushi restaurants", "soup_restaurant": "soup restaurants",
-    "vietnamese_restaurant": "Vietnamese pho and noodle houses",
+    "vietnamese_restaurant": "pho and Vietnamese noodle-soup shops",
     "cheesesteak_restaurant": "cheesesteak shops", "vegetarian_restaurant": "vegetarian restaurants",
     "vegan_restaurant": "vegan restaurants", "gluten_free_restaurant": "gluten-free restaurants",
     "kosher_restaurant": "kosher restaurants", "halal_restaurant": "halal restaurants",
@@ -383,6 +394,33 @@ for p in places:
     if p["lab"] and p["g"] and p["lab"] not in lab_guide:
         lab_guide[p["lab"]] = p["g"]
 
+SUFFIX = {"street": "St", "st": "St", "avenue": "Ave", "ave": "Ave", "av": "Ave", "boulevard": "Blvd", "blvd": "Blvd",
+          "road": "Rd", "rd": "Rd", "drive": "Dr", "dr": "Dr", "lane": "Ln", "ln": "Ln", "parkway": "Pkwy", "pkwy": "Pkwy",
+          "highway": "Hwy", "hwy": "Hwy", "place": "Pl", "pl": "Pl", "court": "Ct", "ct": "Ct", "square": "Sq",
+          "sq": "Sq", "plaza": "Plaza", "plz": "Plaza", "way": "Way", "terrace": "Ter", "circle": "Cir"}
+DIRS = {"north": "N", "south": "S", "east": "E", "west": "W", "n": "N", "s": "S", "e": "E", "w": "W",
+        "ne": "NE", "nw": "NW", "se": "SE", "sw": "SW", "northeast": "NE", "northwest": "NW", "southeast": "SE", "southwest": "SW"}
+
+def street_of(addr):
+    """'1000 E University Ave Ste 4' -> 'E University Ave'. None when there is no house number to strip:
+    that is a mall, a campus building or a PO box rather than a street someone could walk down."""
+    a = re.split(r",|\s(?:ste|suite|unit|#|apt|bldg|building|fl|floor|rm|room)\b\.?", addr, flags=re.I)[0].strip()
+    m = re.match(r"^\d+[A-Za-z]?(?:-\d+)?\s+(.+)$", a)
+    if not m:
+        return None
+    words = m.group(1).replace(".", "").split()
+    out = []
+    for i, w in enumerate(words):
+        lw = w.lower()
+        if lw in DIRS and (i == 0 or i == len(words) - 1):
+            out.append(DIRS[lw])
+        elif lw in SUFFIX and i == len(words) - 1:
+            out.append(SUFFIX[lw])
+        else:
+            out.append(w if not w.isupper() or len(w) <= 3 else w.capitalize())
+    st = " ".join(out)
+    return st if 3 <= len(st) <= 40 and not re.search(r"\d{3,}", st.split()[0]) else None
+
 def scene(lat, lng, radius, walk):
     ps = near(lat, lng, radius)
     if len(ps) < 5:
@@ -398,7 +436,27 @@ def scene(lat, lng, radius, walk):
         if ratio >= 2:
             hi.append([l, lab_guide.get(l, ""), round(ratio, 1), n])
     hi.sort(key=lambda x: -x[2])
+    # Where the food is: the streets with the most places on them. Keyed
+    # case-insensitively so "E University Ave" and "E UNIVERSITY AVE" count once.
+    # Keyed without direction words, so "Abbe Rd N", "N Abbe Rd" and "Abbe Rd"
+    # count as the one road they are, and shown in their commonest spelling.
+    streets, spellings = Counter(), {}
+    for d, p in ps:
+        st = street_of(p["st"])
+        if st:
+            key = " ".join(w for w in st.lower().split() if w.upper() not in DIRS.values())
+            if not key:
+                continue
+            streets[key] += 1
+            spellings.setdefault(key, Counter())[st] += 1
+    food_streets = [[spellings[k].most_common(1)[0][0] if len(spellings[k]) == 1 else
+                     " ".join(w for w in spellings[k].most_common(1)[0][0].split() if w not in DIRS.values()), n]
+                    for k, n in streets.most_common(4) if n >= 3]
+    # A wider count for campuses on the edge of town, where a mile holds only a
+    # handful: three miles is a short drive or bus ride, and says more.
+    wide = len(near(lat, lng, 3.0)) if radius < 3 else len(ps)
     return {
+        "st": food_streets, "n3": wide,
         "r": radius, "n": len(ps), "w": sum(1 for d, p in ps if d <= walk),
         "loc": round(100 * sum(1 for d, p in ps if not p["chain"]) / len(ps)),
         "ff": sum(1 for d, p in ps if p["cat"] == "fast_food_restaurant"),
@@ -406,7 +464,7 @@ def scene(lat, lng, radius, walk):
     }
 
 pages_scene = {}
-city_g, city_t, camp_g, camp_t, city_own = {}, {}, {}, {}, {}
+city_g, city_t, camp_g, camp_t, city_own, camp_own = {}, {}, {}, {}, {}, {}
 def in_city(p, c):
     return p["loc"].lower() == c["c"].lower() and p["reg"].upper() == c["r"]
 cities = load("us-cities.json")
@@ -423,6 +481,7 @@ for c in campuses:
     if sc:
         pages_scene["campus/" + c["s"]] = sc
     ps = near(c["lat"], c["lng"], 1.0)
+    camp_own[c["s"]] = [p for d, p in ps]
     camp_g[c["s"]] = Counter(p["g"] for d, p in ps if p["g"])
     camp_t[c["s"]] = Counter(p["tax"] for d, p in ps if p["tax"])
 for c in cities:
@@ -454,8 +513,16 @@ natl_t = Counter(p["tax"] for p in places if p["tax"])
 # Soup: "pho shops, ramen shops ... when the soup is the reason the restaurant
 # exists". Dedicated soup restaurants alone are 656 listings, mostly one chain.
 GUIDE_SET = {"soup": ["soup_restaurant", "ramen_restaurant", "vietnamese_restaurant"]}
+# Within those types, the places that are actually about the soup. A
+# Vietnamese grill or banh mi shop is not a pho house.
+SOUP_NAME = re.compile(r"(?i)\b(pho|phở|bun bo|bún|hu tieu|hủ tiếu|noodle|soup|ramen|udon|menudo|pozole|caldo)")
+def soup_match(p):
+    return p["tax"] in ("soup_restaurant", "ramen_restaurant") or (p["tax"] == "vietnamese_restaurant" and SOUP_NAME.search(p["n"]))
 for g, T in GUIDE_SET.items():
     guide_via[g] = T
+
+# Online-only schools have an office address, not a campus anyone eats near.
+ONLINE = re.compile(r"(?i)University of the People|\bGlobal\b|\bOnline\b|National and Global")
 
 guides = {}
 for g in set(guide_direct) | set(guide_via):
@@ -470,13 +537,19 @@ for g in set(guide_direct) | set(guide_via):
         taxes = list(GUIDE_SET[g]) if g in GUIDE_SET else sorted(set(guide_via.get(g, [])), key=lambda t: -natl_t.get(t, 0))
         if not taxes:
             continue
-        count_city = lambda s, T=tuple(taxes): sum(city_t[s][t] for t in T)
-        count_camp = lambda s, T=tuple(taxes): sum(camp_t[s][t] for t in T)
-        match = lambda p, T=tuple(taxes): p["tax"] in T
-        natl = sum(natl_t.get(t, 0) for t in taxes)
+        if g == "soup":
+            match = soup_match
+            count_city = lambda s: sum(1 for p in city_own[s] if soup_match(p))
+            count_camp = lambda s: sum(1 for p in camp_own[s] if soup_match(p))
+            natl = sum(1 for p in places if soup_match(p))
+        else:
+            count_city = lambda s, T=tuple(taxes): sum(city_t[s][t] for t in T)
+            count_camp = lambda s, T=tuple(taxes): sum(camp_t[s][t] for t in T)
+            match = lambda p, T=tuple(taxes): p["tax"] in T
+            natl = sum(natl_t.get(t, 0) for t in taxes)
     top_cities = sorted(((count_city(c["s"]), c["s"]) for c in cities), reverse=True)
     top_cities = [[s, n] for n, s in top_cities if n >= 3][:12]
-    top_camps = sorted(((count_camp(c["s"]), c["s"]) for c in campuses), reverse=True)
+    top_camps = sorted(((count_camp(c["s"]), c["s"]) for c in campuses if not ONLINE.search(c["n"])), reverse=True)
     top_camps = [[s, n] for n, s in top_camps if n >= 2][:10]
     examples = []
     for s, n in top_cities[:6]:

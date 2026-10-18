@@ -108,8 +108,40 @@ const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase())
    words people search with (Search Console, 15 October 2026):
      /food/korean-food  108 impressions, position 39, 0 clicks
      /food/soup          68 impressions, position 33, 0 clicks
-   The title leads with the query, the description promises what the page has. */
+   The title leads with the query, the description promises what the page has.
+
+   Second batch, 18 October (impressions, position, clicks):
+     coffee 73, 23.3, 0 · chicken-sandwich 51, 20.7, 0 · venezuelan-food 50, 29.2, 0
+     arepas 45, 7.4, 0 · afghan-food 32, 44.7, 0 · diet/shellfish-allergy 33, 11.6, 0
+   Drafted three ways (exact query match, concrete specifics, the searcher's
+   job), then judged against the page text: nothing here promises what the page
+   does not have. */
 const SEARCH_COPY = {
+  "coffee": {
+    seoTitle: ["Coffee Shops Near You to Work, Meet or Grab a Cup | Savor Scout", "Coffee Shops Near You to Work, Meet or Grab a Cup"],
+    h1: "How to find a good coffee shop near you",
+    desc: "Say what you need and Savor Scout picks one coffee shop near you. Plus how to spot fresh-roasted beans, a good cortado and silky milk, and what to order.",
+  },
+  "chicken-sandwich": {
+    seoTitle: ["Fried Chicken Sandwich Near You, Classic or Spicy | Savor Scout", "Fried Chicken Sandwich Near You, Classic or Spicy"],
+    h1: "How to find a good fried chicken sandwich near you",
+    desc: "Brined thigh, a craggy crust, a toasted bun, sour pickles: what makes a good fried chicken sandwich. Savor Scout favors chicken shops over burger places.",
+  },
+  "venezuelan-food": {
+    seoTitle: ["Venezuelan Food Near You: Pabellón, Cachapas and Tequeños"],
+    h1: "How to find good Venezuelan food near you",
+    desc: "Pabellón, cachapas and tequeños: what to order, how to tell a Venezuelan kitchen from a Colombian one, and where the {natl} US Venezuelan restaurants are.",
+  },
+  "arepas": {
+    seoTitle: ["Arepas Near You: Venezuelan vs Colombian, What to Order"],
+    h1: "How to find good arepas near you, Venezuelan or Colombian",
+    desc: "Venezuelan arepas are split and stuffed, Colombian ones thin and flat. How to spot a good one and what to order, from reina pepiada to arepa de choclo.",
+  },
+  "afghan-food": {
+    seoTitle: ["Afghan Food Near You: Kabuli Pulao, Mantu, Aushak | Savor Scout", "Afghan Food Near You: Kabuli Pulao, Mantu, Aushak"],
+    h1: "How to find good Afghan food near you",
+    desc: "Afghan restaurants are often signed Mediterranean or Middle Eastern, so cuisine filters miss them. Savor Scout searches by dish name. Plus what to order.",
+  },
   "korean-food": {
     seoTitle: [
       "Korean Food & Korean BBQ Near You — What to Order | Savor Scout",
@@ -120,11 +152,35 @@ const SEARCH_COPY = {
   },
   soup: {
     seoTitle: [
-      "Good Soup Near You — Pho, Ramen & Where to Find It | Savor Scout",
-      "Good Soup Near You — Pho, Ramen & Where to Find It",
+      "Good Soup Near You: Pho, Ramen, Pozole and More | Savor Scout",
+      "Good Soup Near You: Pho, Ramen, Pozole and More",
     ],
     h1: "Good soup near you, and how to find it",
-    desc: "Pho, ramen, pozole, matzo ball: where good soup actually is, how to tell a kitchen makes its own, and which soups survive being taken to go.",
+    desc: "Pho, ramen, pozole, matzo ball: where good soup actually is, how to tell a kitchen makes its own, and the soups worth seeking out.",
+  },
+};
+
+/* A dish name in the middle of a sentence: "Find chicken sandwich near you",
+   not "Find Chicken sandwich". Names that start with a place or people keep
+   their capital (Korean BBQ, Nashville hot chicken, Pad Thai, Eggs Benedict). */
+const KEEPS_CAPITAL = /^(Korean|Nashville|Peking|Chinese|Pad|Bún|Neapolitan|New|Detroit|Italian|Eggs|Cuban|Tacos al|Po')/;
+function inSentence(n) {
+  if (/ food$/.test(n) && !/^(Soul|Halal|Southern) /.test(n)) return n;   // Mexican food, Korean food
+  return KEEPS_CAPITAL.test(n) ? n : n[0].toLowerCase() + n.slice(1);
+}
+
+/* Guides where shellfish is the main event or a common hidden ingredient
+   (fish sauce, shrimp paste, shared fryers): the place a reader with the
+   allergy most needs the allergy guide. */
+const SHELLFISH = new Set(["seafood", "sushi", "oysters", "crab", "lobster", "lobster-rolls", "seafood-boil", "crawfish",
+  "shrimp-and-grits", "poke", "ceviche", "mariscos", "fish-tacos", "thai-food", "vietnamese-food", "gumbo", "jambalaya",
+  "po-boys", "cajun-food", "pad-thai", "dim-sum", "paella", "tempura"]);
+
+const SEARCH_COPY_DIET = {
+  "shellfish-allergy": {
+    seoTitle: ["Shellfish Allergy at Restaurants: Hidden Sources and What to Ask"],
+    h1: "Eating out with a shellfish allergy: what to ask before you order",
+    desc: "Shellfish can hide in oyster sauce, shrimp paste, fish sauce, seafood stock and shared fryers. What to ask the kitchen, and which cuisines are easier.",
   },
 };
 
@@ -220,7 +276,11 @@ ${x.group && (GROUP_ENABLED || !ROOM_PITCH.test(x.group)) ? `
 const FOOD_HUB = { name: "Food guides", url: `${ORIGIN}/food/` };
 
 function dishPage(x) {
-  if (SEARCH_COPY[x.s]) x = { ...x, ...SEARCH_COPY[x.s] };
+  if (SEARCH_COPY[x.s]) {
+    x = { ...x, ...SEARCH_COPY[x.s] };
+    const g = guideFor(x.s);
+    if (g) x.desc = x.desc.replace("{natl}", g.natl.toLocaleString("en-US"));
+  }
   const url = `${ORIGIN}/food/${x.s}`;
   const trail = [HOME, FOOD_HUB, { name: x.n, url }];
 
@@ -234,7 +294,7 @@ function dishPage(x) {
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
       <p class="lede">${esc(x.lede)}</p>
-      <p><a class="cta" href="${app(x.n)}">Find ${esc(x.n)} near you &rarr;</a></p>${qaHtml(x.qa)}
+      <p><a class="cta" href="${app(x.n)}">Find ${esc(inSentence(x.n))} near you &rarr;</a></p>${qaHtml(x.qa)}
 
       <h2>What separates a good one from a bad one</h2>
       ${defs(x.good)}
@@ -245,7 +305,7 @@ ${whereHtml(guideFor(x.s), x.n)}
 
       <h2>How Savor Scout looks for it</h2>
       <p>${esc(x.signals)}</p>
-      <p><a class="cta" href="${app(x.n)}">Find ${esc(x.n)} near you &rarr;</a></p>
+      <p><a class="cta" href="${app(x.n)}">Find ${esc(inSentence(x.n))} near you &rarr;</a></p>
 
       <h2>Looking in a particular city?</h2>
       <p>
@@ -258,6 +318,9 @@ ${whereHtml(guideFor(x.s), x.n)}
       </ul>
       <p><a href="/eat/">All ${CITIES.length.toLocaleString("en-US")} cities &rarr;</a></p>
 
+${SHELLFISH.has(x.s) ? `
+      <p class="note">Shellfish allergy at the table? <a href="/diet/shellfish-allergy">Where shellfish hides on a menu, and what to ask before you order</a>.</p>
+` : ""}
       <h2>Related food guides</h2>
       <p>${relDish}</p>
 
@@ -279,7 +342,7 @@ ${whereHtml(guideFor(x.s), x.n)}
     author: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     publisher: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     mainEntityOfPage: url,
-    ...(whereLd(guideFor(x.s), x.n) ? { mentions: whereLd(guideFor(x.s), x.n) } : {}),
+    ...(whereLd(guideFor(x.s), x.n, x.s) ? { mentions: whereLd(guideFor(x.s), x.n, x.s) } : {}),
     breadcrumb: breadcrumb(trail),
   });
 
@@ -291,6 +354,7 @@ ${whereHtml(guideFor(x.s), x.n)}
 const DIET_HUB = { name: "Eating out with a restriction", url: `${ORIGIN}/diet/` };
 
 function dietPage(x) {
+  if (SEARCH_COPY_DIET[x.s]) x = { ...x, ...SEARCH_COPY_DIET[x.s] };
   const url = `${ORIGIN}/diet/${x.s}`;
   const trail = [HOME, DIET_HUB, { name: x.n, url }];
 
@@ -349,7 +413,7 @@ ${whereHtml(guideFor(DIET_DATA[x.s]), `${x.n} restaurants`)}
     breadcrumb: breadcrumb(trail),
   });
 
-  return { url, html: render(shell, { title: x.title, desc: x.desc, url, body, ld, who: WHO }) };
+  return { url, html: render(shell, { title: x.seoTitle ? fitTitle(x.seoTitle) : x.title, desc: x.desc, url, body, ld, who: WHO }) };
 }
 
 /* ---- hubs ----------------------------------------------------------------- */

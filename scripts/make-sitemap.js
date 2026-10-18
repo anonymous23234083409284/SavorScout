@@ -73,22 +73,38 @@ if (dupes.length) {
   process.exit(1);
 }
 
-/* 50,000 is the sitemap spec's limit per file. Well clear of it today, but the
-   generators are designed to grow and a silent overflow produces a sitemap
-   Google rejects wholesale rather than one it truncates. */
-if (urls.length > 50000) {
-  console.error(`make-sitemap: ${urls.length} URLs exceeds the 50,000 per-file limit — split into a sitemap index.`);
-  process.exit(1);
+/* One sitemap per kind of page, under a sitemap index at /sitemap.xml.
+   Search Console reports indexing per submitted sitemap, so splitting them is
+   what makes "how many campus pages are indexed" a number you can read rather
+   than something buried in 2,400 mixed URLs. robots.txt and the sitemap
+   already submitted in Search Console both point at /sitemap.xml, which is now
+   the index, so nothing has to be resubmitted. */
+const GROUPS = { cities: "cities", campus: "campuses", guides: "guides", types: "pages", about: "pages" };
+const byFile = new Map([["pages", [urls[0]]]]);
+for (const name of found) {
+  const file = GROUPS[name] || name;
+  if (!byFile.has(file)) byFile.set(file, []);
+  byFile.get(file).push(...JSON.parse(fs.readFileSync(path.join(MANIFEST_DIR, `${name}.json`), "utf8")));
 }
-
-const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+const urlset = (rows) => `<?xml version="1.0" encoding="UTF-8"?>\n` +
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  urls.map((u) =>
+  rows.map((u) =>
     `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${lastmodFor(u.loc)}</lastmod>\n` +
     `    <changefreq>${u.freq}</changefreq>\n    <priority>${u.pri}</priority>\n  </url>`
   ).join("\n") + `\n</urlset>\n`;
-
-fs.writeFileSync(path.join(BUILD, "sitemap.xml"), xml);
+const index = [];
+for (const [file, rows] of byFile) {
+  /* 50,000 URLs is the per-file limit in the sitemap spec. */
+  if (rows.length > 50000) {
+    console.error(`make-sitemap: sitemap-${file}.xml has ${rows.length} URLs, over the 50,000 limit.`);
+    process.exit(1);
+  }
+  fs.writeFileSync(path.join(BUILD, `sitemap-${file}.xml`), urlset(rows));
+  index.push({ loc: `${ORIGIN}/sitemap-${file}.xml`, lastmod: rows.map((u) => lastmodFor(u.loc)).sort().pop() });
+}
+fs.writeFileSync(path.join(BUILD, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+  index.map((i) => `  <sitemap>\n    <loc>${i.loc}</loc>\n    <lastmod>${i.lastmod}</lastmod>\n  </sitemap>`).join("\n") +
+  `\n</sitemapindex>\n`);
 fs.rmSync(MANIFEST_DIR, { recursive: true, force: true });
-
-console.log(`make-sitemap: ${urls.length} urls from ${found.length} manifests (${found.join(", ")})`);
+console.log(`make-sitemap: ${urls.length} urls in ${index.length} sitemaps (${[...byFile].map(([f, r]) => `${f} ${r.length}`).join(", ")}) under sitemap.xml`);

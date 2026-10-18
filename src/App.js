@@ -2321,11 +2321,15 @@ function App() {
             onClick={() => { setShowAuth(true); if (trialWall) setAuthMode("signup"); }}
           >
             <span className="signedout-star" aria-hidden="true">*</span>
-            {trialWall ? (
-              <>You are not signed in. <strong>Sign up to keep searching</strong></>
-            ) : (
-              <>You are not signed in. <strong>One free search</strong>, then sign up to keep going</>
-            )}
+            {/* One span, so the flex button lays the sentence out as text rather
+                than as three columns with a stray comma on a phone. */}
+            <span className="signedout-text">
+              {trialWall ? (
+                <>You are not signed in. <strong>Sign up to keep searching</strong></>
+              ) : (
+                <>You are not signed in. <strong>One free search</strong>, then sign up to keep going</>
+              )}
+            </span>
           </button>
         )}
 

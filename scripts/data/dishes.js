@@ -259,7 +259,7 @@ module.exports = [
     ],
     signals:
       "Searching fried chicken, the matcher looks for fried-to-order mentions, named styles, wait times described positively, and specific crust language in reviews. A twenty-minute wait showing up repeatedly in reviews raises a place's score here rather than lowering it, which is the opposite of how a generic ranking treats it.",
-    related: ["burgers", "korean-food", "bbq", "sandwiches"],
+    related: ["burgers", "korean-food", "bbq", "sandwiches", "chicken-sandwich"],
     situations: ["sad", "on-a-budget", "with-picky-eaters", "moving-day"],
   },
 
@@ -289,7 +289,7 @@ module.exports = [
     ],
     signals:
       "Sandwich searches weight bread mentions, house-baked and sliced-to-order language, and named regional styles. Because a sandwich shop's rating is heavily influenced by speed and price, the matcher discounts those and reads for what people actually say about the bread and the filling.",
-    related: ["burgers", "vietnamese-food", "brunch"],
+    related: ["burgers", "vietnamese-food", "brunch", "chicken-sandwich"],
     situations: ["work-team-lunch", "on-a-budget", "before-a-flight", "moving-day"],
   },
 
@@ -765,7 +765,7 @@ module.exports = [
     ],
     signals:
       "Korean searches read reviews for banchan quality and variety, charcoal grilling, and named dishes beyond barbecue. Because Korean barbecue restaurants attract high volumes of reviews, the matcher looks past that to find the stew and noodle kitchens when that is what you asked for.",
-    related: ["fried-chicken", "wings", "noodles", "dumplings"],
+    related: ["fried-chicken", "wings", "noodles", "dumplings", "korean-bbq", "korean-fried-chicken"],
     situations: ["big-group", "celebrating", "cold-rainy-night", "after-a-workout"],
   },
 

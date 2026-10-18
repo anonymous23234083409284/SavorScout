@@ -42,20 +42,86 @@ const {
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
-const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, ranksHtml } = require("./lib/scene");
+const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, leaders, ranksHtml, faq, withFaq } = require("./lib/scene");
 
 /* Pages Google ranks on page one without anyone clicking get a description
    built from their own numbers: a count and three cuisines say more about what
    is on the page than any general line can. Search Console, 15 October 2026:
    /campus/azusa-pacific-university, 54 impressions, position 10.1, 0 clicks. */
-const DATA_DESC = new Set(["azusa-pacific-university"]);
-function dataDesc(c, sc) {
-  const r = sc.r === 1 ? "a mile" : `${sc.r} miles`;
-  const top = sc.top.filter((t) => t[0] !== "Coffee").slice(0, 3).map((t) => inline(t[0], t[1]));
-  const lead = top.length ? ` ${top[0][0].toUpperCase()}${listSentence(top).slice(1)} lead the list.` : "";
-  return `${sc.n.toLocaleString("en-US")} places to eat within ${r} of ${c.n}` +
-    `${sc.w ? `, ${sc.w.toLocaleString("en-US")} of them a ten-minute walk away` : ""}.${lead}` +
-    ` Five to start with, or one picked for your craving. Free.`;
+const FOCUS_PAGES = require("./data/search-focus").pages;
+const DATA_DESC = new Set(FOCUS_PAGES.map(([p]) => p).filter((p) => p.startsWith("/campus/")).map((p) => p.slice(8)));
+/* The radius worth quoting. A campus on the edge of town may have five places
+   within a mile and 165 within three; the bigger honest number is the one
+   that tells a searcher the page is worth opening. */
+function reach(sc) {
+  if (sc.n < 25 && sc.n3 >= 25 && sc.n3 >= sc.n * 2) return { n: sc.n3, r: 3 };
+  return { n: sc.n, r: sc.r };
+}
+const miles = (r, cap) => (r === 1 ? (cap ? "a Mile" : "a mile") : `${r} ${cap ? "Miles" : "miles"}`);
+
+/* The name a description should use: the settled search name when it is a
+   name rather than an abbreviation ("Cal State LA", "CUNY Graduate Center"),
+   otherwise the full name, so the words someone typed are there to be bolded. */
+function descName(c) {
+  if (c.d) return c.d;
+  const plainName = c.t && c.t.includes(" ") && !c.t.includes("(") && !/^[A-Z&]{2,6} [A-Z][a-z]+$/.test(c.t);
+  const n = plainName ? c.t : c.n;
+  return /^University of /.test(n) ? `the ${n}` : n;
+}
+
+/* `town` is the nearest city with its own page, for campuses with almost
+   nothing around them: the honest pitch there is where to go instead. */
+function dataDesc(c, sc, town) {
+  const { n, r } = reach(sc);
+  const who = descName(c);
+  const close = " See five nearby, or get a free pick for your craving.";
+  if (n < 12) {
+    const head = `Only ${sc.n} ${sc.n === 1 ? "place" : "places"} to eat right by ${who}`;
+    const more = town ? `; ${town.c}, ${town.miles} miles away, has far more.` : ".";
+    return [`${head}${more}${close}`, `${head}${more}`, `${head}.`].find((d) => d.length <= 160);
+  }
+  const top = leaders(sc.top, 3).map((t) => inline(t[0], t[1]));
+  const lead = top.length && r === sc.r
+    ? ` ${top[0][0].toUpperCase()}${listSentence(top).slice(1)} ${top.length === 1 ? "leads" : "lead"} the list.`
+    : "";
+  const street = sc.st && sc.st.length && sc.st[0][1] >= 8 && r === sc.r ? ` Busiest food street: ${sc.st[0][0]}.` : "";
+  const head = r === sc.r
+    ? `${n.toLocaleString("en-US")} places to eat within ${miles(r)} of ${who}` +
+      `${sc.w ? `, ${sc.w.toLocaleString("en-US")} a ten-minute walk away` : ""}.`
+    : `${sc.n.toLocaleString("en-US")} places to eat within ${miles(sc.r)} of ${who} and ` +
+      `${n.toLocaleString("en-US")} within ${miles(r)}.`;
+  /* Longest version that fits in about 160 characters, Google's usual cut. */
+  return [
+    `${head}${lead}${street}${close}`,
+    `${head}${lead}${close}`,
+    `${head}${close}`,
+    `${head}${lead}`,
+    head,
+  ].find((d) => d.length <= 160) || head;
+}
+
+/* Title for a focus page: the school as people search it, then the count,
+   which is the one thing on the page no directory result shows in its title.
+   Under a dozen places is no selling point, so those titles leave it out.
+   60 characters rather than 65 here: Google cuts titles at about 600 pixels,
+   and a title full of capitals and digits reaches that sooner. */
+function dataTitle(c, sc) {
+  const who = c.t || (c.a && c.a.length <= 24 ? c.a : c.n);
+  const { n: count, r } = reach(sc);
+  const n = count.toLocaleString("en-US");
+  const options = [
+    ...(count >= 12 ? [
+      `Restaurants Near ${who}: ${n} Places Within ${miles(r, true)} | Savor Scout`,
+      `Restaurants Near ${who}: ${n} Places to Eat Within ${miles(r, true)}`,
+      `Restaurants Near ${who}: ${n} Places Within ${miles(r, true)}`,
+      `Restaurants Near ${who}: ${n} Within ${miles(r, true)}`,
+      `Restaurants Near ${who}: ${n} Nearby | Savor Scout`,
+      `Restaurants Near ${who}: ${n} Nearby`,
+    ] : []),
+    `Restaurants Near ${who}: Where to Eat Nearby | Savor Scout`,
+    `Restaurants Near ${who} | Savor Scout`,
+  ];
+  return options.find((t) => t.length <= 60) || fitTitle([...options, `Restaurants Near ${who}`]);
 }
 
 const WHO = "make-campus-pages";
@@ -66,7 +132,9 @@ const WHO = "make-campus-pages";
 const { CAMPUSES, BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
-const CITY_PAGE = new Map(CITIES.map((x) => [`${x.c}|${x.r}`, x]));
+/* "Saint Louis" in IPEDS, "St. Louis" in the city list: one key for both. */
+const townKey = (name, st) => `${name.toLowerCase().replace(/\./g, "").replace(/^saint /, "st ").replace(/^sainte /, "ste ")}|${st}`;
+const CITY_PAGE = new Map(CITIES.map((x) => [townKey(x.c, x.r), x]));
 
 const shell = shellOrDie(WHO);
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
@@ -203,17 +271,25 @@ function nearestCities(c, k) {
    answer to "where do we drive when nobody wants the same four places again" —
    and it is different for almost every campus, which is exactly what 637 pages
    need to be worth having. */
+/* The nearest city of 100,000 or more, for the nights the options by campus
+   run out. Null when the campus is already in or beside one (telling a CUNY
+   student the nearest big city is New York helps no one) or when the nearest
+   is more than an hour's drive away. */
 function nearestBigCity(c) {
   const cos = Math.cos((c.lat * Math.PI) / 180);
   let best = null;
   for (const o of CITIES) {
-    if (o.p < 150000) continue;
+    if (o.p < 100000) continue;
     const dx = (o.lng - c.lng) * cos;
     const dy = o.lat - c.lat;
     const d2 = dx * dx + dy * dy;
     if (!best || d2 < best.d2) best = { o, d2 };
   }
-  return best ? { ...best.o, miles: Math.max(1, Math.round(Math.sqrt(best.d2) * 69)) } : null;
+  if (!best) return null;
+  const miles = Math.max(1, Math.round(Math.sqrt(best.d2) * 69));
+  const sameTown = best.o.c.toLowerCase() === c.c.toLowerCase() && best.o.r === c.r;
+  if (sameTown || miles <= 10 || miles > 60) return null;
+  return { ...best.o, miles };
 }
 
 /* Title/description test, started 11 October 2026.
@@ -269,7 +345,9 @@ function page(c) {
      to rely on Google inferring that FAU means the same thing. */
   const abbr = c.a && c.a !== c.n && /^[A-Z&]{2,6}$/.test(c.a) ? c.a : null;
   const test = CTR_TEST.has(c.s);
-  const title = fitTitle([
+  const sc0 = sceneFor(`campus/${c.s}`);
+  const focus = DATA_DESC.has(c.s) && sc0;
+  const title = focus ? dataTitle(c, sc0) : fitTitle([
     ...(test ? [
       ...(abbr ? [`Restaurants & Food Near ${abbr} (${c.n}) | Savor Scout`] : []),
       `Restaurants & Food Near ${c.n} | Savor Scout`,
@@ -291,8 +369,7 @@ function page(c) {
     `Food Near ${c.n}`,
     ...(c.a && c.a !== c.n ? [`Restaurants Near ${c.a} — ${place} | Savor Scout`] : []),
   ]);
-  const sc0 = sceneFor(`campus/${c.s}`);
-  const desc = DATA_DESC.has(c.s) && sc0 ? dataDesc(c, sc0)
+  const desc = focus ? dataDesc(c, sc0, near[0])
     : test
     ? `Where to eat near ${abbr || c.n}: tell Savor Scout your budget, craving, diet, or that ` +
       `it has to be open late, and it picks one spot near ${place} and shows why. Free, no signup.`
@@ -303,7 +380,7 @@ function page(c) {
   const stateNode = { name: STATES[c.r] || c.r, url: `${ORIGIN}/campus/${c.r.toLowerCase()}` };
   /* Home > Campuses > State > Town > Campus. The town step only where the town
      has its own page, so every crumb is a real place to go. */
-  const town = CITY_PAGE.get(`${c.c}|${c.r}`);
+  const town = CITY_PAGE.get(townKey(c.c, c.r));
   const trail = [HOME, HUB, stateNode,
     ...(town ? [{ name: `${town.c}, ${town.r}`, url: `${ORIGIN}/eat/${town.s}` }] : []),
     { name: c.n, url }];
@@ -321,6 +398,7 @@ function page(c) {
   const otherNames = (c.al || []).filter((s) => s && s !== c.n);
 
   const spots = spotsFor(`campus/${c.s}`);
+  const qa = faq({ name: shortName, near: `near ${shortName}`, sc: sceneFor(`campus/${c.s}`), spots });
   const list = spotsLd(spots, `Places to eat near ${c.n}`);
 
   const body = `      ${crumbHtml(trail)}
@@ -348,7 +426,8 @@ ${ranksHtml("campus", c.s, shortName)}
       <h2>The campus</h2>
       <ul>
         <li><strong>Location</strong> — ${esc(place)}</li>
-${otherNames.length ? `        <li><strong>Also known as</strong> — ${otherNames.map(esc).join(", ")}</li>\n` : ""}        <li><strong>Setting</strong> — ${esc(sc.label)}</li>
+${c.at ? `        <li><strong>Measured from</strong> — ${esc(c.at)}</li>\n` : ""}
+${otherNames.length ? `        <li><strong>Other names, current or former</strong> — ${otherNames.map(esc).join(", ")}</li>\n` : ""}        <li><strong>Setting</strong> — ${esc(sc.label)}</li>
         <li><strong>Size</strong> — ${esc(sz.label)}</li>
         <li><strong>Type</strong> — ${esc(lvl.type(c.pub, lv))}</li>
       </ul>
@@ -399,6 +478,7 @@ ${GROUP_ENABLED ? `
       <ul>
         ${lvl.guides.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("\n        ")}
       </ul>
+${qa ? qa.html : ""}
 ${neighboursHtml(c)}
       <hr>
       <p><a href="/campus/${c.r.toLowerCase()}">All campuses in ${esc(STATES[c.r] || c.r)}</a> &middot;
@@ -406,7 +486,7 @@ ${neighboursHtml(c)}
          <a href="/eat/">Cities</a> &middot;
          <a href="/">Savor Scout home</a></p>`;
 
-  const ld = JSON.stringify({
+  const ld = JSON.stringify(withFaq({
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: title,
@@ -425,7 +505,7 @@ ${neighboursHtml(c)}
     ...(list ? { mainEntity: list } : {}),
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
     breadcrumb: breadcrumb(trail),
-  });
+  }, qa));
 
   return { url, html: render(shell, { title, desc, url, body, ld, who: WHO }) };
 }
@@ -533,14 +613,26 @@ stateCodes.forEach((st) => {
 });
 
 const hubTrail = [HOME, HUB];
-const stateRows = stateCodes.map((st) =>
+
+/* The campus pages Google shows most (data/search-focus.js), linked straight
+   from the hub. The hub ranks on page one for "restaurants near campus"; this
+   hands some of that to the campus pages sitting just below the top five. */
+const FOCUS = require("./data/search-focus");
+const BY_SLUG = new Map(CAMPUSES.map((x) => [x.s, x]));
+const searched = FOCUS.pages.map(([p]) => p)
+  .filter((p) => /^\/campus\/[^/]+$/.test(p) && BY_SLUG.has(p.slice(8)))
+  .map((p) => BY_SLUG.get(p.slice(8)));
+const searchedCards = searched.map((x) =>
+  `<li class="card"><a href="/campus/${x.s}">${esc(x.n)}</a><span class="meta">${esc(x.c)}, ${esc(x.r)}` +
+  `${x.a && x.a.length <= 24 && !x.n.includes(x.a) ? ` · ${esc(x.a)}` : ""}</span></li>`).join("\n        ");
+const stateRows = stateCodes.slice().sort((a, b) => (STATES[a] || a).localeCompare(STATES[b] || b)).map((st) =>
   `        <li><a href="/campus/${st.toLowerCase()}">${esc(STATES[st] || st)}</a> — ` +
   `${byState[st].length} ${byState[st].length === 1 ? "campus" : "campuses"}</li>`).join("\n");
 
 const hubBody = `      ${crumbHtml(hubTrail)}
-      <h1>Where to eat near campus</h1>
+      <h1>Where to eat near campus: ${CAMPUSES.length.toLocaleString("en-US")} US colleges</h1>
       <p class="lede">
-        ${CAMPUSES.length} US campuses across ${stateCodes.length} states, from community colleges
+        ${CAMPUSES.length.toLocaleString("en-US")} US campuses across the 50 states, DC and Puerto Rico, from community colleges
         to universities of 20,000 students and more. Pick yours and Savor Scout opens with the location already set — say what you are
         craving and it finds one place, then shows why it chose it.
       </p>
@@ -557,6 +649,12 @@ const hubBody = `      ${crumbHtml(hubTrail)}
         campuses just under that.
       </p>
 
+      <h2>Most-searched campuses</h2>
+      <p>The campus pages people find most often on Google right now.</p>
+      <ul class="cards">
+        ${searchedCards}
+      </ul>
+
       <h2>Browse by state</h2>
       <ul class="cols">
 ${stateRows}
@@ -567,8 +665,14 @@ ${stateRows}
          <a href="/">Savor Scout home</a></p>`;
 
 fs.writeFileSync(path.join(outDir, "index.html"), render(shell, {
-  title: `Where to Eat Near Campus — ${CAMPUSES.length.toLocaleString("en-US")} US Colleges | Savor Scout`,
-  desc: `Food near your college or university: ${CAMPUSES.length.toLocaleString("en-US")} US campuses, with one restaurant pick instead of a list of thirty. Free, no app, no signup.`,
+  /* 39 impressions at position 7.1 and no clicks (18 October): the title now
+     leads with "Restaurants Near Campus", the commoner search. */
+  title: fitTitle([
+    `Restaurants Near Campus: Where to Eat at ${CAMPUSES.length.toLocaleString("en-US")} US Colleges`,
+    `Restaurants Near Campus | Savor Scout`,
+  ]),
+  desc: `Pick your college from ${CAMPUSES.length.toLocaleString("en-US")} US campuses, say what you are craving, and Savor Scout ` +
+    `finds one place nearby, not a ranked list, and shows why it chose it.`,
   url: HUB.url,
   who: WHO,
   body: hubBody,

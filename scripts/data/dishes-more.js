@@ -382,7 +382,7 @@ module.exports = [
     ],
     signals:
       "Colombian searches read for regional dish names and for bakery and juice-bar language, since a lot of Colombian food is sold from panaderías rather than restaurants. Ajiaco and guascas mentions are treated as strong signals of a kitchen cooking the Bogotá tradition rather than a general Latin menu.",
-    related: ["arepas", "cuban-food", "peruvian-food"],
+    related: ["arepas", "cuban-food", "peruvian-food", "venezuelan-food"],
     situations: ["big-group", "on-a-budget", "cold-rainy-night"],
   },
   {
@@ -438,7 +438,7 @@ module.exports = [
     ],
     signals:
       "Afghan searches read for the specific dish names, since Afghan restaurants are frequently signed as Mediterranean or Middle Eastern and would be missed by a cuisine filter. Mantu, aushak and kabuli pulao on a menu are close to conclusive.",
-    related: ["persian-food", "dumplings", "indian-food"],
+    related: ["persian-food", "dumplings", "indian-food", "kebabs", "pakistani-food"],
     situations: ["big-group", "vegetarians-and-meat-eaters", "cold-rainy-night"],
   },
   {
@@ -608,7 +608,7 @@ module.exports = [
     ],
     signals:
       "Pupusa searches read for pupuseria language and for curtido and loroco mentions, including in Spanish-language reviews. Many are counters inside markets rather than restaurants, so the matcher treats a non-restaurant listing with the right vocabulary as a candidate.",
-    related: ["salvadoran-food", "tacos", "mexican-food"],
+    related: ["salvadoran-food", "tacos", "mexican-food", "arepas"],
     situations: ["on-a-budget", "finals-week", "late-night"],
   },
   {
@@ -636,7 +636,7 @@ module.exports = [
     ],
     signals:
       "Arepa searches resolve to Venezuelan or Colombian where the search implies one, since the two are different dishes with the same name. The matcher reads for named fillings — reina pepiada, pabellón, de choclo — which are unambiguous about which tradition a kitchen is cooking.",
-    related: ["colombian-food", "sandwiches", "cuban-food"],
+    related: ["colombian-food", "sandwiches", "cuban-food", "venezuelan-food"],
     situations: ["on-a-budget", "work-team-lunch", "nothing-sounds-good"],
   },
   {

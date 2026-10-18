@@ -51,8 +51,8 @@ function spotsHtml(spots, { heading, from, appLink, ctaText }) {
           `<br><span class="addr">${esc([p.st, p.loc].filter(Boolean).join(", "))}</span></li>`).join("\n        ")}
       </ul>
       <p class="note">
-        The closest few by distance from ${esc(from)}, not a ranking — local places listed ahead of
-        chains. Listings from <a href="https://overturemaps.org/" rel="nofollow noopener">Overture Maps</a>
+        Chosen local-first, then listed by distance from ${esc(from)}: a starting point, not a
+        ranking. Listings from <a href="https://overturemaps.org/" rel="nofollow noopener">Overture Maps</a>
         open data (September 2026); hours and openings change, so check before you go.
         Want one picked for what you're craving instead? <a href="${appLink}">${esc(ctaText)}</a>.
       </p>`;

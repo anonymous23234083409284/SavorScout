@@ -49,11 +49,24 @@ function pill(label, slug, count) {
    capital, "Pizza" and "Coffee" lose it. Cuisine guides are the ones whose
    slug ends in -food, which is exactly the set named after a people or place. */
 const COMMON_FOOD = new Set(["soul-food", "halal-food", "asian-fusion-food", "american-food"]);
+const PLURAL = { Bakery: "bakeries", Deli: "delis", Diner: "diners", Buffet: "buffets", Steakhouse: "steakhouses",
+  Gastropub: "gastropubs", Bistro: "bistros", Cafeteria: "cafeterias" };
 function inline(label, slug) {
+  if (PLURAL[label]) return PLURAL[label];
   if (slug && slug.endsWith("-food") && !COMMON_FOOD.has(slug)) return label;
   if (slug === "american-food" || /^(Tex-Mex|Cajun|Latin|Pan-Asian|Middle|Southern|Asian)/.test(label)) return label;
   if (!slug && /^[A-Z][a-z]+(an|ese|ish|ian|ic|i|ch)$/.test(label.split(" ")[0])) return label;
   return label.toLowerCase();
+}
+
+/* The types worth naming as "most common": at least three places each, at most
+   k of them, and never a cut through a tie (naming two of four types on 3
+   places each would be an arbitrary pick presented as a finding). */
+function leaders(top, k) {
+  const ok = top.filter((t) => t[2] >= 3);
+  let n = Math.min(k, ok.length);
+  while (n > 0 && n < ok.length && ok[n - 1][2] === ok[n][2]) n--;
+  return ok.slice(0, n);
 }
 
 function listSentence(items) {
@@ -74,7 +87,7 @@ function sceneHtml(sc, { where, around, isCampus }) {
   const walk = sc.w === 0
     ? `none of them within a ten-minute walk${isCampus ? " of the middle of campus" : ""}`
     : `${fmt(sc.w)} within a ten-minute walk (half a mile)`;
-  const top = sc.top.filter((t) => t[0] !== "Coffee").slice(0, 3);
+  const top = leaders(sc.top, 3);
   const lead = top.length
     ? ` The most common: ${listSentence(top.map((t) => `${esc(inline(t[0], t[1]))} (${fmt(t[2])})`))}.`
     : "";
@@ -93,16 +106,82 @@ function sceneHtml(sc, { where, around, isCampus }) {
       <div class="stats">
         <div class="stat"><b>${fmt(sc.n)}</b><span>places to eat within ${radius}</span></div>
         <div class="stat"><b>${sc.loc}%</b><span>independent, not chains</span></div>
-        <div class="stat"><b>${fmt(sc.cof)}</b><span>coffee shops and cafés</span></div>
+        <div class="stat"><b>${fmt(sc.cof)}</b><span>${sc.cof === 1 ? "coffee shop or café" : "coffee shops and cafés"}</span></div>
       </div>
       <p>
-        Open listings put ${fmt(sc.n)} places to eat within ${radius} of ${esc(where)}, ${walk}.${lead}
-        ${sc.ff ? `${fmt(sc.ff)} are fast-food counters; the rest are sit-down restaurants, cafés, bakeries and takeaway spots.` : ""}
-      </p>${hi}
+        Open listings put ${fmt(sc.n)} places to eat within ${radius} of ${esc(where)}, ${walk}${sc.n3 > sc.n && sc.r < 3 ? `,
+        and ${fmt(sc.n3)} within 3 miles` : ""}.${lead}
+        ${sc.ff ? `${sc.ff === 1 ? "One is a fast-food counter" : `${fmt(sc.ff)} are fast-food counters`}; the rest are sit-down restaurants, cafés, bakeries and takeaway spots.` : ""}
+      </p>${sc.st && sc.st.length ? `
+      <p>
+        <strong>Where to walk:</strong> ${sc.st.length === 1 ? "the street with the most places to eat" : "the streets with the most places to eat"}
+        within ${radius} ${sc.st.length === 1 ? "is" : "are"} ${listSentence(sc.st.map(([st, n]) => `${esc(st)} (${fmt(n)})`))}.
+      </p>` : ""}${hi}
+${sc.top.length ? `
       <p class="pills-label">By type of food — tap one for what to order and how to spot a good one:</p>
       <p class="pills">
         ${sc.top.map((t) => pill(t[0], t[1], t[2])).join("\n        ")}
-      </p>`;
+      </p>` : ""}`;
+}
+
+/* "1 is a coffee shop", "none are fast-food counters", "12 are …". */
+function count(n, one, many) {
+  return n === 0 ? `none ${many}` : n === 1 ? `one ${one}` : `${fmt(n)} ${many}`;
+}
+
+/* ---- questions people search, answered from the page's own data -------- */
+
+/* `name` is how the place is searched ("RPI", "Waco"); `near` finishes
+   "places to eat ..." ("near RPI", "in central Waco"). Every answer is built
+   from the same numbers shown above it, so the FAQ can never disagree with the
+   page. Returns { html, ld } or null when there is nothing to answer with. */
+function faq({ name, near, sc, spots }) {
+  const qa = [];
+  if (spots && spots.length) {
+    qa.push([`What restaurants are ${near}?`,
+      `A few to start with, nearest first: ${listSentence(spots.map((p) =>
+        `${p.n}${p.c ? ` (${p.c.toLowerCase()}, ${p.mi < 0.1 ? "under 0.1" : p.mi} mi)` : ""}`))}. ` +
+      `They are chosen local-first, then listed by distance; a starting point, not a ranking.`]);
+  }
+  if (sc) {
+    const radius = `${sc.r} ${sc.r === 1 ? "mile" : "miles"}`;
+    qa.push([`How many places to eat are ${near}?`,
+      `Open map listings put ${fmt(sc.n)} places to eat within ${radius}` +
+      `${sc.w ? `, ${fmt(sc.w)} of them within a ten-minute walk` : ""}` +
+      `${sc.n3 > sc.n && sc.r < 3 ? `, and ${fmt(sc.n3)} within 3 miles` : ""}. About ${sc.loc}% are independent rather than chains; ` +
+      `${count(sc.cof, "is a coffee shop or café", "are coffee shops or cafés")} and ` +
+      `${count(sc.ff, "is a fast-food counter", "are fast-food counters")}.`]);
+    if (sc.st && sc.st.length) {
+      const streets = sc.st.map(([st, n]) => `${st} (${fmt(n)} ${n === 1 ? "place" : "places"})`);
+      qa.push([`Where is the food ${near}?`,
+        `The busiest ${streets.length === 1 ? "street is" : "streets are"} ${listSentence(streets)}.`]);
+    }
+    const top = leaders(sc.top, 4);
+    if (top.length) {
+      qa.push([`What kind of food is ${near}?`,
+        `The most common types are ${listSentence(top.map((t) => `${inline(t[0], t[1])} (${fmt(t[2])})`))}.` +
+        (sc.hi.length ? ` Unusually common compared with the rest of the country: ${listSentence(sc.hi.map((h) => inline(h[0], h[1])))}.` : "")]);
+    }
+  }
+  if (!qa.length) return null;
+  return {
+    html: `
+      <h2>Questions about eating ${esc(near)}</h2>
+      <dl class="faq">
+        ${qa.map(([q, a]) => `<dt>${esc(q)}</dt><dd>${esc(a)}</dd>`).join("\n        ")}
+      </dl>`,
+    ld: {
+      "@type": "FAQPage",
+      mainEntity: qa.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+    },
+  };
+}
+
+/* One JSON-LD block holding the page and its FAQ. */
+function withFaq(pageLd, f) {
+  if (!f) return pageLd;
+  const { ["@context"]: ctx, ...page } = pageLd;
+  return { "@context": ctx || "https://schema.org", "@graph": [page, f.ld] };
 }
 
 /* ---- campus neighbours -------------------------------------------------- */
@@ -192,15 +271,23 @@ const DISH_NAME = new Map([
   ...require("../data/dishes"), ...require("../data/dishes-more"), ...require("../data/dishes-cuisines"),
   ...require("../data/dishes-formats"), ...require("../data/dishes-formats-2"),
 ].map((d) => [d.s, d.n]));
-const guideName = (g) => (g.startsWith("diet:") ? `${g.slice(5)} food` : DISH_NAME.get(g));
+const PROPER_START = /^(Korean|Nashville|Peking|Chinese|Pad|Bún|Neapolitan|New|Detroit|Italian|Eggs|Cuban|Tacos al|Po')/;
+const guideName = (g) => {
+  if (g.startsWith("diet:")) return `${g.slice(5)} food`;
+  const n = DISH_NAME.get(g);
+  if (!n || / food$/.test(n) || PROPER_START.test(n)) return n;
+  return n[0].toLowerCase() + n.slice(1);
+};
 
 const RANKS = { city: new Map(), campus: new Map() };
 for (const [g, d] of Object.entries(DATA.guides)) {
   if (d.via || !guideName(g)) continue;
   for (const [type, list] of [["city", d.cities], ["campus", d.campuses]]) {
-    list.forEach(([s, n], i) => {
+    list.forEach(([s, n]) => {
+      if (n <= 2) return;   // "#3 for empanadas, 2 listed" is noise, not a standing
       if (!RANKS[type].has(s)) RANKS[type].set(s, []);
-      RANKS[type].get(s).push({ g, rank: i + 1, n, kind: d.kinds[0] });
+      /* Competition ranking: places on the same count share the rank. */
+      RANKS[type].get(s).push({ g, rank: 1 + list.filter(([, m]) => m > n).length, n, kind: d.kinds[0] });
     });
   }
 }
@@ -215,8 +302,8 @@ function ranksHtml(type, slug, name) {
       <h2>Where ${esc(name)} stands out</h2>
       <p>Among ${among}, ${esc(name)} ranks near the top for these. Each guide covers what to order and how to tell a good one.</p>
       <ul class="ranks">
-        ${list.map((r) => `<li><b>#${r.rank}</b> for <a href="${guideHref(r.g)}">${esc(guideName(r.g))}</a>` +
-          ` — ${fmt(r.n)} ${esc(r.kind)} listed</li>`).join("\n        ")}
+        ${list.map((r) => `<li><b>#${r.rank}</b><span>for <a href="${guideHref(r.g)}">${esc(guideName(r.g))}</a>` +
+          ` — ${fmt(r.n)} ${esc(r.kind)} listed</span></li>`).join("\n        ")}
       </ul>`;
 }
 
@@ -270,7 +357,12 @@ function whereHtml(g, name) {
       </p>`;
 }
 
-function whereLd(g, name) {
+/* The schema type for a guide's places: a coffee shop is not a Restaurant. */
+const PLACE_TYPE = { coffee: "CafeOrCoffeeShop", matcha: "CafeOrCoffeeShop", bakery: "Bakery", donuts: "Bakery",
+  bagels: "Bakery", "ice-cream": "IceCreamShop", gelato: "IceCreamShop", "shaved-ice": "IceCreamShop",
+  "fried-chicken": "FastFoodRestaurant", "hot-dogs": "FastFoodRestaurant" };
+
+function whereLd(g, name, slug) {
   if (!g) return null;
   const ex = g.ex.filter((e) => CITY.has(e.city));
   if (!ex.length) return null;
@@ -282,7 +374,7 @@ function whereLd(g, name) {
       "@type": "ListItem",
       position: i + 1,
       item: {
-        "@type": "Restaurant",
+        "@type": PLACE_TYPE[slug] || "Restaurant",
         name: e.n,
         address: {
           "@type": "PostalAddress", streetAddress: e.st,
@@ -297,5 +389,5 @@ function whereLd(g, name) {
 
 module.exports = {
   sceneFor, sceneHtml, neighboursHtml, cityCampusesHtml, guideFor, whereHtml, whereLd, guideHref, pill,
-  systemOf, inline, listSentence, ranksHtml,
+  systemOf, inline, listSentence, leaders, ranksHtml, faq, withFaq,
 };

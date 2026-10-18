@@ -43,7 +43,7 @@ const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-citie
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
-const { sceneFor, sceneHtml, cityCampusesHtml, ranksHtml } = require("./lib/scene");
+const { sceneFor, sceneHtml, cityCampusesHtml, ranksHtml, faq, withFaq } = require("./lib/scene");
 const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
 
 /* Hand-written food identity for the 50 largest cities.
@@ -298,6 +298,7 @@ function page(shell, city) {
     ctaText: `Ask Savor Scout in ${name}`,
   });
   const list = spotsLd(nearby, `Places to eat in ${place}`);
+  const qa = faq({ name, near: `in ${name}`, sc: sceneFor(`eat/${slug}`), spots: nearby });
 
   /* The written opening, for the 50 cities that have one. */
   const intro = m ? `      <p class="lede">${esc(m.identity[0])}</p>
@@ -365,6 +366,7 @@ ${GROUP_ENABLED ? `
         anything.
       </p>
 ` : ""}
+${qa ? qa.html : ""}
       <h2>Near ${esc(name)}</h2>
       <ul>
         ${nearLinks}
@@ -394,7 +396,7 @@ ${cityCampusesHtml(city)}
       <hr>
       <p><a href="/eat/">All cities</a> &middot; <a href="/">Savor Scout home</a></p>`;
 
-  const ld = JSON.stringify({
+  const ld = JSON.stringify(withFaq({
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: title,
@@ -408,7 +410,7 @@ ${cityCampusesHtml(city)}
     ...(list ? { mainEntity: list } : {}),
     isPartOf: { "@type": "WebSite", name: "Savor Scout", url: `${ORIGIN}/` },
     breadcrumb: breadcrumb(trail),
-  });
+  }, qa));
 
   return render(shell, { title, desc, url, body, ld, who: WHO });
 }

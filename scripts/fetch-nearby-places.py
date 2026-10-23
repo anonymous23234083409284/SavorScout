@@ -542,7 +542,10 @@ for g, T in GUIDE_SET.items():
     guide_via[g] = T
 
 # Online-only schools have an office address, not a campus anyone eats near.
-ONLINE = re.compile(r"(?i)University of the People|\bGlobal\b|\bOnline\b|National and Global")
+ONLINE = re.compile(r"(?i)University of the People|\bGlobal\b|\bOnline\b|National and Global|"
+                    # and the same exclusions scripts/lib/campuses.js applies (NO_CAMPUS), so
+                    # nothing is picked here that the site never builds a page for
+                    r"digital immersion|global campus|world campus|\bdistrict\b|system office|\bvirtual\b")
 
 guides = {}
 for g in set(guide_direct) | set(guide_via):

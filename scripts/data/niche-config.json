@@ -1,0 +1,6 @@
+{
+  "_why": "Campus x cuisine pages (/campus/<school>/<food>). batch = how many are published; raise it once Search Console shows the last batch indexed. min_places = matching listings within a mile a pair needs before it gets a page at all; per_campus = most pages one campus gets in this batch.",
+  "batch": 100,
+  "min_places": 6,
+  "per_campus": 3
+}

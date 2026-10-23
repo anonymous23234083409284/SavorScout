@@ -11,6 +11,10 @@ reads the JSON and never touches the network.
 The first step downloads about 1.7M US food places (~180 MB) into /tmp and
 is skipped if that file is already there. Bump RELEASE to the newest folder
 under release/ when refreshing, and update the date in scripts/lib/nearby.js.
+
+Also writes scripts/data/food-scene.json (per-page food scene, per-guide
+rankings) and scripts/data/campus-cuisine.json (the campus x cuisine pages;
+batch size and the minimum-listings gate are in data/niche-config.json).
 """
 import json, math, os, re, sys, time
 from collections import Counter
@@ -74,7 +78,8 @@ BAD_NAME = re.compile(
     r"headquarters|corporate|commissary|inc|llc|l\.l\.c|corp|corporation|ltd|dba|d/b/a|sba|enterprises?|"
     r"consulting|management|marketing|properties|technology|holdings|advisors|services|investments?|"
     r"partners|group|ventures|solutions|hospitality|vending|janitorial|liquors?|wine & spirits|spirits|"
-    r"candy|candies|smoke shop|vape|tobacco|cigars?|convenience|gas station|fuel|lottery)\b|https?://|@|\d{6,}")
+    r"candy|candies|smoke shop|vape|tobacco|cigars?|convenience|gas station|fuel|lottery|answers|realty|insurance|"
+    r"repair|plumbing|hvac|salon|nails|dental|dentist|clinic|attorney|law firm|storage|cleaners|laundromat)\b|https?://|@|\d{6,}")
 CATERING_ONLY = re.compile(r"(?i)catering")
 FOODISH = re.compile(r"(?i)restaurant|cafe|café|grill|kitchen|diner|pizz|bbq|bar\b|deli|taco|bistro|eatery|"
                      r"trattoria|osteria|cantina|taqueria|sushi|ramen|pho|noodle|burger|wings|chicken|bagel|bakery|"
@@ -585,3 +590,114 @@ print("scene pages", len(pages_scene), "guides with data", len(guides), file=sys
 with open(os.path.join(REPO, "scripts", "data", "food-scene.json"), "w") as f:
     json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "pages": pages_scene, "guides": guides},
               f, separators=(",", ":"), ensure_ascii=False)
+
+
+# ---------------------------------------------------------------------------
+# Campus x cuisine pages: /campus/<school>/<food>, e.g. "Korean food near NYU".
+# Written to scripts/data/campus-cuisine.json. A pair qualifies only with
+# min_places real matching listings within a mile; the batch is the top
+# `batch` qualifying pairs, highest-priority campuses first, spread wide.
+# ---------------------------------------------------------------------------
+
+with open(os.path.join(REPO, "scripts", "data", "niche-config.json")) as f:
+    NICHE = json.load(f)
+
+# Cuisines people search "<food> near <school>" for, each with how a place is
+# matched. Food-guide slugs, so every page sits under a real guide.
+NICHE_FOODS = ["mexican-food", "asian-food", "chinese-food", "japanese-food", "korean-food", "thai-food",
+               "vietnamese-food", "indian-food", "italian-food", "mediterranean-food", "sushi", "ramen", "pizza",
+               "tacos", "burgers", "bbq", "coffee", "bakery", "sandwiches", "fried-chicken", "wings", "breakfast",
+               "seafood", "halal-food", "greek-food", "deli", "ice-cream", "bagels", "donuts", "dessert"]
+
+def niche_match(g):
+    if g == "asian-food":
+        return lambda p: p["tax"] in ASIAN
+    return lambda p: p["g"] == g
+
+def read_js_slugs(path, pattern):
+    with open(os.path.join(REPO, path)) as f:
+        return re.findall(pattern, f.read())
+
+focus = read_js_slugs("scripts/data/search-focus.js", r'"/campus/([a-z0-9-]+)"')
+
+with open(os.path.join(REPO, "scripts", "make-campus-pages.js")) as f:
+    src = f.read()
+m = re.search(r"CTR_TEST = new Set\(\[([\s\S]*?)\]\)", src)
+clicked = re.findall(r'"([a-z0-9-]+)"', m.group(1)) if m else []
+by_slug = {c["s"]: c for c in campuses}
+order = []
+for s_ in focus + clicked:
+    if s_ in by_slug and s_ not in order:
+        order.append(s_)
+rest = sorted((c["s"] for c in campuses if c["s"] not in order and not ONLINE.search(c["n"])),
+              key=lambda s_: -len(camp_own.get(s_, [])))
+order += rest
+
+def pair(c, g):
+    ps = [(miles(c["lat"], c["lng"], p["lat"], p["lng"]), p) for p in camp_own.get(c["s"], []) if niche_match(g)(p)]
+    if len(ps) < NICHE["min_places"]:
+        return None
+    ps.sort(key=lambda dp: dp[0])
+    streets = Counter()
+    for d, p in ps:
+        st = street_of(p["st"])
+        if st:
+            streets[" ".join(w for w in st.split() if w not in DIRS.values())] += 1
+    wide = sum(1 for d, p in near(c["lat"], c["lng"], 3.0) if niche_match(g)(p))
+    seen, shown = set(), []
+    for d, p in sorted(ps, key=lambda dp: (dp[1]["chain"], dp[0])):   # local first, then closest
+        k = norm(p["n"])
+        if k in seen:
+            continue
+        seen.add(k)
+        shown.append((d, p))
+        if len(shown) == 10:
+            break
+    shown.sort(key=lambda dp: dp[0])
+    return {
+        "campus": c["s"], "food": g, "n": len(ps), "w": sum(1 for d, p in ps if d <= 0.5), "n3": wide,
+        "loc": round(100 * sum(1 for d, p in ps if not p["chain"]) / len(ps)),
+        "st": [[s_, n] for s_, n in streets.most_common(2) if n >= 2],
+        "places": [{"n": p["n"], "c": cuisine(p), "st": p["st"], "loc": p["loc"], "reg": p["reg"], "zip": p["zip"],
+                    "lat": p["lat"], "lng": p["lng"], "mi": round(d, 1), "chain": p["chain"]} for d, p in shown],
+    }
+
+# One page per family of food per campus, so a campus gets "Thai", "Mexican"
+# and "coffee" rather than "Asian", "Chinese" and "sushi". Within a family the
+# specific cuisine beats the umbrella: "Thai food near Simmons" is a narrower,
+# less contested search than "Asian food near Simmons".
+FAMILY = {"asian-food": "asian", "chinese-food": "asian", "japanese-food": "asian", "korean-food": "asian",
+          "thai-food": "asian", "vietnamese-food": "asian", "sushi": "asian", "ramen": "asian",
+          "mexican-food": "mexican", "tacos": "mexican", "pizza": "italian", "italian-food": "italian",
+          "coffee": "cafe", "bakery": "cafe", "bagels": "cafe", "donuts": "cafe", "dessert": "sweet", "ice-cream": "sweet",
+          "burgers": "american", "bbq": "american", "fried-chicken": "american", "wings": "american",
+          "sandwiches": "american", "deli": "american", "breakfast": "breakfast", "mediterranean-food": "med",
+          "greek-food": "med", "halal-food": "med", "indian-food": "indian", "seafood": "seafood"}
+
+def pick(cands):
+    best = {}
+    for x in sorted(cands, key=lambda x: (x["food"] == "asian-food", -x["n"])):
+        best.setdefault(FAMILY[x["food"]], x)
+    return sorted(best.values(), key=lambda x: -x["n"])
+
+tier1 = [s_ for s_ in order if s_ in focus or s_ in clicked]
+per, eligible = {}, 0
+for s_ in order:
+    cands = [x for x in (pair(by_slug[s_], g) for g in NICHE_FOODS) if x]
+    eligible += len(cands)
+    if cands:
+        per[s_] = pick(cands)[:NICHE["per_campus"]]
+
+# The campuses Google already shows us for go first, every one of them up to
+# per_campus pages, round-robin so each gets its best page before any gets a
+# third; then the rest of the list the same way.
+batch = []
+for tier in (tier1, [s_ for s_ in order if s_ not in tier1]):
+    for rank in range(NICHE["per_campus"]):
+        for s_ in tier:
+            if s_ in per and len(per[s_]) > rank and len(batch) < NICHE["batch"]:
+                batch.append(per[s_][rank])
+print("campus x cuisine: eligible", eligible, "published", len(batch), file=sys.stderr)
+with open(os.path.join(REPO, "scripts", "data", "campus-cuisine.json"), "w") as f:
+    json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "eligible": eligible,
+               "pages": batch}, f, separators=(",", ":"), ensure_ascii=False)

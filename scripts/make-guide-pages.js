@@ -34,6 +34,7 @@ const WHO = "make-guide-pages";
    The generator sees one array per class and nothing downstream knows. */
 const { GROUP_ENABLED } = require("./lib/features");
 const { guideFor, whereHtml, whereLd } = require("./lib/scene");
+const { guideLinksHtml } = require("./lib/niche");
 /* Diet guides whose restriction is also a kind of restaurant in the data. */
 const DIET_DATA = { vegetarian: "diet:vegetarian", vegan: "diet:vegan", "gluten-free": "diet:gluten-free",
   kosher: "diet:kosher", halal: "halal-food" };
@@ -341,6 +342,7 @@ function dishPage(x) {
       ${defs(x.order)}
 ${x.hub ? hubHtml(x) : ""}
 ${whereHtml(guideFor(x.s), x.n)}
+${guideLinksHtml(x.s)}
 
       <h2>How Savor Scout looks for it</h2>
       <p>${esc(x.signals)}</p>

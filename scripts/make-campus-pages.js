@@ -42,6 +42,7 @@ const {
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
+const NICHE = require("./lib/niche");
 const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, leaders, ranksHtml, faq, withFaq,
   cravingsHtml, budgetHtml, openNowHtml } = require("./lib/scene");
 
@@ -413,6 +414,7 @@ ${spotsHtml(spots, {
 })}
 ${sceneHtml(sceneFor(`campus/${c.s}`), { where: shortName, around: `around ${shortName}`, isCampus: true })}
 ${cravingsHtml(sc0, `near ${shortName}`)}
+${NICHE.campusLinksHtml(c)}
 ${ranksHtml("campus", c.s, shortName)}
 ${budgetHtml(sc0, shortName, appLink)}
 ${openNowHtml(shortName, appLink)}
@@ -525,6 +527,15 @@ CAMPUSES.forEach((c) => {
   fs.writeFileSync(path.join(outDir, `${c.s}.html`), p.html);
   urls.push({ loc: p.url, pri: c.sz === 5 ? "0.8" : "0.7", freq: "monthly" });
 });
+
+/* ---- campus x cuisine pages (lib/niche.js) -------------------------------- */
+for (const p of NICHE.PAGES) {
+  const n = NICHE.build(p, { ORIGIN, HOME, HUB, STATES, breadcrumb, crumbHtml });
+  fs.mkdirSync(path.join(outDir, p.campus), { recursive: true });
+  fs.writeFileSync(path.join(outDir, p.campus, `${p.food}.html`),
+    render(shell, { title: n.title, desc: n.desc, url: n.url, body: n.body, ld: n.ld, who: WHO }));
+  urls.push({ loc: n.url, pri: "0.6", freq: "monthly" });
+}
 
 /* ---- state hubs -------------------------------------------------------------
    Same reasoning as /eat/: a single index listing all 627 campuses was the only
@@ -692,4 +703,4 @@ fs.writeFileSync(path.join(outDir, "index.html"), render(shell, {
 urls.push({ loc: HUB.url, pri: "0.9", freq: "weekly" });
 
 emit("campus", urls);
-console.log(`${WHO}: ${CAMPUSES.length} campus pages + index across ${Object.keys(byState).length} states`);
+console.log(`${WHO}: ${CAMPUSES.length} campus pages + ${NICHE.PAGES.length} campus x cuisine pages + index across ${Object.keys(byState).length} states`);

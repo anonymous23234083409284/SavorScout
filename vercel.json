@@ -52,6 +52,11 @@
       "permanent": true
     },
     {
+      "source": "/campus/:slug/:food/",
+      "destination": "/campus/:slug/:food",
+      "permanent": true
+    },
+    {
       "source": "/about/:slug/",
       "destination": "/about/:slug",
       "permanent": true
@@ -133,6 +138,10 @@
     {
       "source": "/campus/:slug",
       "destination": "/campus/:slug.html"
+    },
+    {
+      "source": "/campus/:slug/:food",
+      "destination": "/campus/:slug/:food.html"
     },
     {
       "source": "/about/:slug",

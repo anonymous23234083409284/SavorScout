@@ -60,30 +60,40 @@ function mapsLink(p) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
 
+/* The count leads: "112 Italian Restaurants Near Suffolk University". A
+   number is the one thing a directory result never puts first, and it is the
+   page's real content. No "best", "verified" or "top picks": the listings are
+   unranked and unreviewed, and a title that promises more than the page has
+   wins the click and loses the visitor. */
+const titleCase = (s) => s.replace(/\b([a-z])/g, (m) => m.toUpperCase());
+
 function title(p, c) {
-  const [L] = label(p.food);
-  const who = titleName(c);
+  const [L, noun] = label(p.food);
+  const TN = titleCase(noun);
   const n = fmt(p.n);
-  const options = [
-    `${L} Near ${who}: ${n} Places Within a Mile | Savor Scout`,
-    `${L} Near ${who}: ${n} Places Within a Mile`,
-    `${L} Near ${who}: ${n} Within a Mile`,
-    `${L} Near ${who}: ${n} Nearby`,
-    `${L} Near ${who} | Savor Scout`,
-  ];
-  return options.find((t) => t.length <= 60) || fitTitle([...options, `${L} Near ${who}`]);
+  /* The settled search name, then the full name; a raw abbreviation only when
+     nothing else fits, since many are ambiguous ("BC" is Broward College here
+     and Boston College to most readers). */
+  const plain = c.n.replace(/[- ]Main Campus$/, "").replace(/^City Colleges of Chicago-/, "");
+  const names = [...new Set([c.t, plain, c.t ? null : c.a].filter(Boolean))];
+  const options = names.flatMap((who) => [
+    `${n} ${TN} Near ${who} — Closest First`,
+    `${n} ${TN} Near ${who} | Savor Scout`,
+    `${n} ${TN} Near ${who}`,
+  ]);
+  const fallback = names.flatMap((who) => [`${L} Near ${who}: ${n} Within a Mile`, `${L} Near ${who}`]);
+  return options.find((t) => t.length <= 60) || [...options, ...fallback].find((t) => t.length <= 65) || fallback[fallback.length - 1];
 }
 
 function desc(p, c) {
   const [, noun] = label(p.food);
-  const name = c.d || c.n;
-  const head = `${fmt(p.n)} ${noun} within a mile of ${name}${p.w ? `, ${fmt(p.w)} a ten-minute walk away` : ""}.`;
-  const street = p.st.length ? ` The busiest stretch is ${p.st[0][0]}.` : "";
+  const who = c.d || c.n;
+  const k = p.places.length;
   return [
-    `${head}${street} The closest, with addresses, and what to order.`,
-    `${head} The closest, with addresses, and what to order.`,
-    head,
-  ].find((d) => d.length <= 160) || head;
+    `Looking for ${noun} near ${who}? All ${fmt(p.n)} within a mile, the closest ${k} with addresses and walking distance, and what to order.`,
+    `Looking for ${noun} near ${who}? All ${fmt(p.n)} within a mile, the closest ${k} with addresses and walking distance.`,
+    `${fmt(p.n)} ${noun} within a mile of ${who}, the closest ${k} with addresses and walking distance.`,
+  ].find((d) => d.length <= 160) || `${fmt(p.n)} ${noun} within a mile of ${who}.`;
 }
 
 /* ---- the page ----------------------------------------------------------- */
@@ -213,8 +223,11 @@ function campusLinksHtml(c) {
 }
 
 /* On a food guide: every campus with a page for that food. */
+/* Capped: a guide is read by people, and 300 cards is not a section. Every
+   page is also linked from its own campus page and its sibling pages, so the
+   cap costs no page its way in. */
 function guideLinksHtml(food) {
-  const mine = PAGES.filter((p) => p.food === food).sort((a, b) => b.n - a.n);
+  const mine = PAGES.filter((p) => p.food === food).sort((a, b) => b.n - a.n).slice(0, 48);
   if (!mine.length) return "";
   const [L] = label(food);
   return `

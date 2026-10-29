@@ -23,6 +23,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Keyword miner output (scripts/research/mine-keywords.py)
+# Keyword tool (scripts/research/keywords.py): its database and reports, and
+# the credentials it reads. None of these belong in the repository.
 scripts/research/out/
+scripts/research/config.json
+scripts/research/client_secret*.json
+scripts/research/*service*account*.json
+scripts/research/*-key.json
 __pycache__/

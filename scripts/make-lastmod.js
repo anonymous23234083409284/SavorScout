@@ -100,7 +100,7 @@ const touched = (url) => {
 const V = 2;
 const pick = (html, re) => (html.match(re) || [""])[0];
 const bodyOf = (html) => {
-  const i = html.indexOf('<main class="ss-static">');
+  const i = html.indexOf('<main class="ss-static"');
   const j = html.indexOf("</main>");
   return i >= 0 && j > i ? html.slice(i, j) : "";
 };

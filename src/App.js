@@ -1961,16 +1961,29 @@ function App() {
      they are. Without this the location pages would be pure bait: rank for a
      town, then ask the reader to type that same town into a box. */
   const deepLinkApplied = useRef(false);
+  /* Set when the visitor arrived from a guide page's search bar (?go=1): they
+     already pressed "Find my one" there, so the search runs by itself as soon
+     as the place resolves (see the effect after handleSearch). */
+  const deepLinkGo = useRef(false);
   useEffect(() => {
     if (deepLinkApplied.current) return;
-    let near = null, craving = null;
+    let near = null, craving = null, go = false;
     try {
       const sp = new URLSearchParams(window.location.search);
       near = sp.get("near");
       craving = sp.get("craving");
+      go = sp.get("go") === "1";
+      /* Dropped from the address bar at once, so a reload or a shared link
+         does not run the search a second time. */
+      if (go) {
+        sp.delete("go");
+        const qs = sp.toString();
+        window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
+      }
     } catch { return; }
     if (!near && !craving) return;
     deepLinkApplied.current = true;
+    if (go && craving && craving.trim()) deepLinkGo.current = true;
     if (craving) { setQuery(craving); setRoomCraving(craving); }
     if (!near || resolvedLocation) return;
     (async () => {
@@ -2095,6 +2108,16 @@ function App() {
       setResults([]);
     } finally { setLoading(false); }
   };
+
+  /* The other half of ?go=1: one search, once the deep link's place and
+     craving are both in. A food guide passes no place, so there it runs the
+     moment the visitor sets one. */
+  useEffect(() => {
+    if (!deepLinkGo.current || !resolvedLocation || !query.trim() || loading) return;
+    deepLinkGo.current = false;
+    handleSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedLocation, query, loading]);
 
   const winner = results[0];
   const reasons = useMemo(() => (winner ? buildReasons(winner) : []), [winner]);

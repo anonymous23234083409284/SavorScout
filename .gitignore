@@ -25,3 +25,4 @@ yarn-error.log*
 
 # Keyword miner output (scripts/research/mine-keywords.py)
 scripts/research/out/
+__pycache__/

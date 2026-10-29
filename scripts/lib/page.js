@@ -184,7 +184,25 @@ function render(shell, { title, desc, url, body, ld, who }) {
   return html
     .replace("</head>",
       `<meta name="ss-static-page" content="1">${STYLE}` +
-      `<script type="application/ld+json">${ld}</script></head>`);
+      `<script type="application/ld+json">${withModified(ld, url)}</script></head>`);
+}
+
+/* The date this page's content last changed, from data/lastmod.json, which
+   only moves when the title, description or body actually changes (see
+   make-lastmod.js). The same date the sitemap gives, now also in the page's
+   own schema, where Google reads freshness for a result. A page not in the
+   file yet (new this build) gets nothing rather than a guess. */
+const LASTMOD_FILE = path.join(__dirname, "..", "data", "lastmod.json");
+const LASTMOD = fs.existsSync(LASTMOD_FILE) ? JSON.parse(fs.readFileSync(LASTMOD_FILE, "utf8")) : {};
+const DATED = new Set(["WebPage", "Article", "CollectionPage"]);
+function withModified(ld, url) {
+  const d = LASTMOD[url] && LASTMOD[url].d;
+  if (!ld || !d) return ld;
+  const doc = JSON.parse(ld);
+  const node = Array.isArray(doc["@graph"]) ? doc["@graph"][0] : doc;
+  if (!node || !DATED.has(node["@type"]) || node.dateModified) return ld;
+  node.dateModified = d;
+  return JSON.stringify(doc);
 }
 
 /* Picks the fullest title that still fits.

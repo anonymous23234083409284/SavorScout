@@ -43,8 +43,13 @@ const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-citie
 const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
-const { sceneFor, sceneHtml, cityCampusesHtml, ranksHtml, faq, withFaq, cravingsHtml, openNowHtml } = require("./lib/scene");
-const { BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
+const { sceneFor, sceneHtml, cityCampusesHtml, ranksHtml, faq, withFaq, cravingsHtml, openNowHtml, leaders, inline,
+  listSentence } = require("./lib/scene");
+const { CAMPUSES, BY_STATE: CAMPUS_BY_STATE } = require("./lib/campuses");
+const { isPriority, askedQa } = require("./lib/search");
+/* Counted, not typed: the guide and campus counts in the footer list were
+   written as "30" and "637" and stayed that way while both doubled. */
+const SITUATION_COUNT = require("./data/situations").length + require("./data/situations-more").length;
 
 /* Hand-written food identity for the 50 largest cities.
  *
@@ -249,20 +254,64 @@ function diningHtml(city) {
   return parts.join("\n");
 }
 
+const WORD = ["no", "one", "two", "three", "four", "five"];
+const milesText = (r, cap) => (r === 1 ? (cap ? "a Mile" : "a mile") : `${r} ${cap ? "Miles" : "miles"}`);
+
+/* A city page's title, for the pages Google shows most (data/priority-pages.json):
+   the count of places, which no directory result puts in its title. Kept to
+   60 characters, where Google's cut falls for a title with digits in it. */
+function cityTitle(place, sc) {
+  if (sc && sc.n >= 12) {
+    const n = fmt(sc.n);
+    const t = [
+      `Where to Eat in ${place}: ${n} Places Within ${milesText(sc.r, true)} | Savor Scout`,
+      `Where to Eat in ${place}: ${n} Places Within ${milesText(sc.r, true)}`,
+      `Where to Eat in ${place}: ${n} Places to Eat Nearby`,
+      `Where to Eat in ${place}: ${n} Places Nearby`,
+    ].find((x) => x.length <= 60);
+    if (t) return t;
+  }
+  return null;
+}
+
+/* Every city page with data: the count, the walk, what leads, the busiest
+   street, then what the page offers, in the longest version that fits in
+   about 160 characters. `shown` is how many places the page lists. */
+function cityDesc(name, place, sc, shown) {
+  const radius = milesText(sc.r);
+  const head = `${fmt(sc.n)} places to eat within ${radius} of central ${place}` +
+    `${sc.w === 1 ? ", one a ten-minute walk from the middle" : sc.w ? `, ${fmt(sc.w)} a ten-minute walk from the middle` : ""}.`;
+  const top = leaders(sc.top, 3).map((t) => inline(t[0], t[1]));
+  const lead = top.length ? ` ${top[0][0].toUpperCase()}${listSentence(top).slice(1)} ${top.length === 1 ? "leads" : "lead"}.` : "";
+  const street = sc.st && sc.st.length && sc.st[0][1] >= 8 ? ` Busiest food street: ${sc.st[0][0]}.` : "";
+  const close = shown ? ` See ${WORD[shown] || shown} to start with, or get one picked for your craving.`
+    : ` Get one picked for your craving.`;
+  /* What leads and the busiest street before the closing line: those are
+     different on every page, the closing line is the same on all of them. */
+  return [`${head}${lead}${street}${close}`, `${head}${lead}${close}`, `${head}${lead}${street}`, `${head}${lead}`,
+    `${head}${close}`, head].find((d) => d.length <= 160) || head;
+}
+
 function page(shell, city) {
   const { c: name, r: region, s: slug, p: pop } = city;
   const place = `${name}, ${region}`;
   const near = nearest(city);
   const copy = sizeCopy(city);
+  const sc = sceneFor(`eat/${slug}`);
+  const pagePath = `/eat/${slug}`;
+  const nearby = spotsFor(`eat/${slug}`);
 
-  const title = fitTitle([
+  const title = (isPriority(pagePath) && cityTitle(place, sc)) || fitTitle([
     `Where to Eat in ${place} — One Pick, Not a List | Savor Scout`,
     `Where to Eat in ${place} — One Pick, Not a List`,
     `Where to Eat in ${place} | Savor Scout`,
     `Where to Eat in ${place}`,
   ]);
-  const desc = `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${place} ` +
-    `based on what you're craving and shows why it chose it. Free, no app, no signup.`;
+  /* Built from the page's own numbers where it has them. The general line it
+     replaces was the same sentence on a thousand pages and ran past Google's cut. */
+  const desc = sc ? cityDesc(name, place, sc, nearby ? nearby.length : 0)
+    : `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${place} ` +
+      `based on what you're craving and shows why it chose it. Free, no app, no signup.`;
   const url = `${ORIGIN}/eat/${slug}`;
   const app = `/?near=${encodeURIComponent(place)}`;
 
@@ -290,7 +339,6 @@ function page(shell, city) {
 
   const m = METRO.get(slug);
 
-  const nearby = spotsFor(`eat/${slug}`);
   const spots = spotsHtml(nearby, {
     heading: `A few places to eat in ${name}`,
     from: `central ${name}`,
@@ -298,7 +346,7 @@ function page(shell, city) {
     ctaText: `Ask Savor Scout in ${name}`,
   });
   const list = spotsLd(nearby, `Places to eat in ${place}`);
-  const qa = faq({ name, near: `in ${name}`, sc: sceneFor(`eat/${slug}`), spots: nearby });
+  const qa = faq({ name, near: `in ${name}`, sc, spots: nearby, extra: askedQa(pagePath, { near: `in ${name}`, sc }) });
 
   /* The written opening, for the 50 cities that have one. */
   const intro = m ? `      <p class="lede">${esc(m.identity[0])}</p>
@@ -387,13 +435,13 @@ ${cityCampusesHtml(city)}
 
       <h2>Guides</h2>
       <ul>
-        <li><a href="/what-to-eat/">What to eat when&hellip;</a> — 30 guides by situation, from
+        <li><a href="/what-to-eat/">What to eat when&hellip;</a> — ${SITUATION_COUNT} guides by situation, from
             a first date to a hangover to a group of twelve.</li>
         <li><a href="/food/">Food guides</a> — what separates a good taco, ramen or pizza from
             an average one.</li>
         <li><a href="/diet/">Eating out with a restriction</a> — allergies, halal, kosher, vegan
             and more.</li>
-        <li><a href="/campus/">Near a campus?</a> — food around 637 US universities.</li>
+        <li><a href="/campus/">Near a campus?</a> — food around ${fmt(CAMPUSES.length)} US colleges and universities.</li>
       </ul>
       <hr>
       <p><a href="/eat/">All cities</a> &middot; <a href="/">Savor Scout home</a></p>`;

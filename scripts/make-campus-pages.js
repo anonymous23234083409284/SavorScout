@@ -43,6 +43,7 @@ const STATES = require("./data/states");
 const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
 const NICHE = require("./lib/niche");
+const { PRIORITY, isPriority, preferSearched, askedQa } = require("./lib/search");
 const { sceneFor, sceneHtml, neighboursHtml, inline, listSentence, leaders, ranksHtml, faq, withFaq,
   cravingsHtml, budgetHtml, openNowHtml } = require("./lib/scene");
 
@@ -67,16 +68,21 @@ const miles = (r, cap) => (r === 1 ? (cap ? "a Mile" : "a mile") : `${r} ${cap ?
 function descName(c) {
   if (c.d) return c.d;
   const plainName = c.t && c.t.includes(" ") && !c.t.includes("(") && !/^[A-Z&]{2,6} [A-Z][a-z]+$/.test(c.t);
-  const n = plainName ? c.t : c.n;
+  const n = (plainName ? c.t : c.n).replace(/-Main Campus$/, "");
   return /^University of /.test(n) ? `the ${n}` : n;
 }
 
+const WORD = ["no", "one", "two", "three", "four", "five"];
+
 /* `town` is the nearest city with its own page, for campuses with almost
-   nothing around them: the honest pitch there is where to go instead. */
-function dataDesc(c, sc, town) {
+   nothing around them: the honest pitch there is where to go instead.
+   `shown` is how many places the page lists (three to five), so the promise
+   matches the page. */
+function dataDesc(c, sc, town, shown, dataFirst = false) {
   const { n, r } = reach(sc);
   const who = descName(c);
-  const close = " See five nearby, or get a free pick for your craving.";
+  const close = shown ? ` See ${WORD[shown] || shown} nearby, or get a free pick for your craving.`
+    : " Get a free pick for your craving.";
   if (n < 12) {
     const head = `Only ${sc.n} ${sc.n === 1 ? "place" : "places"} to eat right by ${who}`;
     const more = town ? `; ${town.c}, ${town.miles} miles away, has far more.` : ".";
@@ -89,41 +95,95 @@ function dataDesc(c, sc, town) {
   const street = sc.st && sc.st.length && sc.st[0][1] >= 8 && r === sc.r ? ` Busiest food street: ${sc.st[0][0]}.` : "";
   const head = r === sc.r
     ? `${n.toLocaleString("en-US")} places to eat within ${miles(r)} of ${who}` +
-      `${sc.w ? `, ${sc.w.toLocaleString("en-US")} a ten-minute walk away` : ""}.`
+      `${sc.w === 1 ? ", one a ten-minute walk away" : sc.w ? `, ${sc.w.toLocaleString("en-US")} a ten-minute walk away` : ""}.`
     : `${sc.n.toLocaleString("en-US")} places to eat within ${miles(sc.r)} of ${who} and ` +
       `${n.toLocaleString("en-US")} within ${miles(r)}.`;
-  /* Longest version that fits in about 160 characters, Google's usual cut. */
-  return [
+  /* Longest version that fits in about 160 characters, Google's usual cut.
+     `dataFirst` keeps what leads and the busiest street over the closing
+     line when only one fits: those differ from page to page, the closing
+     line is the same on all of them. The focus pages keep the order they
+     have carried since 18 October. */
+  return (dataFirst ? [
+    `${head}${lead}${street}${close}`,
+    `${head}${lead}${close}`,
+    `${head}${lead}${street}`,
+    `${head}${lead}`,
+    `${head}${close}`,
+    head,
+  ] : [
     `${head}${lead}${street}${close}`,
     `${head}${lead}${close}`,
     `${head}${close}`,
     `${head}${lead}`,
     head,
-  ].find((d) => d.length <= 160) || head;
+  ]).find((d) => d.length <= 160) || head;
 }
 
 /* Title for a focus page: the school as people search it, then the count,
    which is the one thing on the page no directory result shows in its title.
    Under a dozen places is no selling point, so those titles leave it out.
    60 characters rather than 65 here: Google cuts titles at about 600 pixels,
-   and a title full of capitals and digits reaches that sooner. */
-function dataTitle(c, sc) {
-  const who = c.t || (c.a && c.a.length <= 24 ? c.a : c.n);
+   and a title full of capitals and digits reaches that sooner.
+
+   `whos` is the names to try, best first. Every name is tried with the count
+   before any is tried without it: the count is the reason to click, so a
+   shorter name that leaves room for it beats a longer one that does not. */
+function dataTitle(c, sc, whos, max = 60) {
+  whos = whos || [c.t || (c.a && c.a.length <= 24 ? c.a : c.n)];
   const { n: count, r } = reach(sc);
   const n = count.toLocaleString("en-US");
   const options = [
-    ...(count >= 12 ? [
+    ...(count >= 12 ? whos.flatMap((who) => [
       `Restaurants Near ${who}: ${n} Places Within ${miles(r, true)} | Savor Scout`,
       `Restaurants Near ${who}: ${n} Places to Eat Within ${miles(r, true)}`,
       `Restaurants Near ${who}: ${n} Places Within ${miles(r, true)}`,
       `Restaurants Near ${who}: ${n} Within ${miles(r, true)}`,
       `Restaurants Near ${who}: ${n} Nearby | Savor Scout`,
       `Restaurants Near ${who}: ${n} Nearby`,
-    ] : []),
-    `Restaurants Near ${who}: Where to Eat Nearby | Savor Scout`,
-    `Restaurants Near ${who} | Savor Scout`,
+    ]) : []),
+    ...whos.flatMap((who) => [
+      `Restaurants Near ${who}: Where to Eat Nearby | Savor Scout`,
+      `Restaurants Near ${who} | Savor Scout`,
+    ]),
   ];
-  return options.find((t) => t.length <= 60) || fitTitle([...options, `Restaurants Near ${who}`]);
+  return options.find((t) => t.length <= max) || fitTitle([...options, `Restaurants Near ${whos[0]}`]);
+}
+
+/* The names a priority page's title can use, fullest first: the settled
+   search name, the full name with its abbreviation, the full name, the short
+   name, the abbreviation alone. */
+const STATE_NAMES = new Set(Object.values(STATES));
+function titleNames(c, abbr) {
+  const full = c.n.replace(/-Main Campus$/, "");
+  /* Not a one-word short name: in a title it reads as the place, not the
+     school ("Illinois", "Brooklyn", "Northwest"), and several are shared
+     ("Rutgers" is three campuses). Nor one that is a state or the town. */
+  const short = c.a && c.a !== abbr && c.a.length <= 24 && !/^[A-Z][a-z]+$/.test(c.a) && !STATE_NAMES.has(c.a)
+    && c.a !== c.c ? c.a : null;
+  return [...new Set([
+    ...(c.t ? [c.t] : []),
+    ...(abbr ? [`${full} (${abbr})`] : []),
+    full,
+    ...(short ? [short] : []),
+    ...(abbr ? [abbr] : []),
+  ])];
+}
+
+/* A priority page's title. An abbreviation people search by ("food near
+   ewu") should not drop out for want of a few characters: when the
+   60-character title lost it, the full name with it may run to the site's
+   usual 65. */
+function priorityTitle(c, sc, abbr, pagePath, fallback) {
+  const names = preferSearched(pagePath, titleNames(c, abbr));
+  const t = dataTitle(c, sc, names);
+  const keep = abbr ? names.filter((n) => n.includes(abbr)) : [];
+  if (keep.length && !t.includes(abbr)) {
+    const alt = dataTitle(c, sc, keep, 65);
+    if (alt.length <= 65 && /\d/.test(alt) && alt.includes(" (")) return alt;
+  }
+  /* A name too long for any version with the count keeps the title it had,
+     which was already fitted to the length. */
+  return t.length <= 65 && /\d/.test(t) ? t : fallback;
 }
 
 const WHO = "make-campus-pages";
@@ -349,7 +409,13 @@ function page(c) {
   const test = CTR_TEST.has(c.s);
   const sc0 = sceneFor(`campus/${c.s}`);
   const focus = DATA_DESC.has(c.s) && sc0;
-  const title = focus ? dataTitle(c, sc0) : fitTitle([
+  /* The 500 pages Google shows most (data/priority-pages.json) get the focus
+     treatment too: the count in the title. The title test's pages keep their
+     test copy until it has been read. */
+  const pagePath = `/campus/${c.s}`;
+  const prio = !focus && !test && sc0 && isPriority(pagePath);
+  const spots = spotsFor(`campus/${c.s}`);
+  const baseTitle = fitTitle([
     ...(test ? [
       ...(abbr ? [`Restaurants & Food Near ${abbr} (${c.n}) | Savor Scout`] : []),
       `Restaurants & Food Near ${c.n} | Savor Scout`,
@@ -371,10 +437,14 @@ function page(c) {
     `Food Near ${c.n}`,
     ...(c.a && c.a !== c.n ? [`Restaurants Near ${c.a} — ${place} | Savor Scout`] : []),
   ]);
-  const desc = focus ? dataDesc(c, sc0, near[0])
-    : test
+  const title = focus ? dataTitle(c, sc0) : prio ? priorityTitle(c, sc0, abbr, pagePath, baseTitle) : baseTitle;
+  /* Every campus page with data gets a description built from it: the count,
+     the walk, what leads, the busiest street. The general line it replaces was
+     the same 30 words on a thousand pages, and ran past Google's cut. */
+  const desc = test
     ? `Where to eat near ${abbr || c.n}: tell Savor Scout your budget, craving, diet, or that ` +
       `it has to be open late, and it picks one spot near ${place} and shows why. Free, no signup.`
+    : sc0 ? dataDesc(c, sc0, near[0], spots ? spots.length : 0, !focus)
     :
     `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
     `what you're craving instead of handing you a list. Free, no app, no signup.`;
@@ -399,8 +469,8 @@ function page(c) {
      searcher using them can be matched to it. */
   const otherNames = (c.al || []).filter((s) => s && s !== c.n);
 
-  const spots = spotsFor(`campus/${c.s}`);
-  const qa = faq({ name: shortName, near: `near ${shortName}`, sc: sceneFor(`campus/${c.s}`), spots });
+  const qa = faq({ name: shortName, near: `near ${shortName}`, sc: sc0, spots,
+    extra: askedQa(pagePath, { near: `near ${shortName}`, sc: sc0 }) });
   const list = spotsLd(spots, `Places to eat near ${c.n}`);
 
   const body = `      ${crumbHtml(trail)}
@@ -562,9 +632,11 @@ function stateHub(st) {
     .map(([k, n]) => `${n} ${k === "city" ? "in cities" : k === "suburb" ? "in suburbs"
       : k === "town" ? "in college towns" : "rurally situated"}`).join(", ");
 
-  const rows = list.map((c) =>
-    `        <li><a href="/campus/${c.s}">${esc(c.n)}</a> — ${esc(c.c)}, ` +
-    `${esc(SIZE[c.sz].label)}</li>`).join("\n");
+  const rows = list.map((c) => {
+    const guides = NICHE.campusInlineLinks(c);
+    return `        <li><a href="/campus/${c.s}">${esc(c.n)}</a> — ${esc(c.c)}, ` +
+      `${esc(SIZE[c.sz].label)}${guides ? ` · ${guides}` : ""}</li>`;
+  }).join("\n");
 
   const body = `      ${crumbHtml(trail)}
       <h1>Where to eat near ${esc(name)} campuses</h1>
@@ -629,13 +701,15 @@ stateCodes.forEach((st) => {
 
 const hubTrail = [HOME, HUB];
 
-/* The campus pages Google shows most (data/search-focus.js), linked straight
-   from the hub. The hub ranks on page one for "restaurants near campus"; this
-   hands some of that to the campus pages sitting just below the top five. */
-const FOCUS = require("./data/search-focus");
+/* The campus pages Google shows most, linked straight from the hub: the
+   first 60 campuses on the priority list (data/priority-pages.json, ordered by
+   Search Console impressions), which starts with the 18 October focus pages.
+   The hub ranks on page one for "restaurants near campus"; this hands some of
+   that to the campus pages sitting just below the top five. */
 const BY_SLUG = new Map(CAMPUSES.map((x) => [x.s, x]));
-const searched = FOCUS.pages.map(([p]) => p)
+const searched = (PRIORITY.length ? PRIORITY.map((p) => p.url) : FOCUS_PAGES.map(([p]) => p))
   .filter((p) => /^\/campus\/[^/]+$/.test(p) && BY_SLUG.has(p.slice(8)))
+  .slice(0, 60)
   .map((p) => BY_SLUG.get(p.slice(8)));
 const searchedCards = searched.map((x) =>
   `<li class="card"><a href="/campus/${x.s}">${esc(x.n)}</a><span class="meta">${esc(x.c)}, ${esc(x.r)}` +

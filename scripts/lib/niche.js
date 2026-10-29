@@ -222,6 +222,14 @@ function campusLinksHtml(c) {
       </p>`;
 }
 
+/* On a state hub, after each campus: its cuisine pages as plain links. This
+   puts every one of them two clicks from the campus hub instead of three, and
+   gives each a link from a page Google crawls often. */
+function campusInlineLinks(c) {
+  return PAGES.filter((p) => p.campus === c.s)
+    .map((p) => `<a href="${urlPath(p)}">${esc(inSentence(sentenceLabel(p.food)))}</a>`).join(", ");
+}
+
 /* On a food guide: every campus with a page for that food. */
 /* Capped: a guide is read by people, and 300 cards is not a section. Every
    page is also linked from its own campus page and its sibling pages, so the
@@ -238,4 +246,4 @@ function guideLinksHtml(food) {
       </ul>`;
 }
 
-module.exports = { PAGES, build, campusLinksHtml, guideLinksHtml, urlPath };
+module.exports = { PAGES, build, campusLinksHtml, campusInlineLinks, guideLinksHtml, urlPath };

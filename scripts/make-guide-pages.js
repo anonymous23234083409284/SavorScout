@@ -314,11 +314,30 @@ ${x.group && (GROUP_ENABLED || !ROOM_PITCH.test(x.group)) ? `
 
 const FOOD_HUB = { name: "Food guides", url: `${ORIGIN}/food/` };
 
+/* A short description, finished with the page's own national count: "Plus
+   where the US's 273 Polish restaurants are, led by Chicago." Most dish
+   descriptions were written as one line of 70 to 100 characters, which
+   leaves half of what Google shows unused; the count is the part a reader
+   cannot get from the title. Only where it fits, and only for a guide counted
+   from a single kind of place, so the sentence names exactly what was counted. */
+const CITY_NAME = new Map(CITIES.map((c) => [c.s, c.c]));
+function withCount(desc, g) {
+  if (!g || g.natl < 50 || g.kinds.length !== 1 || desc.length >= 110) return desc;
+  const top = g.cities.find(([s]) => CITY_NAME.has(s));
+  const n = g.natl.toLocaleString("en-US");
+  return [
+    ...(top ? [`${desc} Plus where the US's ${n} ${g.kinds[0]} are, led by ${CITY_NAME.get(top[0])}.`] : []),
+    `${desc} Plus where the US's ${n} ${g.kinds[0]} are.`,
+  ].find((d) => d.length <= 160) || desc;
+}
+
 function dishPage(x) {
   if (SEARCH_COPY[x.s]) {
     x = { ...x, ...SEARCH_COPY[x.s] };
     const g = guideFor(x.s);
     if (g) x.desc = x.desc.replace("{natl}", g.natl.toLocaleString("en-US"));
+  } else {
+    x = { ...x, desc: withCount(x.desc, guideFor(x.s)) };
   }
   const url = `${ORIGIN}/food/${x.s}`;
   const trail = [HOME, FOOD_HUB, { name: x.n, url }];

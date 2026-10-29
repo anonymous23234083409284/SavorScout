@@ -135,7 +135,7 @@ function count(n, one, many) {
    "places to eat ..." ("near RPI", "in central Waco"). Every answer is built
    from the same numbers shown above it, so the FAQ can never disagree with the
    page. Returns { html, ld } or null when there is nothing to answer with. */
-function faq({ name, near, sc, spots }) {
+function faq({ name, near, sc, spots, extra = [] }) {
   const qa = [];
   if (spots && spots.length) {
     qa.push([`What restaurants are ${near}?`,
@@ -163,6 +163,9 @@ function faq({ name, near, sc, spots }) {
         (sc.hi.length ? ` Unusually common compared with the rest of the country: ${listSentence(sc.hi.map((h) => inline(h[0], h[1])))}.` : "")]);
     }
   }
+  /* Questions from this page's own searches (lib/search.js), already
+     answered from the same numbers. */
+  qa.push(...extra);
   if (!qa.length) return null;
   return {
     html: `

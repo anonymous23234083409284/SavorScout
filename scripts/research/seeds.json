@@ -1,0 +1,619 @@
+{
+ "made": "2026-10-29",
+ "campuses": [
+  {
+   "slug": "california-state-university-los-angeles",
+   "city": "Los Angeles",
+   "state": "CA",
+   "names": [
+    "Cal State LA",
+    "California State University Los Angeles"
+   ]
+  },
+  {
+   "slug": "weber-state-university",
+   "city": "Ogden",
+   "state": "UT",
+   "names": [
+    "Weber State",
+    "WSU",
+    "Weber State University"
+   ]
+  },
+  {
+   "slug": "california-state-university-east-bay",
+   "city": "Hayward",
+   "state": "CA",
+   "names": [
+    "Cal State East Bay",
+    "California State University East Bay"
+   ]
+  },
+  {
+   "slug": "cuny-city-college",
+   "city": "New York",
+   "state": "NY",
+   "names": [
+    "CCNY",
+    "City College",
+    "CUNY City College",
+    "City College of New York"
+   ]
+  },
+  {
+   "slug": "east-tennessee-state-university",
+   "city": "Johnson City",
+   "state": "TN",
+   "names": [
+    "ETSU",
+    "East Tennessee State",
+    "East Tennessee State University"
+   ]
+  },
+  {
+   "slug": "idaho-state-university",
+   "city": "Pocatello",
+   "state": "ID",
+   "names": [
+    "Idaho State",
+    "ISU",
+    "Idaho State University"
+   ]
+  },
+  {
+   "slug": "modesto-junior-college",
+   "city": "Modesto",
+   "state": "CA",
+   "names": [
+    "MJC",
+    "Modesto Junior College"
+   ]
+  },
+  {
+   "slug": "new-jersey-institute-of-technology",
+   "city": "Newark",
+   "state": "NJ",
+   "names": [
+    "NJIT",
+    "New Jersey Institute of Technology"
+   ]
+  },
+  {
+   "slug": "rochester-institute-of-technology",
+   "city": "Rochester",
+   "state": "NY",
+   "names": [
+    "RIT",
+    "Rochester Institute of Technology"
+   ]
+  },
+  {
+   "slug": "southern-illinois-university-edwardsville",
+   "city": "Edwardsville",
+   "state": "IL",
+   "names": [
+    "SIUE",
+    "SIU Edwardsville",
+    "Southern Illinois University Edwardsville",
+    "Southern Illinois"
+   ]
+  },
+  {
+   "slug": "valdosta-state-university",
+   "city": "Valdosta",
+   "state": "GA",
+   "names": [
+    "Valdosta State",
+    "VSU",
+    "Valdosta State University",
+    "Valdosta State College",
+    "V-State"
+   ]
+  },
+  {
+   "slug": "washington-university-in-st-louis",
+   "city": "Saint Louis",
+   "state": "MO",
+   "names": [
+    "WashU",
+    "WashU in St. Louis",
+    "Washington University in St Louis",
+    "Washington"
+   ]
+  },
+  {
+   "slug": "western-washington-university",
+   "city": "Bellingham",
+   "state": "WA",
+   "names": [
+    "WWU",
+    "Western Washington",
+    "Western Washington University",
+    "Western Washington State College",
+    "Western Washington College of Education"
+   ]
+  },
+  {
+   "slug": "azusa-pacific-university",
+   "city": "Azusa",
+   "state": "CA",
+   "names": [
+    "APU",
+    "Azusa Pacific",
+    "Azusa Pacific University"
+   ]
+  },
+  {
+   "slug": "california-state-university-channel-islands",
+   "city": "Camarillo",
+   "state": "CA",
+   "names": [
+    "CSUCI",
+    "CSU Channel Islands",
+    "California State University Channel Islands"
+   ]
+  },
+  {
+   "slug": "columbia-basin-college",
+   "city": "Pasco",
+   "state": "WA",
+   "names": [
+    "Columbia Basin College",
+    "CBC"
+   ]
+  },
+  {
+   "slug": "concordia-university-saint-paul",
+   "city": "Saint Paul",
+   "state": "MN",
+   "names": [
+    "Concordia St. Paul",
+    "CSP",
+    "Concordia University Saint Paul",
+    "Concordia-St. Paul",
+    "Concordia"
+   ]
+  },
+  {
+   "slug": "cuny-graduate-school-and-university-center",
+   "city": "New York",
+   "state": "NY",
+   "names": [
+    "CUNY Graduate Center",
+    "CUNY Graduate School and University Center",
+    "The Graduate Center"
+   ]
+  },
+  {
+   "slug": "davenport-university",
+   "city": "Grand Rapids",
+   "state": "MI",
+   "names": [
+    "Davenport University",
+    "Davenport"
+   ]
+  },
+  {
+   "slug": "delaware-state-university",
+   "city": "Dover",
+   "state": "DE",
+   "names": [
+    "Del State",
+    "Delaware State",
+    "DSU",
+    "Delaware State University"
+   ]
+  },
+  {
+   "slug": "green-river-college",
+   "city": "Auburn",
+   "state": "WA",
+   "names": [
+    "Green River College"
+   ]
+  },
+  {
+   "slug": "lindenwood-university",
+   "city": "Saint Charles",
+   "state": "MO",
+   "names": [
+    "Lindenwood University",
+    "Lindenwood"
+   ]
+  },
+  {
+   "slug": "lorain-county-community-college",
+   "city": "Elyria",
+   "state": "OH",
+   "names": [
+    "LCCC",
+    "Lorain County Community College"
+   ]
+  },
+  {
+   "slug": "mercy-college",
+   "city": "Dobbs Ferry",
+   "state": "NY",
+   "names": [
+    "Mercy University",
+    "Dobbs Ferry",
+    "Mercy College",
+    "Mercy"
+   ]
+  },
+  {
+   "slug": "northeastern-illinois-university",
+   "city": "Chicago",
+   "state": "IL",
+   "names": [
+    "NEIU",
+    "Northeastern Illinois",
+    "Northeastern Illinois University"
+   ]
+  },
+  {
+   "slug": "purdue-university-northwest",
+   "city": "Hammond",
+   "state": "IN",
+   "names": [
+    "Purdue Northwest",
+    "Purdue University Northwest",
+    "Purdue"
+   ]
+  },
+  {
+   "slug": "rensselaer-polytechnic-institute",
+   "city": "Troy",
+   "state": "NY",
+   "names": [
+    "RPI",
+    "Rensselaer Polytechnic Institute"
+   ]
+  },
+  {
+   "slug": "simmons-university",
+   "city": "Boston",
+   "state": "MA",
+   "names": [
+    "Simmons University",
+    "Simmons"
+   ]
+  },
+  {
+   "slug": "suffolk-university",
+   "city": "Boston",
+   "state": "MA",
+   "names": [
+    "Suffolk University",
+    "Suffolk"
+   ]
+  },
+  {
+   "slug": "tacoma-community-college",
+   "city": "Tacoma",
+   "state": "WA",
+   "names": [
+    "Tacoma Community College"
+   ]
+  },
+  {
+   "slug": "texas-southern-university",
+   "city": "Houston",
+   "state": "TX",
+   "names": [
+    "Texas Southern",
+    "TSU",
+    "Texas Southern University"
+   ]
+  },
+  {
+   "slug": "university-of-washington-bothell-campus",
+   "city": "Bothell",
+   "state": "WA",
+   "names": [
+    "UW Bothell",
+    "University of Washington Bothell Campus",
+    "UW-B",
+    "UW-Bothell"
+   ]
+  },
+  {
+   "slug": "university-of-west-alabama",
+   "city": "Livingston",
+   "state": "AL",
+   "names": [
+    "University of West Alabama"
+   ]
+  },
+  {
+   "slug": "washburn-university",
+   "city": "Topeka",
+   "state": "KS",
+   "names": [
+    "Washburn University",
+    "Washburn"
+   ]
+  },
+  {
+   "slug": "college-of-dupage",
+   "city": "Glen Ellyn",
+   "state": "IL",
+   "names": [
+    "College of DuPage",
+    "COD"
+   ]
+  },
+  {
+   "slug": "cuny-borough-of-manhattan-community-college",
+   "city": "New York",
+   "state": "NY",
+   "names": [
+    "BMCC",
+    "CUNY Borough of Manhattan Community College",
+    "Borough of Manhattan CC",
+    "Borough of Manhattan Community College"
+   ]
+  },
+  {
+   "slug": "des-moines-area-community-college",
+   "city": "Ankeny",
+   "state": "IA",
+   "names": [
+    "DMACC",
+    "DMACC Ankeny",
+    "Des Moines Area Community College"
+   ]
+  },
+  {
+   "slug": "johnson-county-community-college",
+   "city": "Overland Park",
+   "state": "KS",
+   "names": [
+    "JCCC",
+    "Johnson County Community College"
+   ]
+  },
+  {
+   "slug": "onondaga-community-college",
+   "city": "Syracuse",
+   "state": "NY",
+   "names": [
+    "Onondaga Community College"
+   ]
+  },
+  {
+   "slug": "pima-community-college",
+   "city": "Tucson",
+   "state": "AZ",
+   "names": [
+    "Pima Community College",
+    "Pima County Community College District"
+   ]
+  },
+  {
+   "slug": "appalachian-state-university",
+   "city": "Boone",
+   "state": "NC",
+   "names": [
+    "Appalachian State University",
+    "Appalachian State"
+   ]
+  },
+  {
+   "slug": "arizona-state-university-campus-immersion",
+   "city": "Tempe",
+   "state": "AZ",
+   "names": [
+    "ASU Tempe",
+    "Arizona State University Campus Immersion",
+    "Arizona State"
+   ]
+  },
+  {
+   "slug": "auburn-university",
+   "city": "Auburn",
+   "state": "AL",
+   "names": [
+    "Auburn University"
+   ]
+  },
+  {
+   "slug": "baylor-university",
+   "city": "Waco",
+   "state": "TX",
+   "names": [
+    "Baylor University",
+    "Baylor"
+   ]
+  },
+  {
+   "slug": "boise-state-university",
+   "city": "Boise",
+   "state": "ID",
+   "names": [
+    "Boise State",
+    "Boise State University"
+   ]
+  },
+  {
+   "slug": "boston-university",
+   "city": "Boston",
+   "state": "MA",
+   "names": [
+    "BU",
+    "Boston University",
+    "Boston U"
+   ]
+  },
+  {
+   "slug": "brigham-young-university",
+   "city": "Provo",
+   "state": "UT",
+   "names": [
+    "BYU",
+    "Brigham Young University",
+    "Brigham Young"
+   ]
+  },
+  {
+   "slug": "brigham-young-university-idaho",
+   "city": "Rexburg",
+   "state": "ID",
+   "names": [
+    "BYU-I",
+    "Brigham Young University Idaho",
+    "Brigham Young"
+   ]
+  },
+  {
+   "slug": "california-polytechnic-state-university-san-luis-obispo",
+   "city": "San Luis Obispo",
+   "state": "CA",
+   "names": [
+    "Cal Poly",
+    "California Polytechnic State University San Luis Obispo"
+   ]
+  },
+  {
+   "slug": "california-state-polytechnic-university-pomona",
+   "city": "Pomona",
+   "state": "CA",
+   "names": [
+    "California State Polytechnic University Pomona"
+   ]
+  },
+  {
+   "slug": "california-state-university-fresno",
+   "city": "Fresno",
+   "state": "CA",
+   "names": [
+    "California State University Fresno"
+   ]
+  },
+  {
+   "slug": "california-state-university-fullerton",
+   "city": "Fullerton",
+   "state": "CA",
+   "names": [
+    "CSUF",
+    "California State University Fullerton",
+    "Cal State Fullerton"
+   ]
+  },
+  {
+   "slug": "california-state-university-long-beach",
+   "city": "Long Beach",
+   "state": "CA",
+   "names": [
+    "Cal State Long Beach",
+    "California State University Long Beach"
+   ]
+  },
+  {
+   "slug": "california-state-university-northridge",
+   "city": "Northridge",
+   "state": "CA",
+   "names": [
+    "CSUN",
+    "California State University Northridge"
+   ]
+  },
+  {
+   "slug": "california-state-university-sacramento",
+   "city": "Sacramento",
+   "state": "CA",
+   "names": [
+    "Sacramento State",
+    "California State University Sacramento"
+   ]
+  },
+  {
+   "slug": "clemson-university",
+   "city": "Clemson",
+   "state": "SC",
+   "names": [
+    "Clemson University"
+   ]
+  },
+  {
+   "slug": "colorado-state-university-fort-collins",
+   "city": "Fort Collins",
+   "state": "CO",
+   "names": [
+    "Colorado State University Fort Collins",
+    "Colorado State"
+   ]
+  },
+  {
+   "slug": "columbia-university-in-the-city-of-new-york",
+   "city": "New York",
+   "state": "NY",
+   "names": [
+    "Columbia University",
+    "Columbia University in the City of New York",
+    "Columbia"
+   ]
+  },
+  {
+   "slug": "cornell-university",
+   "city": "Ithaca",
+   "state": "NY",
+   "names": [
+    "Cornell University",
+    "Cornell"
+   ]
+  },
+  {
+   "slug": "depaul-university",
+   "city": "Chicago",
+   "state": "IL",
+   "names": [
+    "DePaul University",
+    "DePaul"
+   ]
+  }
+ ],
+ "foods": [
+  "vietnamese food",
+  "fried chicken",
+  "japanese food",
+  "mediterranean",
+  "mexican food",
+  "italian food",
+  "chinese food",
+  "indian food",
+  "gluten free",
+  "asian food",
+  "sandwiches",
+  "bubble tea",
+  "vietnamese",
+  "vegetarian",
+  "ice cream",
+  "thai food",
+  "japanese",
+  "burgers",
+  "seafood",
+  "dessert",
+  "chinese",
+  "mexican",
+  "italian",
+  "coffee",
+  "bakery",
+  "indian",
+  "korean",
+  "bagels",
+  "donuts",
+  "pizza",
+  "sushi",
+  "tacos",
+  "ramen",
+  "halal",
+  "vegan",
+  "wings",
+  "deli",
+  "boba",
+  "thai",
+  "bbq",
+  "pho"
+ ]
+}

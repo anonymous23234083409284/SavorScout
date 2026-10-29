@@ -22,3 +22,6 @@ backend/.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Keyword miner output (scripts/research/mine-keywords.py)
+scripts/research/out/

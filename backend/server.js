@@ -2423,6 +2423,15 @@ async function recordTrialSearch(key) {
 /* What to tell the client is left. A trial caller has just spent their only
    search, so it is zero and the sign-in wall goes up — reporting the signed-in
    allowance here would promise four more searches that the gate will refuse. */
+/* Free searches left after this one, for a signed-out visitor; null when
+   signed in. The app walls the search box only when this reaches 0, so the
+   three free searches the gate allows are three in the app too (it used to
+   wall after the first). */
+function trialLeft(req) {
+  if (req.userId) return null;
+  return Math.max(0, FREE_TRIAL_SEARCHES - (req.trialUsedBefore || 0) - 1);
+}
+
 function remainingFor(req, newCount) {
   if (!req.userId) return 0;
   return Math.max(0, DAILY_SEARCH_LIMIT - newCount);
@@ -2457,6 +2466,7 @@ async function requireAuthOrTrial(req, res, next) {
 
     req.userId = null;          // every user-scoped write checks this
     req.anonTrialKey = key;
+    req.trialUsedBefore = used;
     req.currentSearchCount = 0;
     req.searchDate = todayStr();
     return next();
@@ -2485,6 +2495,7 @@ async function requireAuthAndLimit(req, res, next) {
     }
 
     const userId = userData.user.id;
+    res.locals.userId = userId;   // for the search log, which also records refused searches
     const today = new Date().toISOString().slice(0, 10);
 
     const { data: existing, error: fetchError } = await supabaseAdmin
@@ -3289,7 +3300,126 @@ app.get("/me/scout-report", requireAuth, async (req, res) => {
   }
 });
 
-app.post("/search", requireAuthOrTrial, async (req, res) => {
+/* ===========================================================================
+   WHAT PEOPLE ASK FOR
+   Every search anyone types, signed in or not, goes into search_log, and
+   what people tell us on the pages and after a pick goes into feedback (both
+   created by backend/migrations/004_search_log.sql). The product has to be
+   built around what people actually ask for, and this is the only place that
+   is written down in their own words. No IP address is stored; locations
+   are the place name they chose and coordinates rounded to about a
+   kilometre. Recording never delays or breaks a search: it happens after
+   the response has gone, and a failure is reported once and ignored.
+   =========================================================================== */
+
+const insertFailed = new Set();
+function noteInsertError(table, error) {
+  if (!error || insertFailed.has(table)) return;
+  insertFailed.add(table);
+  console.error(`${table} insert failed (has backend/migrations/004_search_log.sql been run?):`, error.message);
+}
+const clip = (v, max) => (typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null);
+const roughly = (v) => (typeof v === "number" && Number.isFinite(v) ? Math.round(v * 100) / 100 : null);
+/* Typed answers lose anything shaped like an email address or a phone
+   number: we want what people are looking for, not how to reach them. */
+const scrub = (t) => t && t.replace(/\S+@\S+/g, "[email]").replace(/\+?\d[\d\s().-]{6,}\d/g, "[number]");
+
+/* Wraps POST /search so every outcome is recorded once, including the
+   searches the gate refuses before the route runs (the sign-up wall, the
+   daily limit), which are the clearest statement of demand going unmet.
+   The response is read on its way out rather than at each of the route's
+   return points. */
+function recordSearches(req, res, next) {
+  const json = res.json.bind(res);
+  res.json = (body) => { res.locals.searchBody = body; return json(body); };
+  res.on("finish", () => {
+    const b = req.body || {};
+    const query = clip(b.query, 500);
+    if (!query) return;
+    const out = res.locals.searchBody || {};
+    const pick = Array.isArray(out.restaurants) && out.restaurants[0] ? out.restaurants[0] : null;
+    const status = res.statusCode;
+    const outcome = status === 401 ? (out.requiresAuth ? "signup_wall" : "signed_out")
+      : status === 429 ? "daily_limit"
+      : status === 400 ? "invalid"
+      : status >= 500 ? "error"
+      : pick ? "pick"
+      : out.outOfRange ? "out_of_range" : "no_match";
+    const userId = req.userId || res.locals.userId || null;
+    supabaseAdmin.from("search_log").insert({
+      query,
+      preferences: out.preferences && typeof out.preferences === "object" ? out.preferences : null,
+      outcome,
+      result_name: pick ? clip(pick.name, 200) : null,
+      result_category: pick ? clip(pick.category, 100) : null,
+      match_score: pick && typeof pick.matchScore === "number" ? Math.round(pick.matchScore) : null,
+      location_name: clip(b.locationHint, 120),
+      lat: roughly(b.lat),
+      lng: roughly(b.lng),
+      radius_mode: clip(b.radiusMode, 20),
+      source: clip(b.source, 30),
+      page: clip(b.page, 200),
+      session_id: clip(b.sessionId, 64),
+      user_id: userId,
+      signed_in: Boolean(userId),
+    }).then(({ error }) => noteInsertError("search_log", error), () => {});
+  });
+  next();
+}
+
+/* The one-tap page votes, the "something else" and "what else could we help
+   you with?" answers, and "was this what you wanted?" after a pick. Open to
+   anyone, so bounded: 30 an hour per address, short fields only. */
+const FEEDBACK_KINDS = new Set(["page_wish", "page_ask", "result"]);
+const FEEDBACK_PER_HOUR = 30;
+const feedbackHits = new Map();
+
+app.post("/feedback", async (req, res) => {
+  const b = req.body || {};
+  const kind = clip(b.kind, 20);
+  if (!kind || !FEEDBACK_KINDS.has(kind)) return res.status(400).json({ error: "Unknown feedback kind" });
+  const choice = clip(b.choice, 40);
+  const message = scrub(clip(b.message, 500));
+  if (!choice && !message) return res.status(400).json({ error: "Nothing to record" });
+
+  const key = ipKey(clientIp(req));
+  const now = Date.now();
+  const hit = feedbackHits.get(key);
+  if (hit && now - hit[1] < 3600 * 1000) {
+    if (hit[0] >= FEEDBACK_PER_HOUR) return res.status(429).json({ error: "Thanks, that's plenty for now." });
+    hit[0] += 1;
+  } else {
+    if (feedbackHits.size > 50000) feedbackHits.clear();
+    feedbackHits.set(key, [1, now]);
+  }
+
+  let userId = null;
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith("Bearer ")) {
+    try {
+      const { data } = await supabaseAdmin.auth.getUser(auth.slice(7).trim());
+      userId = data?.user?.id || null;
+    } catch { /* recorded without the account */ }
+  }
+  const { error } = await supabaseAdmin.from("feedback").insert({
+    kind,
+    choice,
+    message,
+    page: clip(b.page, 200),
+    page_type: clip(b.pageType, 30),
+    query: clip(b.query, 300),
+    result_name: clip(b.resultName, 200),
+    session_id: clip(b.sessionId, 64),
+    user_id: userId,
+  });
+  if (error) {
+    noteInsertError("feedback", error);
+    return res.status(500).json({ error: "Couldn't save that" });
+  }
+  return res.json({ ok: true });
+});
+
+app.post("/search", recordSearches, requireAuthOrTrial, async (req, res) => {
   try {
     const userRequest = req.body.query;
     const userLat = req.body.lat;
@@ -3455,6 +3585,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
         restaurants: [],
         searchesRemaining: remainingFor(req, newCount),
         trialUsed: !req.userId,
+        trialRemaining: trialLeft(req),
       });
     }
 
@@ -3515,6 +3646,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
         restaurants: [],
         searchesRemaining: remainingFor(req, newCount),
         trialUsed: !req.userId,
+        trialRemaining: trialLeft(req),
       });
     }
 
@@ -3591,6 +3723,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
         maxRadiusMiles: maxRadius,
         searchesRemaining: remainingFor(req, newCount),
         trialUsed: !req.userId,
+        trialRemaining: trialLeft(req),
       });
     }
 
@@ -4084,6 +4217,7 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       roomCandidates,
       searchesRemaining: remainingFor(req, newCount),
       trialUsed: !req.userId,
+        trialRemaining: trialLeft(req),
     });
   } catch (err) {
     console.error("Unhandled /search error:", err);

@@ -201,7 +201,12 @@ const STYLE = `
     background:rgba(7,5,11,.6);color:var(--ink);font:inherit;font-size:16px;outline:none}
   .ss-wish__other input:focus{border-color:var(--saffron)}
   .ss-wish .ss-wish__send{background:var(--hot);color:var(--void);font-weight:700;border:0}
-  .ss-static .ss-wish__thanks{margin:0;color:var(--text)}
+  .ss-static .ss-wish__thanks{margin:0 0 10px;color:var(--text)}
+  .ss-wish__ask{display:flex;gap:8px}
+  .ss-wish__ask input{flex:1;min-width:0;padding:10px 16px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(7,5,11,.6);color:var(--ink);font:inherit;font-size:16px;outline:none}
+  .ss-wish__ask input:focus{border-color:var(--saffron)}
+  .ss-static .ss-wish__done{margin:0;color:var(--text)}
   .ss-wish [hidden]{display:none!important}
 
   /* ---- footer ---- */
@@ -340,7 +345,7 @@ function footer() {
 /* The app's search bar, as a plain form: it opens the app with the craving and
    the place already filled in, and go=1 runs the search on arrival. No script
    on this page is needed for it to work. */
-function searchForm(href) {
+function searchForm(href, pathname) {
   const q = new URLSearchParams(href.split("?")[1] || "");
   const near = q.get("near") || "";
   const craving = q.get("craving") || "";
@@ -350,6 +355,7 @@ function searchForm(href) {
           <input class="ss-find__q" type="search" name="craving" value="${esc(craving)}" maxlength="300" autocomplete="off"
             enterkeyhint="search" placeholder="What are you craving? Cheap sushi, spicy ramen&hellip;" aria-label="What are you craving?">
 ${near ? `          <input type="hidden" name="near" value="${esc(near)}">\n` : ""}          <input type="hidden" name="go" value="1">
+          <input type="hidden" name="from" value="${esc(pathname)}">
           <button class="ss-btn" type="submit">Find my one</button>
         </div>
         <p class="ss-find__meta">${near ? `Searching near <b>${esc(near)}</b>` : "Set your location on the next screen"} &middot; one pick, with the reasons</p>
@@ -402,37 +408,52 @@ function wishHtml(type) {
           <input type="text" maxlength="80" placeholder="What were you looking for?" aria-label="What were you looking for?">
           <button class="ss-wish__send" type="submit">Send</button>
         </form>
-        <p class="ss-wish__thanks" hidden>Thanks, your vote is counted.</p>
+        <div class="ss-wish__more" hidden>
+          <p class="ss-wish__thanks">Thanks, that's counted. Anything else we could help you with?</p>
+          <form class="ss-wish__ask">
+            <input type="text" maxlength="300" placeholder="A page, a feature, a question: anything" aria-label="Anything else we could help you with?">
+            <button class="ss-wish__send" type="submit">Send</button>
+          </form>
+        </div>
+        <p class="ss-wish__done" hidden>Thanks. We read every one of these.</p>
       </div>`;
 }
 
 /* Plain script, no bundle. Typed answers lose anything shaped like an email
    address or a phone number before they leave the page. */
+/* Where the answers go: the server's feedback table, the same API the app
+   uses. Overridable at build time with REACT_APP_API_URL, as in App.js. */
+const API = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
+
 const TRACK_JS = `<script>
 (function(){
-  var t=document.body.getAttribute("data-page-type")||"other";
+  var t=document.body.getAttribute("data-page-type")||"other",API=${JSON.stringify(API)},sid=null;
+  try{sid=sessionStorage.getItem("ss_sid");if(!sid){sid=window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10);sessionStorage.setItem("ss_sid",sid);}}catch(e){}
   function ev(n,p){try{if(window.gtag){p.page_type=t;window.gtag("event",n,p);}}catch(e){}}
+  function post(kind,choice,message){try{fetch(API+"/feedback",{method:"POST",headers:{"Content-Type":"application/json"},keepalive:true,
+    body:JSON.stringify({kind:kind,choice:choice||null,message:message||null,page:location.pathname,pageType:t,sessionId:sid})}).catch(function(){});}catch(e){}}
+  function clean(v){return(v||"").trim().replace(/\\S+@\\S+/g,"[email]").replace(/\\+?\\d[\\d\\s().-]{6,}\\d/g,"[number]").slice(0,300);}
   document.addEventListener("click",function(e){
     var a=e.target.closest&&e.target.closest('a[href*="google.com/maps"]');
     if(a){var s=a.querySelector("strong");ev("place_click",{place:(s?s.textContent:a.textContent).trim().slice(0,80)});}
   });
   var box=document.querySelector(".ss-wish");if(!box)return;
   var key="ss_wish:"+location.pathname,opts=box.querySelector(".ss-wish__opts"),sub=box.querySelector(".ss-wish__sub"),
-    form=box.querySelector(".ss-wish__other"),thanks=box.querySelector(".ss-wish__thanks");
-  function done(){opts.hidden=true;sub.hidden=true;form.hidden=true;thanks.hidden=false;}
-  function send(w){ev("page_wish",{wish:w});try{localStorage.setItem(key,"1");}catch(e){}done();}
-  try{if(localStorage.getItem(key))done();}catch(e){}
+    other=box.querySelector(".ss-wish__other"),more=box.querySelector(".ss-wish__more"),ask=box.querySelector(".ss-wish__ask"),
+    done=box.querySelector(".ss-wish__done");
+  function voted(){opts.hidden=true;sub.hidden=true;other.hidden=true;more.hidden=false;}
+  function wish(w,text){ev("page_wish",{wish:text?w+": "+text:w});post("page_wish",w,text);try{localStorage.setItem(key,"1");}catch(e){}voted();}
+  try{if(localStorage.getItem(key))voted();}catch(e){}
   opts.addEventListener("click",function(e){
     var b=e.target.closest("button[data-wish]");if(!b)return;
     var w=b.getAttribute("data-wish");
-    if(w==="other"){form.hidden=false;form.querySelector("input").focus();return;}
-    send(w);
+    if(w==="other"){other.hidden=false;other.querySelector("input").focus();return;}
+    wish(w);
   });
-  form.addEventListener("submit",function(e){
-    e.preventDefault();
-    var v=(form.querySelector("input").value||"").trim()
-      .replace(/\\S+@\\S+/g,"[email]").replace(/\\+?\\d[\\d\\s().-]{6,}\\d/g,"[number]").slice(0,80);
-    if(v)send("other: "+v);
+  other.addEventListener("submit",function(e){e.preventDefault();var v=clean(other.querySelector("input").value);if(v)wish("other",v);});
+  ask.addEventListener("submit",function(e){
+    e.preventDefault();var v=clean(ask.querySelector("input").value);if(!v)return;
+    ev("page_ask",{});post("page_ask",null,v);more.hidden=true;done.hidden=false;
   });
 })();
 </script>`;
@@ -452,7 +473,7 @@ function layout(body, { url, desc }) {
   pre = pre.replace(/<p>\s*<a class="cta"[^>]*?href="([^"]*)"[^>]*>[\s\S]*?<\/a>\s*<\/p>/, (m, href) => {
     if (!(href === "/" || /^\/\?(?:[^"]*&)?(?:near|craving)=/.test(href))) return m;
     near = new URLSearchParams(href.split("?")[1] || "").get("near") || "";
-    return searchForm(href);
+    return searchForm(href, pathname);
   });
   const kicker = (KICKERS.find(([re]) => re.test(pathname)) || [])[1];
   if (kicker) pre = pre.replace("<h1>", `<p class="ss-kicker">${esc(kicker)}</p>\n      <h1>`);

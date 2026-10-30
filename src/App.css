@@ -4152,3 +4152,56 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .consent { transition: none; }
 }.qz-entry-note { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 16px; }
+
+/* ===========================================================================
+   "WAS THIS WHAT YOU WANTED?"
+   Asked under every pick and under a search that found nothing. Quiet on
+   purpose: a footnote to the result, not a second card competing with it.
+   =========================================================================== */
+
+.fb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  max-width: 620px;
+  margin: 14px auto 0;
+  font-size: 14px;
+  color: var(--ink-mid);
+  justify-content: center;
+}
+form.fb { flex-direction: column; align-items: stretch; }
+.fb-q { color: var(--ink-soft); }
+form.fb .fb-q { text-align: center; }
+.fb-row { display: flex; gap: 8px; }
+.fb-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 16px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  outline: none;
+}
+.fb-row input:focus { border-color: var(--saffron); }
+.fb-btn {
+  padding: 7px 16px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line-warm);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+.fb-btn:hover { border-color: var(--saffron); }
+.fb-btn--send {
+  border: 0;
+  color: var(--void);
+  font-weight: 600;
+  background: linear-gradient(110deg, var(--saffron), var(--ember));
+}
+.fb--done { color: var(--ink-soft); }

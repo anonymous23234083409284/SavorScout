@@ -20,6 +20,42 @@ function slugify(s) {
 }
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "https://savorscout.onrender.com";
+/* The server's FREE_TRIAL_SEARCHES. It is the server that enforces it; this is
+   only the number the signed-out banner states. */
+const FREE_SEARCHES = 3;
+
+/* A random id for this browser tab, shared with the guide pages (same key),
+   so one visit's searches and answers can be read together: "sushi", then
+   "cheap sushi", then "was this what you wanted? no, open later". It names
+   nothing and lasts only as long as the tab. */
+const SESSION_ID = (() => {
+  try {
+    let v = window.sessionStorage.getItem("ss_sid");
+    if (!v) {
+      v = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID()
+        : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+      window.sessionStorage.setItem("ss_sid", v);
+    }
+    return v;
+  } catch { return null; }
+})();
+
+/* What people tell us, into the server's feedback table (and a GA4 event so
+   the counts sit beside everything else). Fire and forget: an answer must
+   never wait on, or break, the screen it was given on. */
+function postFeedback(payload) {
+  try {
+    fetch(`${API_BASE_URL}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, sessionId: SESSION_ID }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch { /* nothing to do */ }
+  if (typeof window.gtag === "function") {
+    window.gtag("event", "result_feedback", { choice: payload.choice || "text" });
+  }
+}
 const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN; // optional upgrade, never required
 
 /* Wake the API while the visitor is still reading.
@@ -1079,6 +1115,62 @@ const VIEW_TITLES = {
   you: "Your picks — Savor Scout",
 };
 
+/* ---- asking people what they wanted ---------------------------------------
+   Under every pick: was this what you wanted? A "not really" asks what they
+   were hoping for. Under a search that found nothing, the same question
+   directly. Both go to the server's feedback table: the gap between what
+   people ask for and what we give them is the list of things to build. */
+function PickFeedback({ query, resultName }) {
+  const [step, setStep] = useState("ask");
+  const [text, setText] = useState("");
+  const base = { kind: "result", query, resultName, page: "/", pageType: "app" };
+  if (step === "done") return <p className="fb fb--done">Thanks, that helps us get it right.</p>;
+  if (step === "why") {
+    return (
+      <form className="fb" onSubmit={(e) => {
+        e.preventDefault();
+        if (text.trim()) postFeedback({ ...base, choice: "why", message: text.trim() });
+        setStep("done");
+      }}>
+        <label className="fb-q" htmlFor="fb-why">What were you hoping for?</label>
+        <div className="fb-row">
+          <input id="fb-why" type="text" value={text} maxLength={300} autoFocus
+            placeholder="Cheaper, closer, open later, a different vibe…" onChange={(e) => setText(e.target.value)} />
+          <button className="fb-btn fb-btn--send" type="submit">Send</button>
+        </div>
+      </form>
+    );
+  }
+  return (
+    <div className="fb">
+      <span className="fb-q">Was this what you wanted?</span>
+      <button type="button" className="fb-btn" onClick={() => { postFeedback({ ...base, choice: "yes" }); setStep("done"); }}>Yes</button>
+      <button type="button" className="fb-btn" onClick={() => { postFeedback({ ...base, choice: "no" }); setStep("why"); }}>Not really</button>
+    </div>
+  );
+}
+
+function MissFeedback({ query }) {
+  const [text, setText] = useState("");
+  const [sent, setSent] = useState(false);
+  if (sent) return <p className="fb fb--done">Thanks. We read every one of these.</p>;
+  return (
+    <form className="fb" onSubmit={(e) => {
+      e.preventDefault();
+      if (!text.trim()) return;
+      postFeedback({ kind: "result", choice: "no_match", message: text.trim(), query, page: "/", pageType: "app" });
+      setSent(true);
+    }}>
+      <label className="fb-q" htmlFor="fb-miss">What were you hoping to find?</label>
+      <div className="fb-row">
+        <input id="fb-miss" type="text" value={text} maxLength={300}
+          placeholder="Tell us and we'll work on it" onChange={(e) => setText(e.target.value)} />
+        <button className="fb-btn fb-btn--send" type="submit">Send</button>
+      </div>
+    </form>
+  );
+}
+
 /* ===========================================================================
    APP
    =========================================================================== */
@@ -1249,7 +1341,7 @@ function App() {
         if (sdata.requiresAuth) { spendTrial(); setShowAuth(true); setAuthMode("signup"); }
         throw new Error(sdata.error || "Couldn't build a room from that.");
       }
-      if (sdata.trialUsed) spendTrial();
+      if (sdata.trialUsed && !(sdata.trialRemaining > 0)) spendTrial();
       /* Three is the floor the server now fills to, widening past the chosen
          radius if it has to. Reaching here with fewer means the area genuinely
          has almost nothing, so say that rather than opening a room where the
@@ -1507,6 +1599,9 @@ function App() {
   }, [viewKey, authChecked]);
 
   const [searchesRemaining, setSearchesRemaining] = useState(null);
+  /* The latest search and how it ended, so a search that found nothing can
+     ask what the person was hoping for. */
+  const [lastSearch, setLastSearch] = useState(null);
 
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
@@ -1968,6 +2063,9 @@ function App() {
   /* Where the next search came from, for the search event: typed here, or
      run on arrival from a guide page's search bar. */
   const searchSource = useRef("app");
+  /* The guide page a deep-linked search came from ("/campus/ucla"), sent with
+     that search so the log says which pages lead to which searches. */
+  const fromPage = useRef(null);
   useEffect(() => {
     if (deepLinkApplied.current) return;
     let near = null, craving = null, go = false;
@@ -1976,10 +2074,13 @@ function App() {
       near = sp.get("near");
       craving = sp.get("craving");
       go = sp.get("go") === "1";
+      const from = sp.get("from");
+      if (from && from.startsWith("/")) fromPage.current = from.slice(0, 200);
       /* Dropped from the address bar at once, so a reload or a shared link
          does not run the search a second time. */
-      if (go) {
+      if (go || from) {
         sp.delete("go");
+        sp.delete("from");
         const qs = sp.toString();
         window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
       }
@@ -2046,6 +2147,7 @@ function App() {
     searchSource.current = "app";
     const place = String(resolvedLocation.short || resolvedLocation.name || "");
     const track = (outcome) => {
+      setLastSearch({ outcome, query: query.trim(), at: Date.now() });
       if (typeof window.gtag !== "function") return;
       window.gtag("event", "search", {
         search_term: query.trim().slice(0, 100),
@@ -2080,6 +2182,11 @@ function App() {
           locationHint: resolvedLocation.name,
           zip: resolvedLocation.zip || getZip(),
           radiusMode,
+          /* For the search log: where this search came from, and which tab
+             visit it belongs to. */
+          source,
+          page: source === "guide_page" ? fromPage.current : null,
+          sessionId: SESSION_ID,
         }),
         signal: controller.signal,
       });
@@ -2114,7 +2221,7 @@ function App() {
           ? `Nothing within ${data.maxRadiusMiles || 25} miles of ${resolvedLocation.name} — closest was about ${data.nearestMiles} mi out. Try "Anywhere worth it" or a different ZIP.`
           : `No match near ${resolvedLocation.name} — try a different craving.`);
         setResults([]);
-        if (data.trialUsed) spendTrial();
+        if (data.trialUsed && !(data.trialRemaining > 0)) spendTrial();
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       } else {
         track("pick");
@@ -2122,7 +2229,7 @@ function App() {
         setSubmittedQuery(trimmed);
         /* The server flags a search it served anonymously. That is the moment
            the free one is gone, so the UI stops promising another. */
-        if (data.trialUsed) spendTrial();
+        if (data.trialUsed && !(data.trialRemaining > 0)) spendTrial();
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
         refreshGame().catch(() => {});
         refreshHistory().catch(() => {});
@@ -2378,7 +2485,7 @@ function App() {
               {trialWall ? (
                 <>You are not signed in. <strong>Sign up to keep searching</strong></>
               ) : (
-                <>You are not signed in. <strong>One free search</strong>, then sign up to keep going</>
+                <>You are not signed in. <strong>{FREE_SEARCHES} free searches</strong>, then sign up to keep going</>
               )}
             </span>
           </button>
@@ -2508,6 +2615,9 @@ function App() {
                 <p className="searches-left">{searchesRemaining} search{searchesRemaining === 1 ? "" : "es"} left today</p>
               )}
               {errorMsg && <p className="err">{errorMsg}</p>}
+              {errorMsg && lastSearch && (lastSearch.outcome === "no_match" || lastSearch.outcome === "out_of_range") && (
+                <MissFeedback key={lastSearch.at} query={lastSearch.query} />
+              )}
             </div>
 
             {winner && (
@@ -2659,6 +2769,7 @@ function App() {
                     </div>
                   </div>
                 </article>
+                <PickFeedback key={`${submittedQuery}|${winner.name}`} query={submittedQuery} resultName={winner.name} />
               </div>
             )}
           </main>

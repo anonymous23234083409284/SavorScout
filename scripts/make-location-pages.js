@@ -377,7 +377,7 @@ ${m.areas.map(([n, t]) => `        <li><strong>${esc(n)}</strong> — ${esc(t)}<
         Savor Scout picks <strong>one</strong> restaurant in ${esc(name)} and tells you why it
         picked it. Say what you're craving and it reads menus and reviews for that specific
         dish, rather than sorting places by overall star rating. Free, runs in the browser,
-        and one search needs no account.
+        and your first three searches need no account.
       </p>
 
       <h2>Eating out in ${esc(name)}</h2>`;

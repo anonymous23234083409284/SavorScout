@@ -187,6 +187,23 @@ const STYLE = `
   .ss-static .ss-endnav a{padding:8px 15px;border-radius:999px;border:1px solid var(--line);color:var(--soft);font-size:14px}
   .ss-static .ss-endnav a:hover{color:var(--ink);border-color:rgba(253,248,242,.2)}
 
+  /* ---- what should this page add: the one-tap vote ---- */
+  .ss-wish{margin:8px 0 18px;padding:22px 24px;border-radius:22px;border:1px dashed rgba(255,200,87,.32);
+    background:rgba(255,200,87,.04)}
+  .ss-static .ss-wish__h{margin:0 0 4px;font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .ss-static .ss-wish__sub{margin:0 0 14px;font-size:14.5px;color:var(--soft)}
+  .ss-wish__opts{display:flex;flex-wrap:wrap;gap:8px}
+  .ss-wish button{padding:8px 15px;border-radius:999px;border:1px solid var(--line-warm);background:rgba(255,255,255,.04);
+    color:var(--text);font:inherit;font-size:14.5px;cursor:pointer}
+  .ss-wish button:hover{border-color:var(--saffron);color:var(--ink)}
+  .ss-wish__other{display:flex;gap:8px;margin-top:12px}
+  .ss-wish__other input{flex:1;min-width:0;padding:10px 16px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(7,5,11,.6);color:var(--ink);font:inherit;font-size:16px;outline:none}
+  .ss-wish__other input:focus{border-color:var(--saffron)}
+  .ss-wish .ss-wish__send{background:var(--hot);color:var(--void);font-weight:700;border:0}
+  .ss-static .ss-wish__thanks{margin:0;color:var(--text)}
+  .ss-wish [hidden]{display:none!important}
+
   /* ---- footer ---- */
   .ss-foot{border-top:1px solid var(--line);background:rgba(7,5,11,.6)}
   .ss-foot__in{max-width:1120px;margin:0 auto;padding:44px 24px 28px;display:grid;grid-template-columns:1.1fr 2fr;gap:40px}
@@ -339,6 +356,87 @@ ${near ? `          <input type="hidden" name="near" value="${esc(near)}">\n` : 
       </form>`;
 }
 
+/* ---- what visitors want -------------------------------------------------
+ *
+ * The pages people actually reach are campus, campus x cuisine and city
+ * pages, so those ask the one question this site most needs answered: what
+ * would have made this page more useful? Each option is a page or a feature
+ * we could build; the votes say which, before anything is built. One tap, or
+ * a few words under "Something else". Sent to GA4 as page_wish (with the
+ * page's address, which GA4 attaches to every event); nothing is stored here.
+ *
+ * Every page also reports clicks on its restaurant links (place_click): a
+ * visitor who opens a place in Maps found what they came for, which is the
+ * plainest measure of whether a page did its job. */
+const WISHES = {
+  campus: [["cheap", "Cheap eats"], ["late", "Open late"], ["study", "Study spots with wifi"], ["date", "Date spots"],
+    ["healthy", "Healthy food"], ["groups", "Big groups"], ["delivery", "Delivery to campus"]],
+  campus_food: [["cheap", "The cheapest ones"], ["late", "Open late"], ["reviews", "Best-reviewed"], ["order", "What to order there"],
+    ["veg", "Vegetarian options"], ["delivery", "Delivery"]],
+  city: [["cheap", "Cheap eats"], ["late", "Open late"], ["date", "Date night"], ["brunch", "Brunch"],
+    ["family", "Family-friendly"], ["local", "Local favorites"]],
+};
+
+function pageType(pathname) {
+  if (/^\/campus\/[^/]+\/[^/]+$/.test(pathname)) return "campus_food";
+  if (/^\/campus\/[^/]{3,}$/.test(pathname)) return "campus";
+  if (/^\/eat\/[^/]{3,}$/.test(pathname)) return "city";
+  if (/^\/(campus|eat)\/[a-z]{2}$/.test(pathname)) return "state_hub";
+  const m = pathname.match(/^\/([a-z-]+)\/(.*)$/);
+  if (!m) return "other";
+  return m[2] ? { food: "food_guide", "what-to-eat": "situation_guide", diet: "diet_guide", type: "personality", about: "about" }[m[1]] || "other" : "hub";
+}
+
+function wishHtml(type) {
+  const opts = WISHES[type];
+  if (!opts) return "";
+  return `
+      <div class="ss-wish" data-page-type="${type}">
+        <p class="ss-wish__h">What would make this page more useful?</p>
+        <p class="ss-wish__sub">Tap one. The ideas with the most votes get built first.</p>
+        <div class="ss-wish__opts">
+          ${opts.map(([k, l]) => `<button type="button" data-wish="${k}">${esc(l)}</button>`).join("\n          ")}
+          <button type="button" data-wish="other">Something else&hellip;</button>
+        </div>
+        <form class="ss-wish__other" hidden>
+          <input type="text" maxlength="80" placeholder="What were you looking for?" aria-label="What were you looking for?">
+          <button class="ss-wish__send" type="submit">Send</button>
+        </form>
+        <p class="ss-wish__thanks" hidden>Thanks, your vote is counted.</p>
+      </div>`;
+}
+
+/* Plain script, no bundle. Typed answers lose anything shaped like an email
+   address or a phone number before they leave the page. */
+const TRACK_JS = `<script>
+(function(){
+  var t=document.body.getAttribute("data-page-type")||"other";
+  function ev(n,p){try{if(window.gtag){p.page_type=t;window.gtag("event",n,p);}}catch(e){}}
+  document.addEventListener("click",function(e){
+    var a=e.target.closest&&e.target.closest('a[href*="google.com/maps"]');
+    if(a){var s=a.querySelector("strong");ev("place_click",{place:(s?s.textContent:a.textContent).trim().slice(0,80)});}
+  });
+  var box=document.querySelector(".ss-wish");if(!box)return;
+  var key="ss_wish:"+location.pathname,opts=box.querySelector(".ss-wish__opts"),sub=box.querySelector(".ss-wish__sub"),
+    form=box.querySelector(".ss-wish__other"),thanks=box.querySelector(".ss-wish__thanks");
+  function done(){opts.hidden=true;sub.hidden=true;form.hidden=true;thanks.hidden=false;}
+  function send(w){ev("page_wish",{wish:w});try{localStorage.setItem(key,"1");}catch(e){}done();}
+  try{if(localStorage.getItem(key))done();}catch(e){}
+  opts.addEventListener("click",function(e){
+    var b=e.target.closest("button[data-wish]");if(!b)return;
+    var w=b.getAttribute("data-wish");
+    if(w==="other"){form.hidden=false;form.querySelector("input").focus();return;}
+    send(w);
+  });
+  form.addEventListener("submit",function(e){
+    e.preventDefault();
+    var v=(form.querySelector("input").value||"").trim()
+      .replace(/\\S+@\\S+/g,"[email]").replace(/\\+?\\d[\\d\\s().-]{6,}\\d/g,"[number]").slice(0,80);
+    if(v)send("other: "+v);
+  });
+})();
+</script>`;
+
 function layout(body, { url, desc }) {
   const pathname = url.replace(ORIGIN, "") || "/";
   const at = body.search(/<h2[\s>]/);
@@ -396,7 +494,8 @@ function layout(body, { url, desc }) {
   const links = [...tail.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)].map((m) => m[0]);
   const endnav = links.length ? `\n      <nav class="ss-endnav" aria-label="More">\n        ${links.join("\n        ")}\n      </nav>` : "";
 
-  const main = `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>${tocHtml("ss-toc--inline")}\n${sections.join("\n")}${endnav}`;
+  const type = pageType(pathname);
+  const main = `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>${tocHtml("ss-toc--inline")}\n${sections.join("\n")}${wishHtml(type)}${endnav}`;
   const side = tocHtml("ss-toc--side");
   const aside = side ? `
   <aside class="ss-aside">${side}
@@ -405,7 +504,7 @@ function layout(body, { url, desc }) {
       <a class="ss-btn" href="${near ? `/?near=${encodeURIComponent(near)}` : "/"}">Find my one</a>
     </div>
   </aside>` : "";
-  return { main, aside, pathname };
+  return { main, aside, pathname, type };
 }
 
 function render(shell, { title, desc, url, body, ld, who }) {
@@ -445,7 +544,7 @@ function render(shell, { title, desc, url, body, ld, who }) {
     console.error(`${who}: could not find <div id="root"></div> in index.html`);
     process.exit(1);
   }
-  const { main, aside, pathname } = layout(body, { url, desc });
+  const { main, aside, pathname, type } = layout(body, { url, desc });
   html = html
     .replace(/<noscript>[\s\S]*?<\/noscript>/i, "")
     .replace(/<script defer="defer" src="\/static\/js\/main\.[^"]+\.js"><\/script>/, "")
@@ -457,7 +556,9 @@ function render(shell, { title, desc, url, body, ld, who }) {
 ${main}
   </main>${aside}
 </div>
-${footer()}`);
+${footer()}`)
+    .replace("<body>", `<body data-page-type="${type}">`)
+    .replace("</body>", `${TRACK_JS}\n</body>`);
 
   /* Every link into the app is the homepage with a query string — /?near=…,
      /?craving=…, /?quiz=1 — so each one correctly declares the homepage as its

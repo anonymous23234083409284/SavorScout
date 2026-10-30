@@ -1965,6 +1965,9 @@ function App() {
      already pressed "Find my one" there, so the search runs by itself as soon
      as the place resolves (see the effect after handleSearch). */
   const deepLinkGo = useRef(false);
+  /* Where the next search came from, for the search event: typed here, or
+     run on arrival from a guide page's search bar. */
+  const searchSource = useRef("app");
   useEffect(() => {
     if (deepLinkApplied.current) return;
     let near = null, craving = null, go = false;
@@ -2034,6 +2037,24 @@ function App() {
 
     setErrorMsg(""); setLoading(true);
 
+    /* What people ask for, in their own words, is the best evidence there is
+       for what to build next. One GA4 "search" event per search, with the
+       words (search_term is GA4's own field for this), the town at city level
+       (never a typed street address: anything with a digit is left out), where
+       the search came from, and how it ended. No account, no identity. */
+    const source = searchSource.current;
+    searchSource.current = "app";
+    const place = String(resolvedLocation.short || resolvedLocation.name || "");
+    const track = (outcome) => {
+      if (typeof window.gtag !== "function") return;
+      window.gtag("event", "search", {
+        search_term: query.trim().slice(0, 100),
+        search_place: /\d/.test(place) ? "" : place.slice(0, 40),
+        search_source: source,
+        search_outcome: outcome,
+      });
+    };
+
     try {
       /* Signed out is a legitimate state here: the first search is free. The
          Authorization header is simply omitted and the server decides, which
@@ -2067,9 +2088,11 @@ function App() {
       try { data = await response.json(); } catch { data = {}; }
 
       if (response.status === 429) {
+        track("limit");
         setErrorMsg(data.error || "You've hit your search limit for today.");
         setSearchesRemaining(0); setResults([]);
       } else if (response.status === 401) {
+        track(data.requiresAuth ? "signup_wall" : "signed_out");
         /* The server is the gate; this branch only mirrors its verdict. A spent
            trial sends them straight to signup rather than leaving an error
            sitting under a search box that will never work again. */
@@ -2083,8 +2106,10 @@ function App() {
         }
         setErrorMsg(data.error || "Please sign in again."); setResults([]);
       } else if (!response.ok) {
+        track("error");
         setErrorMsg(data.error || `Something went wrong (${response.status}).`); setResults([]);
       } else if (!data.restaurants || data.restaurants.length === 0) {
+        track(data.outOfRange ? "out_of_range" : "no_match");
         setErrorMsg(data.outOfRange
           ? `Nothing within ${data.maxRadiusMiles || 25} miles of ${resolvedLocation.name} — closest was about ${data.nearestMiles} mi out. Try "Anywhere worth it" or a different ZIP.`
           : `No match near ${resolvedLocation.name} — try a different craving.`);
@@ -2092,6 +2117,7 @@ function App() {
         if (data.trialUsed) spendTrial();
         if (typeof data.searchesRemaining === "number") setSearchesRemaining(data.searchesRemaining);
       } else {
+        track("pick");
         setResults(data.restaurants.slice(0, 1));
         setSubmittedQuery(trimmed);
         /* The server flags a search it served anonymously. That is the moment
@@ -2103,6 +2129,7 @@ function App() {
       }
     } catch (error) {
       if (error.name === "AbortError") return;
+      track("unreachable");
       console.error("search failed:", error);
       setErrorMsg("Couldn't reach the server. Is it running?");
       setResults([]);
@@ -2115,6 +2142,7 @@ function App() {
   useEffect(() => {
     if (!deepLinkGo.current || !resolvedLocation || !query.trim() || loading) return;
     deepLinkGo.current = false;
+    searchSource.current = "guide_page";
     handleSearch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedLocation, query, loading]);

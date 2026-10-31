@@ -15,6 +15,10 @@
 .DS_Store
 .env.local
 backend/.env
+# Any env file at all: API keys (Buffer, Google, Bing) must never reach GitHub.
+.env
+.env.*
+*.env
 .env.development.local
 .env.test.local
 .env.production.local

@@ -31,3 +31,9 @@ scripts/research/client_secret*.json
 scripts/research/*service*account*.json
 scripts/research/*-key.json
 __pycache__/
+
+# Social video pipeline (social/README.md): dependencies, per-run media and
+# build output. The media that gets posted lives on the social-media branch.
+social/video/node_modules/
+social/video/public/batch/
+social/out/

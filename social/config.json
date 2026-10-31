@@ -1,0 +1,12 @@
+{
+ "_why": "Daily social batch settings, read by social/pipeline/make_batch.py. Times are local to `timezone` and each gets a few minutes of jitter. `mode`: \"schedule\" posts at those times; \"draft\" puts everything in Buffer as drafts for you to approve.",
+ "timezone": "America/New_York",
+ "mode": "schedule",
+ "videos_per_day": 4,
+ "jitter_minutes": 6,
+ "slots": {
+  "tiktok": ["13:30", "16:15", "19:00", "21:45"],
+  "twitter": ["12:45", "15:30", "18:15", "20:45"],
+  "threads": ["13:15", "16:45", "19:30", "21:15"]
+ }
+}

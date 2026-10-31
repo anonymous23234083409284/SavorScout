@@ -1,0 +1,106 @@
+{
+ "tiktok": [
+  {
+   "video": "the-university-of-texas-at-austin--pizza",
+   "at": "2026-10-31T17:32:00.000Z",
+   "text": "5 pizza spots you can walk to from UT Austin 🍕 The closest is a 4-minute walk from campus. Save this for your next pizza run. Which one's your go-to?\n\n#utaustin #austinfood #pizza #collegefood #hookem",
+   "post_id": "6ae60d6321c807e9d56fdf8c"
+  },
+  {
+   "video": "new-york-university--coffee",
+   "at": "2026-10-31T20:13:00.000Z",
+   "text": "There are 202 coffee shops within a mile of NYU ☕ These 5 are 3 to 5 minutes from campus. Save it for finals week. What's your study spot?\n\n#nyu #nycfood #coffee #greenwichvillage #studyspot",
+   "post_id": "6ae60d85ab019b90870f1453"
+  },
+  {
+   "video": "university-of-southern-california--mexican-food",
+   "at": "2026-10-31T23:04:00.000Z",
+   "text": "5 Mexican spots you can walk to from USC 🌮 All within a 16-minute walk of campus. Save this for the next taco run. Which one are you picking?\n\n#usc #fighton #lafood #tacos #collegefood",
+   "post_id": "6ae60d85cf3a3112f3ae179e"
+  },
+  {
+   "video": "pennsylvania-state-university-main-campus--asian-food",
+   "at": "2026-11-01T01:41:00.000Z",
+   "text": "Asian food you can walk to from Penn State 🍜 Noodles, Korean, Japanese and sushi, all within 8 minutes of campus. Save this one. What are we getting?\n\n#pennstate #statecollege #weare #asianfood #collegefood",
+   "post_id": "6ae60d8621c807e9d56fecad"
+  }
+ ],
+ "twitter": [
+  {
+   "card": "new-york-university--coffee",
+   "at": "2026-10-31T16:47:00.000Z",
+   "thread": [
+    "There are 202 coffee shops within a mile of NYU.\n\nThe 5 closest on foot:\nThe Uncommons · 3 min\nSpring Cafe Aspen · 3 min\nPetra Cafe · 5 min\nCaffe Reggio · 5 min\nCafe Pane e Cioccolato · 5 min\n\nWhich one's your study spot?",
+    "All 202, closest first, with walking distance: https://www.savorscout.net/campus/new-york-university/coffee"
+   ],
+   "post_id": "6ae60d75ab019b90870f0c50"
+  },
+  {
+   "card": "pennsylvania-state-university-main-campus--asian-food",
+   "at": "2026-10-31T19:28:00.000Z",
+   "thread": [
+    "Asian food you can walk to from Penn State, closest first:\n\nDagu Rice Noodle · 6 min\nRamyun Studio · 6 min\nTadashi Japanese Restaurant · 7 min\nKondu · 7 min\nMomotaro · 8 min\n\n10 of the 26 Asian spots within a mile are on College Ave.",
+    "The full list with addresses: https://www.savorscout.net/campus/pennsylvania-state-university-main-campus/asian-food"
+   ],
+   "post_id": "6ae60d86cf3a3112f3ae17ec"
+  },
+  {
+   "card": "the-university-of-texas-at-austin--pizza",
+   "at": "2026-10-31T22:19:00.000Z",
+   "thread": [
+    "25 pizza places within a mile of UT Austin. Guadalupe St and Rio Grande St have 5 each.\n\nClosest on foot:\nJesta Pizza · 4 min\nDollar Slice Club · 10 min\nBig Bite Pizza & Grill · 12 min\nTower Pizza Bistro · 13 min\nPizzeria Vetri · 14 min",
+    "All 25 on one map: https://www.savorscout.net/campus/the-university-of-texas-at-austin/pizza"
+   ],
+   "post_id": "6ae60d8737c1acd2a0b8bf0a"
+  },
+  {
+   "card": null,
+   "at": "2026-11-01T00:44:00.000Z",
+   "thread": [
+    "Halloween. 1 a.m. Walking back to campus.\n\nPizza, tacos, or ramen?\n\nTell us your school and the spot."
+   ],
+   "post_id": "6ae60d87ab019b90870f154e"
+  }
+ ],
+ "threads": [
+  {
+   "card": "university-of-southern-california--mexican-food",
+   "at": "2026-10-31T17:14:00.000Z",
+   "topic": "USC",
+   "thread": [
+    "Mexican food you can walk to from USC, closest first:\n\nLa Chuperia The Miche Spot · 11 min\nLa Taquiza USC · 12 min\nChano's Drive-In · 12 min\nOaxacalifornia · 14 min\nThe Original Taco Pete · 16 min\n\nThere are 24 Mexican restaurants within a mile of campus, and 83% of them are local, not chains. Who did we miss?",
+    "Every one of the 24, closest first: https://www.savorscout.net/campus/university-of-southern-california/mexican-food"
+   ],
+   "post_id": "6ae60d88f0984eef33193f91"
+  },
+  {
+   "card": "new-york-university--coffee",
+   "at": "2026-10-31T20:48:00.000Z",
+   "topic": "NYU",
+   "thread": [
+    "Study spots near NYU: 202 coffee shops within a mile of campus, 63 of them within half a mile.\n\nThe 5 closest on foot are all 5 minutes or less:\nThe Uncommons · 3 min\nSpring Cafe Aspen · 3 min\nPetra Cafe · 5 min\nCaffe Reggio · 5 min\nCafe Pane e Cioccolato · 5 min\n\nWhere do you actually get work done?",
+    "The full list: https://www.savorscout.net/campus/new-york-university/coffee"
+   ],
+   "post_id": "6ae60d8821c807e9d56fed41"
+  },
+  {
+   "card": "the-university-of-texas-at-austin--pizza",
+   "at": "2026-10-31T23:27:00.000Z",
+   "topic": "UT Austin",
+   "thread": [
+    "25 pizza places within a mile of UT Austin. We mapped the walk to the closest five:\n\nJesta Pizza · 4 min\nDollar Slice Club · 10 min\nBig Bite Pizza & Grill · 12 min\nTower Pizza Bistro · 13 min\nPizzeria Vetri · 14 min\n\nGuadalupe St and Rio Grande St have 5 pizza places each. Which slice wins?",
+    "All 25 on one map: https://www.savorscout.net/campus/the-university-of-texas-at-austin/pizza"
+   ],
+   "post_id": "6ae60d88ab019b90870f1585"
+  },
+  {
+   "card": null,
+   "at": "2026-11-01T01:17:00.000Z",
+   "topic": "Halloween",
+   "thread": [
+    "Halloween night food run near campus: pizza, tacos, or ramen?\n\nDrop your school and the one spot you'd walk to."
+   ],
+   "post_id": "6ae60d8937c1acd2a0b8bfb6"
+  }
+ ]
+}

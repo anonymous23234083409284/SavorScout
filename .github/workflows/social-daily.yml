@@ -1,0 +1,88 @@
+# Makes and schedules SavorScout's daily social posts: 4 TikTok videos, 4 X
+# posts and 4 Threads posts, through Buffer. See social/README.md.
+#
+# Needs two repository secrets (Settings > Secrets and variables > Actions):
+#   BUFFER_API_KEY   from publish.buffer.com/settings/api
+#   PEXELS_API_KEY   from pexels.com/api
+name: Daily social batch
+
+on:
+  schedule:
+    # 14:07 UTC: 10:07 a.m. New York time in summer, 9:07 in winter. Well
+    # before the first post slot (12:45), and off the top of the hour, when
+    # GitHub delays scheduled runs the most.
+    - cron: "7 14 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build and render only (nothing is posted)"
+        type: boolean
+        default: false
+      date:
+        description: "Date to make (YYYY-MM-DD, New York time). Blank for today."
+        type: string
+        default: ""
+      force:
+        description: "Redo a date that already has a batch"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # pushes the day's media to the social-media branch
+
+concurrency:
+  group: social-daily
+  cancel-in-progress: false
+
+jobs:
+  batch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: social/video/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: social/requirements.txt
+
+      - name: Install ffmpeg
+        run: command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+
+      - name: Install dependencies
+        run: |
+          pip install -r social/requirements.txt
+          cd social/video && npm ci
+          # Fetch Remotion's headless Chrome up front (rendering would fetch it anyway).
+          npx remotion browser ensure || true
+
+      - name: Make and schedule the batch
+        env:
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          args=()
+          [ "${{ inputs.dry_run }}" = "true" ] && args+=(--dry-run)
+          [ "${{ inputs.force }}" = "true" ] && args+=(--force)
+          [ -n "${{ inputs.date }}" ] && args+=(--date "${{ inputs.date }}")
+          python social/pipeline/make_batch.py "${args[@]}"
+
+      - name: Keep the videos and posts for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-batch
+          path: |
+            social/out/*/*/video.mp4
+            social/out/*/*/card.jpg
+            social/out/*/posts.json
+          retention-days: 7
+          if-no-files-found: ignore

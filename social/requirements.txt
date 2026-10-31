@@ -1,0 +1,7 @@
+matplotlib==3.11.2
+networkx==3.7
+numpy==2.5.3
+pillow==12.3.0
+pyarrow==26.0.0
+scipy==1.18.1
+shapely==2.2.0

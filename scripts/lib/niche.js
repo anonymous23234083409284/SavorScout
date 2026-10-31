@@ -246,4 +246,4 @@ function guideLinksHtml(food) {
       </ul>`;
 }
 
-module.exports = { PAGES, build, campusLinksHtml, campusInlineLinks, guideLinksHtml, urlPath };
+module.exports = { PAGES, build, campusLinksHtml, campusInlineLinks, guideLinksHtml, urlPath, label };

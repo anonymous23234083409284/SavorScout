@@ -1,0 +1,111 @@
+{
+ "round": 1,
+ "combos": [
+  "the-university-of-texas-at-austin--pizza",
+  "university-of-southern-california--mexican-food",
+  "new-york-university--coffee",
+  "pennsylvania-state-university-main-campus--asian-food"
+ ],
+ "clips": [
+  11131968,
+  6093202,
+  31176063,
+  34145268,
+  31863656,
+  27890286,
+  36126541,
+  8448305,
+  8448188,
+  27278016,
+  37346941,
+  7601348,
+  28889095,
+  8605845,
+  10571186,
+  10752780,
+  30981713,
+  27093700,
+  5269687,
+  12908934,
+  35196990,
+  19387193,
+  11587910,
+  6221657
+ ],
+ "questions": [
+  "Halloween. 1 a.m. Walking back to campus.\n\nPizza, tacos, or ramen?\n\nTell us your school and the spot.",
+  "Halloween night food run near campus: pizza, tacos, or ramen?\n\nDrop your school and the one spot you'd walk to."
+ ],
+ "days": {
+  "2026-10-31": {
+   "combos": [
+    "the-university-of-texas-at-austin--pizza",
+    "university-of-southern-california--mexican-food",
+    "new-york-university--coffee",
+    "pennsylvania-state-university-main-campus--asian-food"
+   ],
+   "posts": [
+    {
+     "service": "twitter",
+     "at": "2026-10-31T16:47:00.000Z",
+     "post_id": "6ae60d75ab019b90870f0c50"
+    },
+    {
+     "service": "threads",
+     "at": "2026-10-31T17:14:00.000Z",
+     "post_id": "6ae60d88f0984eef33193f91"
+    },
+    {
+     "service": "tiktok",
+     "at": "2026-10-31T17:32:00.000Z",
+     "post_id": "6ae60d6321c807e9d56fdf8c"
+    },
+    {
+     "service": "twitter",
+     "at": "2026-10-31T19:28:00.000Z",
+     "post_id": "6ae60d86cf3a3112f3ae17ec"
+    },
+    {
+     "service": "tiktok",
+     "at": "2026-10-31T20:13:00.000Z",
+     "post_id": "6ae60d85ab019b90870f1453"
+    },
+    {
+     "service": "threads",
+     "at": "2026-10-31T20:48:00.000Z",
+     "post_id": "6ae60d8821c807e9d56fed41"
+    },
+    {
+     "service": "twitter",
+     "at": "2026-10-31T22:19:00.000Z",
+     "post_id": "6ae60d8737c1acd2a0b8bf0a"
+    },
+    {
+     "service": "tiktok",
+     "at": "2026-10-31T23:04:00.000Z",
+     "post_id": "6ae60d85cf3a3112f3ae179e"
+    },
+    {
+     "service": "threads",
+     "at": "2026-10-31T23:27:00.000Z",
+     "post_id": "6ae60d88ab019b90870f1585"
+    },
+    {
+     "service": "twitter",
+     "at": "2026-11-01T00:44:00.000Z",
+     "post_id": "6ae60d87ab019b90870f154e"
+    },
+    {
+     "service": "threads",
+     "at": "2026-11-01T01:17:00.000Z",
+     "post_id": "6ae60d8937c1acd2a0b8bfb6"
+    },
+    {
+     "service": "tiktok",
+     "at": "2026-11-01T01:41:00.000Z",
+     "post_id": "6ae60d8621c807e9d56fecad"
+    }
+   ]
+  }
+ }
+}

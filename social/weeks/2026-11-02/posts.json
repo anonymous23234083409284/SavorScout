@@ -1,0 +1,337 @@
+{
+ "twitter": [
+  {
+   "id": "x-cheap",
+   "at": "2026-11-02T12:41:00-05:00",
+   "card": "cheap-vs-bad",
+   "thread": [
+    "Cheap food and bad food overlap a lot less than you'd think.\n\nThe trick is telling them apart before you order. 3 rules:",
+    "1. A short menu is a good sign.\n\nA taqueria selling four things buys those four ingredients in bulk and wastes nothing. That's why it's cheap.\n\nA cheap 60-item menu is getting there some other way, and you can usually taste it.",
+    "2. Go at lunch.\n\nThe same kitchen often charges a lot less at lunch for nearly the same plate. Lunch specials and set menus are the most reliable way to eat somewhere good on a small budget.",
+    "3. Ignore the $ signs.\n\nPrice bands average the whole menu. A \"$$\" place can have a $9 lunch plate, and a \"$\" place might only be cheap if you eat sides.\n\nLook up the price of one filling dish instead.",
+    "Where the value usually hides: taquerias, pho shops, halal plates, dosa, banh mi, rice plates.\n\nCheap because they specialize, not because they cut corners.\n\nThe full guide: https://www.savorscout.net/what-to-eat/on-a-budget"
+   ]
+  },
+  {
+   "id": "x-sick",
+   "at": "2026-11-04T12:18:00-05:00",
+   "card": "sick-day",
+   "thread": [
+    "Food tastes like nothing when you have a cold, and it's not the kitchen's fault.\n\nMost of what you call taste is really smell. Block your nose and you're down to five things: salt, sweet, sour, bitter and heat.",
+    "Heat is the useful one. Chili isn't a taste at all, it's a pain signal, and it gets through a stuffy nose just fine. So does sour.\n\nThat's why hot, sour, salty food still lands when you're sick, and a subtle dish tastes like warm nothing.",
+    "So when you're sick, order:\n\n• Tom yum\n• Hot and sour soup\n• Pho with extra lime and chili\n• Congee with pickles\n\nAnd lean on steam. There's a reason almost every culture's sick-day food is a soup.",
+    "Not a cure, just food you can actually taste. More on eating when you're sick: https://www.savorscout.net/what-to-eat/sick-with-a-cold"
+   ]
+  },
+  {
+   "id": "x-decide",
+   "at": "2026-11-05T18:27:00-05:00",
+   "card": "cant-decide",
+   "thread": [
+    "\"Where do you want to eat?\" gets silence. \"Is Thai okay?\" gets an answer in two seconds.\n\nThat's the whole trick to deciding where to eat. 3 ways to use it:",
+    "1. Name the sensation, not the cuisine.\n\n\"Something crispy and spicy\" narrows the field faster than \"Asian food,\" and it's easier to answer honestly. A cuisine is a category. A craving is a constraint.",
+    "2. Let something else make the first cut.\n\nReacting to one concrete suggestion is much easier than coming up with one from nothing. If it's wrong, you'll know instantly, and you'll know why.",
+    "3. In a group, veto instead of vote.\n\nAsk five people to name a place and you get five answers. Ask them each to remove the one thing they won't eat and you have a shortlist in one round.",
+    "And skip the star ratings. A 4.6 taqueria and a 4.6 steakhouse aren't comparable, and neither number knows you're tired and want something sour.\n\nMore: https://www.savorscout.net/what-to-eat/cant-decide"
+   ]
+  },
+  {
+   "id": "x-bigten",
+   "at": "2026-11-07T11:33:00-05:00",
+   "card": "big-ten",
+   "thread": [
+    "We counted every place to eat within half a mile of every Big Ten campus.\n\n1. Michigan 224\n2. Rutgers 182\n3. Northwestern 162\n4. Penn State 156\n5. Indiana 138\n6. Iowa 132\n7. Illinois 109\n8. Nebraska 102\n9. USC 94\n10. Ohio State 86\n10. Wisconsin 86",
+    "The rest:\n\n12. Michigan State 84\n13. Washington 70\n14. Purdue 61\n15. Oregon 57\n16. Minnesota 55\n17. Maryland 21\n18. UCLA 14\n\nUCLA is the surprise, but Westwood is there. It just starts past the half-mile line from the middle of a very big campus.",
+    "How we measured: places to eat within half a mile (about a 10-minute walk) of each campus's center point, from Overture Maps listings.\n\nHuge campuses lose points this way, which is kind of the point. It's what you can actually walk to between classes.",
+    "Every campus, closest food first: https://www.savorscout.net/campus/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-cold",
+   "at": "2026-11-02T19:12:00-05:00",
+   "card": "cold-night",
+   "topic": "Comfort Food",
+   "thread": [
+    "It's dark at 5 now, so here's the cold-night rule:\n\nOnly leave the dorm for food that's better in a restaurant than at home. Hotpot. Korean BBQ. Ramen. Birria. A curry somebody started four hours ago.\n\nBest sign you picked right: the windows are fogged up from the inside.\n\nAnd on a cold night, close beats best. The good place five minutes away wins over the great one twenty minutes away.\n\nWhat's your fogged-window spot near campus?",
+    "The whole cold-night guide: https://www.savorscout.net/what-to-eat/cold-rainy-night"
+   ]
+  },
+  {
+   "id": "t-sick",
+   "at": "2026-11-04T20:37:00-05:00",
+   "card": "sick-day",
+   "topic": "Cold and Flu",
+   "thread": [
+    "For whoever's coughing in the back of lecture: food tastes like nothing when you're congested because most of taste is actually smell.\n\nWhat still gets through is salt, sour, and chili heat, since heat is a pain signal, not a taste.\n\nSo order tom yum, hot and sour soup, pho with extra lime and chili, or congee with pickles.\n\nNot a cure, just food you can taste. Send this to the sick friend.",
+    "More on eating when you're sick: https://www.savorscout.net/what-to-eat/sick-with-a-cold"
+   ]
+  },
+  {
+   "id": "t-stressed",
+   "at": "2026-11-05T13:04:00-05:00",
+   "card": "stressed",
+   "topic": "College Life",
+   "thread": [
+    "Midterm-week dinner advice that sounds fake but isn't:\n\nWhen you're stressed, the menu matters more than the food. A 60-item menu is genuinely worse tonight, because reading it is work.\n\nPick somewhere with a short menu, food that comes out fast, and no wait. Or somewhere you already know. Trying a new place costs attention you don't have right now.\n\nWhat's your no-thinking-required spot?",
+    "The full guide to eating when you're stressed: https://www.savorscout.net/what-to-eat/stressed"
+   ]
+  },
+  {
+   "id": "t-bigten",
+   "at": "2026-11-06T18:43:00-05:00",
+   "card": "big-ten",
+   "topic": "Big Ten",
+   "thread": [
+    "Big Ten schools ranked by how many places to eat are within half a mile of campus:\n\n1. Michigan 224\n2. Rutgers 182\n3. Northwestern 162\n4. Penn State 156\n5. Indiana 138\n6. Iowa 132\n7. Illinois 109\n8. Nebraska 102\n9. USC 94\n10. Ohio State and Wisconsin 86\n\nThe bottom: Michigan State 84, Washington 70, Purdue 61, Oregon 57, Minnesota 55, Maryland 21, UCLA 14.\n\nWhich school got robbed?",
+    "Measured from each campus's center point using Overture Maps listings, so giant campuses get no favors. Every campus: https://www.savorscout.net/campus/"
+   ]
+  }
+ ],
+ "tiktok": [
+  {
+   "video": "cold-night",
+   "at": "2026-11-02T18:23:00-05:00",
+   "text": "It gets dark at 5pm now 🌙 Here's what's actually worth leaving the dorm for on a cold night. Save this for the first freezing one. What's your go-to?\n\n#collegefood #comfortfood #hotpot #ramen #foodtok"
+  },
+  {
+   "video": "sick-day",
+   "at": "2026-11-04T19:38:00-05:00",
+   "text": "Why food tastes like nothing when you're sick 🤧 It's your nose, not the kitchen. Here's what to order instead. Send this to your sick roommate.\n\n#sickday #soupseason #pho #collegelife #foodfacts"
+  },
+  {
+   "video": "big-ten-walkable",
+   "at": "2026-11-06T17:47:00-05:00",
+   "text": "Big Ten schools ranked by how much food you can walk to 🍕 We counted every place to eat within half a mile of each campus. Where should your school be?\n\n#bigten #collegelife #campusfood #umich #pennstate"
+  },
+  {
+   "video": "cheap-vs-bad",
+   "at": "2026-11-07T13:12:00-05:00",
+   "text": "How to tell cheap food from bad food before you order 💸 Save this for the end of the month. What's your best cheap eat near campus?\n\n#cheapeats #collegefood #budgetfood #foodtips #studentlife"
+  }
+ ],
+ "cards": {
+  "cold-night": {
+   "type": "tips",
+   "photo": {
+    "pexels": 40436767
+   },
+   "kicker": "IT'S DARK AT 5 NOW",
+   "title": "Worth leaving the dorm for on a *cold night*",
+   "items": [
+    [
+     "Hotpot and Korean BBQ",
+     "Cooked at the table. Warm, and something to do."
+    ],
+    [
+     "Ramen, birria, a real curry",
+     "Slow food somebody else started hours ago."
+    ],
+    [
+     "The tell",
+     "The windows are *fogged up from the inside*."
+    ]
+   ],
+   "note": "Cold-night rule: the good spot 5 minutes away beats the great one 20 minutes away."
+  },
+  "sick-day": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "sick-day",
+     13,
+     1.2
+    ]
+   },
+   "kicker": "COLD AND FLU SEASON",
+   "title": "Why food tastes like *nothing* when you're sick",
+   "items": [
+    [
+     "It's your nose",
+     "Most of what you call taste is actually smell."
+    ],
+    [
+     "Heat still gets through",
+     "Chili is a *pain signal*, not a taste. Sour and salt work too."
+    ],
+    [
+     "So order",
+     "Tom yum · hot and sour soup · pho with extra lime and chili · congee"
+    ]
+   ],
+   "note": "Not a cure. Just food you can actually taste."
+  },
+  "cant-decide": {
+   "type": "tips",
+   "photo": {
+    "pexels": 1315908
+   },
+   "kicker": "WHERE SHOULD WE EAT?",
+   "title": "3 ways to actually *decide where to eat*",
+   "items": [
+    [
+     "Name the sensation",
+     "\"Crispy and spicy\" narrows it faster than \"Asian food.\""
+    ],
+    [
+     "Let something make the first cut",
+     "Reacting to one suggestion beats inventing one."
+    ],
+    [
+     "In a group, veto instead of vote",
+     "Everyone removes one thing. Shortlist in one round."
+    ]
+   ],
+   "note": "Skip the star ratings: a 4.6 taqueria and a 4.6 steakhouse aren't comparable."
+  },
+  "stressed": {
+   "type": "tips",
+   "photo": {
+    "pexels": 8085257
+   },
+   "kicker": "MIDTERMS EDITION",
+   "title": "Stressed? Pick the place, *not the food*",
+   "items": [
+    [
+     "A short menu",
+     "Fewer decisions is the whole point tonight."
+    ],
+    [
+     "Fast kitchen, no wait",
+     "Anything with a line is a second task."
+    ],
+    [
+     "Somewhere you already know",
+     "A new place costs attention you don't have."
+    ]
+   ],
+   "note": "Skip the delivery-app scroll. You'll order the usual anyway."
+  },
+  "cheap-vs-bad": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "cheap-vs-bad",
+     2,
+     1.2
+    ]
+   },
+   "kicker": "CHEAP ISN'T THE PROBLEM",
+   "title": "How to tell cheap food from *bad food*",
+   "items": [
+    [
+     "A short menu is a good sign",
+     "Four things, bought in bulk, nothing wasted."
+    ],
+    [
+     "Go at lunch",
+     "Same kitchen, same plate, often a lot cheaper."
+    ],
+    [
+     "Ignore the $ signs",
+     "They average the whole menu. Check one filling dish."
+    ]
+   ],
+   "note": "Where the value hides: taquerias · pho · halal plates · burritos · gyros"
+  },
+  "big-ten": {
+   "type": "ranking",
+   "title": "Big Ten schools ranked by *food you can walk to*",
+   "subtitle": "Places to eat within half a mile of each campus's center",
+   "rows": [
+    [
+     "1",
+     "Michigan",
+     224
+    ],
+    [
+     "2",
+     "Rutgers",
+     182
+    ],
+    [
+     "3",
+     "Northwestern",
+     162
+    ],
+    [
+     "4",
+     "Penn State",
+     156
+    ],
+    [
+     "5",
+     "Indiana",
+     138
+    ],
+    [
+     "6",
+     "Iowa",
+     132
+    ],
+    [
+     "7",
+     "Illinois",
+     109
+    ],
+    [
+     "8",
+     "Nebraska",
+     102
+    ],
+    [
+     "9",
+     "USC",
+     94
+    ],
+    [
+     "T10",
+     "Ohio State",
+     86
+    ],
+    [
+     "T10",
+     "Wisconsin",
+     86
+    ],
+    [
+     "12",
+     "Michigan State",
+     84
+    ],
+    [
+     "13",
+     "Washington",
+     70
+    ],
+    [
+     "14",
+     "Purdue",
+     61
+    ],
+    [
+     "15",
+     "Oregon",
+     57
+    ],
+    [
+     "16",
+     "Minnesota",
+     55
+    ],
+    [
+     "17",
+     "Maryland",
+     21
+    ],
+    [
+     "18",
+     "UCLA",
+     14
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

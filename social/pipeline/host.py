@@ -5,14 +5,15 @@ Buffer fetches each video and image from a public URL when the post goes out
 the host: https://raw.githubusercontent.com/<repo>/social-media/<date>/<file>.
 
 The branch holds media only and is rewritten as a single commit on every
-publish, keeping today and yesterday, so it never grows. Its vercel.json turns
+publish, keeping the last ten days of posts plus the soundtrack library in
+sounds/, so it never grows. Its vercel.json turns
 off Vercel deployments for it, and nothing on it touches the site.
 """
 import datetime as dt
 import os, shutil, subprocess, tempfile, time, urllib.request
 
 BRANCH = "social-media"
-KEEP_DAYS = 2
+KEEP_DAYS = 10   # a week's posts go out over seven days; keep their media a little longer
 
 README = """# social-media
 
@@ -28,10 +29,12 @@ def git(*args, cwd=None, check=True):
     return subprocess.run(["git", *args], cwd=cwd, check=check, capture_output=True, text=True)
 
 
-def publish(remote, repo_slug, date, files, extra=None):
+def publish(remote, repo_slug, date, files, extra=None, root_files=None):
     """Put `files` ({name: local path}) under <date>/ on the branch and return {name: url}.
 
-    `extra` is {path: text} written at the branch root (history.json).
+    `extra` is {path: text} written at the branch root (history.json);
+    `root_files` is {path: local path} copied there (the soundtrack library in
+    sounds/). Directories that are not dates are never pruned.
     """
     work = tempfile.mkdtemp(prefix="media-")
     try:
@@ -59,6 +62,9 @@ def publish(remote, repo_slug, date, files, extra=None):
         for path, text in (extra or {}).items():
             with open(os.path.join(work, path), "w") as f:
                 f.write(text)
+        for path, local in (root_files or {}).items():
+            os.makedirs(os.path.dirname(os.path.join(work, path)) or work, exist_ok=True)
+            shutil.copy(local, os.path.join(work, path))
         git("checkout", "--quiet", "--orphan", "publish", cwd=work)
         git("add", "-A", cwd=work)
         git("-c", "user.name=SavorScout social bot", "-c", "user.email=social-bot@savorscout.net",

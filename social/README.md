@@ -1,72 +1,62 @@
 # SavorScout social
 
-Short videos and posts made from SavorScout's own campus x food pages
-(`/campus/<school>/<food>`), scheduled through Buffer to TikTok, X and Threads.
+Short videos and posts for TikTok (@wfoodfinds), X and Threads (@campuseatshq),
+made from SavorScout's own data and guides and scheduled through Buffer.
 
-Every day at about 10 a.m. New York time, a GitHub Actions workflow
-(`.github/workflows/social-daily.yml`) makes:
+## How it runs
 
-- **4 TikTok videos.** Each is one campus and one food: the five closest places
-  on foot, each with a real walking route drawn on a map, the walking time and
-  distance, background footage that matches what the place serves, and an
-  original soundtrack. About 21 seconds, 1080x1920.
-- **4 X posts and 4 Threads posts.** Three are built from the same pages, as a
-  list with walking times plus a share card (the map and the list). The page link
-  goes in a reply, so the post itself carries no link. The fourth is a question for
-  replies.
+Every week brings **4 TikTok videos, 4 X threads and 4 Threads posts**, all
+researched and written that week, so there's never the same template on repeat.
+Only the soundtracks rotate. A scheduled Claude session does this every Sunday
+afternoon for the week ahead. Its playbook is [`WEEKLY.md`](WEEKLY.md), and each
+week's scripts and schedule are kept in `weeks/<monday>/`.
 
-Posts go out at the times in `config.json`, each a few minutes off the hour so
-days don't look automated.
+The videos are creator-style:
+- full-screen footage cut on the beat
+- bold outlined captions
+- full-screen maps for rankings
+- an original soundtrack
+- no headers, progress bars or app chrome
 
-## Setup (once)
-
-1. **Merge this into `main`.** GitHub only runs scheduled workflows from the
-   default branch.
-2. **Add two repository secrets** under Settings > Secrets and variables > Actions >
-   New repository secret:
-   - `BUFFER_API_KEY`: your key from publish.buffer.com/settings/api
-   - `PEXELS_API_KEY`: your key from pexels.com/api
-3. **Optional: try it first.** Under Actions > Daily social batch > Run workflow,
-   tick "Build and render only". The run's artifact has the videos, cards and
-   `posts.json`, and nothing is posted.
-
-## Day to day
-
-- **Pause:** Actions > Daily social batch > ··· > Disable workflow.
-- **Approve before posting:** set `"mode": "draft"` in `config.json`. Everything
-  lands in Buffer as drafts.
-- **Change the times:** edit `slots` in `config.json` (24-hour, New York time).
-- **Redo a day:** Run workflow with that date and "Redo a date" ticked. Delete
-  the day's old posts in Buffer first.
-- **Fewer videos:** lower `videos_per_day`.
-
-## How it works
+## Pieces
 
 | Step | File | Notes |
 |---|---|---|
-| Pick 4 pairs | `pipeline/combos.js`, `make_batch.py` | Different campuses, foods and states each day. A pair runs once per round. About 190 pairs, so about 48 days per round. Later rounds show the next five places. |
-| Map + routes | `pipeline/mapdata.py` | Streets, buildings, parks and campus outlines from Overture Maps (free, no key). Shortest walking path over streets and footpaths. |
-| Footage | `pipeline/clips.py` | Pexels, matched to each place's cuisine, trimmed and graded. |
-| Soundtrack | `pipeline/audio.py` | Synthesized deep house at 120 BPM, so every cut lands on a beat, plus effects. Nothing to license. |
-| Text fitting | `pipeline/props.py` | Measures names with the real font. |
-| Video | `video/` (Remotion) | `render.mjs` renders the batch. `npm run studio` previews it. |
-| Share card | `pipeline/card.py` | 1080x1350 image for X and Threads. |
-| Captions | `pipeline/posts.py` | Templates that rotate. Facts only, never "best", "cheap" or "open now". |
-| Hosting | `pipeline/host.py` | Media goes on the `social-media` branch, served from raw.githubusercontent.com, kept for 2 days. |
-| Scheduling | `pipeline/buffer.py` | Buffer GraphQL API. |
+| Video scripts | `weeks/<monday>/videos.json` | Scenes with beats, style, words and footage searches |
+| Posts | `weeks/<monday>/posts.json` | X threads, Threads posts, TikTok captions, times, share cards |
+| Build | `pipeline/reel.py` | Footage per scene (Pexels), captions fitted to the real font, beat timing, audio mix |
+| Soundtracks | `pipeline/music.py` | Original lo-fi, deep house and nu-disco tracks; least recently used plays next |
+| Ranking maps | `pipeline/rankmap.py` | A campus, the half mile around it, every place to eat as a dot (Overture Maps) |
+| Walking routes | `pipeline/mapdata.py` | Street maps and shortest walking paths (the walkable-five format) |
+| Video | `video/` (Remotion) | `Reel` composition for the weekly videos, `Short` for walkable-five |
+| Share cards | `pipeline/postcard.py` | 1080x1350 tips cards and ranking charts |
+| Week runner | `pipeline/make_week.py` | sounds, build, qa, render, cards, publish |
+| Hosting | `pipeline/host.py` | Media on the `social-media` branch (raw.githubusercontent.com), kept 10 days; the soundtrack library in `sounds/` |
+| Scheduling | `pipeline/buffer.py` | Buffer GraphQL API |
 
-`history.json` on the `social-media` branch records which pairs, clips and
-questions have run, so nothing repeats.
+`history.json` on the `social-media` branch records every clip, track and
+week, so footage never repeats and topics don't come back too soon.
 
-Run it by hand (Node 22, Python 3.13, ffmpeg):
+## Day to day
+
+- **Pause:** pause or delete the weekly scheduled task in Claude (claude.ai/code,
+  scheduled tasks). Posts already in Buffer still go out unless you delete them there.
+- **Change something this week:** edit or delete the post in Buffer.
+- **Add your own music:** see "Soundtracks" in `WEEKLY.md`.
+- **Old daily format:** `.github/workflows/social-daily.yml` still makes a day of
+  walkable-five posts, but only when you run it by hand (it needs the
+  `BUFFER_API_KEY` and `PEXELS_API_KEY` repository secrets).
+
+Run a week by hand (Node 22, Python 3.13, ffmpeg):
 
 ```bash
 pip install -r social/requirements.txt && (cd social/video && npm ci)
-python social/pipeline/make_batch.py --dry-run
+python social/pipeline/make_week.py sounds /tmp/sounds
+python social/pipeline/make_week.py build 2026-11-02 /tmp/sounds /tmp/rank
 ```
 
-Credits: footage from Pexels; map data © OpenStreetMap contributors and the
-Overture Maps Foundation (shown on every map); Inter typeface (SIL OFL,
-`video/public/fonts/LICENSE-Inter.txt`). Remotion is free for individuals and
-companies of up to three people; a larger company needs a license
+Credits: footage and photos from Pexels; map data © OpenStreetMap contributors
+and the Overture Maps Foundation (shown on every map); Inter typeface (SIL
+OFL, `video/public/fonts/LICENSE-Inter.txt`). Remotion is free for individuals
+and companies of up to three people; a larger company needs a license
 (remotion.dev/license).

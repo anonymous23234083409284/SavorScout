@@ -36,4 +36,5 @@ __pycache__/
 # build output. The media that gets posted lives on the social-media branch.
 social/video/node_modules/
 social/video/public/batch/
+social/video/public/week/
 social/out/

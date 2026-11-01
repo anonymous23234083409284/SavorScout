@@ -1,17 +1,16 @@
-# Makes and schedules SavorScout's daily social posts: 4 TikTok videos, 4 X
-# posts and 4 Threads posts, through Buffer. See social/README.md.
+# The original walkable-five format (social/pipeline/make_batch.py): 4 TikTok
+# videos, 4 X posts and 4 Threads posts for one day, through Buffer.
+#
+# Manual only. SavorScout's posts are now researched and written fresh each
+# week by a scheduled Claude session (social/WEEKLY.md), so this no longer runs
+# on a timer. Run it from the Actions tab for an extra day of walkable-five posts.
 #
 # Needs two repository secrets (Settings > Secrets and variables > Actions):
 #   BUFFER_API_KEY   from publish.buffer.com/settings/api
 #   PEXELS_API_KEY   from pexels.com/api
-name: Daily social batch
+name: Walkable-five social batch (manual)
 
 on:
-  schedule:
-    # 14:07 UTC: 10:07 a.m. New York time in summer, 9:07 in winter. Well
-    # before the first post slot (12:45), and off the top of the hour, when
-    # GitHub delays scheduled runs the most.
-    - cron: "7 14 * * *"
   workflow_dispatch:
     inputs:
       dry_run:

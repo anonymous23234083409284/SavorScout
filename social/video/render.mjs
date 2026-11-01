@@ -21,7 +21,7 @@ const serveUrl = await bundle({entryPoint: path.join(here, 'src', 'index.ts'), p
 for (const v of manifest.videos) {
 	if (only && v.id !== only) continue;
 	const t0 = Date.now();
-	const composition = await selectComposition({serveUrl, id: 'Short', inputProps: v.props, browserExecutable});
+	const composition = await selectComposition({serveUrl, id: v.composition || 'Short', inputProps: v.props, browserExecutable});
 	if (v.stills) {
 		for (const s of v.stills) {
 			await renderStill({composition, serveUrl, inputProps: v.props, frame: s.frame, output: s.out, browserExecutable});

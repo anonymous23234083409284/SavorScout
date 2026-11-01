@@ -66,6 +66,17 @@ def search(query, page=1, per_page=40):
         return json.load(r).get("videos", [])
 
 
+def by_id(video_id):
+    """A specific Pexels video, for when a human picked it from the previews."""
+    req = urllib.request.Request(f"https://api.pexels.com/videos/videos/{video_id}", headers={"User-Agent": "savorscout-social/1.0"})
+    if os.environ.get("PEXELS_API_KEY"):
+        req.add_header("Authorization", os.environ["PEXELS_API_KEY"])
+    with urllib.request.urlopen(req, timeout=30) as r:
+        v = json.load(r)
+    return {"id": v["id"], "query": "chosen", "url": v["url"], "by": v["user"]["name"],
+            "file": best_file(v)["link"], "duration": v["duration"]}
+
+
 def best_file(v):
     """The 1080-wide portrait rendition, else the closest one at or above 720 wide."""
     files = [f for f in v.get("video_files", []) if f.get("width") and f.get("height")
@@ -81,7 +92,12 @@ def best_file(v):
 
 def pick(key, used, seconds, rng, avoid=()):
     """One clip for a cuisine key, skipping ids in `used` or `avoid`."""
-    for query in rng.sample(queries_for(key), k=len(queries_for(key))) + FALLBACK:
+    return pick_queries(rng.sample(queries_for(key), k=len(queries_for(key))), used, seconds, rng, avoid)
+
+
+def pick_queries(queries, used, seconds, rng, avoid=(), top=8):
+    """One clip for the first of `queries` that has an unused match, most literal first."""
+    for query in list(queries) + FALLBACK:
         for page in (1, 2):
             try:
                 vids = search(query, page=page)
@@ -92,7 +108,7 @@ def pick(key, used, seconds, rng, avoid=()):
                     and v.get("duration", 0) >= seconds + 1 and best_file(v)]
             if vids:
                 # Pexels ranks by relevance and quality; stay near the top, vary a little.
-                v = rng.choice(vids[:8])
+                v = rng.choice(vids[:top])
                 return {"id": v["id"], "query": query, "url": v["url"], "by": v["user"]["name"],
                         "file": best_file(v)["link"], "duration": v["duration"]}
     raise RuntimeError(f"no Pexels clip found for {key}")

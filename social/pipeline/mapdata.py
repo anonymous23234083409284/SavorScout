@@ -216,6 +216,91 @@ def street_labels(named, view, P_px, max_labels=7):
     return out
 
 
+AREA_JOBS = {
+    "roads": ("theme=transportation/type=segment", ["class", "names", "geometry"], pc.field("subtype") == "road"),
+    "landuse": ("theme=base/type=land_use", ["subtype", "class", "names", "geometry"], None),
+    "water": ("theme=base/type=water", ["geometry"], None),
+    "buildings": ("theme=buildings/type=building", ["geometry"], None),
+}
+
+
+def load_area(lon0, lat0, lon1, lat1, out_dir, jobs=None):
+    """Overture rows for a box, cached in out_dir so a re-render costs nothing."""
+    jobs = jobs or AREA_JOBS
+    os.makedirs(out_dir, exist_ok=True)
+    cache = os.path.join(out_dir, "overture.pkl")
+    if os.path.exists(cache):
+        with open(cache, "rb") as f:
+            saved = pickle.load(f)
+        b = saved.get("bbox") if isinstance(saved, dict) and "bbox" in saved else None
+        if b and b[0] <= lon0 and b[1] <= lat0 and b[2] >= lon1 and b[3] >= lat1 and set(jobs) <= set(saved["data"]):
+            return saved["data"]
+    with ThreadPoolExecutor(4) as ex:
+        futs = {k: ex.submit(fetch, t, lon0, lat0, lon1, lat1, cols, extra) for k, (t, cols, extra) in jobs.items()}
+        data = {k: f.result() for k, f in futs.items()}
+    with open(cache, "wb") as f:
+        pickle.dump({"bbox": (lon0, lat0, lon1, lat1), "data": data}, f)
+    return data
+
+
+def layers(data, P):
+    """Projected geometry by layer, plus the outline of the campus at P's origin."""
+    road_lines, named = [], []
+    for r in data["roads"]:
+        g = project_geom(wkb.loads(r["geometry"]), P)
+        name = (r.get("names") or {}).get("primary")
+        for l in lines_of(g):
+            road_lines.append((l, r["class"] or "unclassified"))
+            named.append((l, r["class"] or "unclassified", name))
+    parks, campus_polys, water, buildings = [], [], [], []
+    for r in data["landuse"]:
+        g = project_geom(wkb.loads(r["geometry"]), P)
+        if r["subtype"] == "education" and r["class"] in ("university", "college"):
+            campus_polys += polys_of(g)
+        elif r["subtype"] in ("park", "recreation") or r["class"] in ("park", "garden", "pitch", "golf_course", "grass", "village_green"):
+            parks += polys_of(g)
+    for r in data["water"]:
+        water += polys_of(project_geom(wkb.loads(r["geometry"]), P))
+    for r in data["buildings"]:
+        buildings += polys_of(project_geom(wkb.loads(r["geometry"]), P))
+    # The campus outline: education areas that contain, or sit near, the campus point.
+    origin = Point(0, 0)
+    mine = [p for p in campus_polys if p.area > 20000 and p.distance(origin) < 250]
+    return {"roads": road_lines, "named": named, "parks": parks, "water": water, "buildings": buildings,
+            "campus_outline": unary_union(mine) if mine else None}
+
+
+def draw_base(L, x0, x1, y0, y1, scale, W, H, path):
+    """The styled base map, W x H pixels covering x0..x1, y0..y1 metres."""
+    view = box(x0, y0, x1, y1)
+    dpi = 100
+    fig = plt.figure(figsize=(W / dpi, H / dpi), dpi=dpi)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_xlim(x0, x1); ax.set_ylim(y0, y1); ax.set_axis_off()
+    fig.patch.set_facecolor(BG); ax.set_facecolor(BG)
+    lw = lambda px_w: px_w * scale / SCALE * 72 / dpi
+
+    def polys(collection, face, edge="none", ew=0.0, z=1, alpha=1.0):
+        rings = [np.asarray(p.exterior.coords) for p in collection if p.intersects(view)]
+        if rings:
+            ax.add_collection(PolyCollection(rings, facecolors=face, edgecolors=edge, linewidths=ew, zorder=z, alpha=alpha, antialiased=True))
+
+    polys(L["parks"], PARK, z=1)
+    polys(L["water"], WATER, z=2)
+    if L["campus_outline"] is not None:
+        polys(polys_of(L["campus_outline"]), CAMPUS_FILL, edge=CAMPUS_EDGE, ew=lw(3), z=3)
+    polys(L["buildings"], BUILDING, z=4)
+    order = ["track", "steps", "cycleway", "path", "footway", "service", "pedestrian", "unclassified",
+             "living_street", "residential", "tertiary", "secondary", "primary", "trunk", "motorway"]
+    for cls in order:
+        segs = [np.asarray(l.coords) for l, c in L["roads"] if c == cls and l.intersects(view)]
+        if segs:
+            w, col = ROAD[cls]
+            ax.add_collection(LineCollection(segs, colors=col, linewidths=lw(w), capstyle="round", joinstyle="round", zorder=5 + order.index(cls) * 0.01, antialiased=True))
+    fig.savefig(path, dpi=dpi, facecolor=BG)
+    plt.close(fig)
+
+
 def build(job, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     campus = job["campus"]
@@ -236,82 +321,15 @@ def build(job, out_dir):
     lon0, lat0 = P.inv(x0 - 200, y0 - 200)
     lon1, lat1 = P.inv(x1 + 200, y1 + 200)
 
-    jobs = {
-        "roads": ("theme=transportation/type=segment", ["class", "names", "geometry"], pc.field("subtype") == "road"),
-        "landuse": ("theme=base/type=land_use", ["subtype", "class", "names", "geometry"], None),
-        "water": ("theme=base/type=water", ["geometry"], None),
-        "buildings": ("theme=buildings/type=building", ["geometry"], None),
-    }
-    cache = os.path.join(out_dir, "overture.pkl")
-    data = None
-    if os.path.exists(cache):
-        with open(cache, "rb") as f:
-            saved = pickle.load(f)
-        b = saved.get("bbox") if isinstance(saved, dict) and "bbox" in saved else None
-        if b and b[0] <= lon0 and b[1] <= lat0 and b[2] >= lon1 and b[3] >= lat1:
-            data = saved["data"]
-    if data is None:
-        with ThreadPoolExecutor(4) as ex:
-            futs = {k: ex.submit(fetch, t, lon0, lat0, lon1, lat1, cols, extra) for k, (t, cols, extra) in jobs.items()}
-            data = {k: f.result() for k, f in futs.items()}
-        with open(cache, "wb") as f:
-            pickle.dump({"bbox": (lon0, lat0, lon1, lat1), "data": data}, f)
-
+    data = load_area(lon0, lat0, lon1, lat1, out_dir)
     view = box(x0, y0, x1, y1)
-    road_lines, named = [], []
-    for r in data["roads"]:
-        g = project_geom(wkb.loads(r["geometry"]), P)
-        name = (r.get("names") or {}).get("primary")
-        for l in lines_of(g):
-            road_lines.append((l, r["class"] or "unclassified"))
-            named.append((l, r["class"] or "unclassified", name))
-    parks, campus_polys, water, buildings = [], [], [], []
-    for r in data["landuse"]:
-        g = project_geom(wkb.loads(r["geometry"]), P)
-        if r["subtype"] == "education" and r["class"] in ("university", "college"):
-            campus_polys += polys_of(g)
-        elif r["subtype"] in ("park", "recreation") or r["class"] in ("park", "garden", "pitch", "golf_course", "grass", "village_green"):
-            parks += polys_of(g)
-    for r in data["water"]:
-        water += polys_of(project_geom(wkb.loads(r["geometry"]), P))
-    for r in data["buildings"]:
-        buildings += polys_of(project_geom(wkb.loads(r["geometry"]), P))
-
-    # The campus outline: education areas that contain, or sit near, the campus point.
-    origin = Point(0, 0)
-    mine = [p for p in campus_polys if p.area > 20000 and p.distance(origin) < 250]
-    campus_outline = unary_union(mine) if mine else None
+    L = layers(data, P)
+    road_lines, named, campus_outline = L["roads"], L["named"], L["campus_outline"]
 
     def px(x, y):
         return ((x - x0) * scale, (y1 - y) * scale)
 
-    # ---- base map ---------------------------------------------------------
-    dpi = 100
-    fig = plt.figure(figsize=(W / dpi, H / dpi), dpi=dpi)
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.set_xlim(x0, x1); ax.set_ylim(y0, y1); ax.set_axis_off()
-    fig.patch.set_facecolor(BG); ax.set_facecolor(BG)
-    lw = lambda px_w: px_w * scale / SCALE * 72 / dpi
-
-    def polys(collection, face, edge="none", ew=0.0, z=1, alpha=1.0):
-        rings = [np.asarray(p.exterior.coords) for p in collection if p.intersects(view)]
-        if rings:
-            ax.add_collection(PolyCollection(rings, facecolors=face, edgecolors=edge, linewidths=ew, zorder=z, alpha=alpha, antialiased=True))
-
-    polys(parks, PARK, z=1)
-    polys(water, WATER, z=2)
-    if campus_outline is not None:
-        polys(polys_of(campus_outline), CAMPUS_FILL, edge=CAMPUS_EDGE, ew=lw(3), z=3)
-    polys(buildings, BUILDING, z=4)
-    order = ["track", "steps", "cycleway", "path", "footway", "service", "pedestrian", "unclassified",
-             "living_street", "residential", "tertiary", "secondary", "primary", "trunk", "motorway"]
-    for cls in order:
-        segs = [np.asarray(l.coords) for l, c in road_lines if c == cls and l.intersects(view)]
-        if segs:
-            w, col = ROAD[cls]
-            ax.add_collection(LineCollection(segs, colors=col, linewidths=lw(w), capstyle="round", joinstyle="round", zorder=5 + order.index(cls) * 0.01, antialiased=True))
-    fig.savefig(os.path.join(out_dir, "map.png"), dpi=dpi, facecolor=BG)
-    plt.close(fig)
+    draw_base(L, x0, x1, y0, y1, scale, W, H, os.path.join(out_dir, "map.png"))
 
     # ---- routes -----------------------------------------------------------
     G, nodes, tree = build_graph(road_lines)

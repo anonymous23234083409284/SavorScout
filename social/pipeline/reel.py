@@ -1,4 +1,4 @@
-"""Build a creator-style short from a written script (social/weeks/<week>/videos.json).
+"""Build a creator-style short from a written script (social/batches/<date>/videos.json).
 
 A script is a list of scenes, each with a length in beats, a caption style and
 the words, plus Pexels searches for its footage (or a ranking map). This file
@@ -27,6 +27,7 @@ BLACK = os.path.join(FONTS, "InterDisplay-Black.otf")
 SEMI = os.path.join(FONTS, "Inter-SemiBold.otf")
 BOLD = os.path.join(FONTS, "Inter-Bold.otf")
 READ_WPS = 3.2            # words per second a viewer reads comfortably
+CRF = 21                  # x264 quality: TikTok re-encodes uploads, so finer than this only costs megabytes
 STYLE = {                 # font, largest size, smallest size, max width, max lines
     "hook": (BLACK, 120, 72, 900, 4),
     "cap": (BLACK, 92, 60, 880, 4),
@@ -172,13 +173,13 @@ def mix_audio(track_path, scenes, total_frames, out_path, rng):
         w.writeframes((out * 32767).astype(np.int16).tobytes())
 
 
-def build(video, week, lib, sounds_dir, rank_dir, work, used_clips, seed):
+def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed):
     """Props for one scripted video, with its files staged under video/public."""
     rng = random.Random(seed)
     track = music.pick(lib, video["mood"])
-    track["last_used"] = week
+    track["last_used"] = date
     fpb = FPS * 60 / track["bpm"]
-    rel = f"week/{week}/{video['id']}"
+    rel = f"reel/{date}/{video['id']}"
     pub = os.path.join(VIDEO, "public", rel)
     os.makedirs(pub, exist_ok=True)
     scenes, beat = [], 0
@@ -227,6 +228,15 @@ def build(video, week, lib, sounds_dir, rank_dir, work, used_clips, seed):
             "track": track["id"]}
 
 
+def batch_date(spec):
+    """The day a batch posts (older scripts called it "week")."""
+    return spec.get("date") or spec["week"]
+
+
+def work_dir(spec):
+    return os.path.join(HERE, "..", "out", "batches", batch_date(spec))
+
+
 def captions(sc):
     """The fitted text fields of one scene (what build() stores beside the footage)."""
     out = {}
@@ -250,7 +260,7 @@ def refit(spec, work):
             else:
                 sc.update(captions(sc_spec))
     json.dump(reels, open(os.path.join(work, "reels.json"), "w"), indent=1)
-    manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"],
+    manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"], "crf": CRF,
                             "out": os.path.abspath(os.path.join(work, b["id"] + ".mp4"))} for b in reels["videos"]]}
     json.dump(manifest, open(os.path.join(work, "manifest.json"), "w"))
 
@@ -286,7 +296,7 @@ def repick(spec, work, vid, fixes, seed=7):
     json.dump(sorted(used), open(used_path, "w"))
     json.dump(sorted(rejected), open(rejected_path, "w"))
     json.dump(reels, open(os.path.join(work, "reels.json"), "w"), indent=1)
-    manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"],
+    manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"], "crf": CRF,
                             "out": os.path.abspath(os.path.join(work, b["id"] + ".mp4"))} for b in reels["videos"]]}
     json.dump(manifest, open(os.path.join(work, "manifest.json"), "w"))
 
@@ -294,30 +304,30 @@ def repick(spec, work, vid, fixes, seed=7):
 if __name__ == "__main__":
     if sys.argv[1] == "repick":
         spec = json.load(open(sys.argv[2]))
-        repick(spec, os.path.join(HERE, "..", "out", "weeks", spec["week"]), sys.argv[3], json.loads(sys.argv[4]))
+        repick(spec, work_dir(spec), sys.argv[3], json.loads(sys.argv[4]))
         sys.exit()
     if sys.argv[1] == "refit":
         spec = json.load(open(sys.argv[2]))
-        refit(spec, os.path.join(HERE, "..", "out", "weeks", spec["week"]))
+        refit(spec, work_dir(spec))
         sys.exit()
     spec = json.load(open(sys.argv[1]))
     sounds, ranks = sys.argv[2], sys.argv[3]
     only = sys.argv[4] if len(sys.argv) > 4 else None
     lib = json.load(open(os.path.join(sounds, "library.json")))
-    work = os.path.join(HERE, "..", "out", "weeks", spec["week"])
+    work = work_dir(spec)
     os.makedirs(work, exist_ok=True)
     used = set(json.load(open(os.path.join(work, "used-clips.json")))) if os.path.exists(os.path.join(work, "used-clips.json")) else set()
     out = []
     for k, v in enumerate(spec["videos"]):
         if only and v["id"] != only:
             continue
-        b = build(v, spec["week"], lib, sounds, ranks, work, used, seed=1000 + k)
+        b = build(v, batch_date(spec), lib, sounds, ranks, work, used, seed=1000 + k)
         out.append(b)
         print(v["id"], b["track"], b["props"]["total"], "frames", flush=True)
     json.dump(sorted(used), open(os.path.join(work, "used-clips.json"), "w"))
     json.dump(lib, open(os.path.join(sounds, "library.json"), "w"), indent=1)
     json.dump({"videos": out}, open(os.path.join(work, "reels.json"), "w"), indent=1)
     # The renderer's manifest: one entry per video, rendered with the Reel composition.
-    manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"],
+    manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"], "crf": CRF,
                             "out": os.path.abspath(os.path.join(work, b["id"] + ".mp4"))} for b in out]}
     json.dump(manifest, open(os.path.join(work, "manifest.json"), "w"))

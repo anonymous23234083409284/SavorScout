@@ -33,7 +33,7 @@ for (const v of manifest.videos) {
 			serveUrl,
 			inputProps: v.props,
 			codec: 'h264',
-			crf: 18,
+			crf: v.crf ?? 18,
 			pixelFormat: 'yuv420p',
 			audioBitrate: '192k',
 			outputLocation: v.out,

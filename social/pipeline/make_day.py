@@ -1,16 +1,18 @@
-"""One week of SavorScout posts, from scripts in social/weeks/<week>/ to Buffer.
+"""One day of SavorScout posts, from scripts in social/batches/<date>/ to Buffer.
 
-The week's content is researched and written fresh each week (social/WEEKLY.md
-is the playbook): videos.json holds the video scripts, posts.json the X and
-Threads threads, TikTok captions, posting times and share-card specs. Only the
-soundtracks repeat: music.py's library rotates, least recently used first.
+Every day posts 4 TikTok videos, 4 X threads and 4 Threads posts, made the
+afternoon before by a scheduled Claude session (social/DAILY.md is its
+playbook). The content is researched and written fresh for each day:
+videos.json holds the video scripts, posts.json the X and Threads threads,
+TikTok captions, posting times and share-card specs. Only the soundtracks
+repeat: music.py's library rotates, least recently used first.
 
-    python make_week.py sounds <dir>              # fetch the soundtrack library from the media branch
-    python make_week.py build <week> <sounds dir> <rank maps dir>
-    python make_week.py qa <week>                 # contact sheets: every clip at start, middle, end
-    python make_week.py render <week>
-    python make_week.py cards <week>
-    python make_week.py publish <week> <sounds dir> [--dry-run]
+    python make_day.py sounds <dir>              # fetch the soundtrack library from the media branch
+    python make_day.py build <date> <sounds dir> <rank maps dir>
+    python make_day.py qa <date>                 # contact sheets: every clip at start, middle, end
+    python make_day.py render <date>
+    python make_day.py cards <date>
+    python make_day.py publish <date> <sounds dir> [--dry-run]
 
 Between build and render, look at the qa sheets and replace any clip that
 does not show what its caption says: reel.py repick <videos.json> <video> '{"3": [...queries]}'.
@@ -27,9 +29,9 @@ ROOT = os.path.dirname(SOCIAL)
 UA = {"User-Agent": "savorscout-social/1.0"}
 
 
-def paths(week):
-    return (os.path.join(SOCIAL, "weeks", week), os.path.join(SOCIAL, "out", "weeks", week),
-            os.path.join(SOCIAL, "video", "public", "week", week))
+def paths(date):
+    return (os.path.join(SOCIAL, "batches", date), os.path.join(SOCIAL, "out", "batches", date),
+            os.path.join(SOCIAL, "video", "public", "reel", date))
 
 
 def remote_and_slug():
@@ -56,8 +58,8 @@ def sounds(dest):
     print(f"{len(lib['tracks'])} tracks in {dest}")
 
 
-def build(week, sounds_dir, rank_dir):
-    wdir, out, _ = paths(week)
+def build(date, sounds_dir, rank_dir):
+    wdir, out, _ = paths(date)
     os.makedirs(out, exist_ok=True)
     # Never reuse a clip the account has already posted.
     remote, _ = remote_and_slug()
@@ -68,10 +70,10 @@ def build(week, sounds_dir, rank_dir):
     subprocess.run([sys.executable, os.path.join(HERE, "reel.py"), os.path.join(wdir, "videos.json"), sounds_dir, rank_dir], check=True)
 
 
-def qa(week):
+def qa(date):
     """Every clip at 10%, 50% and 90% of its scene, labelled with its caption."""
     from PIL import Image, ImageDraw
-    wdir, out, _ = paths(week)
+    wdir, out, _ = paths(date)
     spec = {v["id"]: v for v in json.load(open(os.path.join(wdir, "videos.json")))["videos"]}
     reels = json.load(open(os.path.join(out, "reels.json")))
     os.makedirs(os.path.join(out, "qa"), exist_ok=True)
@@ -98,16 +100,16 @@ def qa(week):
         print(os.path.join(out, "qa", f"sheet-{v['id']}.png"))
 
 
-def render(week):
-    _, out, _ = paths(week)
+def render(date):
+    _, out, _ = paths(date)
     subprocess.run(["node", os.path.join(SOCIAL, "video", "render.mjs"), os.path.join(out, "manifest.json")],
                    cwd=os.path.join(SOCIAL, "video"), check=True)
 
 
-def photo(spec, week):
-    """A card's header photo: a Pexels photo by id, or a frame of one of the week's clips."""
+def photo(spec, date):
+    """A card's header photo: a Pexels photo by id, or a frame of one of the date's clips."""
     from PIL import Image
-    _, out, pub = paths(week)
+    _, out, pub = paths(date)
     if "pexels" in spec:
         req = urllib.request.Request(f"https://api.pexels.com/v1/photos/{spec['pexels']}", headers=UA)
         if os.environ.get("PEXELS_API_KEY"):
@@ -125,24 +127,24 @@ def photo(spec, week):
     return path
 
 
-def cards(week):
-    wdir, out, _ = paths(week)
+def cards(date):
+    wdir, out, _ = paths(date)
     os.makedirs(os.path.join(out, "cards"), exist_ok=True)
     posts = json.load(open(os.path.join(wdir, "posts.json")))
     for name, c in posts["cards"].items():
         dest = os.path.join(out, "cards", f"{name}.jpg")
         if c["type"] == "tips":
-            postcard.tips(dest, photo(c["photo"], week) if c.get("photo") else None, c["kicker"], c["title"],
+            postcard.tips(dest, photo(c["photo"], date) if c.get("photo") else None, c["kicker"], c["title"],
                           [tuple(i) for i in c["items"]], c.get("note", ""))
         else:
             postcard.ranking(dest, c["title"], c["subtitle"], [tuple(r) for r in c["rows"]], c.get("source", ""))
         print(dest)
 
 
-def publish(week, sounds_dir, dry_run=False):
-    """Host every video and card, then schedule the week's posts in Buffer."""
+def publish(date, sounds_dir, dry_run=False):
+    """Host every video and card, then schedule the date's posts in Buffer."""
     import datetime as dt
-    wdir, out, _ = paths(week)
+    wdir, out, _ = paths(date)
     posts = json.load(open(os.path.join(wdir, "posts.json")))
     reels = json.load(open(os.path.join(out, "reels.json")))
     files = {f"{v['id']}.mp4": os.path.join(out, f"{v['id']}.mp4") for v in reels["videos"]}
@@ -158,12 +160,14 @@ def publish(week, sounds_dir, dry_run=False):
     root_files.update({f"sounds/{t['file']}": os.path.join(sounds_dir, t["file"]) for t in lib["tracks"]})
     history["clips"] = sorted(set(history.get("clips", [])) | {sc["clip"]["id"] for v in reels["videos"]
                                                                for sc in v["props"]["scenes"] if "clip" in sc})
-    history.setdefault("weeks", {})[week] = {"videos": [v["id"] for v in reels["videos"]],
-                                            "tracks": [v["track"] for v in reels["videos"]]}
+    history.setdefault("batches", {})[date] = {"videos": [v["id"] for v in reels["videos"]],
+                                              "tracks": [v["track"] for v in reels["videos"]],
+                                              "posts_planned": {k: [p.get("id") or p.get("video") for p in posts[k]]
+                                                                for k in ("tiktok", "twitter", "threads")}}
     if dry_run:
         print("dry run: would publish", sorted(files), "and schedule", {k: len(v) for k, v in posts.items() if k != "cards"})
         return
-    urls = host.publish(remote, slug, week, files, {"history.json": json.dumps(history, indent=1)}, root_files)
+    urls = host.publish(remote, slug, date, files, {"history.json": json.dumps(history, indent=1)}, root_files)
     chans = buffer.channels()
     done = []
     for p in posts["tiktok"]:
@@ -183,8 +187,8 @@ def publish(week, sounds_dir, dry_run=False):
             done.append({"service": service, "at": res["dueAt"], "post_id": res["id"], "what": p["id"]})
     for d in sorted(done, key=lambda d: d["at"]):
         print(f"  {d['at']}  {d['service']:8} {d['what']:24} {d['post_id']}")
-    history["weeks"][week]["posts"] = done
-    host.publish(remote, slug, week, {}, {"history.json": json.dumps(history, indent=1)})
+    history["batches"][date]["posts"] = done
+    host.publish(remote, slug, date, {}, {"history.json": json.dumps(history, indent=1)})
     json.dump(done, open(os.path.join(wdir, "scheduled.json"), "w"), indent=1)
 
 

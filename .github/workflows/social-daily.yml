@@ -2,7 +2,7 @@
 # videos, 4 X posts and 4 Threads posts for one day, through Buffer.
 #
 # Manual only. SavorScout's posts are now researched and written fresh each
-# week by a scheduled Claude session (social/WEEKLY.md), so this no longer runs
+# day by a scheduled Claude session (social/DAILY.md), so this no longer runs
 # on a timer. Run it from the Actions tab for an extra day of walkable-five posts.
 #
 # Needs two repository secrets (Settings > Secrets and variables > Actions):

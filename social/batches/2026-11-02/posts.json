@@ -2,7 +2,7 @@
  "twitter": [
   {
    "id": "x-cheap",
-   "at": "2026-11-02T12:41:00-05:00",
+   "at": "2026-11-01T17:40:00-05:00",
    "card": "cheap-vs-bad",
    "thread": [
     "Cheap food and bad food overlap a lot less than you'd think.\n\nThe trick is telling them apart before you order. 3 rules:",
@@ -14,7 +14,7 @@
   },
   {
    "id": "x-sick",
-   "at": "2026-11-04T12:18:00-05:00",
+   "at": "2026-11-01T18:40:00-05:00",
    "card": "sick-day",
    "thread": [
     "Food tastes like nothing when you have a cold, and it's not the kitchen's fault.\n\nMost of what you call taste is really smell. Block your nose and you're down to five things: salt, sweet, sour, bitter and heat.",
@@ -25,7 +25,7 @@
   },
   {
    "id": "x-decide",
-   "at": "2026-11-05T18:27:00-05:00",
+   "at": "2026-11-01T19:40:00-05:00",
    "card": "cant-decide",
    "thread": [
     "\"Where do you want to eat?\" gets silence. \"Is Thai okay?\" gets an answer in two seconds.\n\nThat's the whole trick to deciding where to eat. 3 ways to use it:",
@@ -37,7 +37,7 @@
   },
   {
    "id": "x-bigten",
-   "at": "2026-11-07T11:33:00-05:00",
+   "at": "2026-11-01T20:40:00-05:00",
    "card": "big-ten",
    "thread": [
     "We counted every place to eat within half a mile of every Big Ten campus.\n\n1. Michigan 224\n2. Rutgers 182\n3. Northwestern 162\n4. Penn State 156\n5. Indiana 138\n6. Iowa 132\n7. Illinois 109\n8. Nebraska 102\n9. USC 94\n10. Ohio State 86\n10. Wisconsin 86",
@@ -50,7 +50,7 @@
  "threads": [
   {
    "id": "t-cold",
-   "at": "2026-11-02T19:12:00-05:00",
+   "at": "2026-11-01T18:10:00-05:00",
    "card": "cold-night",
    "topic": "Comfort Food",
    "thread": [
@@ -60,7 +60,7 @@
   },
   {
    "id": "t-sick",
-   "at": "2026-11-04T20:37:00-05:00",
+   "at": "2026-11-01T19:10:00-05:00",
    "card": "sick-day",
    "topic": "Cold and Flu",
    "thread": [
@@ -70,7 +70,7 @@
   },
   {
    "id": "t-stressed",
-   "at": "2026-11-05T13:04:00-05:00",
+   "at": "2026-11-01T20:10:00-05:00",
    "card": "stressed",
    "topic": "College Life",
    "thread": [
@@ -80,7 +80,7 @@
   },
   {
    "id": "t-bigten",
-   "at": "2026-11-06T18:43:00-05:00",
+   "at": "2026-11-01T21:10:00-05:00",
    "card": "big-ten",
    "topic": "Big Ten",
    "thread": [
@@ -92,22 +92,22 @@
  "tiktok": [
   {
    "video": "cold-night",
-   "at": "2026-11-02T18:23:00-05:00",
+   "at": "2026-11-01T18:25:00-05:00",
    "text": "It gets dark at 5pm now 🌙 Here's what's actually worth leaving the dorm for on a cold night. Save this for the first freezing one. What's your go-to?\n\n#collegefood #comfortfood #hotpot #ramen #foodtok"
   },
   {
    "video": "sick-day",
-   "at": "2026-11-04T19:38:00-05:00",
+   "at": "2026-11-02T12:35:00-05:00",
    "text": "Why food tastes like nothing when you're sick 🤧 It's your nose, not the kitchen. Here's what to order instead. Send this to your sick roommate.\n\n#sickday #soupseason #pho #collegelife #foodfacts"
   },
   {
    "video": "big-ten-walkable",
-   "at": "2026-11-06T17:47:00-05:00",
+   "at": "2026-11-01T20:55:00-05:00",
    "text": "Big Ten schools ranked by how much food you can walk to 🍕 We counted every place to eat within half a mile of each campus. Where should your school be?\n\n#bigten #collegelife #campusfood #umich #pennstate"
   },
   {
    "video": "cheap-vs-bad",
-   "at": "2026-11-07T13:12:00-05:00",
+   "at": "2026-11-02T18:35:00-05:00",
    "text": "How to tell cheap food from bad food before you order 💸 Save this for the end of the month. What's your best cheap eat near campus?\n\n#cheapeats #collegefood #budgetfood #foodtips #studentlife"
   }
  ],

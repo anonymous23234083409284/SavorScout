@@ -5,7 +5,7 @@ Buffer fetches each video and image from a public URL when the post goes out
 the host: https://raw.githubusercontent.com/<repo>/social-media/<date>/<file>.
 
 The branch holds media only and is rewritten as a single commit on every
-publish, keeping the last ten days of posts plus the soundtrack library in
+publish, keeping the last three days of posts plus the soundtrack library in
 sounds/, so it never grows. Its vercel.json turns
 off Vercel deployments for it, and nothing on it touches the site.
 """
@@ -13,7 +13,7 @@ import datetime as dt
 import os, shutil, subprocess, tempfile, time, urllib.request
 
 BRANCH = "social-media"
-KEEP_DAYS = 10   # a week's posts go out over seven days; keep their media a little longer
+KEEP_DAYS = 3    # each day's batch is made the afternoon before and posts within a day
 
 README = """# social-media
 

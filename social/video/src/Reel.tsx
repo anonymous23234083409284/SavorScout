@@ -181,7 +181,7 @@ const ListScene: React.FC<{s: ReelScene}> = ({s}) => {
 		<AbsoluteFill>
 			<Bg src={s.src!} dur={s.dur} zoom={s.zoom} blur />
 			<div style={{position: 'absolute', left: 70, right: 150, top: 330}}>
-				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 64, color: C.saffron, letterSpacing: -1, opacity: title, transform: `translateY(${(1 - title) * 30}px)`, ...stroke(64)}}>
+				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 64, color: C.saffron, letterSpacing: -1, textWrap: 'balance', opacity: title, transform: `translateY(${(1 - title) * 30}px)`, ...stroke(64)}}>
 					{s.list!.title}
 				</div>
 				<div style={{marginTop: 34, display: 'flex', flexDirection: 'column', gap: 18}}>
@@ -254,7 +254,7 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 				</div>
 			</div>
 			<div style={{position: 'absolute', left: 60, right: 150, top: 1395, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 132, lineHeight: 1, color: '#fff', ...stroke(132)}}>{count}</div>
+				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 132, lineHeight: 1, color: '#fff', ...stroke(132)}}>{count.toLocaleString('en-US')}</div>
 				<div style={{marginTop: 6, fontFamily: TEXT, fontWeight: 700, fontSize: 38, color: '#fff', textShadow: '0 3px 14px rgba(0,0,0,0.8)'}}>places to eat within ½ mile</div>
 			</div>
 			<div style={{position: 'absolute', left: 40, top: 1885, fontFamily: TEXT, fontWeight: 600, fontSize: 18, color: C.inkMid}}>{m.attribution}</div>

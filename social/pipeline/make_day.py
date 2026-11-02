@@ -137,7 +137,7 @@ def cards(date):
             postcard.tips(dest, photo(c["photo"], date) if c.get("photo") else None, c["kicker"], c["title"],
                           [tuple(i) for i in c["items"]], c.get("note", ""))
         else:
-            postcard.ranking(dest, c["title"], c["subtitle"], [tuple(r) for r in c["rows"]], c.get("source", ""))
+            postcard.ranking(dest, c["title"], c["subtitle"], [tuple(r) for r in c["rows"]], c.get("source", ""), c.get("suffix", ""))
         print(dest)
 
 
@@ -167,7 +167,9 @@ def publish(date, sounds_dir, dry_run=False):
     if dry_run:
         print("dry run: would publish", sorted(files), "and schedule", {k: len(v) for k, v in posts.items() if k != "cards"})
         return
-    urls = host.publish(remote, slug, date, files, {"history.json": json.dumps(history, indent=1)}, root_files)
+    # Media goes under the day it posts, even for a day's second batch (2026-11-02b).
+    day = json.load(open(os.path.join(wdir, "videos.json"))).get("date", date)
+    urls = host.publish(remote, slug, day, files, {"history.json": json.dumps(history, indent=1)}, root_files)
     chans = buffer.channels()
     done = []
     for p in posts["tiktok"]:
@@ -188,7 +190,7 @@ def publish(date, sounds_dir, dry_run=False):
     for d in sorted(done, key=lambda d: d["at"]):
         print(f"  {d['at']}  {d['service']:8} {d['what']:24} {d['post_id']}")
     history["batches"][date]["posts"] = done
-    host.publish(remote, slug, date, {}, {"history.json": json.dumps(history, indent=1)})
+    host.publish(remote, slug, day, {}, {"history.json": json.dumps(history, indent=1)})
     json.dump(done, open(os.path.join(wdir, "scheduled.json"), "w"), indent=1)
 
 

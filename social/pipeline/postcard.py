@@ -128,7 +128,7 @@ def tips(out, photo, kicker, title, items, note=""):
     return out
 
 
-def ranking(out, title, subtitle, rows, source):
+def ranking(out, title, subtitle, rows, source, suffix=""):
     """A bar chart of (rank, name, value) rows, the top three in saffron."""
     img = Image.new("RGB", (W, H), BASE)
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
@@ -138,7 +138,10 @@ def ranking(out, title, subtitle, rows, source):
     tf = font("InterDisplay-Black.otf", 70)
     lines = rich_lines(d, title, tf, 950)
     y = draw_rich(d, (60, 70), lines, tf, 74)
-    d.text((62, y + 14), subtitle, font=font("Inter-SemiBold.otf", 30), fill=INK_SOFT)
+    sf = font("Inter-SemiBold.otf", 30)
+    while d.textlength(subtitle, font=sf) > W - 124 and sf.size > 20:   # never run off the edge
+        sf = font("Inter-SemiBold.otf", sf.size - 1)
+    d.text((62, y + 14), subtitle, font=sf, fill=INK_SOFT)
     top = y + 82
     row_h = (H - 140 - top) / len(rows)
     vmax = max(float(v) for _, _, v in rows)
@@ -152,7 +155,7 @@ def ranking(out, title, subtitle, rows, source):
         bw = (bx1 - bx0) * float(value) / vmax
         d.rounded_rectangle((bx0, cy - row_h * 0.32, bx0 + max(bw, 8), cy + row_h * 0.32), radius=int(row_h * 0.3),
                             fill=SAFFRON if hi else (88, 74, 120))
-        d.text((bx0 + max(bw, 8) + 14, cy), str(value), font=rf, fill=INK, anchor="lm")
+        d.text((bx0 + max(bw, 8) + 14, cy), f"{value}{suffix}", font=rf, fill=INK, anchor="lm")
     footer(img, d, source)
     img.save(out, quality=92)
     return out

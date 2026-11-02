@@ -38,7 +38,8 @@ walkable list, a "what to order". Lead with whatever is most timely.
 ## 3. Write the scripts
 
 `social/batches/<date>/videos.json` holds the videos (`"date"` is the day they
-post). Each scene has a length in beats, a style, the words (`*star*`
+post; a day's second batch goes in its own folder, like `2026-11-02b`, with
+`"batch": "2026-11-02b"` beside the date). Each scene has a length in beats, a style, the words (`*star*`
 highlights a word) and Pexels searches:
 
 - `hook`: the first 2–3 seconds. Short, specific, a little surprising.
@@ -65,7 +66,26 @@ captions, posting times (ISO with offset) and share-card specs.
   - X an hour apart at about 4:40, 5:40, 6:40 and 7:40 PM
   - Threads an hour apart at about 5:10, 6:10, 7:10 and 8:10 PM
 
-## 4. Build, check every clip, render, publish
+## 4. Check every word
+
+Read every caption, sub line, card and post as someone scrolling past who has
+never heard of SavorScout. Fix anything that could be read two ways:
+
+- **One plain sentence per line.** No headline-ese or stacked modifiers. The
+  owner flagged "Big Ten schools ranked by how much food you can walk to": it
+  reads as "the top ten schools" or "big ten tips". "Which Big Ten campus has
+  the most restaurants within a 10-minute walk?" says what it means.
+- **Name the thing.** Say restaurants, places to eat, campus. Avoid vague
+  stand-ins like "food you can walk to", "spots" or a bare "it".
+- **No insider words.** Spell out or drop jargon like "turnover",
+  "leoparding" or a conference name with no context.
+- **Every number gets its unit and its scope:** "within half a mile of
+  campus", "38% of 910 campuses".
+- **The hook has to make sense on its own,** before the next scene explains it.
+
+After rendering, read the captions again on the actual frames, at phone size.
+
+## 5. Build, check every clip, render, publish
 
 ```bash
 cd social/pipeline

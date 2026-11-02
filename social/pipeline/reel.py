@@ -173,13 +173,13 @@ def mix_audio(track_path, scenes, total_frames, out_path, rng):
         w.writeframes((out * 32767).astype(np.int16).tobytes())
 
 
-def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed):
+def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=None):
     """Props for one scripted video, with its files staged under video/public."""
     rng = random.Random(seed)
     track = music.pick(lib, video["mood"])
     track["last_used"] = date
     fpb = FPS * 60 / track["bpm"]
-    rel = f"reel/{date}/{video['id']}"
+    rel = f"reel/{key or date}/{video['id']}"
     pub = os.path.join(VIDEO, "public", rel)
     os.makedirs(pub, exist_ok=True)
     scenes, beat = [], 0
@@ -233,8 +233,13 @@ def batch_date(spec):
     return spec.get("date") or spec["week"]
 
 
+def batch_key(spec):
+    """The batch's folder name: its date, or "batch" when a day has a second one (2026-11-02b)."""
+    return spec.get("batch") or batch_date(spec)
+
+
 def work_dir(spec):
-    return os.path.join(HERE, "..", "out", "batches", batch_date(spec))
+    return os.path.join(HERE, "..", "out", "batches", batch_key(spec))
 
 
 def captions(sc):
@@ -321,7 +326,7 @@ if __name__ == "__main__":
     for k, v in enumerate(spec["videos"]):
         if only and v["id"] != only:
             continue
-        b = build(v, batch_date(spec), lib, sounds, ranks, work, used, seed=1000 + k)
+        b = build(v, batch_date(spec), lib, sounds, ranks, work, used, seed=1000 + k, key=batch_key(spec))
         out.append(b)
         print(v["id"], b["track"], b["props"]["total"], "frames", flush=True)
     json.dump(sorted(used), open(os.path.join(work, "used-clips.json"), "w"))

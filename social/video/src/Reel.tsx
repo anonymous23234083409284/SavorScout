@@ -19,7 +19,7 @@ export type ReelScene = {
 	src?: string;
 	caption?: Fitted;
 	sub?: Fitted;
-	list?: {title: string; rows: [string, string, string][]};
+	list?: {title: string; rows: [string, string, string][]; size?: number};
 	rowAt?: number[];
 	map?: RankMap;
 	rank?: {num: string; name: Fitted; count: number; sub: Fitted};
@@ -176,6 +176,7 @@ const ListScene: React.FC<{s: ReelScene}> = ({s}) => {
 	const {fps} = useVideoConfig();
 	const title = usePop(0, 15);
 	const rows = s.list!.rows;
+	const fs = s.list!.size ?? 64; // fitted by reel.py so the longest name fits beside its number
 	return (
 		<AbsoluteFill>
 			<Bg src={s.src!} dur={s.dur} zoom={s.zoom} blur />
@@ -188,9 +189,9 @@ const ListScene: React.FC<{s: ReelScene}> = ({s}) => {
 						const p = spring({frame: f - s.rowAt![r], fps, config: {damping: 16, stiffness: 210, mass: 0.6}});
 						return (
 							<div key={r} style={{display: 'flex', alignItems: 'baseline', gap: 26, opacity: Math.min(1, p * 1.6), transform: `translateX(${(1 - p) * 90}px)`}}>
-								<div style={{width: 150, textAlign: 'right', fontFamily: DISPLAY, fontWeight: 900, fontSize: 60, color: C.saffron, ...stroke(60)}}>{rank}</div>
-								<div style={{flex: 1, fontFamily: DISPLAY, fontWeight: 900, fontSize: 64, color: '#fff', letterSpacing: -1, whiteSpace: 'nowrap', ...stroke(64)}}>{name}</div>
-								<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 64, color: '#fff', ...stroke(64)}}>{value}</div>
+								<div style={{width: 70, textAlign: 'right', fontFamily: DISPLAY, fontWeight: 900, fontSize: fs * 0.94, color: C.saffron, ...stroke(fs)}}>{rank}</div>
+								<div style={{flex: 1, fontFamily: DISPLAY, fontWeight: 900, fontSize: fs, color: '#fff', letterSpacing: -1, whiteSpace: 'nowrap', ...stroke(fs)}}>{name}</div>
+								<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: fs, color: '#fff', ...stroke(fs)}}>{value}</div>
 							</div>
 						);
 					})}
@@ -244,7 +245,7 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 				<CapIcon size={40} color={C.base} />
 			</div>
 			<div style={{position: 'absolute', left: 60, right: 150, top: 200, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 150, lineHeight: 1, color: C.saffron, transform: `scale(${0.6 + 0.4 * top})`, opacity: top, ...stroke(150)}}>#{r.num}</div>
+				{r.num ? <div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 150, lineHeight: 1, color: C.saffron, transform: `scale(${0.6 + 0.4 * top})`, opacity: top, ...stroke(150)}}>#{r.num}</div> : null}
 				<div style={{marginTop: 8, opacity: name, transform: `translateY(${(1 - name) * 30}px)`}}>
 					<Lines cap={r.name} delay={4} />
 				</div>

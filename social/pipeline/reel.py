@@ -127,6 +127,16 @@ def balance(lines, path, size, tracking, max_w):
     return best
 
 
+def list_size(rows, row_w=860, rank_w=70, gaps=52):
+    """The largest type size at which every row's name fits beside its rank and value (ListScene in Reel.tsx)."""
+    for size in range(64, 35, -2):
+        if all(width(words_of(name), BLACK, size, -0.015) + width(words_of(value), BLACK, size, 0) + rank_w + gaps <= row_w
+               for _, name, value in rows):
+            return size
+    print("warning: a list row is too long to fit; shorten the longest name", file=sys.stderr)
+    return 36
+
+
 def reading_beats(scene, fpb):
     text = " ".join([scene.get("text", ""), scene.get("sub", "")] + [" ".join(r) for r in scene.get("rows", [])])
     n = len(re.sub(r"[*]", "", text).split())
@@ -176,7 +186,8 @@ def mix_audio(track_path, scenes, total_frames, out_path, rng):
 def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=None):
     """Props for one scripted video, with its files staged under video/public."""
     rng = random.Random(seed)
-    track = music.pick(lib, video["mood"])
+    # "track" pins a soundtrack (a rebuild keeps the one already picked); otherwise least recently used.
+    track = next(t for t in lib["tracks"] if t["id"] == video["track"]) if video.get("track") else music.pick(lib, video["mood"])
     track["last_used"] = date
     fpb = FPS * 60 / track["bpm"]
     rel = f"reel/{key or date}/{video['id']}"
@@ -194,12 +205,15 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
             m = json.load(open(os.path.join(rank_dir, sc["map"], "map.json")))
             shutil.copy(os.path.join(rank_dir, sc["map"], "map.png"), os.path.join(pub, f"rank-{sc['map']}.png"))
             out["map"] = {**m, "src": f"{rel}/rank-{sc['map']}.png"}
-            out["rank"] = {"num": sc["num"], "name": fit(sc["text"], "rank"), "count": sc["count"],
+            out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"],
                            "sub": fit(sc["sub"], "sub")}
         else:
             if "reuse" in sc:
                 cm = raw_by_scene[sc["reuse"]]
                 out["reuseOf"] = sc["reuse"]
+            elif sc.get("clip"):                # a Pexels id picked by eye from the previews
+                cm = clips.by_id(sc["clip"])
+                used_clips.add(cm["id"])
             else:
                 cm = clips.pick_queries(sc["q"], used_clips, dur / FPS + 0.5, rng, top=5)
                 used_clips.add(cm["id"])
@@ -210,7 +224,7 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
             out["clip"] = {"id": cm["id"], "by": cm["by"], "url": cm["url"], "query": cm["query"]}
             if sc["style"] == "list":
                 rows = sc["rows"]
-                out["list"] = {"title": sc["title"], "rows": rows}
+                out["list"] = {"title": sc["title"], "rows": rows, "size": list_size(rows)}
                 gap = (dur - 10) / (len(rows) + 1)
                 out["rowAt"] = [int(6 + gap * r) for r in range(len(rows))]
             else:
@@ -246,8 +260,10 @@ def captions(sc):
     """The fitted text fields of one scene (what build() stores beside the footage)."""
     out = {}
     if sc["style"] == "rank":
-        out["rank"] = {"num": sc["num"], "name": fit(sc["text"], "rank"), "count": sc["count"], "sub": fit(sc["sub"], "sub")}
-    elif sc["style"] != "list":
+        out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"], "sub": fit(sc["sub"], "sub")}
+    elif sc["style"] == "list":
+        out["list"] = {"title": sc["title"], "rows": sc["rows"], "size": list_size(sc["rows"])}
+    else:
         out["caption"] = fit(sc["text"], sc["style"], f"{sc['num']}." if sc.get("num") else "")
         if sc.get("sub"):
             out["sub"] = fit(sc["sub"], "sub")
@@ -270,11 +286,12 @@ def refit(spec, work):
     json.dump(manifest, open(os.path.join(work, "manifest.json"), "w"))
 
 
-def repick(spec, work, vid, fixes, seed=7):
-    """Swap the footage of chosen scenes ({scene index: [queries]}) after a visual review.
+def repick(spec, work, vid, fixes, seed=7, spec_path=None):
+    """Swap the footage of chosen scenes ({scene index: [queries] or a Pexels id}) after a visual review.
 
     The rejected clip is remembered, so it can never come back; timing, captions
-    and audio are untouched.
+    and audio are untouched. A Pexels id is also pinned in the script
+    (`"clip"`), so rebuilding after a wording change keeps it.
     """
     reels = json.load(open(os.path.join(work, "reels.json")))
     used_path = os.path.join(work, "used-clips.json")
@@ -288,6 +305,7 @@ def repick(spec, work, vid, fixes, seed=7):
         rejected.add(sc["clip"]["id"])
         if isinstance(queries, int):            # a clip chosen by eye from the previews
             cm = clips.by_id(queries)
+            next(v for v in spec["videos"] if v["id"] == vid)["scenes"][int(i)]["clip"] = queries
         else:
             cm = clips.pick_queries(queries, used | rejected, sc["dur"] / FPS + 0.5, rng, top=6)
         used.add(cm["id"])
@@ -300,6 +318,8 @@ def repick(spec, work, vid, fixes, seed=7):
         print(vid, i, cm["query"], cm["id"], cm["by"], flush=True)
     json.dump(sorted(used), open(used_path, "w"))
     json.dump(sorted(rejected), open(rejected_path, "w"))
+    if spec_path:
+        json.dump(spec, open(spec_path, "w"), indent=1, ensure_ascii=False)
     json.dump(reels, open(os.path.join(work, "reels.json"), "w"), indent=1)
     manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"], "crf": CRF,
                             "out": os.path.abspath(os.path.join(work, b["id"] + ".mp4"))} for b in reels["videos"]]}
@@ -309,7 +329,7 @@ def repick(spec, work, vid, fixes, seed=7):
 if __name__ == "__main__":
     if sys.argv[1] == "repick":
         spec = json.load(open(sys.argv[2]))
-        repick(spec, work_dir(spec), sys.argv[3], json.loads(sys.argv[4]))
+        repick(spec, work_dir(spec), sys.argv[3], json.loads(sys.argv[4]), spec_path=sys.argv[2])
         sys.exit()
     if sys.argv[1] == "refit":
         spec = json.load(open(sys.argv[2]))
@@ -331,6 +351,10 @@ if __name__ == "__main__":
         print(v["id"], b["track"], b["props"]["total"], "frames", flush=True)
     json.dump(sorted(used), open(os.path.join(work, "used-clips.json"), "w"))
     json.dump(lib, open(os.path.join(sounds, "library.json"), "w"), indent=1)
+    if only and os.path.exists(os.path.join(work, "reels.json")):   # one video rebuilt: keep the others
+        kept = {v["id"]: v for v in json.load(open(os.path.join(work, "reels.json")))["videos"]}
+        kept.update({b["id"]: b for b in out})
+        out = [kept[v["id"]] for v in spec["videos"] if v["id"] in kept]
     json.dump({"videos": out}, open(os.path.join(work, "reels.json"), "w"), indent=1)
     # The renderer's manifest: one entry per video, rendered with the Reel composition.
     manifest = {"videos": [{"id": b["id"], "composition": "Reel", "props": b["props"], "crf": CRF,

@@ -127,10 +127,21 @@ def prepare(clip, out_path, seconds, cache_dir):
                     break
                 f.write(b)
         os.replace(raw + ".part", raw)
-    # Start a little in, where clips usually settle after the opening move.
-    start = min(1.0, max(0.0, clip["duration"] - seconds - 0.2))
-    vf = ("scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,"
-          "eq=contrast=1.06:saturation=1.12:gamma=0.98,colorbalance=rm=0.03:gm=0.0:bm=-0.03")
+    have = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", raw],
+                                capture_output=True, text=True, check=True).stdout.strip())
+    slow = 1.0
+    if have < seconds + 0.05:
+        # A clip a little short for its scene plays slightly slower rather than freezing on its last frame.
+        slow = (seconds + 0.05) / have
+        if slow > 1.25:
+            raise ValueError(f"Pexels {clip['id']} is {have:.1f}s; the scene needs {seconds:.1f}s")
+        start = 0.0
+    else:
+        # Start a little in, where clips usually settle after the opening move.
+        start = min(1.0, max(0.0, have - seconds - 0.2))
+    vf = ("scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,"
+          + (f"setpts={slow:.4f}*PTS," if slow > 1 else "") +
+          "fps=30,eq=contrast=1.06:saturation=1.12:gamma=0.98,colorbalance=rm=0.03:gm=0.0:bm=-0.03")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{start:.2f}", "-i", raw, "-t", f"{seconds:.2f}",
                     "-vf", vf, "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
                     "-pix_fmt", "yuv420p", "-movflags", "+faststart", out_path], check=True)

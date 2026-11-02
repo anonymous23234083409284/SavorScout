@@ -65,7 +65,9 @@ def build(date, sounds_dir, rank_dir):
     remote, _ = remote_and_slug()
     history = json.loads(host.read_file(remote, "history.json") or "{}")
     used_path = os.path.join(out, "used-clips.json")
-    used = set(history.get("clips", [])) | (set(json.load(open(used_path))) if os.path.exists(used_path) else set())
+    # Clips rejected on review (wrong subject, a business name or logo) never come back either.
+    used = set(history.get("clips", [])) | set(history.get("rejected", [])) | \
+        (set(json.load(open(used_path))) if os.path.exists(used_path) else set())
     json.dump(sorted(used), open(used_path, "w"))
     subprocess.run([sys.executable, os.path.join(HERE, "reel.py"), os.path.join(wdir, "videos.json"), sounds_dir, rank_dir], check=True)
 
@@ -141,10 +143,13 @@ def cards(date):
         print(dest)
 
 
-def publish(date, sounds_dir, dry_run=False):
+def publish(date, sounds_dir, dry_run=False, force=False):
     """Host every video and card, then schedule the date's posts in Buffer."""
     import datetime as dt
     wdir, out, _ = paths(date)
+    if os.path.exists(os.path.join(wdir, "scheduled.json")) and not (dry_run or force):
+        # Running twice would post everything twice; delete the posts in Buffer first, then pass --force.
+        raise SystemExit(f"{date} is already scheduled (batches/{date}/scheduled.json). Use --force to schedule it again.")
     posts = json.load(open(os.path.join(wdir, "posts.json")))
     reels = json.load(open(os.path.join(out, "reels.json")))
     files = {f"{v['id']}.mp4": os.path.join(out, f"{v['id']}.mp4") for v in reels["videos"]}
@@ -160,6 +165,9 @@ def publish(date, sounds_dir, dry_run=False):
     root_files.update({f"sounds/{t['file']}": os.path.join(sounds_dir, t["file"]) for t in lib["tracks"]})
     history["clips"] = sorted(set(history.get("clips", [])) | {sc["clip"]["id"] for v in reels["videos"]
                                                                for sc in v["props"]["scenes"] if "clip" in sc})
+    rejected_path = os.path.join(out, "rejected-clips.json")
+    if os.path.exists(rejected_path):
+        history["rejected"] = sorted(set(history.get("rejected", [])) | set(json.load(open(rejected_path))))
     history.setdefault("batches", {})[date] = {"videos": [v["id"] for v in reels["videos"]],
                                               "tracks": [v["track"] for v in reels["videos"]],
                                               "posts_planned": {k: [p.get("id") or p.get("video") for p in posts[k]]
@@ -207,4 +215,4 @@ if __name__ == "__main__":
     elif cmd == "cards":
         cards(sys.argv[2])
     elif cmd == "publish":
-        publish(sys.argv[2], sys.argv[3], "--dry-run" in sys.argv)
+        publish(sys.argv[2], sys.argv[3], "--dry-run" in sys.argv, "--force" in sys.argv)

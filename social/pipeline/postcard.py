@@ -146,7 +146,11 @@ def ranking(out, title, subtitle, rows, source, suffix=""):
     row_h = (H - 140 - top) / len(rows)
     vmax = max(float(v) for _, _, v in rows)
     nf, rf = font("Inter-Bold.otf", int(min(30, row_h * 0.52))), font("InterDisplay-Black.otf", int(min(30, row_h * 0.55)))
-    bx0, bx1 = 330, W - 140
+    # The bars start after the longest name (campus names run long); names shrink before bars get too short.
+    while 120 + max(d.textlength(name, font=nf) for _, name, _ in rows) + 30 > 620 and nf.size > 20:
+        nf = font("Inter-Bold.otf", nf.size - 1)
+    bx0 = max(330, int(120 + max(d.textlength(name, font=nf) for _, name, _ in rows) + 30))
+    bx1 = W - 140
     for i, (rank, name, value) in enumerate(rows):
         cy = top + i * row_h + row_h / 2
         hi = i < 3
@@ -155,7 +159,8 @@ def ranking(out, title, subtitle, rows, source, suffix=""):
         bw = (bx1 - bx0) * float(value) / vmax
         d.rounded_rectangle((bx0, cy - row_h * 0.32, bx0 + max(bw, 8), cy + row_h * 0.32), radius=int(row_h * 0.3),
                             fill=SAFFRON if hi else (88, 74, 120))
-        d.text((bx0 + max(bw, 8) + 14, cy), f"{value}{suffix}", font=rf, fill=INK, anchor="lm")
+        shown = f"{value:,}" if isinstance(value, int) else f"{value}"
+        d.text((bx0 + max(bw, 8) + 14, cy), f"{shown}{suffix}", font=rf, fill=INK, anchor="lm")
     footer(img, d, source)
     img.save(out, quality=92)
     return out

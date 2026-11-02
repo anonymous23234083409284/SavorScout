@@ -102,16 +102,26 @@ any clip that:
 - looks dated (face masks) or is low quality
 
 If Pexels has no honest match for a label, change the label to something it
-does have.
+does have, or show what defines the thing instead (soy sauce for shoyu, salt
+for shio). Only put real candidates in front of yourself: preview sheets of a
+few searches, then start/middle/end frames of the finalists, before you pick.
 
 ```bash
 python reel.py repick ../batches/<date>/videos.json <video> '{"3": ["better query", "another"]}'
 python reel.py repick ../batches/<date>/videos.json <video> '{"3": 8448265}'   # a Pexels id picked by eye
-python reel.py refit ../batches/<date>/videos.json                            # after editing any words
+python reel.py refit ../batches/<date>/videos.json                            # after small word edits
 python make_day.py render <date>
 python make_day.py cards <date>
 python make_day.py publish <date> /tmp/sounds
 ```
+
+A Pexels id picked by eye is pinned in the script (`"clip": 8448265` on the
+scene), and a video can pin its soundtrack (`"track": "disco-105"`). So when the
+words change enough to need new timing, just run `build` again: pinned clips and
+tracks come back exactly as reviewed. `refit` only re-fits captions into the
+old timing. Rejected clips (wrong subject, a business name or logo) go into
+the batch's `rejected-clips.json`, and publishing adds them to `history.json`
+so no later day picks them again.
 
 Watch a few frames of each finished video before publishing. Then commit
 `social/batches/<date>/` (including `scheduled.json`).

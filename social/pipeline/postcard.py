@@ -153,7 +153,7 @@ def ranking(out, title, subtitle, rows, source, suffix=""):
     bx1 = W - 140
     for i, (rank, name, value) in enumerate(rows):
         cy = top + i * row_h + row_h / 2
-        hi = i < 3
+        hi = int(rank) <= 3 if str(rank).isdigit() else i < 3   # ties for 3rd are on the podium too
         d.text((60, cy), rank, font=rf, fill=SAFFRON if hi else INK_MID, anchor="lm")
         d.text((120, cy), name, font=nf, fill=INK, anchor="lm")
         bw = (bx1 - bx0) * float(value) / vmax

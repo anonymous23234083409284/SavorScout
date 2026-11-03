@@ -8,6 +8,63 @@ the `social-media` branch (`sounds/`) rotates, least recently used first.
 A scheduled Claude session runs this every afternoon and schedules the next
 day. These are its steps. A person can run them the same way.
 
+## 0. Read the numbers first
+
+```bash
+python social/pipeline/make_day.py stats    # writes social/stats.json, best first
+```
+
+TikTok decides how far a video travels mostly by **average watch time**:
+it shows each new video to a small test audience and keeps pushing only the
+ones people stay with and share. What the account's first week showed:
+
+- Most videos held viewers for **1.3 to 3 seconds** of 37 to 50. People left
+  before the second scene, so nothing after second two mattered.
+- The **Big Ten countdown** (schools ranked by places to eat within half a
+  mile, last place to first) held them about **9.5 seconds**, got **9 shares**
+  and drew 395 views on Threads, against 0 to 57 for every other Threads post.
+- "How to tell cheap food from bad food" was second (about 5 seconds, 10 likes).
+- Generic explainers (ramen broths, eating alone, late-night food) did worst.
+- X showed most posts to 0 to 4 people. A new account with no followers gets
+  almost no reach there, so keep X posts short and don't spend effort on it.
+
+Re-read this every day and follow the numbers, not this list: whatever holds
+people longest and gets shared is what to make more of.
+
+## The format that works
+
+**At least three of the four daily TikToks are countdowns of named schools.**
+People stay to see where their school lands, argue in the comments and send
+it to friends at the other schools. Group the schools by something people
+identify with: a conference (Big Ten, SEC, ACC, Big 12, Big East, Ivy
+League, Mountain West...), a state ("every big university in Texas"), a
+system (UC, Cal State, SUNY, CUNY), a city, HBCUs, or schools with famous
+rivalries. Rank by a number from `food-scene.json`: places to eat within a
+10-minute walk (`w`), the share on one street (`st`), coffee shops (`cof`),
+local restaurants (`loc`), fast food (`ff`), cuisines (`cz`, `top`). Don't
+repeat a grouping and metric within two weeks (Big Ten Nov 1; SEC and Ivy
+League Nov 4). The fourth video is a "how to tell X from Y before you order" tip.
+
+How a countdown is built (`social/batches/2026-11-04/videos.json`, `sec-walkable`):
+
+1. **The hook, about 4 seconds, over the #1 school's map** (`"style": "hook",
+   "map": <slug>`): a question naming the group and the measure, plus a
+   tease. "Which SEC school has the most restaurants within a 10-minute
+   walk?" with "Guess before it shows." or "Hint: it's not Columbia." The first
+   scene's words are on screen at frame 0, and the map fills with dots while
+   people read. Never open on stock footage.
+2. **The bottom of the ranking as a list**, last place first (`list`, rows
+   paced about 0.75 s each).
+3. **The top five as full-screen maps**, #5 down to #1 (`rank` scenes with
+   `num`, the count, and the busiest food street as the sub line). Ties share
+   a rank ("Tied with Georgia for 3rd").
+4. **The end**: "Did we rank your school right? Comment below." with "Which
+   conference should we rank next?"
+
+Keep it to 30 to 40 seconds. For a single-campus number (NYU's 1,462), open
+on that campus's `rank` scene with the question as its title
+(`"text_style": "maptitle"`), so the count climbs from the first frame.
+
 ## 1. Research what will do well tomorrow
 
 - Search the web, as text, for what is working right now: TikTok and food
@@ -31,9 +88,10 @@ Every claim has to come from SavorScout's own data or guides:
 | `scripts/data/campus-cuisine.json`, `social/pipeline/combos.js` | the closest places of one food to one campus |
 
 Never claim what the data can't back: no "best", "cheapest", "open now",
-prices or ratings. Four videos a day means variety inside the day, so mix the
-formats: an explainer, a ranking with maps, a seasonal guide, a myth-buster, a
-walkable list, a "what to order". Lead with whatever is most timely.
+prices or ratings. Follow "The format that works" above: three countdowns of
+named schools and one "how to tell" tip, unless the numbers say otherwise.
+Use the X and Threads posts for the same rankings (with a ranking card), and
+for the guides' tips.
 
 ## 3. Write the scripts
 
@@ -42,7 +100,8 @@ post; a day's second batch goes in its own folder, like `2026-11-02b`, with
 `"batch": "2026-11-02b"` beside the date). Each scene has a length in beats, a style, the words (`*star*`
 highlights a word) and Pexels searches:
 
-- `hook`: the first 2–3 seconds. Short, specific, a little surprising.
+- `hook`: the first 3–4 seconds. Short, specific, a little surprising. Its
+  words show from frame 0. With `"map"` it opens on a campus map instead of footage.
 - `cap`: a caption line. `item`: a numbered or named point with a `sub` line.
 - `word`: one big word over a quick montage shot. `small`: a white subtitle box.
 - `list`: ranked rows over blurred footage. A row can carry a fourth item,

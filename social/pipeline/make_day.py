@@ -245,7 +245,8 @@ def verify(date):
         urls = [a["source"] for a in p["assets"] or []]
         if s["service"] == "tiktok":
             parts = 1
-            if p["text"] != w["text"]:
+            # Once posted, Buffer holds the caption as TikTok returns it, line breaks flattened to spaces.
+            if " ".join(p["text"].split()) != " ".join(w["text"].split()):
                 issues.append("caption differs")
             if not urls or not (sent or re.search(rf"/{re.escape(s['what'])}(-\d+)?\.mp4$", urls[0])):
                 issues.append("video missing")

@@ -14,11 +14,13 @@ repeat: music.py's library rotates, least recently used first.
     python make_day.py cards <date>
     python make_day.py publish <date> <sounds dir> [--dry-run] [--force]
     python make_day.py verify <date>             # read every scheduled post back from Buffer
+    python make_day.py stats                     # every sent post's numbers, best first (social/stats.json)
+    python make_day.py update <date> <name>...   # after a fix: re-host and edit those posts in Buffer ("-name" deletes)
 
 Between build and render, look at the qa sheets and replace any clip that
 does not show what its caption says: reel.py repick <videos.json> <video> '{"3": [...queries]}'.
 """
-import json, os, subprocess, sys, urllib.request
+import json, os, re, subprocess, sys, urllib.request
 from io import BytesIO
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -245,7 +247,7 @@ def verify(date):
             parts = 1
             if p["text"] != w["text"]:
                 issues.append("caption differs")
-            if not urls or not (sent or urls[0].endswith(f"/{s['what']}.mp4")):
+            if not urls or not (sent or re.search(rf"/{re.escape(s['what'])}(-\d+)?\.mp4$", urls[0])):
                 issues.append("video missing")
         else:
             thread = (p["metadata"] or {}).get("thread") or []
@@ -253,7 +255,7 @@ def verify(date):
             if [t["text"] for t in thread] != w["thread"]:
                 issues.append("thread differs")
             first = [a["source"] for a in (thread[0]["assets"] if thread else [])]
-            if w.get("card") and not (first and (sent or first[0].endswith(f"/{w['card']}.jpg"))):
+            if w.get("card") and not (first and (sent or re.search(rf"/{re.escape(w['card'])}(-\d+)?\.jpg$", first[0]))):
                 issues.append("card missing")
             urls += first
             if s["service"] == "threads" and (p["metadata"] or {}).get("topic") != w.get("topic"):
@@ -265,6 +267,136 @@ def verify(date):
         print(f"  {when:%a %I:%M %p}  {s['service']:8} {s['what']:20} parts={parts}  {'; '.join(issues) or 'OK'}  ({state.strip()})")
     print(f"{len(sched)} posts read back, {problems} with problems")
     return problems
+
+
+def update(date, names):
+    """Bring already-scheduled posts in line with posts.json after a fix, without re-posting the day.
+
+    Each name is a TikTok video id or an X/Threads post id from posts.json. Its
+    current video or card is hosted under a fresh file name (Buffer may keep a
+    copy of the old file), then its Buffer post is edited in place, or created
+    if it was never scheduled. "-name" deletes that name's posts from Buffer.
+    """
+    import datetime as dt, time
+    wdir, out, _ = paths(date)
+    posts = json.load(open(os.path.join(wdir, "posts.json")))
+    sched_path = os.path.join(wdir, "scheduled.json")
+    sched = json.load(open(sched_path)) if os.path.exists(sched_path) else []
+    day = json.load(open(os.path.join(wdir, "videos.json"))).get("date", date)
+    tag = time.strftime("%H%M%S")
+    want = {}
+    for service in ("tiktok", "twitter", "threads"):
+        for p in posts[service]:
+            want[p.get("video") or p["id"]] = (service, p)
+    drop = [n[1:] for n in names if n.startswith("-")]
+    keep = [n for n in names if not n.startswith("-")]
+    unknown = [n for n in keep if n not in want]
+    if unknown:
+        raise SystemExit(f"not in posts.json: {unknown}")
+    files = {}
+    for n in keep:
+        service, p = want[n]
+        if service == "tiktok":
+            files[f"{n}-{tag}.mp4"] = os.path.join(out, f"{n}.mp4")
+        elif p.get("card"):
+            files[f"{p['card']}-{tag}.jpg"] = os.path.join(out, "cards", f"{p['card']}.jpg")
+    missing = [f for f in files.values() if not os.path.exists(f)]
+    if missing:
+        raise SystemExit(f"missing: {missing}")
+    remote, slug = remote_and_slug()
+    urls = host.publish(remote, slug, day, files) if files else {}
+    chans = buffer.channels()
+    edit = """mutation($input: EditPostInput!) { editPost(input: $input) {
+      ... on PostActionSuccess { post { id dueAt status } } ... on MutationError { message } } }"""
+    for n in drop:
+        for old in [x for x in sched if x["what"] == n]:
+            buffer.delete(old["post_id"])
+            sched.remove(old)
+            print(f"  deleted {old['service']:8} {n}")
+    for n in keep:
+        service, p = want[n]
+        when = dt.datetime.fromisoformat(p["at"])
+        if service == "tiktok":
+            text, assets, meta = p["text"], [buffer.video(urls[f"{n}-{tag}.mp4"], 1200)], None
+        else:
+            items = [{"text": t, "assets": []} for t in p["thread"]]
+            if p.get("card"):
+                items[0]["assets"] = [buffer.image(urls[f"{p['card']}-{tag}.jpg"])]
+            m = {"thread": items}
+            if service == "threads" and p.get("topic"):
+                m["topic"] = p["topic"]
+            text, assets, meta = p["thread"][0], items[0]["assets"], {service: m}
+        old = next((x for x in sched if x["what"] == n and x["service"] == service), None)
+        if old:
+            inp = {"id": old["post_id"], "text": text, "assets": assets, "mode": "customScheduled",
+                   "schedulingType": "automatic",
+                   "dueAt": when.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")}
+            if meta:
+                inp["metadata"] = meta
+            res = buffer.gql(edit, {"input": inp})["editPost"]
+            if "post" not in res:
+                raise SystemExit(f"{n}: {res}")
+            old["at"] = res["post"]["dueAt"]
+            print(f"  edited  {service:8} {n}")
+        else:
+            res = buffer.create(chans[service]["id"], text, when, assets, meta)
+            sched.append({"service": service, "at": res["dueAt"], "post_id": res["id"], "what": n})
+            print(f"  created {service:8} {n}")
+    sched.sort(key=lambda x: x["at"])
+    json.dump(sched, open(sched_path, "w"), indent=1)
+
+
+def stats():
+    """Every sent post's numbers from Buffer, written to social/stats.json and printed best first.
+
+    TikTok is ranked by average watch time, the number that decides whether
+    TikTok shows a video to more people: most videos lose viewers in the
+    first two seconds, and the ones that hold them get pushed. X and Threads
+    are ranked by views. The daily run reads this before choosing ideas.
+    """
+    import datetime as dt
+    from zoneinfo import ZoneInfo
+    import glob
+    tz = ZoneInfo(json.load(open(os.path.join(SOCIAL, "config.json")))["timezone"])
+    remote, _ = remote_and_slug()
+    history = json.loads(host.read_file(remote, "history.json") or "{}")
+    ids = {}
+    for group in ("days", "weeks", "batches"):
+        for key, b in (history.get(group) or {}).items():
+            for p in b.get("posts", []):
+                ids[p["post_id"]] = (p["service"], p.get("what") or key)
+    for f in glob.glob(os.path.join(SOCIAL, "batches", "*", "scheduled.json")):
+        for p in json.load(open(f)):
+            ids[p["post_id"]] = (p["service"], p["what"])
+    query = """query($id: PostId!) { post(input: {id: $id}) { id status sentAt text externalLink
+      metrics { name value } } }"""
+    rows = []
+    for pid, (service, what) in ids.items():
+        try:
+            p = buffer.gql(query, {"id": pid})["post"]
+        except Exception as e:                   # a post deleted in Buffer
+            continue
+        if not p or p["status"] != "sent":
+            continue
+        m = {x["name"]: x["value"] for x in p.get("metrics") or []}
+        rows.append({"service": service, "what": what, "sent": p["sentAt"], "link": p.get("externalLink"),
+                     "text": p["text"].split("\n")[0][:90], "views": m.get("Video Views", m.get("Views", m.get("Impressions", 0))),
+                     "avg_watch_s": m.get("Avg. Watch Time (sec)"), "shares": m.get("Shares", m.get("Reposts", 0)),
+                     "likes": m.get("Reactions", 0), "comments": m.get("Comments", 0), "metrics": m})
+    rows.sort(key=lambda r: r["sent"])
+    with open(os.path.join(SOCIAL, "stats.json"), "w") as f:
+        json.dump({"pulled": dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes"), "posts": rows}, f, indent=1)
+    for service, key in (("tiktok", "avg_watch_s"), ("threads", "views"), ("twitter", "views")):
+        part = sorted((r for r in rows if r["service"] == service), key=lambda r: -(r[key] or 0))
+        if not part:
+            continue
+        print(f"{service} ({len(part)} sent), best first by {key}:")
+        for r in part:
+            when = dt.datetime.fromisoformat(r["sent"].replace("Z", "+00:00")).astimezone(tz)
+            watch = f"{r['avg_watch_s']:.1f}s watched" if r["avg_watch_s"] is not None else ""
+            print(f"  {when:%a %m/%d}  {r['views']:>5.0f} views  {watch:>12}  {r['shares']:>3.0f} shares  "
+                  f"{r['likes']:>3.0f} likes  {r['what']}")
+    return rows
 
 
 if __name__ == "__main__":
@@ -283,3 +415,7 @@ if __name__ == "__main__":
         publish(sys.argv[2], sys.argv[3], "--dry-run" in sys.argv, "--force" in sys.argv)
     elif cmd == "verify":
         sys.exit(1 if verify(sys.argv[2]) else 0)
+    elif cmd == "stats":
+        stats()
+    elif cmd == "update":
+        update(sys.argv[2], sys.argv[3:])

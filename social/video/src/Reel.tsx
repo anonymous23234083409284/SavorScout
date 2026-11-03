@@ -35,23 +35,30 @@ const stroke = (size: number): React.CSSProperties => ({
 	textShadow: `0 ${Math.round(size * 0.06)}px ${Math.round(size * 0.22)}px rgba(0,0,0,0.5)`,
 });
 
+// True for the video's first scene. Viewers decide in the first second, so
+// everything in it is already on screen at frame 0 instead of popping in.
+const Instant = React.createContext(false);
+
 const usePop = (delay: number, damping = 13) => {
 	const f = useCurrentFrame();
 	const {fps} = useVideoConfig();
-	return spring({frame: f - delay, fps, config: {damping, stiffness: 230, mass: 0.6}});
+	const instant = React.useContext(Instant);
+	const s = spring({frame: f - delay, fps, config: {damping, stiffness: 230, mass: 0.6}});
+	return instant ? 1 : s;
 };
 
 // Outlined caption lines; words pop in one after another.
 const Lines: React.FC<{cap: Fitted; delay?: number; color?: string}> = ({cap, delay = 0, color = '#fff'}) => {
 	const f = useCurrentFrame();
 	const {fps} = useVideoConfig();
+	const instant = React.useContext(Instant);
 	let k = 0;
 	return (
 		<div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: cap.size * 0.02}}>
 			{cap.lines.map((line, li) => (
 				<div key={li} style={{display: 'flex', gap: cap.size * 0.24, whiteSpace: 'nowrap'}}>
 					{line.map((w, wi) => {
-						const s = spring({frame: f - delay - k++ * 1.6, fps, config: {damping: 13, stiffness: 230, mass: 0.6}});
+						const s = instant ? 1 : spring({frame: f - delay - k++ * 1.6, fps, config: {damping: 13, stiffness: 230, mass: 0.6}});
 						return (
 							<span
 								key={wi}
@@ -299,19 +306,60 @@ const EndScene: React.FC<{s: ReelScene; site: string; credits: string}> = ({s, s
 	);
 };
 
+// A hook over a campus map: every place to eat already on it, the title on top.
+// Original footage, unlike stock clips that thousands of other videos use.
+const MapHook: React.FC<{s: ReelScene}> = ({s}) => {
+	const f = useCurrentFrame();
+	const m = s.map!;
+	const base = Math.max(345 / m.radius, 1080 / m.width, 1920 / m.height);
+	const z = base * interpolate(f, [0, s.dur], [1.03, 1.12], clamp);
+	const tx = Math.min(0, Math.max(1080 - m.width * z, 540 - m.campus.x * z));
+	const ty = Math.min(0, Math.max(1920 - m.height * z, 985 - m.campus.y * z));
+	const px = (x: number) => tx + x * z;
+	const py = (y: number) => ty + y * z;
+	const lit = (m.hl ?? []).length > 0;
+	const dots = [...m.dots, ...(m.hl ?? [])];
+	// A third of the places are on screen at frame 0; the rest pop in while the title is read.
+	const shown = Math.round(dots.length * interpolate(f, [0, s.dur * 0.6], [0.35, 1], {...clamp, easing: Easing.out(Easing.quad)}));
+	return (
+		<AbsoluteFill style={{background: C.base}}>
+			<div style={{position: 'absolute', left: 0, top: 0, transformOrigin: '0 0', transform: `translate(${tx}px, ${ty}px) scale(${z})`}}>
+				<Img src={staticFile(m.src)} style={{width: m.width, height: m.height}} />
+			</div>
+			<svg width={1080} height={1920} style={{position: 'absolute', left: 0, top: 0}}>
+				{dots.slice(0, shown).map(([x, y], i) => {
+					const age = Math.min(1, (shown - i) / 8);
+					return (
+						<circle key={i} cx={px(x)} cy={py(y)} r={(lit ? 5 : 7) + 4 * (1 - age)} fill={lit ? '#8f84b3' : i % 3 === 0 ? C.saffron : C.ember} opacity={lit ? 0.8 : 0.95} stroke={INK} strokeWidth={1.2} />
+					);
+				})}
+			</svg>
+			<AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(12,9,18,0.82) 0%, rgba(12,9,18,0.5) 45%, rgba(12,9,18,0.6) 100%)'}} />
+			<AbsoluteFill style={{alignItems: 'center', justifyContent: 'center', padding: '0 70px', paddingBottom: 260}}>
+				{s.caption ? <Lines cap={s.caption} /> : null}
+				{s.sub ? <Box cap={s.sub} delay={8} /> : null}
+			</AbsoluteFill>
+		</AbsoluteFill>
+	);
+};
+
 export const Reel: React.FC<ReelProps> = ({scenes, audio, site, credits}) => (
 	<AbsoluteFill style={{background: C.base}}>
 		{scenes.map((s, i) => (
 			<Sequence key={i} from={s.from} durationInFrames={s.dur}>
-				{s.style === 'list' ? (
-					<ListScene s={s} />
-				) : s.style === 'rank' ? (
-					<RankScene s={s} />
-				) : s.style === 'end' ? (
-					<EndScene s={s} site={site} credits={credits} />
-				) : (
-					<ClipScene s={s} first={i === 0} />
-				)}
+				<Instant.Provider value={i === 0}>
+					{s.style === 'list' ? (
+						<ListScene s={s} />
+					) : s.style === 'rank' ? (
+						<RankScene s={s} />
+					) : s.style === 'end' ? (
+						<EndScene s={s} site={site} credits={credits} />
+					) : s.style === 'hook' && s.map ? (
+						<MapHook s={s} />
+					) : (
+						<ClipScene s={s} first={i === 0} />
+					)}
+				</Instant.Provider>
 			</Sequence>
 		))}
 		<Audio src={staticFile(audio)} />

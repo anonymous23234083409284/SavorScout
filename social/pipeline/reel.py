@@ -36,6 +36,7 @@ STYLE = {                 # font, largest size, smallest size, max width, max li
     "small": (SEMI, 54, 40, 820, 3),
     "end": (BLACK, 100, 64, 880, 3),
     "rank": (BLACK, 128, 80, 900, 1),
+    "maptitle": (BLACK, 96, 60, 900, 3),   # a question or sentence over a map, clear of its ring
     "sub": (SEMI, 44, 34, 820, 3),
 }
 _fonts = {}
@@ -153,7 +154,12 @@ def list_size(rows, row_w=860, rank_w=70, gaps=52):
 
 
 def reading_beats(scene, fpb):
-    text = " ".join([scene.get("text", ""), scene.get("sub", "")] + [" ".join(r) for r in scene.get("rows", [])])
+    if scene.get("rows"):
+        # Rows appear one at a time and are glanced at as they land: a second for the
+        # title, then ~0.75s a row (0.9s when a small line sits under the name).
+        need_s = 1.0 + sum(0.9 if len(r) > 3 else 0.75 for r in scene["rows"])
+        return int(np.ceil(need_s * FPS / fpb))
+    text = " ".join([scene.get("text", ""), scene.get("sub", "")])
     n = len(re.sub(r"[*]", "", text).split())
     need_s = n / READ_WPS + 0.5
     return int(np.ceil(need_s * FPS / fpb))
@@ -216,12 +222,12 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
         beat += beats
         dur = end - start
         out = {"from": start, "dur": dur, "style": sc["style"], "zoom": ["in", "out"][i % 2]}
-        if sc["style"] == "rank":
+        if sc["style"] == "rank" or sc.get("map"):
             m = json.load(open(os.path.join(rank_dir, sc["map"], "map.json")))
             shutil.copy(os.path.join(rank_dir, sc["map"], "map.png"), os.path.join(pub, f"rank-{sc['map']}.png"))
             out["map"] = {**m, "src": f"{rel}/rank-{sc['map']}.png"}
-            out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"],
-                           "sub": fit(sc["sub"], "sub"), **{k: sc[k] for k in ("label", "suffix") if k in sc}}
+        if sc["style"] == "rank" or sc.get("map"):   # a ranking map, or a hook over a map: no footage
+            out.update(captions(sc))
         else:
             if "reuse" in sc:
                 cm = raw_by_scene[sc["reuse"]]
@@ -276,8 +282,9 @@ def captions(sc):
     """The fitted text fields of one scene (what build() stores beside the footage)."""
     out = {}
     if sc["style"] == "rank":
-        out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"], "sub": fit(sc["sub"], "sub"),
-                       **{k: sc[k] for k in ("label", "suffix") if k in sc}}
+        # "text_style": "hook" fits a sentence over the map instead of a one-line name (a video's opening scene).
+        out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], sc.get("text_style", "rank")), "count": sc["count"],
+                       "sub": fit(sc["sub"], "sub"), **{k: sc[k] for k in ("label", "suffix") if k in sc}}
     elif sc["style"] == "list":
         out["list"] = {"title": sc["title"], "rows": sc["rows"], "size": list_size(sc["rows"])}
     else:

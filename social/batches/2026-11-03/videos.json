@@ -305,36 +305,25 @@
    "source": "https://www.savorscout.net/campus/",
    "scenes": [
     {
-     "beats": 6,
-     "style": "hook",
-     "text": "The typical college campus has about *12 places to eat* within half a mile.",
-     "sub": "That's about a 10-minute walk.",
+     "beats": 10,
+     "style": "rank",
+     "num": "",
+     "text_style": "maptitle",
+     "text": "How many places to eat are a *10-minute walk* from NYU?",
+     "count": 1462,
+     "sub": "Washington Square, Manhattan",
+     "map": "new-york-university"
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "The typical U.S. college campus has *12.*",
      "q": [
       "college campus",
       "students walking campus",
       "campus quad"
      ],
-     "clip": 7683346
-    },
-    {
-     "beats": 4,
-     "style": "cap",
-     "text": "NYU has *1,462.*",
-     "q": [
-      "nyu",
-      "new york university",
-      "manhattan street"
-     ],
      "clip": 6082985
-    },
-    {
-     "beats": 9,
-     "style": "rank",
-     "num": "",
-     "text": "NYU",
-     "count": 1462,
-     "sub": "Washington Square, Manhattan",
-     "map": "new-york-university"
     },
     {
      "beats": 6,
@@ -406,7 +395,7 @@
      "style": "end",
      "text": "How does your campus compare? Comment below.",
      "sub": "Follow for more food that's worth it.",
-     "reuse": 0
+     "reuse": 2
     }
    ],
    "track": "disco-108"

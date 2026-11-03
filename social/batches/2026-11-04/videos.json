@@ -2,104 +2,103 @@
  "date": "2026-11-04",
  "videos": [
   {
-   "id": "protein-eating-out",
+   "id": "ivy-walkable",
    "mood": "upbeat",
-   "source": "https://www.savorscout.net/diet/high-protein",
+   "source": "https://www.savorscout.net/campus/",
    "scenes": [
     {
-     "beats": 5,
+     "beats": 4,
      "style": "hook",
-     "text": "That chicken rice bowl? *It's mostly rice.*",
-     "q": [
-      "chicken rice bowl",
-      "rice bowl",
-      "burrito bowl"
-     ],
-     "clip": 6645813
-    },
-    {
-     "beats": 5,
-     "style": "cap",
-     "text": "Today is National Eating Healthy Day. *Here's how to get real protein when you eat out.*",
-     "q": [
-      "grilled chicken plate",
-      "healthy meal restaurant",
-      "healthy food plate"
-     ],
-     "clip": 8477264
+     "map": "yale-university",
+     "text": "Which Ivy has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Columbia."
     },
     {
      "beats": 6,
-     "style": "item",
-     "num": "1",
-     "text": "Pick a place where protein is the main dish",
-     "sub": "Shawarma plates, Korean barbecue, rotisserie chicken and poke make it easy.",
-     "q": [
-      "korean bbq grill",
-      "shawarma plate",
-      "rotisserie chicken"
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "8",
+       "Dartmouth",
+       "39"
+      ],
+      [
+       "7",
+       "Cornell",
+       "69"
+      ],
+      [
+       "6",
+       "Princeton",
+       "97"
+      ]
      ],
-     "clip": 33338733
+     "q": [
+      "old university building",
+      "ivy covered building",
+      "historic campus building"
+     ],
+     "clip": 36323345
     },
     {
-     "beats": 6,
-     "style": "item",
-     "num": "2",
-     "text": "Ask for double meat, half rice",
-     "sub": "It's a common ask at bowl and burrito places. Extra meat usually costs a little more.",
-     "q": [
-      "burrito bowl",
-      "making burrito bowl",
-      "rice bowl meat"
-     ],
-     "clip": 7601351
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Penn",
+     "count": 125,
+     "sub": "Busiest food street: Walnut St",
+     "map": "university-of-pennsylvania",
+     "label": "places to eat within a 10-minute walk"
     },
     {
-     "beats": 6,
-     "style": "item",
-     "num": "3",
-     "text": "Grilled, not fried",
-     "sub": "It's the same protein, just leaner.",
-     "q": [
-      "grilled chicken",
-      "chicken on grill",
-      "grilling meat"
-     ],
-     "clip": 30044486
-    },
-    {
-     "beats": 6,
-     "style": "item",
+     "beats": 7,
+     "style": "rank",
      "num": "4",
-     "text": "Watch out for pasta with a little chicken",
-     "sub": "It fills you up without much protein.",
-     "q": [
-      "chicken pasta",
-      "pasta plate",
-      "creamy pasta"
-     ],
-     "clip": 34317032
+     "text": "Brown",
+     "count": 133,
+     "sub": "Busiest food street: Thayer St",
+     "map": "brown-university",
+     "label": "places to eat within a 10-minute walk"
     },
     {
-     "beats": 6,
-     "style": "cap",
-     "text": "Vegetarian? *Tofu, lentils, beans, eggs and paneer all count.*",
-     "q": [
-      "tofu",
-      "lentils",
-      "paneer"
-     ],
-     "clip": 36994146
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Harvard",
+     "count": 156,
+     "sub": "Busiest food street: Massachusetts Ave",
+     "map": "harvard-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Columbia",
+     "count": 214,
+     "sub": "Busiest food street: Broadway",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Yale",
+     "count": 223,
+     "sub": "Busiest food street: Chapel St",
+     "map": "yale-university",
+     "label": "places to eat within a 10-minute walk"
     },
     {
      "beats": 6,
      "style": "end",
-     "text": "Save this for your next meal out",
-     "sub": "What's your go-to high-protein order?",
-     "reuse": 0
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which conference should we rank next?",
+     "reuse": 1
     }
-   ],
-   "track": "disco-111"
+   ]
   },
   {
    "id": "boba-signs",
@@ -203,106 +202,143 @@
    "track": "lofi-113"
   },
   {
-   "id": "first-date",
-   "mood": "groove",
-   "source": "https://www.savorscout.net/what-to-eat/first-date",
+   "id": "sec-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
    "scenes": [
     {
-     "beats": 5,
+     "beats": 4,
      "style": "hook",
-     "text": "Most great restaurants are *bad for a first date.*",
-     "q": [
-      "couple dinner restaurant",
-      "date night restaurant",
-      "fine dining couple"
-     ],
-     "clip": 6247909
+     "map": "vanderbilt-university",
+     "text": "Which SEC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows."
     },
     {
-     "beats": 5,
-     "style": "cap",
-     "text": "A first-date spot has one job: *make it easy to talk.*",
-     "q": [
-      "couple talking restaurant",
-      "couple laughing dinner",
-      "date conversation"
+     "beats": 9,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "16",
+       "Mississippi State",
+       "8"
+      ],
+      [
+       "14",
+       "Ole Miss",
+       "10"
+      ],
+      [
+       "14",
+       "Arkansas",
+       "10"
+      ],
+      [
+       "12",
+       "Auburn",
+       "21"
+      ],
+      [
+       "12",
+       "Tennessee",
+       "21"
+      ],
+      [
+       "11",
+       "Alabama",
+       "27"
+      ],
+      [
+       "10",
+       "Texas A&M",
+       "40"
+      ],
+      [
+       "9",
+       "LSU",
+       "41"
+      ],
+      [
+       "8",
+       "South Carolina",
+       "47"
+      ],
+      [
+       "7",
+       "Florida",
+       "48"
+      ],
+      [
+       "6",
+       "Oklahoma",
+       "64"
+      ]
      ],
-     "clip": 4255449
+     "q": [
+      "college stadium crowd night",
+      "college campus evening",
+      "university campus aerial"
+     ],
+     "clip": 5957445
     },
     {
-     "beats": 6,
-     "style": "item",
-     "num": "1",
-     "text": "Warm light, not dark",
-     "sub": "Dark feels like you're trying too hard. Bright feels like a cafeteria.",
-     "q": [
-      "candle light dinner",
-      "warm lighting restaurant",
-      "restaurant lights"
-     ],
-     "clip": 6657882
-    },
-    {
-     "beats": 6,
-     "style": "item",
-     "num": "2",
-     "text": "Skip the tasting menu",
-     "sub": "That's two hours and a big bill with someone you just met.",
-     "q": [
-      "tasting menu",
-      "fine dining plating",
-      "chef plating dish"
-     ],
-     "clip": 34350179
-    },
-    {
-     "beats": 6,
-     "style": "item",
-     "num": "3",
-     "text": "Nothing messy",
-     "sub": "Ribs, crab and whole fish make you look down when you should be looking up.",
-     "q": [
-      "eating ribs",
-      "crab dinner",
-      "whole fish dish"
-     ],
-     "clip": 34228444
-    },
-    {
-     "beats": 6,
-     "style": "item",
-     "num": "4",
-     "text": "Not your usual spot",
-     "sub": "Staff knowing your name is charming to you. To your date, it's a little weird.",
-     "q": [
-      "waiter greeting",
-      "waiter restaurant",
-      "server taking order"
-     ],
-     "clip": 6816195
-    },
-    {
-     "beats": 6,
-     "style": "item",
+     "beats": 7,
+     "style": "rank",
      "num": "5",
-     "text": "Somewhere to walk to after",
-     "sub": "If it's going well, you need a next move.",
-     "q": [
-      "couple walking night",
-      "couple walking city",
-      "walking at night"
-     ],
-     "clip": 5909008
+     "text": "Kentucky",
+     "count": 69,
+     "sub": "Busiest food street: Broadway",
+     "map": "university-of-kentucky",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Missouri",
+     "count": 98,
+     "sub": "Tied with Georgia for 3rd",
+     "map": "university-of-missouri-columbia",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Georgia",
+     "count": 98,
+     "sub": "Tied with Missouri for 3rd",
+     "map": "university-of-georgia",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Texas",
+     "count": 115,
+     "sub": "Busiest food street: Guadalupe St",
+     "map": "the-university-of-texas-at-austin",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Vanderbilt",
+     "count": 129,
+     "sub": "Busiest food street: West End Ave",
+     "map": "vanderbilt-university",
+     "label": "places to eat within a 10-minute walk"
     },
     {
      "beats": 6,
      "style": "end",
-     "text": "Send this to the friend with a date this week",
-     "sub": "Follow for more food that's worth it.",
-     "reuse": 0
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which conference should we rank next?",
+     "reuse": 1
     }
-   ],
-   "track": "house-112"
+   ]
   },
   {
    "id": "food-streets",
@@ -312,16 +348,11 @@
     {
      "beats": 6,
      "style": "hook",
-     "text": "In some college towns, *most of the restaurants are on one street.*",
-     "q": [
-      "main street night",
-      "college town street",
-      "small town main street"
-     ],
-     "clip": 19543876
+     "map": "unc-franklin",
+     "text": "In some college towns, *most of the restaurants are on one street.*"
     },
     {
-     "beats": 14,
+     "beats": 12,
      "style": "rank",
      "num": "",
      "text": "UNC Chapel Hill",
@@ -341,7 +372,7 @@
       "town aerial view"
      ],
      "clip": 19543873,
-     "sub": "Universities with 20,000+ students and at least 100 places to eat within a mile."
+     "sub": "Universities with 20,000+ students."
     },
     {
      "beats": 9,
@@ -420,7 +451,7 @@
      "style": "end",
      "text": "Send this to a friend at one of these schools",
      "sub": "Follow for more food that's worth it.",
-     "reuse": 0
+     "reuse": 2
     }
    ],
    "track": "disco-114"

@@ -45,8 +45,13 @@ highlights a word) and Pexels searches:
 - `hook`: the first 2–3 seconds. Short, specific, a little surprising.
 - `cap`: a caption line. `item`: a numbered or named point with a `sub` line.
 - `word`: one big word over a quick montage shot. `small`: a white subtitle box.
-- `list`: ranked rows over blurred footage. `rank`: a full-screen map
-  (`rankmap.py <slug> <lat> <lng> <dir>` builds it).
+- `list`: ranked rows over blurred footage. A row can carry a fourth item,
+  a small line under the name (`["1", "UNC Chapel Hill", "70%", "Franklin St"]`).
+- `rank`: a full-screen map (`rankmap.py <slug> <lat> <lng> <dir>` builds it).
+  Give it a street (`rankmap.py <slug> <lat> <lng> <dir> "Franklin St"`) and
+  the map covers a mile, dims every other place, and lights up that
+  street's places one by one. The scene's `label` and `suffix` replace the
+  default "places to eat within ½ mile" under the number (`"suffix": "%"`).
 - `end`: the call to action ("Save this...", "Send this to...", "Where should
   your school be?"), over a reused clip.
 
@@ -116,7 +121,9 @@ python make_day.py publish <date> /tmp/sounds
 ```
 
 A Pexels id picked by eye is pinned in the script (`"clip": 8448265` on the
-scene), and a video can pin its soundtrack (`"track": "disco-105"`). So when the
+scene), and a video can pin its soundtrack (`"track": "disco-105"`). If only
+part of a clip works (someone lifts the glass out of frame at 7 seconds), set
+`"clip_from"` to the second the scene should start from. So when the
 words change enough to need new timing, just run `build` again: pinned clips and
 tracks come back exactly as reviewed. `refit` only re-fits captions into the
 old timing. Rejected clips (wrong subject, a business name or logo) go into

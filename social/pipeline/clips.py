@@ -114,8 +114,12 @@ def pick_queries(queries, used, seconds, rng, avoid=(), top=8):
     raise RuntimeError(f"no Pexels clip found for {key}")
 
 
-def prepare(clip, out_path, seconds, cache_dir):
-    """Download, trim, crop to 1080x1920 at 30 fps, grade, strip audio."""
+def prepare(clip, out_path, seconds, cache_dir, start=None):
+    """Download, trim, crop to 1080x1920 at 30 fps, grade, strip audio.
+
+    `start` (seconds into the clip) overrides the default of starting a second in,
+    for a clip whose best stretch is somewhere else.
+    """
     os.makedirs(cache_dir, exist_ok=True)
     raw = os.path.join(cache_dir, f"{clip['id']}.mp4")
     if not os.path.exists(raw):
@@ -136,6 +140,8 @@ def prepare(clip, out_path, seconds, cache_dir):
         if slow > 1.25:
             raise ValueError(f"Pexels {clip['id']} is {have:.1f}s; the scene needs {seconds:.1f}s")
         start = 0.0
+    elif start is not None:
+        start = max(0.0, min(float(start), have - seconds - 0.05))
     else:
         # Start a little in, where clips usually settle after the opening move.
         start = min(1.0, max(0.0, have - seconds - 0.2))

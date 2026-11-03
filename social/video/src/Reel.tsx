@@ -10,7 +10,7 @@ import {C, DISPLAY, TEXT} from './theme';
 
 type Word = {t: string; hl?: boolean};
 type Fitted = {size: number; lines: Word[][]};
-type RankMap = {src: string; width: number; height: number; campus: {x: number; y: number}; radius: number; dots: [number, number][]; attribution: string};
+type RankMap = {src: string; width: number; height: number; campus: {x: number; y: number}; radius: number; dots: [number, number][]; hl?: [number, number][]; attribution: string};
 export type ReelScene = {
 	from: number;
 	dur: number;
@@ -19,10 +19,10 @@ export type ReelScene = {
 	src?: string;
 	caption?: Fitted;
 	sub?: Fitted;
-	list?: {title: string; rows: [string, string, string][]; size?: number};
+	list?: {title: string; rows: [string, string, string, string?][]; size?: number};
 	rowAt?: number[];
 	map?: RankMap;
-	rank?: {num: string; name: Fitted; count: number; sub: Fitted};
+	rank?: {num: string; name: Fitted; count: number; sub: Fitted; label?: string; suffix?: string};
 };
 export type ReelProps = {scenes: ReelScene[]; audio: string; total: number; bpm: number; site: string; credits: string};
 
@@ -185,12 +185,15 @@ const ListScene: React.FC<{s: ReelScene}> = ({s}) => {
 					{s.list!.title}
 				</div>
 				<div style={{marginTop: 34, display: 'flex', flexDirection: 'column', gap: 18}}>
-					{rows.map(([rank, name, value], r) => {
+					{rows.map(([rank, name, value, sub], r) => {
 						const p = spring({frame: f - s.rowAt![r], fps, config: {damping: 16, stiffness: 210, mass: 0.6}});
 						return (
 							<div key={r} style={{display: 'flex', alignItems: 'baseline', gap: 26, opacity: Math.min(1, p * 1.6), transform: `translateX(${(1 - p) * 90}px)`}}>
 								<div style={{width: 70, textAlign: 'right', fontFamily: DISPLAY, fontWeight: 900, fontSize: fs * 0.94, color: C.saffron, ...stroke(fs)}}>{rank}</div>
-								<div style={{flex: 1, fontFamily: DISPLAY, fontWeight: 900, fontSize: fs, color: '#fff', letterSpacing: -1, whiteSpace: 'nowrap', ...stroke(fs)}}>{name}</div>
+								<div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+									<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: fs, color: '#fff', letterSpacing: -1, whiteSpace: 'nowrap', ...stroke(fs)}}>{name}</div>
+									{sub ? <div style={{marginTop: 2, fontFamily: TEXT, fontWeight: 700, fontSize: Math.round(fs * 0.56), color: C.saffron, whiteSpace: 'nowrap', textShadow: '0 2px 10px rgba(0,0,0,0.85)'}}>{sub}</div> : null}
+								</div>
 								<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: fs, color: '#fff', ...stroke(fs)}}>{value}</div>
 							</div>
 						);
@@ -214,9 +217,14 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 	const ty = Math.min(0, Math.max(1920 - m.height * z, cy - m.campus.y * z));
 	const px = (x: number) => tx + x * z;
 	const py = (y: number) => ty + y * z;
-	const grow = Easing.out(Easing.cubic)(interpolate(f, [8, 8 + s.dur * 0.55], [0, 1], clamp));
+	// With a highlighted street, every place appears first, dimmed; then the street's places light up end to end.
+	const hl = m.hl ?? [];
+	const lit = hl.length > 0;
+	const grow = Easing.out(Easing.cubic)(interpolate(f, [8, 8 + s.dur * (lit ? 0.28 : 0.55)], [0, 1], clamp));
+	const glow = Easing.inOut(Easing.cubic)(interpolate(f, [s.dur * 0.3, s.dur * 0.72], [0, 1], clamp));
 	const shown = Math.round(m.dots.length * grow);
-	const count = Math.round(r.count * grow);
+	const shownHl = Math.round(hl.length * glow);
+	const count = Math.round(r.count * (lit ? glow : grow));
 	const ring = interpolate(f, [2, 16], [0, 1], {...clamp, easing: Easing.out(Easing.cubic)});
 	const R = m.radius * z;
 	const top = usePop(0, 14);
@@ -233,10 +241,21 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 				<circle cx={px(m.campus.x)} cy={py(m.campus.y)} r={R} fill="rgba(255,95,31,0.08)" stroke={C.saffron} strokeWidth={5} strokeDasharray={`${2 * Math.PI * R}`} strokeDashoffset={2 * Math.PI * R * (1 - ring)} transform={`rotate(-90 ${px(m.campus.x)} ${py(m.campus.y)})`} />
 				{m.dots.slice(0, shown).map(([x, y], i) => {
 					const age = Math.min(1, (shown - i) / 6);
-					return (
+					return lit ? (
+						<circle key={i} cx={px(x)} cy={py(y)} r={5 + 2 * (1 - age)} fill="#8f84b3" opacity={0.55 + 0.3 * (1 - glow)} stroke={INK} strokeWidth={1} />
+					) : (
 						<g key={i}>
 							<circle cx={px(x)} cy={py(y)} r={13} fill={C.ember} opacity={0.22 * age} />
 							<circle cx={px(x)} cy={py(y)} r={6 + 3 * (1 - age)} fill={i % 3 === 0 ? C.saffron : C.ember} stroke={INK} strokeWidth={1.5} />
+						</g>
+					);
+				})}
+				{hl.slice(0, shownHl).map(([x, y], i) => {
+					const age = Math.min(1, (shownHl - i) / 5);
+					return (
+						<g key={`h${i}`}>
+							<circle cx={px(x)} cy={py(y)} r={18} fill={C.saffron} opacity={0.28 * age} />
+							<circle cx={px(x)} cy={py(y)} r={7 + 4 * (1 - age)} fill={C.saffron} stroke={INK} strokeWidth={1.5} />
 						</g>
 					);
 				})}
@@ -254,8 +273,8 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 				</div>
 			</div>
 			<div style={{position: 'absolute', left: 60, right: 150, top: 1395, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 132, lineHeight: 1, color: '#fff', ...stroke(132)}}>{count.toLocaleString('en-US')}</div>
-				<div style={{marginTop: 6, fontFamily: TEXT, fontWeight: 700, fontSize: 38, color: '#fff', textShadow: '0 3px 14px rgba(0,0,0,0.8)'}}>places to eat within ½ mile</div>
+				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 132, lineHeight: 1, color: lit ? C.saffron : '#fff', ...stroke(132)}}>{count.toLocaleString('en-US')}{r.suffix ?? ''}</div>
+				<div style={{marginTop: 6, fontFamily: TEXT, fontWeight: 700, fontSize: 38, color: '#fff', textAlign: 'center', textWrap: 'balance', textShadow: '0 3px 14px rgba(0,0,0,0.8)'}}>{r.label ?? 'places to eat within ½ mile'}</div>
 			</div>
 			<div style={{position: 'absolute', left: 40, top: 1885, fontFamily: TEXT, fontWeight: 600, fontSize: 18, color: C.inkMid}}>{m.attribution}</div>
 		</AbsoluteFill>

@@ -1,0 +1,429 @@
+{
+ "date": "2026-11-04",
+ "videos": [
+  {
+   "id": "protein-eating-out",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/diet/high-protein",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "That chicken rice bowl? *It's mostly rice.*",
+     "q": [
+      "chicken rice bowl",
+      "rice bowl",
+      "burrito bowl"
+     ],
+     "clip": 6645813
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Today is National Eating Healthy Day. *Here's how to get real protein when you eat out.*",
+     "q": [
+      "grilled chicken plate",
+      "healthy meal restaurant",
+      "healthy food plate"
+     ],
+     "clip": 8477264
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Pick a place where protein is the main dish",
+     "sub": "Shawarma plates, Korean barbecue, rotisserie chicken and poke make it easy.",
+     "q": [
+      "korean bbq grill",
+      "shawarma plate",
+      "rotisserie chicken"
+     ],
+     "clip": 33338733
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Ask for double meat, half rice",
+     "sub": "It's a common ask at bowl and burrito places. Extra meat usually costs a little more.",
+     "q": [
+      "burrito bowl",
+      "making burrito bowl",
+      "rice bowl meat"
+     ],
+     "clip": 7601351
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Grilled, not fried",
+     "sub": "It's the same protein, just leaner.",
+     "q": [
+      "grilled chicken",
+      "chicken on grill",
+      "grilling meat"
+     ],
+     "clip": 30044486
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Watch out for pasta with a little chicken",
+     "sub": "It fills you up without much protein.",
+     "q": [
+      "chicken pasta",
+      "pasta plate",
+      "creamy pasta"
+     ],
+     "clip": 34317032
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "Vegetarian? *Tofu, lentils, beans, eggs and paneer all count.*",
+     "q": [
+      "tofu",
+      "lentils",
+      "paneer"
+     ],
+     "clip": 36994146
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for your next meal out",
+     "sub": "What's your go-to high-protein order?",
+     "reuse": 0
+    }
+   ],
+   "track": "disco-111"
+  },
+  {
+   "id": "boba-signs",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/boba",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "A lot of boba is just *sugar with pearls in it.*",
+     "q": [
+      "bubble tea",
+      "boba tea",
+      "milk tea pearls"
+     ],
+     "clip": 6414273
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Here's how to find a boba shop *that actually makes tea:*",
+     "q": [
+      "making bubble tea",
+      "bubble tea shop",
+      "boba shop"
+     ],
+     "clip": 34164107
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Chewy pearls with a soft center",
+     "sub": "Cooked pearls are only good for about four hours. Old ones go hard in the middle.",
+     "q": [
+      "tapioca pearls",
+      "boba pearls",
+      "tapioca pearls cooking"
+     ],
+     "clip": 8473926
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Tea that's brewed, not powdered",
+     "sub": "If every flavor comes from a powder, the tea is just there to carry sugar.",
+     "q": [
+      "brewing tea",
+      "tea brewing",
+      "pouring tea"
+     ],
+     "clip": 8296117
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "You choose the sweetness",
+     "sub": "Look for 25%, 50% or 75% sugar. A shop that asks wants you to taste the tea.",
+     "q": [
+      "pouring milk tea",
+      "milk tea",
+      "iced milk tea"
+     ],
+     "clip": 14461052
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Brown sugar syrup made in house",
+     "sub": "It should taste caramelized and a little bitter, not just sweet.",
+     "q": [
+      "brown sugar boba",
+      "brown sugar syrup",
+      "brown sugar milk tea"
+     ],
+     "clip": 26245626
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "New shop? Order a classic milk tea at 50% sugar. *If that's good, everything else will be.*",
+     "q": [
+      "drinking bubble tea",
+      "holding bubble tea",
+      "boba drink"
+     ],
+     "clip": 25692386,
+     "clip_from": 0
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to your boba buddy",
+     "sub": "What's your usual order?",
+     "reuse": 0
+    }
+   ],
+   "track": "lofi-113"
+  },
+  {
+   "id": "first-date",
+   "mood": "groove",
+   "source": "https://www.savorscout.net/what-to-eat/first-date",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "Most great restaurants are *bad for a first date.*",
+     "q": [
+      "couple dinner restaurant",
+      "date night restaurant",
+      "fine dining couple"
+     ],
+     "clip": 6247909
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "A first-date spot has one job: *make it easy to talk.*",
+     "q": [
+      "couple talking restaurant",
+      "couple laughing dinner",
+      "date conversation"
+     ],
+     "clip": 4255449
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Warm light, not dark",
+     "sub": "Dark feels like you're trying too hard. Bright feels like a cafeteria.",
+     "q": [
+      "candle light dinner",
+      "warm lighting restaurant",
+      "restaurant lights"
+     ],
+     "clip": 6657882
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Skip the tasting menu",
+     "sub": "That's two hours and a big bill with someone you just met.",
+     "q": [
+      "tasting menu",
+      "fine dining plating",
+      "chef plating dish"
+     ],
+     "clip": 34350179
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Nothing messy",
+     "sub": "Ribs, crab and whole fish make you look down when you should be looking up.",
+     "q": [
+      "eating ribs",
+      "crab dinner",
+      "whole fish dish"
+     ],
+     "clip": 34228444
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Not your usual spot",
+     "sub": "Staff knowing your name is charming to you. To your date, it's a little weird.",
+     "q": [
+      "waiter greeting",
+      "waiter restaurant",
+      "server taking order"
+     ],
+     "clip": 15261451
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "5",
+     "text": "Somewhere to walk to after",
+     "sub": "If it's going well, you need a next move.",
+     "q": [
+      "couple walking night",
+      "couple walking city",
+      "walking at night"
+     ],
+     "clip": 5909008
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to the friend with a date this week",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 0
+    }
+   ],
+   "track": "house-112"
+  },
+  {
+   "id": "food-streets",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/university-of-north-carolina-at-chapel-hill",
+   "scenes": [
+    {
+     "beats": 6,
+     "style": "hook",
+     "text": "In some college towns, *most of the restaurants are on one street.*",
+     "q": [
+      "main street night",
+      "college town street",
+      "small town main street"
+     ],
+     "clip": 19543876
+    },
+    {
+     "beats": 14,
+     "style": "rank",
+     "num": "",
+     "text": "UNC Chapel Hill",
+     "count": 70,
+     "suffix": "%",
+     "label": "of the places to eat within a mile of campus are on Franklin Street",
+     "sub": "Chapel Hill, North Carolina",
+     "map": "unc-franklin"
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "These big schools have *the biggest share of their restaurants on one street:*",
+     "q": [
+      "aerial college town",
+      "aerial town street",
+      "town aerial view"
+     ],
+     "clip": 19543873,
+     "sub": "Universities with 20,000+ students and at least 100 places to eat within a mile."
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "Share of nearby places to eat on one street",
+     "rows": [
+      [
+       "1",
+       "University of Delaware",
+       "73%",
+       "Main St"
+      ],
+      [
+       "2",
+       "UNC Chapel Hill",
+       "70%",
+       "Franklin St"
+      ],
+      [
+       "3",
+       "UC Riverside",
+       "66%",
+       "University Ave"
+      ],
+      [
+       "4",
+       "Cal State Northridge",
+       "66%",
+       "Reseda Blvd"
+      ],
+      [
+       "5",
+       "University of New Mexico",
+       "66%",
+       "Central Ave"
+      ],
+      [
+       "6",
+       "University of Maryland",
+       "63%",
+       "Baltimore Ave"
+      ],
+      [
+       "7",
+       "Michigan State",
+       "60%",
+       "Grand River Ave"
+      ],
+      [
+       "8",
+       "NC State",
+       "53%",
+       "Hillsborough St"
+      ]
+     ],
+     "q": [
+      "street lights night",
+      "city street night",
+      "street at night"
+     ],
+     "clip": 29631359
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "What's the food street at your school? *Comment it below.*",
+     "q": [
+      "college students walking",
+      "friends walking street",
+      "students walking downtown"
+     ],
+     "clip": 7970444
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to a friend at one of these schools",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 0
+    }
+   ],
+   "track": "disco-114"
+  }
+ ]
+}

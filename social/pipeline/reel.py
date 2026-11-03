@@ -130,8 +130,8 @@ def balance(lines, path, size, tracking, max_w):
 def list_size(rows, row_w=860, rank_w=70, gaps=52):
     """The largest type size at which every row's name fits beside its rank and value (ListScene in Reel.tsx)."""
     for size in range(64, 35, -2):
-        if all(width(words_of(name), BLACK, size, -0.015) + width(words_of(value), BLACK, size, 0) + rank_w + gaps <= row_w
-               for _, name, value in rows):
+        if all(width(words_of(r[1]), BLACK, size, -0.015) + width(words_of(r[2]), BLACK, size, 0) + rank_w + gaps <= row_w
+               for r in rows):                  # a row may carry a 4th item, a small line under the name
             return size
     print("warning: a list row is too long to fit; shorten the longest name", file=sys.stderr)
     return 36
@@ -206,7 +206,7 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
             shutil.copy(os.path.join(rank_dir, sc["map"], "map.png"), os.path.join(pub, f"rank-{sc['map']}.png"))
             out["map"] = {**m, "src": f"{rel}/rank-{sc['map']}.png"}
             out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"],
-                           "sub": fit(sc["sub"], "sub")}
+                           "sub": fit(sc["sub"], "sub"), **{k: sc[k] for k in ("label", "suffix") if k in sc}}
         else:
             if "reuse" in sc:
                 cm = raw_by_scene[sc["reuse"]]
@@ -219,7 +219,8 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
                 used_clips.add(cm["id"])
             raw_by_scene[i] = cm
             path = os.path.join(pub, f"s{i:02d}.mp4")
-            clips.prepare(cm, path, dur / FPS + 0.25, os.path.join(work, "pexels-cache"))
+            clips.prepare(cm, path, dur / FPS + 0.25, os.path.join(work, "pexels-cache"),
+                          start=sc.get("clip_from") if "reuse" not in sc else None)
             out["src"] = f"{rel}/s{i:02d}.mp4"
             out["clip"] = {"id": cm["id"], "by": cm["by"], "url": cm["url"], "query": cm["query"]}
             if sc["style"] == "list":
@@ -260,7 +261,8 @@ def captions(sc):
     """The fitted text fields of one scene (what build() stores beside the footage)."""
     out = {}
     if sc["style"] == "rank":
-        out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"], "sub": fit(sc["sub"], "sub")}
+        out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], "rank"), "count": sc["count"], "sub": fit(sc["sub"], "sub"),
+                       **{k: sc[k] for k in ("label", "suffix") if k in sc}}
     elif sc["style"] == "list":
         out["list"] = {"title": sc["title"], "rows": sc["rows"], "size": list_size(sc["rows"])}
     else:

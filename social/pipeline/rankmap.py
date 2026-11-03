@@ -61,7 +61,10 @@ def is_food(r):
     return any("restaurant" in (h or "") for h in (tax.get("hierarchy") or []))
 
 
-def build(lat, lng, out_dir, half_w=1000.0, street=None):
+def build(lat, lng, out_dir, half_w=1150.0, street=None):
+    # half_w sets the ring's size on screen (Reel.tsx fills the frame with the
+    # map, so the ring's radius is about 540 * radius / half_w pixels). At 1150
+    # the ring clears the count under it even after the scene's slow zoom.
     radius = MILE_M if street else HALF_MILE_M
     half_w = half_w * radius / HALF_MILE_M          # the same framing at either radius
     key = street_key("1 " + street) if street else None

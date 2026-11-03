@@ -12,7 +12,8 @@ repeat: music.py's library rotates, least recently used first.
     python make_day.py qa <date>                 # contact sheets: every clip at start, middle, end
     python make_day.py render <date>
     python make_day.py cards <date>
-    python make_day.py publish <date> <sounds dir> [--dry-run]
+    python make_day.py publish <date> <sounds dir> [--dry-run] [--force]
+    python make_day.py verify <date>             # read every scheduled post back from Buffer
 
 Between build and render, look at the qa sheets and replace any clip that
 does not show what its caption says: reel.py repick <videos.json> <video> '{"3": [...queries]}'.
@@ -202,6 +203,70 @@ def publish(date, sounds_dir, dry_run=False, force=False):
     json.dump(done, open(os.path.join(wdir, "scheduled.json"), "w"), indent=1)
 
 
+def verify(date):
+    """Read every scheduled post back from Buffer and check it against posts.json.
+
+    Text, thread parts, Threads topic, posting time, and that each video or
+    card is attached and publicly served. Returns the number of posts with a
+    problem (0 means all is as written).
+    """
+    import datetime as dt
+    from zoneinfo import ZoneInfo
+    wdir, _, _ = paths(date)
+    sched = json.load(open(os.path.join(wdir, "scheduled.json")))
+    posts = json.load(open(os.path.join(wdir, "posts.json")))
+    tz = ZoneInfo(json.load(open(os.path.join(SOCIAL, "config.json")))["timezone"])
+    want = {p["video"]: p for p in posts["tiktok"]}
+    want.update({p["id"]: p for p in posts["twitter"] + posts["threads"]})
+    query = """query($id: PostId!) { post(input: {id: $id}) { id status dueAt externalLink error { message } text assets { source }
+      metadata { ... on TwitterPostMetadata { thread { text assets { source } } }
+                 ... on ThreadsPostMetadata { topic thread { text assets { source } } } } } }"""
+
+    def served(url):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, method="HEAD", headers=UA), timeout=30) as r:
+                return r.status == 200
+        except Exception:
+            return False
+
+    problems = 0
+    for s in sorted(sched, key=lambda d: d["at"]):
+        p = buffer.gql(query, {"id": s["post_id"]})["post"]
+        w = want[s["what"]]
+        when = dt.datetime.fromisoformat(p["dueAt"].replace("Z", "+00:00")).astimezone(tz)
+        sent = p["status"] == "sent"         # once it posts, Buffer swaps in its own copy of the media
+        issues = [] if p["status"] in ("scheduled", "sent") else [f"status {p['status']}"]
+        if p.get("error"):
+            issues.append(f"error: {p['error'].get('message')}")
+        if when != dt.datetime.fromisoformat(w["at"]).astimezone(tz):
+            issues.append("time differs")
+        urls = [a["source"] for a in p["assets"] or []]
+        if s["service"] == "tiktok":
+            parts = 1
+            if p["text"] != w["text"]:
+                issues.append("caption differs")
+            if not urls or not (sent or urls[0].endswith(f"/{s['what']}.mp4")):
+                issues.append("video missing")
+        else:
+            thread = (p["metadata"] or {}).get("thread") or []
+            parts = len(thread)
+            if [t["text"] for t in thread] != w["thread"]:
+                issues.append("thread differs")
+            first = [a["source"] for a in (thread[0]["assets"] if thread else [])]
+            if w.get("card") and not (first and (sent or first[0].endswith(f"/{w['card']}.jpg"))):
+                issues.append("card missing")
+            urls += first
+            if s["service"] == "threads" and (p["metadata"] or {}).get("topic") != w.get("topic"):
+                issues.append("topic differs")
+        if not sent:
+            issues += [f"not served: {u}" for u in sorted(set(urls)) if not served(u)]
+        problems += bool(issues)
+        state = "sent " + (p.get("externalLink") or "") if sent else "scheduled"
+        print(f"  {when:%a %I:%M %p}  {s['service']:8} {s['what']:20} parts={parts}  {'; '.join(issues) or 'OK'}  ({state.strip()})")
+    print(f"{len(sched)} posts read back, {problems} with problems")
+    return problems
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "sounds":
@@ -216,3 +281,5 @@ if __name__ == "__main__":
         cards(sys.argv[2])
     elif cmd == "publish":
         publish(sys.argv[2], sys.argv[3], "--dry-run" in sys.argv, "--force" in sys.argv)
+    elif cmd == "verify":
+        sys.exit(1 if verify(sys.argv[2]) else 0)

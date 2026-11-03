@@ -118,7 +118,12 @@ python reel.py refit ../batches/<date>/videos.json                            # 
 python make_day.py render <date>
 python make_day.py cards <date>
 python make_day.py publish <date> /tmp/sounds
+python make_day.py verify <date>     # reads all 12 posts back from Buffer
 ```
+
+`verify` checks every post against `posts.json`: text, thread parts, Threads
+topic, time, and that each video or card is attached and served. A post
+that has already gone out shows its live link.
 
 A Pexels id picked by eye is pinned in the script (`"clip": 8448265` on the
 scene), and a video can pin its soundtrack (`"track": "disco-105"`). If only

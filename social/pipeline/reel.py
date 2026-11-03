@@ -99,31 +99,46 @@ def wrap(ws, path, size, tracking, max_w):
 
 
 def balance(lines, path, size, tracking, max_w):
-    """Even out a greedy wrap so the last line isn't a lonely word."""
+    """Even out a greedy wrap so the last line isn't a lonely word.
+
+    Tries every split into the same number of lines and keeps the one whose
+    widest and narrowest lines differ least. Each run of words is measured
+    once, so long captions are balanced too.
+    """
     if len(lines) < 2:
         return lines
     flat = [w for l in lines for w in l]
-    n = len(lines)
+    n, total = len(lines), len(flat)
+    if total > 60:
+        return lines
+    spans = {}
+
+    def wd(i, j):
+        if (i, j) not in spans:
+            spans[(i, j)] = width(flat[i:j], path, size, tracking)
+        return spans[(i, j)]
+
     best, best_score = lines, None
-    def rec(start, k, acc):
+
+    def rec(start, k, widths, cuts):
         nonlocal best, best_score
         if k == 1:
-            line = flat[start:]
-            if not line or width(line, path, size, tracking) > max_w:
+            last = wd(start, total)
+            if last > max_w:
                 return
-            cand = acc + [line]
-            ws = [width(l, path, size, tracking) for l in cand]
+            ws = widths + [last]
             score = max(ws) - min(ws)
             if best_score is None or score < best_score:
-                best, best_score = cand, score
+                best_score = score
+                best = [flat[a:b] for a, b in zip([0] + cuts, cuts + [total])]
             return
-        for end in range(start + 1, len(flat) - k + 2):
-            line = flat[start:end]
-            if width(line, path, size, tracking) > max_w:
+        for end in range(start + 1, total - k + 2):
+            w = wd(start, end)
+            if w > max_w:
                 break
-            rec(end, k - 1, acc + [line])
-    if len(flat) <= 16:
-        rec(0, n, [])
+            rec(end, k - 1, widths + [w], cuts + [end])
+
+    rec(0, n, [], [])
     return best
 
 

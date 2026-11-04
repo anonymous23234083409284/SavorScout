@@ -1,0 +1,559 @@
+{
+ "date": "2026-11-05",
+ "videos": [
+  {
+   "id": "sushi-tell",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/sushi",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "How to tell *good sushi* from *bad sushi* before you order",
+     "q": [
+      "sushi chef nigiri",
+      "sushi close up",
+      "nigiri sushi"
+     ],
+     "clip": 31561018
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "Start with the rice, *not the fish.*",
+     "q": [
+      "sushi rice",
+      "making sushi rice",
+      "sushi chef rice"
+     ],
+     "clip": 8908333
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Rice that's barely warm",
+     "sub": "It should be just warm and lightly seasoned. Cold, packed rice means sushi made on an assembly line.",
+     "q": [
+      "sushi chef making nigiri",
+      "forming nigiri",
+      "sushi chef hands"
+     ],
+     "clip": 8908337
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "A short menu that changes",
+     "sub": "Sixty kinds of fish all year usually means frozen. A dozen that change means they buy what's good.",
+     "q": [
+      "slicing raw fish",
+      "sashimi knife",
+      "cutting fish"
+     ],
+     "clip": 36997896
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "More nigiri than rolls",
+     "sub": "Nigiri is fish on rice, where the skill shows. A menu of rolls with three sauces is selling something else.",
+     "q": [
+      "sushi rolls sauce",
+      "sushi roll",
+      "nigiri plate"
+     ],
+     "clip": 3298020
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "A chef you can talk to",
+     "sub": "At a counter, you can ask what's good today and get a real answer.",
+     "q": [
+      "sushi counter",
+      "sushi bar chef",
+      "sushi restaurant counter"
+     ],
+     "clip": 8908216
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "And if the wasabi is already under the fish, *you're somewhere serious.*",
+     "q": [
+      "wasabi sushi",
+      "sushi chef wasabi",
+      "nigiri close up"
+     ],
+     "clip": 8908217
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for your next sushi night",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 0
+    }
+   ],
+   "track": "lofi-116"
+  },
+  {
+   "id": "big12-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-cincinnati-main-campus",
+     "text": "Which Big 12 school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Arizona State."
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "16",
+       "Kansas",
+       "11"
+      ],
+      [
+       "15",
+       "Utah",
+       "16"
+      ],
+      [
+       "14",
+       "Houston",
+       "20"
+      ],
+      [
+       "13",
+       "Oklahoma State",
+       "24"
+      ],
+      [
+       "12",
+       "BYU",
+       "29"
+      ],
+      [
+       "11",
+       "UCF",
+       "30"
+      ]
+     ],
+     "q": [
+      "college football stadium crowd",
+      "university campus aerial",
+      "college campus sunset"
+     ],
+     "clip": 7683445
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "10",
+       "TCU",
+       "35"
+      ],
+      [
+       "7",
+       "Texas Tech",
+       "49"
+      ],
+      [
+       "7",
+       "Iowa State",
+       "49"
+      ],
+      [
+       "7",
+       "Baylor",
+       "49"
+      ],
+      [
+       "6",
+       "Kansas State",
+       "52"
+      ]
+     ],
+     "q": [
+      "college campus aerial",
+      "university campus walking",
+      "campus quad students"
+     ],
+     "clip": 40612291
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Colorado",
+     "count": 70,
+     "sub": "Busiest food street: Pearl St",
+     "map": "university-of-colorado-boulder",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Arizona State",
+     "count": 76,
+     "sub": "Busiest food street: Mill Ave",
+     "map": "arizona-state-university-campus-immersion",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "West Virginia",
+     "count": 81,
+     "sub": "Busiest food street: High St",
+     "map": "west-virginia-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Arizona",
+     "count": 84,
+     "sub": "Busiest food street: University Blvd",
+     "map": "university-of-arizona",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Cincinnati",
+     "count": 101,
+     "sub": "Busiest food street: McMillan St",
+     "map": "university-of-cincinnati-main-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which conference should we rank next?",
+     "reuse": 1
+    }
+   ],
+   "track": "disco-129"
+  },
+  {
+   "id": "acc-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which ACC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UNC."
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "17",
+       "Notre Dame",
+       "6"
+      ],
+      [
+       "17",
+       "Wake Forest",
+       "6"
+      ],
+      [
+       "16",
+       "Boston College",
+       "8"
+      ],
+      [
+       "15",
+       "Duke",
+       "9"
+      ],
+      [
+       "14",
+       "Miami",
+       "16"
+      ],
+      [
+       "13",
+       "Louisville",
+       "27"
+      ]
+     ],
+     "q": [
+      "college campus autumn",
+      "university campus brick building",
+      "campus students walking fall"
+     ],
+     "clip": 5957473
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "12",
+       "Stanford",
+       "29"
+      ],
+      [
+       "11",
+       "Georgia Tech",
+       "34"
+      ],
+      [
+       "10",
+       "Clemson",
+       "43"
+      ],
+      [
+       "9",
+       "Syracuse",
+       "47"
+      ],
+      [
+       "8",
+       "Florida State",
+       "50"
+      ],
+      [
+       "7",
+       "Virginia",
+       "58"
+      ],
+      [
+       "6",
+       "SMU",
+       "62"
+      ]
+     ],
+     "q": [
+      "college campus aerial",
+      "university campus walking",
+      "campus quad students"
+     ],
+     "clip": 40101511
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Virginia Tech",
+     "count": 64,
+     "sub": "Busiest food street: Main St",
+     "map": "virginia-polytechnic-institute-and-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "NC State",
+     "count": 75,
+     "sub": "Busiest food street: Hillsborough St",
+     "map": "north-carolina-state-university-at-raleigh",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UNC",
+     "count": 87,
+     "sub": "Busiest food street: Franklin St",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Pitt",
+     "count": 135,
+     "sub": "Busiest food street: Forbes Ave",
+     "map": "university-of-pittsburgh-pittsburgh-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which conference should we rank next?",
+     "reuse": 1
+    }
+   ],
+   "track": "disco-132"
+  },
+  {
+   "id": "texas-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/tx",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "the-university-of-texas-at-austin",
+     "text": "Which big Texas university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: A&M isn't top 5."
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Universities with 20,000+ students",
+     "rows": [
+      [
+       "13",
+       "UT Dallas",
+       "10"
+      ],
+      [
+       "12",
+       "UTSA",
+       "16"
+      ],
+      [
+       "11",
+       "Houston",
+       "20"
+      ],
+      [
+       "10",
+       "Sam Houston State",
+       "29"
+      ],
+      [
+       "9",
+       "UT Arlington",
+       "35"
+      ]
+     ],
+     "q": [
+      "texas campus",
+      "university campus texas",
+      "college campus palm trees"
+     ],
+     "clip": 5545110
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "8",
+       "Texas A&M",
+       "40"
+      ],
+      [
+       "7",
+       "UTRGV",
+       "42"
+      ],
+      [
+       "6",
+       "UTEP",
+       "47"
+      ]
+     ],
+     "q": [
+      "college campus aerial",
+      "university campus walking",
+      "campus quad students"
+     ],
+     "clip": 5544745
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Texas Tech",
+     "count": 49,
+     "sub": "Tied with Baylor for 4th",
+     "map": "texas-tech-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Baylor",
+     "count": 49,
+     "sub": "Tied with Texas Tech for 4th",
+     "map": "baylor-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "North Texas",
+     "count": 51,
+     "sub": "Busiest food street: Hickory St",
+     "map": "university-of-north-texas",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Texas State",
+     "count": 79,
+     "sub": "Busiest food street: LBJ Dr",
+     "map": "texas-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UT Austin",
+     "count": 115,
+     "sub": "Busiest food street: Guadalupe St",
+     "map": "the-university-of-texas-at-austin",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at A&M.",
+     "reuse": 1
+    }
+   ],
+   "track": "disco-135"
+  }
+ ]
+}

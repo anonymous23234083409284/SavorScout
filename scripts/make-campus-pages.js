@@ -122,19 +122,27 @@ function dataDesc(c, sc, town, shown, dataFirst = false) {
 /* The description for a page that lists every nearby place: what the list is,
    then the closest few by name. A searcher deciding between results recognises
    a restaurant's name; a general line about the site tells them nothing. */
-function listDesc(c, sc, rows) {
+/* A name that is part of the campus ("NYU Stern - Sosnoff Lounge", "Student
+   Union Food Court") is listed on the page but is no reason to click from
+   search: most are for students only. */
+const CAMPUS_PLACE = /\b(universit(y|ies)|college|campus|student|dining hall|residence|lounge|cafeteria)\b/i;
+
+function listDesc(c, dir) {
   const who = descName(c);
-  const r = sc.r;
-  const n = sc.n.toLocaleString("en-US");
-  const names = rows.map((p) => p.n);
-  const head = sc.n <= 50
+  const { r, rows } = dir;
+  const n = dir.n.toLocaleString("en-US");
+  /* Local places by name, closest first: "Subway" tells a searcher nothing
+     about this campus, the corner café does. Chains only make up the numbers. */
+  const ok = rows.filter((p) => !CAMPUS_PLACE.test(p.n) && !(c.a && p.n.includes(c.a)));
+  const names = [...ok.filter((p) => !p.chain), ...ok.filter((p) => p.chain)].map((p) => p.n);
+  const head = dir.n <= 50
     ? `Every place to eat within ${miles(r)} of ${who}, closest first`
     : `${n} places to eat within ${miles(r)} of ${who}, closest first`;
   const tries = [];
   for (const k of [3, 2, 1]) {
     if (names.length < k) continue;
     const list = k === 1 ? names[0] : `${names.slice(0, k - 1).join(", ")} and ${names[k - 1]}`;
-    tries.push(`${head}: ${list}. With addresses and walking distance.`, `${head}: ${list}.`);
+    tries.push(`${head}, including ${list}. With addresses and distances.`, `${head}, including ${list}.`);
   }
   return tries.find((d) => d.length <= 160) || `${head}.`;
 }
@@ -377,7 +385,7 @@ function page(c) {
   /* Every campus page with data gets a description built from it: the count,
      the walk, what leads, the busiest street. The general line it replaces was
      the same 30 words on a thousand pages, and ran past Google's cut. */
-  const desc = sc0 && dir ? listDesc(c, sc0, dir)
+  const desc = sc0 && dir ? listDesc(c, dir)
     : sc0 ? dataDesc(c, sc0, near[0], spots ? spots.length : 0, !focus)
     :
     `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
@@ -401,13 +409,13 @@ function page(c) {
 
   const qa = faq({ name: shortName, near: `near ${shortName}`, sc: sc0, spots,
     extra: askedQa(pagePath, { near: `near ${shortName}`, sc: sc0 }) });
-  const list = spotsLd(dir || spots, `Places to eat near ${c.n}`);
+  const list = spotsLd(dir ? dir.rows : spots, `Places to eat near ${c.n}`);
 
   const body = `      ${crumbHtml(trail)}
       <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
       <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
-${dir && sc0 ? directoryHtml(dir, {
-  who: shortName, n: sc0.n, r: sc0.r, from: c.at ? esc(c.at) : "the campus",
+${dir ? directoryHtml(dir, {
+  who: shortName, from: c.at || "the campus",
   appLink, ctaText: `Ask Savor Scout near ${shortName}`,
 }) : spotsHtml(spots, {
   heading: `A few places to eat near ${shortName}`,

@@ -102,11 +102,17 @@ function spotsLd(spots, name) {
 const DIR_FILE = path.join(__dirname, "..", "data", "campus-places.json");
 const DIR = fs.existsSync(DIR_FILE) ? JSON.parse(fs.readFileSync(DIR_FILE, "utf8")) : { pages: {}, max: 50 };
 
+/* { r: the radius in miles, n: how many places are within it, rows: the
+   closest of them, up to DIR.max }, or null for a campus with almost none. */
 function directoryFor(slug) {
-  const rows = DIR.pages[slug];
-  if (!rows || rows.length < 3) return null;
-  return rows.map(([n, c, st, loc, reg, zip, lat, lng, mi, g, chain]) =>
-    ({ n, c, st, loc, reg, zip, lat, lng, mi, ...(g ? { g } : {}), chain: !!chain }));
+  const page = DIR.pages[slug];
+  if (!page || page.rows.length < 3) return null;
+  return {
+    r: page.r,
+    n: page.n,
+    rows: page.rows.map(([n, c, st, loc, reg, zip, lat, lng, mi, g, chain]) =>
+      ({ n, c, st, loc, reg, zip, lat, lng, mi, ...(g ? { g } : {}), chain: !!chain })),
+  };
 }
 
 /* Straight-line distance, so the bands say "about": a walking route runs a
@@ -121,10 +127,11 @@ const BANDS = [
 
 const milesWord = (r) => (r === 1 ? "a mile" : `${r} miles`);
 
-/* `n` is how many places the page counts within `r` miles; when that is more
-   than the list holds, the heading says the list is the closest ones. */
-function directoryHtml(rows, { who, n, r, from, appLink, ctaText }) {
-  if (!rows) return "";
+/* When there are more places within the radius than the list holds, the
+   heading says the list is the closest ones. */
+function directoryHtml(dir, { who, from, appLink, ctaText }) {
+  if (!dir) return "";
+  const { rows, n, r } = dir;
   const complete = n <= DIR.max;
   const heading = complete
     ? `Every place to eat within ${milesWord(r)} of ${who}`
@@ -140,7 +147,7 @@ function directoryHtml(rows, { who, n, r, from, appLink, ctaText }) {
       <h2>${esc(heading)}</h2>
       <p>${complete ? `${rows.length} places, closest first.` : `Closest first, out of ${n.toLocaleString("en-US")} within ${milesWord(r)}.`}
         Distances are straight-line from ${esc(from)}, so a walk runs a little longer.</p>
-${shown.map((g) => `      <h3>${esc(g.title)} <span class="note">· ${esc(g.sub)} (${g.items.length})</span></h3>
+${shown.map((g) => `      <h3>${esc(g.title)} <span class="band">· ${esc(g.sub)} (${g.items.length})</span></h3>
       <ul class="spots">
         ${g.items.map(item).join("\n        ")}
       </ul>`).join("\n")}

@@ -708,31 +708,41 @@ with open(os.path.join(REPO, "scripts", "data", "campus-cuisine.json"), "w") as 
 
 
 # ---------------------------------------------------------------------------
-# Campus directory: the places to eat within the radius a campus page counts
-# (sc["r"], usually a mile), closest first, up to DIRECTORY_MAX. Written to
-# scripts/data/campus-places.json. Someone searching "restaurants near <campus>"
-# wants the list itself, and the page's count and its list come from the same
-# places, so they agree.
+# Campus directory: the places to eat within the radius a campus page counts,
+# closest first, up to DIRECTORY_MAX. Written to scripts/data/campus-places.json.
+# Someone searching "restaurants near <campus>" wants the list itself, and the
+# page's count and its list come from the same places, so they agree.
+#
+# The radius is the one the page's title quotes (make-campus-pages.js reach()):
+# a mile, or three miles for a campus on the edge of town with fewer than 25
+# places within a mile but at least twice as many within three.
+# Page: {"r": radius, "n": places within it, "rows": [...]}
 # Row: [name, label, street, town, region, zip, lat, lng, miles, guide, chain]
 # ---------------------------------------------------------------------------
 DIRECTORY_MAX = 50
+STORE_NO = re.compile(r"(?i)\s*(?:[-–#]\s*#?|\((?:store\s*)?#?\s*)\d{1,6}\)?\s*$")
 directory = {}
 for c in campuses:
     sc = pages_scene.get("campus/" + c["s"])
     if not sc:
         continue
+    r = 3.0 if sc["r"] < 3 and sc["n"] < 25 and sc["n3"] >= 25 and sc["n3"] >= 2 * sc["n"] else sc["r"]
+    found = near(c["lat"], c["lng"], r)
     seen, rows = set(), []
-    for d, p in sorted(near(c["lat"], c["lng"], sc["r"]), key=lambda x: (round(x[0], 3), x[1]["n"])):
+    for d, p in sorted(found, key=lambda x: (round(x[0], 3), x[1]["n"])):
         key = (norm(p["n"]), norm(p["st"]))
         if key in seen:
             continue
         seen.add(key)
-        rows.append([p["n"], p["lab"] or "", p["st"], p["loc"], p["reg"], p["zip"], p["lat"], p["lng"],
-                     round(d, 2), p["g"] or "", 1 if p["chain"] else 0])
+        # "Boston Market - 822": a store number means a chain, and is no part of the name.
+        name = STORE_NO.sub("", p["n"]).strip() or p["n"]
+        rows.append([name, p["lab"] or "", p["st"], p["loc"], p["reg"], p["zip"], p["lat"], p["lng"],
+                     round(d, 2), p["g"] or "", 1 if p["chain"] or name != p["n"] else 0])
         if len(rows) >= DIRECTORY_MAX:
             break
-    directory[c["s"]] = rows
-print("campus directory", len(directory), "campuses,", sum(map(len, directory.values())), "places", file=sys.stderr)
+    directory[c["s"]] = {"r": r, "n": len(found), "rows": rows}
+print("campus directory", len(directory), "campuses,", sum(len(v["rows"]) for v in directory.values()), "places",
+      file=sys.stderr)
 with open(os.path.join(REPO, "scripts", "data", "campus-places.json"), "w") as f:
     json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "max": DIRECTORY_MAX,
                "pages": directory}, f, separators=(",", ":"), ensure_ascii=False)

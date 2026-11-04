@@ -95,6 +95,7 @@ const STYLE = `
   .ss-static h1{font-size:clamp(30px,4.8vw,46px);line-height:1.06;letter-spacing:-.035em;color:var(--ink);margin:0 0 14px;font-weight:700}
   .ss-static h2{font-size:clamp(21px,2.8vw,25px);line-height:1.25;letter-spacing:-.02em;color:var(--ink);margin:0 0 14px;font-weight:700}
   .ss-static h3{font-size:17px;margin:22px 0 8px;color:var(--ink)}
+  .ss-static h3 .band{font-size:14px;font-weight:400;color:var(--mid)}
   .ss-static ul,.ss-static ol{margin:0 0 18px;padding-left:20px}
   .ss-static li{margin:0 0 9px}
   .ss-static li::marker{color:var(--ember)}

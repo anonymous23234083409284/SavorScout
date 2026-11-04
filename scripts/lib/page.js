@@ -121,6 +121,8 @@ const STYLE = `
   .ss-find .ss-btn{padding:0 26px;font-size:15px}
   .ss-static .ss-find__meta{margin:10px 8px 2px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;line-height:1.5;color:var(--mid)}
   .ss-find__meta b{color:var(--text);font-weight:500}
+  .ss-after{margin:0 0 26px}
+  .ss-static .ss-after__h{margin:0 0 10px;font-size:16px;color:var(--text)}
 
   /* ---- sections ---- */
   .ss-sec{margin:0 0 18px;padding:26px 28px 10px;border-radius:22px;background:rgba(19,16,28,.72);
@@ -350,11 +352,27 @@ function layout(body, { url, desc }) {
   if (hr >= 0) { tail = rest.slice(hr + 4); rest = rest.slice(0, hr); }
 
   /* The first button into the app becomes the search bar. A quiz button
-     stays a button: that page's next step is the quiz, not a search. */
+     stays a button: that page's next step is the quiz, not a search.
+
+     On a page that lists places (a campus, a campus x food, a city), the list
+     comes first and the search bar follows it. Someone who searched
+     "restaurants near <campus>" came for the list; with the bar on top, the
+     first restaurant sat below the first screen of a phone (measured: 926px
+     down on an 844px screen), and a page that shows no answer on arrival is
+     the one people leave straight back to the results. */
+  const listFirst = /^\/campus\/[^/]{3,}(\/[^/]+)?$/.test(pathname) || /^\/eat\/[^/]{3,}$/.test(pathname);
   let near = "";
+  let laterForm = "";
   pre = pre.replace(/<p>\s*<a class="cta"[^>]*?href="([^"]*)"[^>]*>[\s\S]*?<\/a>\s*<\/p>/, (m, href) => {
     if (!(href === "/" || /^\/\?(?:[^"]*&)?(?:near|craving)=/.test(href))) return m;
     near = new URLSearchParams(href.split("?")[1] || "").get("near") || "";
+    if (listFirst) {
+      laterForm = `
+      <div class="ss-after">
+        <p class="ss-after__h">Can't decide between them? Say what you're craving and Savor Scout picks one${near ? ` near ${esc(near)}` : ""}.</p>${searchForm(href)}
+      </div>`;
+      return "";
+    }
     return searchForm(href);
   });
   const kicker = (KICKERS.find(([re]) => re.test(pathname)) || [])[1];
@@ -397,7 +415,9 @@ function layout(body, { url, desc }) {
   const links = [...tail.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)].map((m) => m[0]);
   const endnav = links.length ? `\n      <nav class="ss-endnav" aria-label="More">\n        ${links.join("\n        ")}\n      </nav>` : "";
 
-  const main = `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>${tocHtml("ss-toc--inline")}\n${sections.join("\n")}${endnav}`;
+  const main = laterForm && sections.length
+    ? `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>\n${sections[0]}${laterForm}${tocHtml("ss-toc--inline")}\n${sections.slice(1).join("\n")}${endnav}`
+    : `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>${tocHtml("ss-toc--inline")}\n${sections.join("\n")}${endnav}`;
   const side = tocHtml("ss-toc--side");
   const aside = side ? `
   <aside class="ss-aside">${side}
@@ -426,7 +446,10 @@ function render(shell, { title, desc, url, body, ld, who }) {
      nowhere else. Inherited by a generated page it describes content that page
      does not show (Google's structured-data rules call that misleading), and on
      campus and city pages it made a second FAQPage beside the page's own. */
-  html = html.replace(/<script type="application\/ld\+json">(?:(?!<\/script>)[\s\S])*?"FAQPage"[\s\S]*?<\/script>/, "");
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, "");
+  /* Likewise the homepage's WebApplication and WebSite blocks: they describe
+     the app and the site, which is the homepage's subject, not a guide's or a
+     campus page's. Every block the shell carried goes; the page adds its own. */
   if (/"FAQPage"/.test(html) && !/"FAQPage"/.test(ld || "")) {
     console.error(`${who}: the homepage FAQ schema survived into a generated page`);
     process.exit(1);

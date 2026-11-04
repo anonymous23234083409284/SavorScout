@@ -110,8 +110,9 @@ function directoryFor(slug) {
   return {
     r: page.r,
     n: page.n,
+    /* "Genki Omakase | Sushi • Japanese": a listing's name, then its own tags. */
     rows: page.rows.map(([n, c, st, loc, reg, zip, lat, lng, mi, g, chain]) =>
-      ({ n, c, st, loc, reg, zip, lat, lng, mi, ...(g ? { g } : {}), chain: !!chain })),
+      ({ n: n.split(/\s+[|•]\s+/)[0], c, st, loc, reg, zip, lat, lng, mi, ...(g ? { g } : {}), chain: !!chain })),
   };
 }
 
@@ -135,13 +136,15 @@ function directoryHtml(dir, { who, from, appLink, ctaText }) {
   const complete = n <= DIR.max;
   const heading = complete
     ? `Every place to eat within ${milesWord(r)} of ${who}`
-    : `The ${rows.length} closest places to eat to ${who}`;
-  /* Each place goes in the first band it fits; rows are already closest first. */
+    : `The ${rows.length} places to eat closest to ${who}`;
+  /* Each place goes in the first band its shown distance fits (0.25 shows as
+     0.3, so it sits with the other 0.3s); rows are already closest first. */
+  const shownMi = (p) => Math.round(p.mi * 10) / 10;
   const groups = BANDS.map(([hi, title, sub]) => ({ hi, title, sub, items: [] }));
-  for (const p of rows) groups.find((g) => p.mi <= g.hi).items.push(p);
+  for (const p of rows) groups.find((g) => shownMi(p) <= g.hi).items.push(p);
   const shown = groups.filter((g) => g.items.length);
   const item = (p) => `<li><a href="${mapsLink(p)}" rel="nofollow noopener" target="_blank"><strong>${esc(p.n)}</strong></a>` +
-    `${p.c ? ` ${cuisinePill(p)}` : ""} · ${distance(Math.round(p.mi * 10) / 10)}` +
+    `${p.c ? ` ${cuisinePill(p)}` : ""} · ${distance(shownMi(p))}` +
     `<br><span class="addr">${esc([p.st, p.loc].filter(Boolean).join(", "))}</span></li>`;
   return `
       <h2>${esc(heading)}</h2>

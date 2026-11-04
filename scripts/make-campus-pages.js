@@ -40,7 +40,7 @@ const {
   BUILD, ORIGIN, esc, render, breadcrumb, crumbHtml, emit, shellOrDie, fitTitle,
 } = require("./lib/page");
 const STATES = require("./data/states");
-const { spotsFor, spotsHtml, spotsLd } = require("./lib/nearby");
+const { spotsFor, spotsHtml, spotsLd, directoryFor, directoryHtml } = require("./lib/nearby");
 const { GROUP_ENABLED } = require("./lib/features");
 const NICHE = require("./lib/niche");
 const { PRIORITY, isPriority, preferSearched, askedQa } = require("./lib/search");
@@ -117,6 +117,26 @@ function dataDesc(c, sc, town, shown, dataFirst = false) {
     `${head}${lead}`,
     head,
   ]).find((d) => d.length <= 160) || head;
+}
+
+/* The description for a page that lists every nearby place: what the list is,
+   then the closest few by name. A searcher deciding between results recognises
+   a restaurant's name; a general line about the site tells them nothing. */
+function listDesc(c, sc, rows) {
+  const who = descName(c);
+  const r = sc.r;
+  const n = sc.n.toLocaleString("en-US");
+  const names = rows.map((p) => p.n);
+  const head = sc.n <= 50
+    ? `Every place to eat within ${miles(r)} of ${who}, closest first`
+    : `${n} places to eat within ${miles(r)} of ${who}, closest first`;
+  const tries = [];
+  for (const k of [3, 2, 1]) {
+    if (names.length < k) continue;
+    const list = k === 1 ? names[0] : `${names.slice(0, k - 1).join(", ")} and ${names[k - 1]}`;
+    tries.push(`${head}: ${list}. With addresses and walking distance.`, `${head}: ${list}.`);
+  }
+  return tries.find((d) => d.length <= 160) || `${head}.`;
 }
 
 /* Title for a focus page: the school as people search it, then the count,
@@ -202,37 +222,13 @@ const shell = shellOrDie(WHO);
 const HOME = { name: "Savor Scout", url: `${ORIGIN}/` };
 const HUB = { name: "Campuses", url: `${ORIGIN}/campus/` };
 
-/* IPEDS institution size categories 3-5. The brackets are the survey's own, so
+/* IPEDS institution size categories. The brackets are the survey's own, so
    quoting them is accurate in a way an estimated headcount would not be. */
 const SIZE = {
-  2: {
-    label: "1,000 to 4,999 students", short: "smaller",
-    angle:
-      "A campus this size cannot carry a restaurant strip of its own, so the places nearby are the town's restaurants first and the students' second. That is usually good news: they have to be good enough for locals who are not on a meal plan, and the town's longest-running places are often the best ones to know.",
-    craving: "somewhere the locals actually go",
-  },
-  3: {
-    label: "5,000 to 9,999 students", short: "mid-sized",
-    /* Size is not decoration here. A student body is a restaurant's customer
-       base, and the three brackets genuinely support different economies —
-       which is the difference between a page that states a number and a page
-       that says something because of it. */
-    angle:
-      "A student body this size supports a real cluster of restaurants without supporting a huge one, which tends to produce a small number of very good places rather than a wide field of average ones. The upside is that the good ones are easy to find. The downside is that you will have been to all of them by your second year.",
-    craving: "somewhere we haven't already been",
-  },
-  4: {
-    label: "10,000 to 19,999 students", short: "large",
-    angle:
-      "At this size the area around campus supports enough restaurants that they start to specialise rather than all trying to serve everyone. That is when the good cheap food appears — a kitchen can survive selling one thing well, which is nearly always better than a long menu at the same price.",
-    craving: "one thing done well, cheap",
-  },
-  5: {
-    label: "20,000 students or more", short: "very large",
-    angle:
-      "A student body this large is a city-sized customer base on its own, which means the restaurants nearby are genuinely competitive and the weak ones do not last. It also means the obvious places are permanently crowded, and the ones worth knowing are usually a few blocks past where the crowd stops.",
-    craving: "good food without the queue",
-  },
+  2: { label: "1,000 to 4,999 students" },
+  3: { label: "5,000 to 9,999 students" },
+  4: { label: "10,000 to 19,999 students" },
+  5: { label: "20,000 students or more" },
 };
 
 /* IPEDS urban-centric locale codes, collapsed to the four that matter to this
@@ -246,49 +242,17 @@ function setting(lc) {
 }
 
 const SETTING_COPY = {
-  city: {
-    label: "in a city",
-    problem: (n) =>
-      `${n} sits inside a city, which means the problem is not finding somewhere to eat — it is that there are hundreds of options and the same six get recommended to every new student. The good places are usually one neighbourhood over from the ones with the queue.`,
-    advice:
-      "Campus-adjacent blocks are priced and designed for students who will eat there twice a week for four years, which keeps them cheap and keeps them honest. The better cooking is often a short ride out, in the neighbourhoods where people actually live.",
-    cravings: ["cheap eats", "open late", "somewhere quiet to work", "good coffee",
-      "date night", "somewhere to take visiting parents"],
-  },
-  suburb: {
-    label: "in a suburb",
-    problem: (n) =>
-      `${n} is in a suburban setting, which produces a specific pattern: a strip of chains close to campus, and the genuinely good independent restaurants scattered across a few miles in directions nobody tells you about in your first year.`,
-    advice:
-      "Suburban campuses reward a car or a willingness to take a bus for fifteen minutes. The restaurants worth knowing are rarely the ones visible from the main road, and a suburb's best food is frequently in an unremarkable plaza.",
-    cravings: ["cheap eats", "worth the drive", "somewhere with parking", "open late",
-      "big group", "somewhere to take visiting parents"],
-  },
-  town: {
-    label: "in a college town",
-    problem: (n) =>
-      `${n} is in a town where the university is a large share of the local economy. That cuts both ways: the restaurants near campus are built around student budgets and student hours, and the same small set of places gets recommended until everyone is tired of them.`,
-    advice:
-      "College towns tend to have a handful of genuinely excellent long-running restaurants surrounded by a lot of interchangeable ones, and the difference is not visible from the street. They also empty out over breaks, when hours change without warning.",
-    cravings: ["cheap eats", "open late", "somewhere that's been here forever",
-      "somewhere quiet to work", "big group", "parents' weekend"],
-  },
-  rural: {
-    label: "in a rural area",
-    problem: (n) =>
-      `${n} is rurally situated, which makes this a completely different question. There is no scrolling through options — the constraint is how far you are willing to drive, and knowing which of the nearby towns is worth the trip.`,
-    advice:
-      "A rural campus rewards knowing the surrounding towns rather than the surrounding blocks. Savor Scout searches a wide radius by default, so places twenty or thirty minutes out stay on the table when they are worth the drive.",
-    cravings: ["worth the drive", "open on a Sunday", "somewhere in the next town over",
-      "big group", "a proper sit-down meal", "parents' weekend"],
-  },
+  city: { label: "in a city" },
+  suburb: { label: "in a suburb" },
+  town: { label: "in a college town" },
+  rural: { label: "in a rural area" },
 };
 
 /* Two-year colleges are a different question, not a smaller one. Most students
    commute and many work, so the meal that matters is the one between a class
    and a shift — quick, cheap, and on the way somewhere — rather than the
-   late-night one a residential campus is built around. The page says so, and
-   its guide links follow. */
+   late-night one a residential campus is built around, and the guide links
+   follow that. */
 const LEVEL = {
   4: {
     type: (pub) => `${pub ? "Public" : "Private, not-for-profit"} four-year institution`,
@@ -303,8 +267,6 @@ const LEVEL = {
   2: {
     type: (pub, lv) => `${pub ? "Public" : "Private, not-for-profit"} two-year college${lv === 4
       ? " that also awards some bachelor's degrees" : ""}`,
-    commute: (n) =>
-      `Most students at ${n} commute, and a lot of them work, which changes what a good restaurant near campus is. The useful places are the ones between campus, work and home, fast enough to fit between a class and a shift, and cheap enough to be a habit. Late-night matters less than a lunch that takes twenty minutes.`,
     guides: [
       ["/what-to-eat/quick-lunch", "Where to get a quick lunch"],
       ["/what-to-eat/on-a-budget", "Where to eat when you're broke"],
@@ -354,29 +316,6 @@ function nearestBigCity(c) {
   return { ...best.o, miles };
 }
 
-/* Title/description test, started 11 October 2026.
-   These 28 are the campus pages that had earned at least one click by then.
-   They get a title that adds "Food" (the second most common phrasing in their
-   queries) and a description that names what a student can filter by. Every
-   other campus page keeps the old copy, so it serves as the comparison: check
-   CTR for these against the rest in Search Console on or after 25 October.
-   Deliberately not "10 Best Places to Eat": these pages list no restaurants,
-   and a title promising a list the page does not have loses the click back. */
-const CTR_TEST = new Set([
-  "cuny-new-york-city-college-of-technology", "foothill-college", "lewis-university",
-  "indiana-wesleyan-university-national-and-global", "bellevue-college", "kean-university",
-  "concordia-university-chicago", "university-of-southern-indiana",
-  "university-of-cincinnati-main-campus", "western-kentucky-university",
-  "university-of-the-incarnate-word", "fairleigh-dickinson-university-metropolitan-campus",
-  "the-university-of-west-florida", "san-jacinto-community-college", "merrimack-college",
-  "college-of-staten-island-cuny", "lincoln-memorial-university",
-  "prairie-view-a-and-m-university", "marquette-university", "fayetteville-state-university",
-  "cuny-john-jay-college-of-criminal-justice", "university-of-wisconsin-la-crosse",
-  "university-of-puerto-rico-rio-piedras", "university-of-nevada-reno",
-  "wichita-state-university", "university-of-northern-iowa", "bradley-university",
-  "minnesota-state-university-mankato",
-]);
-
 function page(c) {
   const url = `${ORIGIN}/campus/${c.s}`;
   const place = `${c.c}, ${c.r}`;
@@ -406,22 +345,19 @@ function page(c) {
      "gvsu restaurants". A title naming only "Florida Atlantic University" has
      to rely on Google inferring that FAU means the same thing. */
   const abbr = c.a && c.a !== c.n && /^[A-Z&]{2,6}$/.test(c.a) ? c.a : null;
-  const test = CTR_TEST.has(c.s);
+  /* A title/description test ran from 11 October on 28 pages; it ended when
+     every campus page got the count-led title and the full list. */
+  const dir = directoryFor(c.s);
   const sc0 = sceneFor(`campus/${c.s}`);
   const focus = DATA_DESC.has(c.s) && sc0;
   /* The 500 pages Google shows most (data/priority-pages.json) get the focus
-     treatment too: the count in the title. The title test's pages keep their
-     test copy until it has been read. */
+     treatment too: the count in the title. */
   const pagePath = `/campus/${c.s}`;
-  const prio = !focus && !test && sc0 && isPriority(pagePath);
+  /* Every page with a list gets the count in its title, not only the 500
+     Google showed most: the page now delivers what the count promises. */
+  const prio = !focus && sc0 && (dir || isPriority(pagePath));
   const spots = spotsFor(`campus/${c.s}`);
   const baseTitle = fitTitle([
-    ...(test ? [
-      ...(abbr ? [`Restaurants & Food Near ${abbr} (${c.n}) | Savor Scout`] : []),
-      `Restaurants & Food Near ${c.n} | Savor Scout`,
-      ...(abbr ? [`Restaurants & Food Near ${abbr} — ${c.n}`] : []),
-      `Restaurants & Food Near ${c.n}`,
-    ] : []),
     ...(abbr ? [
       `Restaurants Near ${abbr} — Where to Eat Near ${c.n} | Savor Scout`,
       `Restaurants Near ${abbr} (${c.n}) | Savor Scout`,
@@ -441,9 +377,7 @@ function page(c) {
   /* Every campus page with data gets a description built from it: the count,
      the walk, what leads, the busiest street. The general line it replaces was
      the same 30 words on a thousand pages, and ran past Google's cut. */
-  const desc = test
-    ? `Where to eat near ${abbr || c.n}: tell Savor Scout your budget, craving, diet, or that ` +
-      `it has to be open late, and it picks one spot near ${place} and shows why. Free, no signup.`
+  const desc = sc0 && dir ? listDesc(c, sc0, dir)
     : sc0 ? dataDesc(c, sc0, near[0], spots ? spots.length : 0, !focus)
     :
     `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
@@ -458,10 +392,6 @@ function page(c) {
     { name: c.n, url }];
   const appLink = `/?near=${encodeURIComponent(place)}`;
 
-  /* Drawn from the setting rather than a fixed list, plus one that follows from
-     the size bracket — so a rural campus of 6,000 and an urban one of 30,000
-     suggest genuinely different searches instead of the same six links. */
-  const cravings = [...sc.cravings.slice(0, 5), sz.craving];
 
   /* Every other name the school goes by, for the facts list. The abbreviation
      already sits in the title and h1; this puts the longer forms ("Grand Valley
@@ -471,12 +401,15 @@ function page(c) {
 
   const qa = faq({ name: shortName, near: `near ${shortName}`, sc: sc0, spots,
     extra: askedQa(pagePath, { near: `near ${shortName}`, sc: sc0 }) });
-  const list = spotsLd(spots, `Places to eat near ${c.n}`);
+  const list = spotsLd(dir || spots, `Places to eat near ${c.n}`);
 
   const body = `      ${crumbHtml(trail)}
       <h1>Restaurants near ${esc(c.n)}${abbr ? ` (${esc(abbr)})` : ""}</h1>
       <p><a class="cta" href="${appLink}">Find somewhere to eat near ${esc(shortName)} &rarr;</a></p>
-${spotsHtml(spots, {
+${dir && sc0 ? directoryHtml(dir, {
+  who: shortName, n: sc0.n, r: sc0.r, from: c.at ? esc(c.at) : "the campus",
+  appLink, ctaText: `Ask Savor Scout near ${shortName}`,
+}) : spotsHtml(spots, {
   heading: `A few places to eat near ${shortName}`,
   from: "campus",
   appLink,
@@ -488,16 +421,6 @@ ${NICHE.campusLinksHtml(c)}
 ${ranksHtml("campus", c.s, shortName)}
 ${budgetHtml(sc0, shortName, appLink)}
 ${openNowHtml(shortName, appLink)}
-
-      <h2>Eating around ${esc(shortName)}</h2>
-      <p class="lede">${esc(sc.problem(shortName))}</p>
-
-      <p>
-        Savor Scout picks <strong>one</strong> restaurant near ${esc(place)} and shows you why it
-        picked it. Say what you are craving — including a budget, a dietary need, or that it has
-        to be open right now — and it reads menus and reviews for those specific things rather
-        than sorting places by overall star rating.
-      </p>
 
       <h2>The campus</h2>
       <ul>
@@ -513,34 +436,16 @@ ${otherNames.length ? `        <li><strong>Other names, current or former</stron
         that is what the public dataset gives and we would rather quote it than estimate.
       </p>
 
-      <h2>Eating near a ${esc(sz.short)} campus ${esc(sc.label)}</h2>
-      <p>${esc(sc.advice)}</p>
-${lvl.commute ? `      <p>${esc(lvl.commute(shortName))}</p>\n` : ""}      <p>${esc(sz.angle)}</p>
-${big ? `      <p>
-        The nearest city of any real size is <a href="/eat/${big.s}">${esc(big.c)}, ${esc(big.r)}</a>,
-        about ${big.miles} ${big.miles === 1 ? "mile" : "miles"} away — worth knowing for the nights
-        when the usual options near campus have run out.
-      </p>` : ""}
-      <p>
-        One thing that catches everyone out: term time and break are different towns. Hours shrink,
-        some places close entirely, and the listings almost never keep up — so a place that shows as
-        open in July may not be.
-      </p>
-
-      <h2>Common searches near ${esc(shortName)}</h2>
-      <ul>
-        ${cravings.map((k) =>
-          `<li><a href="${appLink}&craving=${encodeURIComponent(k)}">${esc(k)} near ${esc(shortName)}</a></li>`
-        ).join("\n        ")}
-      </ul>
-
       <h2>Nearby cities</h2>
-      <p>Savor Scout searches a wide radius, so these are all in range:</p>
       <ul>
         ${near.map((n) =>
           `<li><a href="/eat/${n.s}">${esc(n.c)}, ${esc(n.r)}</a> — about ${n.miles} ${n.miles === 1 ? "mile" : "miles"} away</li>`
         ).join("\n        ")}
       </ul>
+${big ? `      <p>
+        The nearest city of any real size is <a href="/eat/${big.s}">${esc(big.c)}, ${esc(big.r)}</a>,
+        about ${big.miles} ${big.miles === 1 ? "mile" : "miles"} away, for the nights the options by campus run out.
+      </p>` : ""}
 
 ${GROUP_ENABLED ? `
       <h2>Deciding as a group</h2>
@@ -568,6 +473,9 @@ ${neighboursHtml(c)}
     name: title,
     description: desc,
     url,
+    /* The day the full lists went on these pages. Change it when the page's
+       content changes, not on every build. */
+    dateModified: "2026-11-04",
     about: {
       "@type": "CollegeOrUniversity",
       name: c.n,

@@ -12,7 +12,8 @@ The first step downloads about 1.7M US food places (~180 MB) into /tmp and
 is skipped if that file is already there. Bump RELEASE to the newest folder
 under release/ when refreshing, and update the date in scripts/lib/nearby.js.
 
-Also writes scripts/data/food-scene.json (per-page food scene, per-guide
+Also writes scripts/data/campus-places.json (every place within a campus
+page's radius, closest first), scripts/data/food-scene.json (per-page food scene, per-guide
 rankings) and scripts/data/campus-cuisine.json (the campus x cuisine pages;
 batch size and the minimum-listings gate are in data/niche-config.json).
 """
@@ -704,3 +705,34 @@ print("campus x cuisine: eligible", eligible, "published", len(batch), file=sys.
 with open(os.path.join(REPO, "scripts", "data", "campus-cuisine.json"), "w") as f:
     json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "eligible": eligible,
                "pages": batch}, f, separators=(",", ":"), ensure_ascii=False)
+
+
+# ---------------------------------------------------------------------------
+# Campus directory: the places to eat within the radius a campus page counts
+# (sc["r"], usually a mile), closest first, up to DIRECTORY_MAX. Written to
+# scripts/data/campus-places.json. Someone searching "restaurants near <campus>"
+# wants the list itself, and the page's count and its list come from the same
+# places, so they agree.
+# Row: [name, label, street, town, region, zip, lat, lng, miles, guide, chain]
+# ---------------------------------------------------------------------------
+DIRECTORY_MAX = 50
+directory = {}
+for c in campuses:
+    sc = pages_scene.get("campus/" + c["s"])
+    if not sc:
+        continue
+    seen, rows = set(), []
+    for d, p in sorted(near(c["lat"], c["lng"], sc["r"]), key=lambda x: (round(x[0], 3), x[1]["n"])):
+        key = (norm(p["n"]), norm(p["st"]))
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append([p["n"], p["lab"] or "", p["st"], p["loc"], p["reg"], p["zip"], p["lat"], p["lng"],
+                     round(d, 2), p["g"] or "", 1 if p["chain"] else 0])
+        if len(rows) >= DIRECTORY_MAX:
+            break
+    directory[c["s"]] = rows
+print("campus directory", len(directory), "campuses,", sum(map(len, directory.values())), "places", file=sys.stderr)
+with open(os.path.join(REPO, "scripts", "data", "campus-places.json"), "w") as f:
+    json.dump({"source": f"Overture Maps Foundation, places release {RELEASE}", "max": DIRECTORY_MAX,
+               "pages": directory}, f, separators=(",", ":"), ensure_ascii=False)

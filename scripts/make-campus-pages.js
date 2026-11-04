@@ -388,8 +388,12 @@ function page(c) {
   const desc = sc0 && dir ? listDesc(c, dir)
     : sc0 ? dataDesc(c, sc0, near[0], spots ? spots.length : 0, !focus)
     :
-    `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
-    `what you're craving instead of handing you a list. Free, no app, no signup.`;
+    [
+      `Looking for food near ${c.n} in ${place}? Savor Scout picks one restaurant based on ` +
+      `what you're craving instead of handing you a list. Free, no app, no signup.`,
+      `Food near ${c.n} in ${place}: Savor Scout picks one restaurant for what you're craving. Free, no signup.`,
+      `Food near ${c.n}: Savor Scout picks one restaurant for what you're craving. Free, no signup.`,
+    ].find((d) => d.length <= 160) || `Food near ${c.n}, picked for what you're craving.`;
 
   const stateNode = { name: STATES[c.r] || c.r, url: `${ORIGIN}/campus/${c.r.toLowerCase()}` };
   /* Home > Campuses > State > Town > Campus. The town step only where the town

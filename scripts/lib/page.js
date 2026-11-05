@@ -186,6 +186,22 @@ const STYLE = `
   .ss-static .tbl tbody th{color:var(--ink);font-weight:600;white-space:nowrap}
   .ss-static .tbl td:last-child{color:var(--soft);padding-right:0}
   .ss-static .tbl tbody tr:last-child>*{border-bottom:0}
+  /* A ranking: one bar per school, from a single baseline, the count at its tip
+     in text colour. #e0701a is checked against the section surface (#13101c):
+     inside the dark lightness band, contrast above 3:1. */
+  .ss-static .rank-tbl{width:100%;border-collapse:collapse;margin:4px 0 16px;font-size:15.5px;line-height:1.35}
+  .ss-static .rank-tbl th,.ss-static .rank-tbl td{text-align:left;vertical-align:middle;padding:9px 10px 9px 0;border-bottom:1px solid var(--line)}
+  .ss-static .rank-tbl thead th{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--mid);font-weight:500;padding-top:0;vertical-align:bottom}
+  .ss-static .rank-tbl .rk{width:2.8em;color:var(--mid);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ss-static .rank-tbl .sch a{color:var(--ink);font-weight:600;border:0}
+  .ss-static .rank-tbl .sch a:hover{color:var(--link)}
+  .ss-static .rank-tbl .sch small{display:block;font-size:13px;font-weight:400;color:var(--mid);margin-top:2px}
+  .ss-static .rank-tbl .ct{width:48%;padding-right:0}
+  .ss-static .rank-tbl .bar{display:flex;align-items:center;gap:8px}
+  .ss-static .rank-tbl .bar i{display:block;flex:none;height:10px;min-width:2px;background:#e0701a;border-radius:0 4px 4px 0}
+  .ss-static .rank-tbl .bar b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .ss-static .rank-tbl tbody tr:last-child>*{border-bottom:0}
   .ss-static .ranks{list-style:none;padding-left:0}
   .ss-static .ranks li{margin:0 0 8px;display:grid;grid-template-columns:42px 1fr}
   .ss-static .ranks b{color:var(--link);font-variant-numeric:tabular-nums}
@@ -247,6 +263,9 @@ const STYLE = `
     .ss-static .tbl tbody th{white-space:normal;margin:0 0 2px}
     .ss-static .tbl td+td{margin-top:3px;font-size:14.5px}
     .ss-static .tbl td+td::before{content:attr(data-label) ": ";color:var(--mid)}
+    .ss-static .rank-tbl .ct{width:40%}
+    .ss-static .rank-tbl .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .ss-static .rank-tbl thead .sch-h::after{content:" · food street"}
     .ss-foot__in{grid-template-columns:1fr;gap:28px;padding:34px 16px 18px}
     .ss-foot__nav{grid-template-columns:1fr 1fr}
     .ss-foot__base{padding:16px 16px 30px}
@@ -290,6 +309,8 @@ const KICKERS = [
   [/^\/eat\/[a-z]{2}$/, "Cities by state"],
   [/^\/eat\/$/, "Where to eat"],
   [/^\/eat\//, "City guide"],
+  [/^\/rankings\/$/, "College food rankings"],
+  [/^\/rankings\//, "College food ranking"],
   [/^\/food\/$/, "Food guides"],
   [/^\/food\//, "Food guide"],
   [/^\/what-to-eat\/$/, "What to eat when…"],
@@ -300,7 +321,7 @@ const KICKERS = [
   [/^\/type\//, "Food personality"],
   [/^\/about\//, "About the data"],
 ];
-const NAV = [["/campus/", "Campuses"], ["/eat/", "Cities"], ["/food/", "Food"], ["/what-to-eat/", "What to eat"], ["/diet/", "Diets"]];
+const NAV = [["/campus/", "Campuses"], ["/rankings/", "Rankings"], ["/eat/", "Cities"], ["/food/", "Food"], ["/what-to-eat/", "What to eat"], ["/diet/", "Diets"]];
 
 const textOf = (h) => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&#39;|&rsquo;/g, "'")
   .replace(/&hellip;/g, "…").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
@@ -329,7 +350,7 @@ function footer() {
       <p>One pick, not a list. Say what you're craving and Savor Scout finds one place nearby and shows you why.</p>
     </div>
     <nav class="ss-foot__nav" aria-label="Site">
-      <div><p>Explore</p><a href="/campus/">Near campus</a><a href="/eat/">Cities</a><a href="/food/">Food guides</a></div>
+      <div><p>Explore</p><a href="/campus/">Near campus</a><a href="/rankings/">College food rankings</a><a href="/eat/">Cities</a><a href="/food/">Food guides</a></div>
       <div><p>Decide</p><a href="/what-to-eat/">What to eat when&hellip;</a><a href="/diet/">Dietary guides</a><a href="/type/">Food personalities</a></div>
       <div><p>Savor Scout</p><a href="/">Find a place to eat</a><a href="/about/data">Where our data comes from</a></div>
     </nav>

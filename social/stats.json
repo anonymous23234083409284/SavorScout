@@ -1,5 +1,5 @@
 {
- "pulled": "2026-11-04T18:25+00:00",
+ "pulled": "2026-11-05T18:25+00:00",
  "posts": [
   {
    "service": "twitter",
@@ -69,7 +69,7 @@
    "sent": "2026-10-31T19:28:02.513Z",
    "link": "https://x.com/2088807133093548033/status/2116613181829234911",
    "text": "Asian food you can walk to from Penn State, closest first:",
-   "views": 4,
+   "views": 5,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -77,9 +77,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 25,
+    "Eng. Rate": 20,
     "Reposts": 0,
-    "Impressions": 4,
+    "Impressions": 5,
     "Clicks": 0
    }
   },
@@ -100,7 +100,7 @@
     "Eng. Rate": 0,
     "Video Views": 109,
     "Shares": 0,
-    "Reach": 94,
+    "Reach": 96,
     "Watch Time (min)": 2.55,
     "Avg. Watch Time (sec)": 1.39
    }
@@ -151,8 +151,8 @@
    "sent": "2026-10-31T23:04:42.018Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7702971557542513933?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "5 Mexican spots you can walk to from USC \ud83c\udf2e All within a 16-minute walk of campus. Save thi",
-   "views": 128,
-   "avg_watch_s": 2.79,
+   "views": 129,
+   "avg_watch_s": 2.77,
    "shares": 0,
    "likes": 0,
    "comments": 0,
@@ -160,11 +160,11 @@
     "Reactions": 0,
     "Comments": 0,
     "Eng. Rate": 0,
-    "Video Views": 128,
+    "Video Views": 129,
     "Shares": 0,
     "Reach": 112,
     "Watch Time (min)": 6.03,
-    "Avg. Watch Time (sec)": 2.79
+    "Avg. Watch Time (sec)": 2.77
    }
   },
   {
@@ -173,7 +173,7 @@
    "sent": "2026-10-31T23:27:22.015Z",
    "link": "https://www.threads.com/@campuseatshq/post/DfLVdC9EcNn",
    "text": "25 pizza places within a mile of UT Austin. We mapped the walk to the closest five:",
-   "views": 13,
+   "views": 14,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -181,8 +181,8 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 7.69,
-    "Views": 13,
+    "Eng. Rate": 7.14,
+    "Views": 14,
     "Quotes": 0,
     "Reposts": 0
    }
@@ -244,7 +244,7 @@
     "Eng. Rate": 1.1,
     "Video Views": 91,
     "Shares": 0,
-    "Reach": 89,
+    "Reach": 91,
     "Watch Time (min)": 3.22,
     "Avg. Watch Time (sec)": 1.98
    }
@@ -255,7 +255,7 @@
    "sent": "2026-11-01T22:40:03.107Z",
    "link": "https://x.com/2088807133093548033/status/2117023887183564903",
    "text": "Cheap food and bad food overlap a lot less than you'd think.",
-   "views": 2,
+   "views": 3,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -263,9 +263,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 50,
+    "Eng. Rate": 33.33,
     "Reposts": 0,
-    "Impressions": 2,
+    "Impressions": 3,
     "Clicks": 0
    }
   },
@@ -317,7 +317,7 @@
    "sent": "2026-11-01T23:40:03.038Z",
    "link": "https://x.com/2088807133093548033/status/2117038987730649588",
    "text": "Food tastes like nothing when you have a cold, and it's not the kitchen's fault.",
-   "views": 4,
+   "views": 6,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -325,9 +325,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 25,
+    "Eng. Rate": 16.67,
     "Reposts": 0,
-    "Impressions": 4,
+    "Impressions": 6,
     "Clicks": 0
    }
   },
@@ -417,20 +417,20 @@
    "sent": "2026-11-02T01:56:43.061Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7703386709668547854?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Big Ten schools ranked by how much food you can walk to \ud83c\udf55 We counted every place to eat wi",
-   "views": 700,
-   "avg_watch_s": 11.47,
+   "views": 720,
+   "avg_watch_s": 11.56,
    "shares": 14,
    "likes": 5,
    "comments": 1,
    "metrics": {
     "Reactions": 5,
     "Comments": 1,
-    "Eng. Rate": 2.86,
-    "Video Views": 700,
+    "Eng. Rate": 2.78,
+    "Video Views": 720,
     "Shares": 14,
-    "Reach": 190,
-    "Watch Time (min)": 137.67,
-    "Avg. Watch Time (sec)": 11.47
+    "Reach": 548,
+    "Watch Time (min)": 142.57,
+    "Avg. Watch Time (sec)": 11.56
    }
   },
   {
@@ -470,7 +470,7 @@
     "Eng. Rate": 1.11,
     "Video Views": 90,
     "Shares": 0,
-    "Reach": 55,
+    "Reach": 86,
     "Watch Time (min)": 2.37,
     "Avg. Watch Time (sec)": 1.58
    }
@@ -521,7 +521,7 @@
    "sent": "2026-11-02T23:15:14.760Z",
    "link": "https://x.com/2088807133093548033/status/2117395133079453770",
    "text": "Eating alone at a restaurant feels awkward for one reason: you're in the wrong seat.",
-   "views": 2,
+   "views": 3,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -529,9 +529,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 50,
+    "Eng. Rate": 33.33,
     "Reposts": 0,
-    "Impressions": 2,
+    "Impressions": 3,
     "Clicks": 0
    }
   },
@@ -552,7 +552,7 @@
     "Eng. Rate": 5.35,
     "Video Views": 243,
     "Shares": 0,
-    "Reach": 80,
+    "Reach": 218,
     "Watch Time (min)": 21.38,
     "Avg. Watch Time (sec)": 5.24
    }
@@ -654,7 +654,7 @@
     "Eng. Rate": 0,
     "Video Views": 38,
     "Shares": 0,
-    "Reach": 0,
+    "Reach": 34,
     "Watch Time (min)": 1.78,
     "Avg. Watch Time (sec)": 2.82
    }
@@ -685,8 +685,8 @@
    "sent": "2026-11-03T02:48:45.467Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7703770679665102093?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "The app said open until 2am. The kitchen closed at midnight \ud83c\udf19 How to actually find food af",
-   "views": 28,
-   "avg_watch_s": 1.57,
+   "views": 29,
+   "avg_watch_s": 1.6,
    "shares": 0,
    "likes": 0,
    "comments": 0,
@@ -694,11 +694,11 @@
     "Reactions": 0,
     "Comments": 0,
     "Eng. Rate": 0,
-    "Video Views": 28,
+    "Video Views": 29,
     "Shares": 0,
-    "Reach": 0,
-    "Watch Time (min)": 0.72,
-    "Avg. Watch Time (sec)": 1.57
+    "Reach": 24,
+    "Watch Time (min)": 0.77,
+    "Avg. Watch Time (sec)": 1.6
    }
   },
   {
@@ -707,8 +707,8 @@
    "sent": "2026-11-03T17:18:45.948Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7703995341460344077?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Happy National Sandwich Day \ud83e\udd6a How many of these does your go-to sandwich shop have? Save t",
-   "views": 133,
-   "avg_watch_s": 3.26,
+   "views": 134,
+   "avg_watch_s": 3.25,
    "shares": 0,
    "likes": 0,
    "comments": 0,
@@ -716,11 +716,11 @@
     "Reactions": 0,
     "Comments": 0,
     "Eng. Rate": 0,
-    "Video Views": 133,
+    "Video Views": 134,
     "Shares": 0,
-    "Reach": 0,
-    "Watch Time (min)": 7.28,
-    "Avg. Watch Time (sec)": 3.26
+    "Reach": 116,
+    "Watch Time (min)": 7.3,
+    "Avg. Watch Time (sec)": 3.25
    }
   },
   {
@@ -729,20 +729,20 @@
    "sent": "2026-11-03T20:25:43.018Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704043550580690190?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Tonkotsu, shoyu, miso or shio? \ud83c\udf5c Here's what each ramen broth actually is. Save this for y",
-   "views": 153,
-   "avg_watch_s": 3.07,
+   "views": 158,
+   "avg_watch_s": 3.01,
    "shares": 0,
    "likes": 4,
    "comments": 0,
    "metrics": {
     "Reactions": 4,
     "Comments": 0,
-    "Eng. Rate": 2.61,
-    "Video Views": 153,
+    "Eng. Rate": 2.53,
+    "Video Views": 158,
     "Shares": 0,
-    "Reach": 0,
-    "Watch Time (min)": 7.97,
-    "Avg. Watch Time (sec)": 3.07
+    "Reach": 104,
+    "Watch Time (min)": 8.13,
+    "Avg. Watch Time (sec)": 3.01
    }
   },
   {
@@ -791,7 +791,7 @@
    "sent": "2026-11-03T22:37:02.826Z",
    "link": "https://x.com/2088807133093548033/status/2117747908107731403",
    "text": "Across the 1,031 U.S. college campuses we mapped, the typical one has 12 places to eat wit",
-   "views": 1,
+   "views": 3,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -799,9 +799,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 100,
+    "Eng. Rate": 33.33,
     "Reposts": 0,
-    "Impressions": 1,
+    "Impressions": 3,
     "Clicks": 0
    }
   },
@@ -811,7 +811,7 @@
    "sent": "2026-11-03T23:07:21.718Z",
    "link": "https://www.threads.com/@campuseatshq/post/DfTBjQMif3-",
    "text": "Across the 1,031 U.S. college campuses we mapped, the typical one has 12 places to eat wit",
-   "views": 4,
+   "views": 6,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -819,8 +819,8 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 25,
-    "Views": 4,
+    "Eng. Rate": 16.67,
+    "Views": 6,
     "Quotes": 0,
     "Reposts": 0
    }
@@ -831,20 +831,20 @@
    "sent": "2026-11-03T23:16:42.450Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704087892842286349?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Why does picking a restaurant for a big group take forever? Four fixes, plus the one-veto ",
-   "views": 103,
-   "avg_watch_s": 2.22,
+   "views": 106,
+   "avg_watch_s": 2.2,
    "shares": 0,
    "likes": 1,
    "comments": 0,
    "metrics": {
     "Reactions": 1,
     "Comments": 0,
-    "Eng. Rate": 0.97,
-    "Video Views": 103,
+    "Eng. Rate": 0.94,
+    "Video Views": 106,
     "Shares": 0,
-    "Reach": 0,
-    "Watch Time (min)": 3.9,
-    "Avg. Watch Time (sec)": 2.22
+    "Reach": 50,
+    "Watch Time (min)": 4,
+    "Avg. Watch Time (sec)": 2.2
    }
   },
   {
@@ -893,7 +893,7 @@
    "sent": "2026-11-04T00:38:04.005Z",
    "link": "https://x.com/2088807133093548033/status/2117778362890350925",
    "text": "Not sure what to order at a ramen shop? Start with the broth. There are four main kinds:",
-   "views": 2,
+   "views": 3,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -901,9 +901,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 50,
+    "Eng. Rate": 33.33,
     "Reposts": 0,
-    "Impressions": 2,
+    "Impressions": 3,
     "Clicks": 0
    }
   },
@@ -933,20 +933,20 @@
    "sent": "2026-11-04T02:24:43.526Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7704136080890629389",
    "text": "How many places to eat are within a 10-minute walk of your campus? \ud83c\udfd9\ufe0f The top six are all ",
-   "views": 315,
-   "avg_watch_s": 7.77,
+   "views": 404,
+   "avg_watch_s": 7.46,
    "shares": 0,
-   "likes": 20,
+   "likes": 24,
    "comments": 1,
    "metrics": {
-    "Reactions": 20,
+    "Reactions": 24,
     "Comments": 1,
-    "Eng. Rate": 6.67,
-    "Video Views": 315,
+    "Eng. Rate": 6.19,
+    "Video Views": 404,
     "Shares": 0,
     "Reach": 0,
-    "Watch Time (min)": 41.58,
-    "Avg. Watch Time (sec)": 7.77
+    "Watch Time (min)": 51.35,
+    "Avg. Watch Time (sec)": 7.46
    }
   },
   {
@@ -955,6 +955,254 @@
    "sent": "2026-11-04T17:34:29.765Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7704368057279466766",
    "text": "Columbia is in New York City and it's still not No. 1 \ud83d\uddfd Which Ivy has the most restaurants",
+   "views": 2627,
+   "avg_watch_s": 9.14,
+   "shares": 17,
+   "likes": 85,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 85,
+    "Comments": 0,
+    "Eng. Rate": 3.88,
+    "Video Views": 2627,
+    "Shares": 17,
+    "Reach": 0,
+    "Watch Time (min)": 406.62,
+    "Avg. Watch Time (sec)": 9.14
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "boba-signs",
+   "sent": "2026-11-04T20:18:42.805Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7704412911715847437",
+   "text": "Is your boba actually tea, or just sugar? \ud83e\uddcb 4 signs a boba shop brews it right. Send this ",
+   "views": 89,
+   "avg_watch_s": 3.88,
+   "shares": 0,
+   "likes": 1,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 1,
+    "Comments": 0,
+    "Eng. Rate": 1.12,
+    "Video Views": 89,
+    "Shares": 0,
+    "Reach": 0,
+    "Watch Time (min)": 5.73,
+    "Avg. Watch Time (sec)": 3.88
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-ivy",
+   "sent": "2026-11-04T21:44:02.482Z",
+   "link": "https://x.com/2088807133093548033/status/2118096957650461060",
+   "text": "Columbia is in New York City, and it's still not #1.",
+   "views": 0,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 0,
+    "Reposts": 0,
+    "Impressions": 0,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-ivy",
+   "sent": "2026-11-04T22:13:18.831Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfVgKlaoKZa",
+   "text": "Columbia is in New York City, and it's still not the Ivy with the most restaurants within ",
+   "views": 302,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 1,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 1,
+    "Comments": 1,
+    "Eng. Rate": 0.66,
+    "Views": 302,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-food-streets",
+   "sent": "2026-11-04T22:38:02.653Z",
+   "link": "https://x.com/2088807133093548033/status/2118110547153395882",
+   "text": "At UNC Chapel Hill, 70% of the places to eat within a mile of campus are on one street: Fr",
+   "views": 3,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 33.33,
+    "Reposts": 0,
+    "Impressions": 3,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-food-streets",
+   "sent": "2026-11-04T23:07:21.607Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfVmWURnQsu",
+   "text": "At UNC Chapel Hill, 70% of the places to eat within a mile of campus are on one street: Fr",
+   "views": 2,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 50,
+    "Views": 2,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "sec-walkable",
+   "sent": "2026-11-04T23:24:42.825Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7704461066117336333",
+   "text": "Which SEC school can walk to the most restaurants? \ud83c\udfc8 We counted every place to eat within ",
+   "views": 123,
+   "avg_watch_s": 4.94,
+   "shares": 0,
+   "likes": 0,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 0,
+    "Eng. Rate": 0,
+    "Video Views": 123,
+    "Shares": 0,
+    "Reach": 0,
+    "Watch Time (min)": 10.28,
+    "Avg. Watch Time (sec)": 4.94
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-sec",
+   "sent": "2026-11-04T23:43:02.477Z",
+   "link": "https://x.com/2088807133093548033/status/2118126904196698444",
+   "text": "Which SEC school has the most restaurants within a 10-minute walk of campus?",
+   "views": 2,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 50,
+    "Reposts": 0,
+    "Impressions": 2,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-sec",
+   "sent": "2026-11-05T00:12:18.919Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfVtyNyjTMF",
+   "text": "Which SEC school can walk to the most food? We counted every place to eat within a 10-minu",
+   "views": 9,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 11.11,
+    "Views": 9,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-dumplings",
+   "sent": "2026-11-05T00:36:03.499Z",
+   "link": "https://x.com/2088807133093548033/status/2118140245338210533",
+   "text": "How to tell whether a dumpling place makes its own dumplings, before you order:",
+   "views": 0,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 0,
+    "Reposts": 0,
+    "Impressions": 0,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-boba",
+   "sent": "2026-11-05T01:06:21.727Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfVz9t_kedu",
+   "text": "A lot of boba is just sugar with pearls in it. Here's how to find a shop that actually mak",
+   "views": 0,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 0,
+    "Views": 0,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "food-streets",
+   "sent": "2026-11-05T02:17:43.083Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7704505376250678541",
+   "text": "What's the food street at your school? \ud83d\udccd At UNC, 70% of the places to eat within a mile of",
+   "views": 89,
+   "avg_watch_s": 4.47,
+   "shares": 0,
+   "likes": 0,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 0,
+    "Eng. Rate": 0,
+    "Video Views": 89,
+    "Shares": 0,
+    "Reach": 0,
+    "Watch Time (min)": 6.77,
+    "Avg. Watch Time (sec)": 4.47
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "sushi-tell",
+   "sent": "2026-11-05T17:18:42.757Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7704737857428032782",
+   "text": "Can you tell good sushi from bad before you order? \ud83c\udf63 Start with the rice. Save this for yo",
    "views": 0,
    "avg_watch_s": 0,
    "shares": 0,

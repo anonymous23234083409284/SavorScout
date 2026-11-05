@@ -1,0 +1,441 @@
+<title>Campus Paper Pitches</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: one column, like an assignment desk. Tally and filters on top, then
+   one card per newspaper in the order to send them. Blue is the editor's pencil. */
+:root{
+  --paper:#f6f7f9; --card:#ffffff; --ink:#14161b; --muted:#5a6070; --rule:#dde1e8; --soft:#eef1f6;
+  --pencil:#2152c4; --pencil-ink:#ffffff; --wash:#e8eefc;
+  --sent:#2152c4; --replied:#975a00; --linked:#17784a; --skip:#737987; --due:#b3261e;
+  --display:"Archivo Narrow","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --letter:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1115; --card:#171a20; --ink:#e7e9ee; --muted:#a0a6b3; --rule:#2a2f38; --soft:#1e222a;
+    --pencil:#89a9ff; --pencil-ink:#0b1020; --wash:#1b2439;
+    --sent:#89a9ff; --replied:#e5a648; --linked:#4fc386; --skip:#8c92a0; --due:#ff8b80; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1115; --card:#171a20; --ink:#e7e9ee; --muted:#a0a6b3; --rule:#2a2f38; --soft:#1e222a;
+  --pencil:#89a9ff; --pencil-ink:#0b1020; --wash:#1b2439;
+  --sent:#89a9ff; --replied:#e5a648; --linked:#4fc386; --skip:#8c92a0; --due:#ff8b80; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 var(--body)}
+.wrap{max-width:880px;margin:0 auto;padding-block:28px 72px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--pencil)}
+:focus-visible{outline:2px solid var(--pencil);outline-offset:2px}
+h1,h2,h3{text-wrap:balance}
+.eyebrow{font:600 12px/1.2 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+h1{font:700 clamp(34px,6vw,48px)/1 var(--display);letter-spacing:-.01em;margin:0 0 10px}
+.sub{max-width:62ch;color:var(--muted);margin:0 0 18px}
+.tally{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 22px;padding:12px 0;border-block:1px solid var(--rule);
+  font:500 14px/1.3 var(--mono);font-variant-numeric:tabular-nums}
+.tally b{font-weight:500;color:var(--ink)}
+.tally span{color:var(--muted)}
+.tally .due b{color:var(--due)}
+
+.prep{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:16px 18px;margin:0 0 22px}
+.prep h2{font:600 18px/1.2 var(--display);letter-spacing:.02em;margin:0 0 10px}
+.prep ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.prep li{max-width:70ch}
+.you{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 0}
+input[type=text],input[type=search]{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+  border-radius:8px;padding:8px 10px;min-width:0}
+.you input{width:min(260px,100%)}
+
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 0;margin:0 0 6px;border-bottom:1px solid var(--rule)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{font:500 13.5px/1 var(--body);color:var(--muted);background:transparent;border:1px solid var(--rule);
+  border-radius:999px;padding:7px 11px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.seg .n{font:500 12px var(--mono);margin-left:5px;opacity:.75}
+.controls input[type=search]{flex:1 1 200px}
+.dbnote{margin:8px 0 0;font-size:13.5px;color:var(--muted)}
+
+.tier{margin:26px 0 0}
+.tier > header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:0 0 10px}
+.tier h2{font:700 22px/1.15 var(--display);margin:0}
+.tier h2 .num{font:500 13px var(--mono);color:var(--muted);margin-right:6px;vertical-align:2px}
+.tier header p{margin:0;color:var(--muted);font-size:14px}
+.cards{display:grid;gap:10px}
+
+.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.card[data-state="sent"]{border-left:4px solid var(--sent)}
+.card[data-state="replied"]{border-left:4px solid var(--replied)}
+.card[data-state="linked"]{border-left:4px solid var(--linked)}
+.card[data-state="skip"]{opacity:.62}
+.card .top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 12px}
+.card h3{font:700 21px/1.15 var(--display);margin:0}
+.card h3 .paper{font:500 15px var(--body);color:var(--muted);margin-left:6px}
+.pill{font:600 12px/1 var(--body);letter-spacing:.02em;padding:5px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill--sent{color:var(--sent)} .pill--replied{color:var(--replied)} .pill--linked{color:var(--linked)} .pill--skip{color:var(--skip)} .pill--due{color:var(--due)}
+.ranks{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.ranks li{font:500 12.5px/1 var(--mono);font-variant-numeric:tabular-nums;background:var(--soft);border-radius:6px;padding:6px 8px}
+.fields{display:grid;gap:6px;margin:0}
+.fields > div{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;align-items:baseline}
+.fields dt{font:600 11.5px/1.6 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.fields dd{margin:0;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.addr{font:500 14px var(--mono);word-break:break-all;user-select:all}
+.subj{font-weight:600}
+.flag{font:600 11.5px/1 var(--body);color:var(--replied);border:1px dashed currentColor;border-radius:999px;padding:4px 7px}
+.how{flex-basis:100%;font-size:13px;color:var(--muted)}
+.mini{font:500 12.5px/1 var(--body);color:var(--pencil);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:5px 8px;cursor:pointer}
+details{border-top:1px solid var(--rule);padding-top:8px}
+summary{cursor:pointer;font-weight:500;color:var(--muted);font-size:14px}
+.letter{font:16px/1.6 var(--letter);white-space:pre-wrap;word-break:break-word;margin:10px 0 0;padding:14px 16px;background:var(--paper);
+  border-radius:8px;max-width:68ch;overflow-x:auto}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:600 14px/1 var(--body);border-radius:8px;padding:10px 13px;border:1px solid var(--rule);background:var(--card);color:var(--ink);
+  cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn--primary{background:var(--pencil);border-color:var(--pencil);color:var(--pencil-ink)}
+.status{display:inline-flex;flex-wrap:wrap;gap:4px;margin-left:auto}
+.status button{font:500 13px/1 var(--body);color:var(--muted);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:7px 11px;cursor:pointer}
+.status button[aria-pressed="true"][data-set="sent"]{background:var(--sent);border-color:var(--sent);color:var(--card)}
+.status button[aria-pressed="true"][data-set="replied"]{background:var(--replied);border-color:var(--replied);color:var(--card)}
+.status button[aria-pressed="true"][data-set="linked"]{background:var(--linked);border-color:var(--linked);color:var(--card)}
+.status button[aria-pressed="true"][data-set="skip"]{background:var(--skip);border-color:var(--skip);color:var(--card)}
+.status button:disabled,.note input:disabled{cursor:not-allowed;opacity:.5}
+.follow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;background:var(--wash);border-radius:8px;padding:9px 11px}
+.follow strong{color:var(--due)}
+.note{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.note input{flex:1;font-size:13.5px;padding:6px 9px}
+.empty{color:var(--muted);padding:18px 0}
+@media (max-width:560px){
+  .fields > div{grid-template-columns:1fr;gap:2px}
+  .status{margin-left:0}
+  .card{padding:13px}
+}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .2s,opacity .2s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Savor Scout · press outreach</p>
+    <h1>Campus Paper Pitches</h1>
+    <p class="sub">One email for every student newspaper in Savor Scout's college food rankings, plus local news in the towns that came out on top. Work down the list, 15 to 30 a day.</p>
+    <div class="tally" id="tally" aria-live="polite"></div>
+  </header>
+
+  <section class="prep" aria-labelledby="prep-h">
+    <h2 id="prep-h">Before you send</h2>
+    <ol>
+      <li>Open one ranking, like <a href="https://www.savorscout.net/rankings/big-ten" target="_blank" rel="noopener">savorscout.net/rankings/big-ten</a>, to check the pages are live. Every email links to them.</li>
+      <li>
+        Add your name for the sign-off:
+        <span class="you"><input type="text" id="you" autocomplete="name" placeholder="Your name"> <span id="you-saved" class="how" hidden>Saved on this device</span></span>
+      </li>
+      <li>Send each email by itself, from your own address. No BCC and no attachments.</li>
+      <li>Mark it Sent here. If there's no reply after five days, send the follow-up once, then stop.</li>
+      <li>If a paper runs the story, ask them to link the ranking page. That link is what helps the site rank.</li>
+    </ol>
+  </section>
+
+  <div class="controls">
+    <div class="seg" id="filters" role="group" aria-label="Show"></div>
+    <input type="search" id="q" placeholder="Search a school or paper" aria-label="Search a school or paper">
+  </div>
+  <p class="dbnote" id="dbnote" hidden></p>
+
+  <main id="list"></main>
+</div>
+
+<script id="pitch-data" type="application/json">/*PITCHES*/</script>
+<script>
+(function () {
+  "use strict";
+  var P = JSON.parse(document.getElementById("pitch-data").textContent);
+  var BY = {}; P.forEach(function (p) { BY[p.slug] = p; });
+  var S = {};            // saved status per slug, from the store
+  var db = null;         // the store, once it answers
+  var canSave = false;
+  var filter = "all", query = "";
+  var TIERS = [
+    [1, "#1 schools", "The clearest story. Send these first."],
+    [2, "Last place", "Students argue about these. Send next."],
+    [3, "Top five", "A good number for the school paper to report."],
+    [4, "Everyone else", "Every school in a ranking has a story."],
+    [5, "Local news in the #1 towns", "No addresses found yet. Use the tips or newsroom page on each site."]
+  ];
+  var FILTERS = [["all", "All"], ["todo", "To send"], ["due", "Follow up"], ["sent", "Sent"], ["replied", "Replied"], ["linked", "Linked"], ["skip", "Skipped"]];
+  var DUE_DAYS = 5;
+
+  function el(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === "text") e.textContent = attrs[k];
+      else if (k === "class") e.className = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function you() { return (document.getElementById("you").value || "").trim(); }
+  function sign(t) { return t.replace("{name}", you() || "[Your name]"); }
+  function today() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function daysSince(iso) { return Math.floor((Date.parse(today()) - Date.parse(iso)) / 864e5); }
+  function short(iso) { var d = new Date(iso + "T12:00:00"); return d.toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
+  function stateOf(slug) { var s = S[slug]; return s && s.state ? s.state : "todo"; }
+  function isDue(slug) { var s = S[slug]; return !!(s && s.state === "sent" && s.sentAt && daysSince(s.sentAt) >= DUE_DAYS); }
+  function groupLabel(r) {
+    if (r.s === "university-of-california") return "UC campuses";
+    if (r.s === "texas" || r.s === "florida" || r.s === "pennsylvania") return "big " + r.group + " universities";
+    return r.group;
+  }
+  function followText(p) {
+    return "Hi again,\n\nFollowing up on my note last week about Savor Scout's college food ranking. " + p.lead +
+      "\n\nThe full ranking is here: " + p.link + "\n\nI'm happy to send the numbers or answer questions about the method.\n\nThanks,\n{name}\nSavor Scout";
+  }
+  function gmail(to, subject, body) {
+    return "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(to || "") +
+      "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(sign(body));
+  }
+  function copy(text, btn, selectEl) {
+    var label = btn.textContent;
+    var done = function (msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = label; }, 1600); };
+    var p;
+    try { p = navigator.clipboard.writeText(text); } catch (e) { p = Promise.reject(e); }
+    p.then(function () { done("Copied"); }, function () {
+      if (selectEl) {
+        var d = selectEl.closest("details"); if (d) d.open = true;
+        var r = document.createRange(); r.selectNodeContents(selectEl);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      }
+      done("Selected. Press Ctrl+C or ⌘C");
+    });
+  }
+
+  /* ---- cards: built once, updated in place ---- */
+  var CARD = {};
+  function card(p) {
+    var ranks = el("ul", { class: "ranks" }, p.rankings.map(function (r) {
+      return el("li", { text: "#" + (r.tied ? "T-" : "") + r.rank + " of " + r.n + " · " + groupLabel(r) + " · " + r.w.toLocaleString("en-US") });
+    }));
+    var toDd = el("dd");
+    if (p.email) {
+      var addr = el("span", { class: "addr", text: p.email });
+      var cb = el("button", { class: "mini", type: "button", text: "Copy" });
+      cb.addEventListener("click", function () { copy(p.email, cb, addr); });
+      toDd.appendChild(addr); toDd.appendChild(cb);
+      if (p.unconfirmed) toDd.appendChild(el("span", { class: "flag", text: "Check address", title: p.how }));
+      if (p.unconfirmed) toDd.appendChild(el("span", { class: "how", text: p.how }));
+    } else {
+      toDd.appendChild(el("span", { text: "No address yet." }));
+      toDd.appendChild(el("a", { href: p.find, target: "_blank", rel: "noopener", text: "Find it on " + p.site + " ↗" }));
+      toDd.appendChild(el("span", { class: "how", text: p.how }));
+    }
+    var subj = el("span", { class: "subj", text: p.subject });
+    var sb = el("button", { class: "mini", type: "button", text: "Copy" });
+    sb.addEventListener("click", function () { copy(p.subject, sb, subj); });
+    var fields = el("dl", { class: "fields" }, [
+      el("div", null, [el("dt", { text: "To" }), toDd]),
+      el("div", null, [el("dt", { text: "Subject" }), el("dd", null, [subj, sb])])
+    ]);
+    var letter = el("pre", { class: "letter" });
+    var details = el("details", null, [el("summary", { text: "Read the email" }), letter]);
+    var compose = el("a", { class: "btn btn--primary", target: "_blank", rel: "noopener", text: "Compose in Gmail ↗" });
+    var copyBody = el("button", { class: "btn", type: "button", text: "Copy email" });
+    copyBody.addEventListener("click", function () { copy(sign(p.body), copyBody, letter); });
+    var status = el("span", { class: "status", role: "group", "aria-label": "Status for " + p.paper });
+    [["sent", "Sent"], ["replied", "Replied"], ["linked", "Linked"], ["skip", "Skip"]].forEach(function (b) {
+      var btn = el("button", { type: "button", "data-set": b[0], "aria-pressed": "false", text: b[1] });
+      btn.addEventListener("click", function () { setState(p.slug, b[0]); });
+      status.appendChild(btn);
+    });
+    var actions = el("div", { class: "actions" }, [compose, copyBody, status]);
+    var fCopy = el("button", { class: "mini", type: "button", text: "Copy follow-up" });
+    var fLetter = el("pre", { class: "letter" });
+    fCopy.addEventListener("click", function () { copy(sign(followText(p)), fCopy, fLetter); });
+    var fCompose = el("a", { class: "mini", target: "_blank", rel: "noopener", text: "Compose follow-up ↗" });
+    var follow = el("div", { class: "follow", hidden: "" }, [el("strong", { text: "Follow-up due." }), el("span", { text: "Five days with no reply." }), fCopy, fCompose]);
+    var noteIn = el("input", { type: "text", id: "note-" + p.slug, placeholder: "Who replied, what they said", "aria-label": "Note for " + p.paper });
+    noteIn.addEventListener("change", function () { saveNote(p.slug, noteIn.value.trim()); });
+    var note = el("label", { class: "note" }, [el("span", { text: "Note" }), noteIn]);
+    var pill = el("span", { class: "pill", hidden: "" });
+    var head = el("div", { class: "top" }, [el("h3", null, [p.school, el("span", { class: "paper", text: p.paper })]), pill]);
+    var c = el("article", { class: "card", "data-state": "todo", id: "c-" + p.slug }, [head, ranks, fields, details, actions, follow, note]);
+    CARD[p.slug] = { c: c, p: p, pill: pill, status: status, follow: follow, fCompose: fCompose, fLetter: fLetter, letter: letter, compose: compose, note: noteIn };
+    fillText(p.slug);
+    return c;
+  }
+  function fillText(slug) {
+    var k = CARD[slug], p = k.p;
+    k.letter.textContent = sign(p.body);
+    k.compose.href = gmail(p.email, p.subject, p.body);
+    k.fLetter.textContent = sign(followText(p));
+    k.fCompose.href = gmail(p.email, "Re: " + p.subject, followText(p));
+  }
+  function paint(slug) {
+    var k = CARD[slug], st = stateOf(slug), s = S[slug] || {};
+    k.c.setAttribute("data-state", st);
+    Array.prototype.forEach.call(k.status.children, function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-set") === st));
+      b.disabled = !canSave;
+    });
+    var due = isDue(slug);
+    k.follow.hidden = !due;
+    if (st === "todo") { k.pill.hidden = true; }
+    else {
+      k.pill.hidden = false;
+      k.pill.className = "pill pill--" + (due ? "due" : st);
+      var when = s.sentAt ? " " + short(s.sentAt) : "";
+      k.pill.textContent = due ? "Follow up · sent" + when : st === "sent" ? "Sent" + when : st === "replied" ? "Replied" : st === "linked" ? "Linked" : "Skipped";
+    }
+    if (document.activeElement !== k.note) k.note.value = s.note || "";
+    k.note.disabled = !canSave;
+  }
+  function matches(slug) {
+    var p = BY[slug], st = stateOf(slug);
+    if (query && (p.school + " " + p.paper + " " + p.site).toLowerCase().indexOf(query) < 0) return false;
+    if (filter === "all") return true;
+    if (filter === "due") return isDue(slug);
+    return st === filter;
+  }
+  function applyFilter() {
+    var shown = 0;
+    TIERS.forEach(function (t) {
+      var sec = document.getElementById("tier-" + t[0]); var n = 0;
+      P.forEach(function (p) { if (p.tier === t[0]) { var ok = matches(p.slug); CARD[p.slug].c.hidden = !ok; if (ok) n++; } });
+      sec.hidden = n === 0; shown += n;
+    });
+    document.getElementById("none").hidden = shown > 0;
+  }
+  function tally() {
+    var c = { todo: 0, sent: 0, replied: 0, linked: 0, skip: 0, due: 0, today: 0 };
+    P.forEach(function (p) {
+      var st = stateOf(p.slug); c[st]++;
+      if (isDue(p.slug)) c.due++;
+      var s = S[p.slug]; if (s && s.sentAt === today()) c.today++;
+    });
+    var t = document.getElementById("tally"); t.textContent = "";
+    [["To send", c.todo], ["Sent today", c.today], ["Sent so far", c.sent + c.replied + c.linked], ["Follow up", c.due, c.due ? "due" : ""], ["Replied", c.replied], ["Linked", c.linked]].forEach(function (x) {
+      t.appendChild(el("div", x[2] ? { class: x[2] } : null, [el("b", { text: String(x[1]) }), " ", el("span", { text: x[0] })]));
+    });
+    var f = document.getElementById("filters");
+    Array.prototype.forEach.call(f.children, function (b) {
+      var k = b.getAttribute("data-f"), n = k === "all" ? P.length : k === "sent" ? c.sent : c[k];
+      b.querySelector(".n").textContent = String(n);
+    });
+  }
+  function refresh() { P.forEach(function (p) { paint(p.slug); }); tally(); applyFilter(); }
+
+  /* ---- saving ---- */
+  var busy = {};
+  function write(slug, body) {
+    if (!db || !canSave || busy[slug]) return;
+    busy[slug] = true;
+    var ref = db.doc("pitches/" + slug);
+    var done = function () { busy[slug] = false; };
+    var job = body ? ref.set(body) : ref.delete();
+    job.then(done, function (e) {
+      done();
+      var n = document.getElementById("dbnote");
+      n.hidden = false;
+      n.textContent = e && e.code === "invalid_argument" ? "This view can't save changes. Your progress is read-only here." : "That change didn't save. Try again in a moment.";
+    });
+  }
+  function setState(slug, st) {
+    var cur = S[slug] || {};
+    var next = cur.state === st ? null : st;
+    var body = null;
+    if (next || cur.note) {
+      body = { state: next, updatedAt: today() };
+      if (next && next !== "skip") body.sentAt = cur.sentAt || today();
+      if (cur.note) body.note = cur.note;
+    }
+    S[slug] = body || undefined;   // show it at once; the store confirms
+    if (!body) delete S[slug];
+    paint(slug); tally(); applyFilter();
+    write(slug, body);
+  }
+  function saveNote(slug, text) {
+    var cur = S[slug] || {};
+    if ((cur.note || "") === text) return;
+    var body = { state: cur.state || null, updatedAt: today() };
+    if (cur.sentAt) body.sentAt = cur.sentAt;
+    if (text) body.note = text;
+    if (!body.state && !text) body = null;
+    if (body) S[slug] = body; else delete S[slug];
+    paint(slug); tally();
+    write(slug, body);
+  }
+
+  /* ---- build ---- */
+  var f = document.getElementById("filters");
+  FILTERS.forEach(function (x) {
+    var b = el("button", { type: "button", "data-f": x[0], "aria-pressed": String(x[0] === filter) }, [x[1], el("span", { class: "n" })]);
+    b.addEventListener("click", function () {
+      filter = x[0];
+      Array.prototype.forEach.call(f.children, function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+      applyFilter();
+    });
+    f.appendChild(b);
+  });
+  document.getElementById("q").addEventListener("input", function (e) { query = e.target.value.trim().toLowerCase(); applyFilter(); });
+  var youIn = document.getElementById("you");
+  youIn.value = store("pitch-name") || "";
+  var nameTimer;
+  youIn.addEventListener("input", function () {
+    clearTimeout(nameTimer);
+    nameTimer = setTimeout(function () {
+      store("pitch-name", you());
+      document.getElementById("you-saved").hidden = !you();
+      P.forEach(function (p) { fillText(p.slug); });
+    }, 250);
+  });
+  document.getElementById("you-saved").hidden = !you();
+
+  var list = document.getElementById("list");
+  TIERS.forEach(function (t) {
+    var cards = el("div", { class: "cards" });
+    P.filter(function (p) { return p.tier === t[0]; }).forEach(function (p) { cards.appendChild(card(p)); });
+    var n = P.filter(function (p) { return p.tier === t[0]; }).length;
+    list.appendChild(el("section", { class: "tier", id: "tier-" + t[0], "aria-labelledby": "h-" + t[0] }, [
+      el("header", null, [el("h2", { id: "h-" + t[0] }, [el("span", { class: "num", text: t[0] + "/5" }), t[1] + " (" + n + ")"]), el("p", { text: t[2] })]),
+      cards
+    ]));
+  });
+  list.appendChild(el("p", { class: "empty", id: "none", hidden: "", text: "Nothing matches. Try another filter or search." }));
+  refresh();
+
+  /* ---- the store: progress kept across devices ---- */
+  var note = document.getElementById("dbnote");
+  var slow = setTimeout(function () {
+    note.hidden = false;
+    note.textContent = "Saved progress hasn't loaded yet. Everything shows as To send until it does.";
+  }, 10000);
+  (window.claude && window.claude.use ? window.claude.use("db") : Promise.resolve(null)).then(function (d) {
+    if (!d) {
+      clearTimeout(slow);
+      note.hidden = false;
+      note.textContent = "Progress can't be saved in this view. Open the page on claude.ai, signed in, to mark emails sent.";
+      return;
+    }
+    db = d; canSave = true;
+    db.collection("pitches").onSnapshot(function (snap) {
+      if (!snap.metadata.fromCache) { clearTimeout(slow); if (/hasn't loaded/.test(note.textContent)) note.hidden = true; }
+      var next = {};
+      snap.docs.forEach(function (doc) { var v = doc.data(); if (v && BY[doc.id]) next[doc.id] = v; });
+      S = next;
+      refresh();
+    }, function (e) {
+      clearTimeout(slow);
+      canSave = e && e.code !== "revoked" ? canSave : false;
+      note.hidden = false;
+      note.textContent = "Saved progress couldn't be loaded. Reload the page to try again.";
+      refresh();
+    });
+  }, function () { clearTimeout(slow); });
+})();
+</script>

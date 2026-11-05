@@ -176,6 +176,16 @@ const STYLE = `
   .ss-static .faq dt{font-weight:600;color:var(--ink);margin:0;padding:14px 0 4px;border-top:1px solid var(--line)}
   .ss-static .faq dt:first-child{border-top:0;padding-top:0}
   .ss-static .faq dd{margin:0 0 12px;color:var(--text)}
+  .ss-static .faq h3{margin:0;padding:14px 0 6px;border-top:1px solid var(--line);font-size:17px;line-height:1.4}
+  .ss-static .faq h3:first-child{border-top:0;padding-top:0}
+  .ss-static .faq h3+p{margin:0 0 12px}
+  .ss-static .tbl{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:15.5px;line-height:1.5}
+  .ss-static .tbl th,.ss-static .tbl td{text-align:left;vertical-align:top;padding:10px 14px 10px 0;border-bottom:1px solid var(--line)}
+  .ss-static .tbl thead th{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--mid);font-weight:500;padding-top:0}
+  .ss-static .tbl tbody th{color:var(--ink);font-weight:600;white-space:nowrap}
+  .ss-static .tbl td:last-child{color:var(--soft);padding-right:0}
+  .ss-static .tbl tbody tr:last-child>*{border-bottom:0}
   .ss-static .ranks{list-style:none;padding-left:0}
   .ss-static .ranks li{margin:0 0 8px;display:grid;grid-template-columns:42px 1fr}
   .ss-static .ranks b{color:var(--link);font-variant-numeric:tabular-nums}
@@ -229,6 +239,14 @@ const STYLE = `
     .ss-static .stats{gap:8px}
     .ss-static .stat{padding:12px 10px 10px}
     .ss-static .cols{column-gap:16px;font-size:15px}
+    .ss-static .tbl thead{display:none}
+    .ss-static .tbl,.ss-static .tbl tbody,.ss-static .tbl tr,.ss-static .tbl th,.ss-static .tbl td{display:block}
+    .ss-static .tbl tr{padding:11px 0;border-bottom:1px solid var(--line)}
+    .ss-static .tbl tbody tr:last-child{border-bottom:0}
+    .ss-static .tbl th,.ss-static .tbl td{border:0;padding:0}
+    .ss-static .tbl tbody th{white-space:normal;margin:0 0 2px}
+    .ss-static .tbl td+td{margin-top:3px;font-size:14.5px}
+    .ss-static .tbl td+td::before{content:attr(data-label) ": ";color:var(--mid)}
     .ss-foot__in{grid-template-columns:1fr;gap:28px;padding:34px 16px 18px}
     .ss-foot__nav{grid-template-columns:1fr 1fr}
     .ss-foot__base{padding:16px 16px 30px}

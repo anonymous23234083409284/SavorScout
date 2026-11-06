@@ -360,8 +360,12 @@
      "beats": 6,
      "style": "end",
      "text": "Did we rank your school right? *Comment below.*",
-     "reuse": 1,
-     "sub": "Universities with 20,000+ students. Who should we rank next?"
+     "sub": "Universities with 20,000+ students. Who should we rank next?",
+     "q": [
+      "college students walking campus",
+      "university campus autumn",
+      "students on campus quad"
+     ]
     }
    ]
   }

@@ -1,0 +1,271 @@
+{
+ "tiktok": [
+  {
+   "video": "csu-walkable",
+   "at": "2026-11-07T12:21:00-05:00",
+   "text": "San Diego State is 4th 👀 Which big Cal State campus has the most restaurants within a 10-minute walk? Send this to your friend at another Cal State.\n\n#calstate #sjsu #sdsu #collegelife #collegefood"
+  },
+  {
+   "video": "tacos-tell",
+   "at": "2026-11-07T15:19:00-05:00",
+   "text": "Can you tell good tacos from bad before you order? 🌮 Start with the tortilla. Save this for your next taco run.\n\n#tacos #mexicanfood #foodtips #alpastor #taqueria"
+  },
+  {
+   "video": "virginia-walkable",
+   "at": "2026-11-07T18:22:00-05:00",
+   "text": "UVA is 3rd 👀 Which big Virginia university has the most restaurants within a 10-minute walk? Send this to your friend at another Virginia school.\n\n#vcu #virginiatech #uva #collegelife #collegefood"
+  },
+  {
+   "video": "nc-walkable",
+   "at": "2026-11-07T21:18:00-05:00",
+   "text": "NC State is 2nd 👀 Which big North Carolina university has the most restaurants within a 10-minute walk? Tag someone from Chapel Hill or Raleigh.\n\n#unc #ncstate #ecu #appstate #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-csu",
+   "at": "2026-11-07T16:43:00-05:00",
+   "card": "csu",
+   "thread": [
+    "San Jose State has more restaurants within a 10-minute walk of campus than any other big Cal State, 61 more than No. 2.\n\nEvery Cal State campus with 20,000+ students:",
+    "1. San Jose State: 140\n2. CSUN: 79\n3. SF State: 62\n4. San Diego State: 40\n5. Cal State Fullerton: 37\n6. Sacramento State: 31\n7. Cal State LA: 14\n8. Long Beach State: 11\n9. Fresno State: 9\n10. Cal Poly SLO: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ca"
+   ]
+  },
+  {
+   "id": "x-tacos",
+   "at": "2026-11-07T17:41:00-05:00",
+   "card": "tacos",
+   "thread": [
+    "How to tell a good taqueria before you order:\n\nLook at the tortillas first. Fresh corn tortillas pressed and griddled to order are the biggest difference there is.",
+    "Three more signs:\n\n- Three or four house salsas, not one bottle of hot sauce\n- A short menu: five or six fillings\n- Onion, cilantro and lime on top, nothing else",
+    "New place? If there's a spit of pork with pineapple turning, order al pastor.\n\nMore on what to order: https://www.savorscout.net/food/tacos"
+   ]
+  },
+  {
+   "id": "x-virginia",
+   "at": "2026-11-07T18:44:00-05:00",
+   "card": "virginia",
+   "thread": [
+    "VCU has more restaurants within a 10-minute walk of campus than Virginia Tech and UVA combined.\n\nEvery Virginia university with 20,000+ students:",
+    "1. VCU: 130\n2. Virginia Tech: 64\n3. UVA: 58\n4. Liberty: 40\n5. Old Dominion: 35\n6. George Mason: 17\n7. James Madison: 11",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/va"
+   ]
+  },
+  {
+   "id": "x-nc",
+   "at": "2026-11-07T19:42:00-05:00",
+   "card": "nc",
+   "thread": [
+    "UNC Chapel Hill has the most restaurants within a 10-minute walk of campus of any big North Carolina university. NC State is 12 behind.\n\nEvery NC university with 20,000+ students:",
+    "1. UNC Chapel Hill: 87\n2. NC State: 75\n3. East Carolina: 57\n4. App State: 47\n5. UNC Charlotte: 23",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/nc"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-csu",
+   "at": "2026-11-07T17:12:00-05:00",
+   "card": "csu",
+   "topic": "Cal State",
+   "thread": [
+    "San Jose State has the most restaurants within a 10-minute walk of campus of any big Cal State, 61 more than No. 2. Every Cal State campus with 20,000+ students:\n\nSan Jose State 140, CSUN 79, SF State 62, San Diego State 40, Cal State Fullerton 37, Sacramento State 31, Cal State LA 14, Long Beach State 11, Fresno State 9, Cal Poly SLO 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ca"
+   ]
+  },
+  {
+   "id": "t-tacos",
+   "at": "2026-11-07T18:11:00-05:00",
+   "card": "tacos",
+   "topic": "Tacos",
+   "thread": [
+    "The fastest way to judge a taqueria: look at the tortillas. Fresh corn tortillas pressed to order beat everything else on the plate.\n\nAlso good signs: three or four house salsas, a short menu of five or six fillings, and just onion, cilantro and lime on top.\n\nWhat's the one taco you order everywhere?",
+    "More on what to order: https://www.savorscout.net/food/tacos"
+   ]
+  },
+  {
+   "id": "t-virginia",
+   "at": "2026-11-07T19:13:00-05:00",
+   "card": "virginia",
+   "topic": "Virginia",
+   "thread": [
+    "VCU has more restaurants within a 10-minute walk of campus than any other big Virginia university, more than twice as many as Virginia Tech.\n\nVCU 130, Virginia Tech 64, UVA 58, Liberty 40, Old Dominion 35, George Mason 17, James Madison 11.\n\nWhere should your school be?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/va"
+   ]
+  },
+  {
+   "id": "t-nc",
+   "at": "2026-11-07T20:12:00-05:00",
+   "card": "nc",
+   "topic": "North Carolina",
+   "thread": [
+    "UNC Chapel Hill edges NC State for the most restaurants within a 10-minute walk of campus among big North Carolina universities.\n\nUNC Chapel Hill 87, NC State 75, East Carolina 57, App State 47, UNC Charlotte 23.\n\nFranklin St or Hillsborough St?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/nc"
+   ]
+  }
+ ],
+ "cards": {
+  "csu": {
+   "type": "ranking",
+   "title": "Big Cal State campuses ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Campuses with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "San Jose State",
+     140
+    ],
+    [
+     "2",
+     "CSUN",
+     79
+    ],
+    [
+     "3",
+     "SF State",
+     62
+    ],
+    [
+     "4",
+     "San Diego State",
+     40
+    ],
+    [
+     "5",
+     "Cal State Fullerton",
+     37
+    ],
+    [
+     "6",
+     "Sacramento State",
+     31
+    ],
+    [
+     "7",
+     "Cal State LA",
+     14
+    ],
+    [
+     "8",
+     "Long Beach State",
+     11
+    ],
+    [
+     "9",
+     "Fresno State",
+     9
+    ],
+    [
+     "10",
+     "Cal Poly SLO",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "virginia": {
+   "type": "ranking",
+   "title": "Big Virginia universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "VCU",
+     130
+    ],
+    [
+     "2",
+     "Virginia Tech",
+     64
+    ],
+    [
+     "3",
+     "UVA",
+     58
+    ],
+    [
+     "4",
+     "Liberty",
+     40
+    ],
+    [
+     "5",
+     "Old Dominion",
+     35
+    ],
+    [
+     "6",
+     "George Mason",
+     17
+    ],
+    [
+     "7",
+     "James Madison",
+     11
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "nc": {
+   "type": "ranking",
+   "title": "Big North Carolina universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UNC Chapel Hill",
+     87
+    ],
+    [
+     "2",
+     "NC State",
+     75
+    ],
+    [
+     "3",
+     "East Carolina",
+     57
+    ],
+    [
+     "4",
+     "App State",
+     47
+    ],
+    [
+     "5",
+     "UNC Charlotte",
+     23
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "tacos": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "tacos-tell",
+     0,
+     1.0
+    ]
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell *good tacos*",
+   "items": [
+    [
+     "Tortillas pressed to order",
+     "The biggest difference there is."
+    ],
+    [
+     "Salsa made there",
+     "Three or four, not one bottle."
+    ],
+    [
+     "A short menu",
+     "Five or six fillings."
+    ]
+   ],
+   "note": "New place? See a spit of pork with pineapple? Order al pastor."
+  }
+ }
+}

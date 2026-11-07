@@ -278,6 +278,14 @@ function dishIcon(term) {
   return "\u{1F37D}\uFE0F";
 }
 
+/* The device's own day and time, so the server can tell which places are open
+   right now. The search location comes from the ZIP, which is almost always in
+   the same time zone as the phone doing the searching. */
+function localTimeNow() {
+  const d = new Date();
+  return { day: d.getDay(), minutes: d.getHours() * 60 + d.getMinutes() };
+}
+
 function listOf(a) {
   if (a.length === 1) return a[0];
   if (a.length === 2) return `${a[0]} and ${a[1]}`;
@@ -371,7 +379,8 @@ function buildReasons(r) {
       icon: "\u{1F4CD}",
       tag: "distance",
       headline: near ? "Close enough to make sense" : "Worth the drive",
-      detail: `${near ? "Just " : ""}${r.distanceMiles} miles from ${from}.`,
+      detail: `${near ? "Just " : ""}${r.distanceMiles} miles from ${from}.` +
+        (r.openStatus?.open && r.openStatus.closesAt ? ` Open until ${r.openStatus.closesAt}.` : ""),
     });
   }
 
@@ -1240,6 +1249,7 @@ function App() {
           // Group rooms always search the wider fixed radius, so a board of
           // five is findable even where the host lives somewhere thin.
           radiusMode: "group",
+          localTime: localTimeNow(),
         }),
       });
       const sdata = await sres.json().catch(() => ({}));
@@ -2059,6 +2069,7 @@ function App() {
           locationHint: resolvedLocation.name,
           zip: resolvedLocation.zip || getZip(),
           radiusMode,
+          localTime: localTimeNow(),
         }),
         signal: controller.signal,
       });

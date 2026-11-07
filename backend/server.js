@@ -3289,7 +3289,14 @@ app.get("/me/scout-report", requireAuth, async (req, res) => {
   }
 });
 
-app.post("/search", requireAuthOrTrial, async (req, res) => {
+/* ===========================================================================
+   SEARCH (legacy engine)
+
+   The original two-stage engine, kept intact so it can be switched back on
+   without a code change: set SEARCH_ALGORITHM=legacy, or call /search/legacy.
+   The current engine is searchV2 below (pipeline in ./search/).
+   =========================================================================== */
+async function legacySearch(req, res) {
   try {
     const userRequest = req.body.query;
     const userLat = req.body.lat;
@@ -4091,7 +4098,316 @@ app.post("/search", requireAuthOrTrial, async (req, res) => {
       return res.status(500).json({ error: "Something went wrong on our end. Please try again." });
     }
   }
-});
+}
+
+/* ===========================================================================
+   SEARCH v2
+
+   Wider net, better judgment. The pipeline lives in ./search/ (index.js has
+   the overview); this handler does what the legacy one did around it: checks
+   the request, loads the person's profile, builds the same response shape the
+   app already renders, and runs the same bookkeeping (search count, verdict,
+   duel pool, XP, stamps).
+
+   Rollback: SEARCH_ALGORITHM=legacy routes /search back to legacySearch.
+   =========================================================================== */
+const { runSearchV2, SearchError } = require("./search");
+const SEARCH_ALGORITHM = process.env.SEARCH_ALGORITHM === "legacy" ? "legacy" : "v2";
+
+async function searchV2(req, res) {
+  try {
+    const userRequest = req.body.query;
+    const userLat = req.body.lat;
+    const userLng = req.body.lng;
+
+    if (!userRequest || typeof userRequest !== "string" || !userRequest.trim()) {
+      return res.status(400).json({ error: "Missing or empty 'query' in request body" });
+    }
+    if (userRequest.length > MAX_QUERY_CHARS) {
+      return res.status(400).json({ error: `Query is too long (max ${MAX_QUERY_CHARS} characters)` });
+    }
+    if (typeof userLat !== "number" || typeof userLng !== "number" ||
+        !Number.isFinite(userLat) || !Number.isFinite(userLng) ||
+        Math.abs(userLat) > 90 || Math.abs(userLng) > 180) {
+      return res.status(400).json({ error: "Missing or invalid 'lat'/'lng' — location is required for radius search" });
+    }
+    // Same rule as the legacy engine: the ZIP box is the only source of
+    // location, so a search without its resolved name is refused, not guessed.
+    const locationName = typeof req.body.locationHint === "string" ? req.body.locationHint.trim() : "";
+    if (!locationName) {
+      return res.status(400).json({
+        error: "Missing location — please set your ZIP code and try again.",
+        searchesRemaining: DAILY_SEARCH_LIMIT - req.currentSearchCount,
+      });
+    }
+
+    const requestedMode = typeof req.body.radiusMode === "string" ? req.body.radiusMode : "";
+    const radiusMode = RADIUS_TIERS[requestedMode] ? requestedMode : DEFAULT_RADIUS_MODE;
+    const anchor = { lat: userLat, lng: userLng };
+    console.log("User said:", userRequest, "at", userLat, userLng, `(${locationName}, ${radiusMode})`);
+
+    // A trial caller has no profile, history or quiz: none of these are
+    // queried with a null id (that would match strangers' rows).
+    const [profileRes, tasteProfile, quiz] = await Promise.all([
+      req.userId
+        ? Promise.resolve(
+            supabaseAdmin.from("profiles").select("allergies, dietary_preferences").eq("id", req.userId).maybeSingle()
+          ).catch(() => ({ data: null }))
+        : Promise.resolve({ data: null }),
+      req.userId ? loadTasteProfile(req.userId).catch(() => null) : Promise.resolve(null),
+      req.userId ? quizScoresFor(req.userId).catch(() => null) : Promise.resolve(null),
+    ]);
+    const profile = profileRes?.data;
+    const splitList = (s) => (s ? String(s).split(",").map((x) => x.trim()).filter(Boolean) : []);
+
+    let result;
+    try {
+      result = await runSearchV2(
+        {
+          openai,
+          http,
+          serperKey: process.env.SERPER_API_KEY,
+          exaKey: EXA_API_KEY,
+          cache: { fetchBatch: fetchCachedResearchBatch, store: storeResearch },
+          tasteMultiplier,
+          log: console,
+        },
+        {
+          userRequest: userRequest.trim(),
+          anchor,
+          locationName,
+          radiusMode,
+          radiusTiers: RADIUS_TIERS,
+          localTime: req.body.localTime,
+          allergyTerms: splitList(profile?.allergies),
+          profileDietaryTerms: splitList(profile?.dietary_preferences),
+          tasteProfile,
+          quiz,
+          roomMinCards: ROOM_MIN_CARDS,
+          roomWidenCeilingMiles: ROOM_WIDEN_CEILING_MILES,
+        }
+      );
+    } catch (err) {
+      if (err instanceof SearchError && err.code === "retrieval_failed") {
+        console.error("Serper Places search error:", err.detail);
+        return res.status(500).json({ error: "Failed to search Serper Places", detail: err.detail });
+      }
+      throw err;
+    }
+
+    if (!result.ok) {
+      const newCount = req.currentSearchCount + 1;
+      countThisSearch(req, newCount).catch(() => {});
+      return res.json({
+        preferences: result.intent,
+        locationName,
+        restaurants: [],
+        ...(result.reason === "out_of_range"
+          ? { outOfRange: true, nearestMiles: result.nearestMiles, maxRadiusMiles: result.maxRadiusMiles }
+          : {}),
+        searchesRemaining: remainingFor(req, newCount),
+        trialUsed: !req.userId,
+        engine: "v2",
+      });
+    }
+
+    const { ranked, contenders, stage1Ranked, withFeatures, rawCandidates, intent } = result;
+    const winner = ranked[0];
+    const others = ranked.slice(1);
+
+    const othersAvgScore =
+      others.length > 0 ? others.reduce((sum, c) => sum + c.matchScore, 0) / others.length : null;
+    const dominancePercent =
+      othersAvgScore && othersAvgScore > 0
+        ? Math.round(((winner.matchScore - othersAvgScore) / othersAvgScore) * 100)
+        : null;
+    const runnerUps = others.slice(0, 3).map((c) => ({ name: c.place.title, matchScore: c.matchScore }));
+
+    /* The group-vote board, filled exactly as before: researched finalists,
+       then the other contenders in stage-1 order, then anything inside the
+       radius, then (only to reach the minimum) the nearest places outside it. */
+    const samePlace = (a, b) =>
+      (a.place.placeId && a.place.placeId === b.place.placeId) || a.place.title === b.place.title;
+    const roomPool = [];
+    const addFrom = (list) => {
+      for (const c of list) {
+        if (roomPool.length >= ROOM_MAX_CARDS) return;
+        if (roomPool.some((r) => samePlace(r, c))) continue;
+        roomPool.push(c);
+      }
+    };
+    addFrom(ranked);
+    addFrom(contenders);
+    addFrom(stage1Ranked);
+    if (roomPool.length < ROOM_MIN_CARDS) addFrom(withFeatures.slice().sort((a, b) => a.distance - b.distance));
+
+    const roomCandidates = roomPool.map((c, i) => ({
+      id: String(c.place.placeId || c.place.cid || c.place.title),
+      name: c.place.title,
+      rating: typeof c.rating === "number" ? c.rating : null,
+      reviewCount: c.reviewCount || 0,
+      category: c.place.type || (c.place.types && c.place.types[0]) || null,
+      address: c.place.address || "",
+      lat: c.place.latitude,
+      lng: c.place.longitude,
+      distanceMiles: Math.round(c.distance * 10) / 10,
+      matchScore: typeof c.matchScore === "number" ? c.matchScore : Math.max(1, 40 - i * 3),
+      matchedDish: c.matchedDish || null,
+      image: c.place.thumbnailUrl || c.place.thumbnail || null,
+    }));
+
+    const pexelsPhoto = await fetchPexelsFood(
+      intent.dish || intent.cuisine || userRequest,
+      winner.place.placeId || winner.place.cid || winner.place.title
+    );
+    const existingThumb = winner.place.thumbnailUrl || winner.place.thumbnail || null;
+    const winnerImage = pexelsPhoto
+      ? {
+          imageUrl: pexelsPhoto.imageUrl,
+          imageSourceUrl: pexelsPhoto.pexelsUrl,
+          imageCredit: {
+            source: "pexels",
+            photographer: pexelsPhoto.photographer,
+            photographerUrl: pexelsPhoto.photographerUrl,
+            representative: true,
+          },
+        }
+      : existingThumb
+        ? { imageUrl: existingThumb, imageSourceUrl: null }
+        : await fetchWinnerImage(winner.place.title, winner.place.address);
+
+    const menu = winner.research?.menu || null;
+    const reviews = winner.research?.reviews || null;
+    const pct = (v) => (typeof v === "number" ? Math.round(v * 100) : null);
+    const ev = winner.evidence;
+
+    const finalPicks = [
+      {
+        id: winner.place.placeId || winner.place.cid,
+        name: winner.place.title,
+        rating: winner.rating,
+        reviewCount: winner.reviewCount,
+        address: winner.place.address || "",
+        category: winner.place.type || (winner.place.types && winner.place.types[0]) || null,
+        website: winner.place.website || null,
+        phone: winner.place.phoneNumber || null,
+        lat: winner.place.latitude,
+        lng: winner.place.longitude,
+        distanceMiles: Math.round(winner.distance * 10) / 10,
+        distanceFrom: locationName,
+        matchedDish: winner.matchedDish,
+        matchedCuisine: winner.matchedCuisine,
+        matchScore: winner.matchScore,
+        scoreBreakdown: {
+          relevance: pct(winner.absolute.relevance),
+          quality: pct(winner.absolute.quality),
+          proximity: pct(winner.absolute.proximity),
+          vibe: pct(winner.absolute.vibe),
+          evidence: pct(winner.absolute.evidence),
+          budget: pct(winner.absolute.budget),
+        },
+        evidence: (() => {
+          const quote = pickQuote(menu);
+          return quote ? { sourceType: menu.sourceType, sourceUrl: menu.sourceUrl, quote } : null;
+        })(),
+        reception: (() => {
+          const quote = pickQuote(reviews);
+          return quote ? { sourceUrl: reviews.sourceUrl, quote } : null;
+        })(),
+        review: (() => {
+          const text = extractReview(reviews) || extractReview(menu);
+          return text ? { text, sourceUrl: reviews?.sourceUrl || menu?.sourceUrl || null } : null;
+        })(),
+        menuItems: extractMenuItems(menu, [intent.dish, intent.cuisine].filter(Boolean)),
+        requestedFactors: result.wantsVibe ? result.vibeTerms : null,
+        matchedFactors: ev.matchedFactors.length > 0 ? ev.matchedFactors : null,
+        matchedDietaryTerms: ev.matchedDietaryTerms.length > 0 ? ev.matchedDietaryTerms : null,
+        matchedAllergyTerms: ev.matchedAllergyTerms.length > 0 ? ev.matchedAllergyTerms : null,
+        // Every contender was scored, so this is how many it actually beat.
+        beatCount: Math.max(0, contenders.length - 1),
+        poolSize: rawCandidates.length,
+        dominancePercent,
+        runnerUps,
+        openStatus: winner.open?.known
+          ? { open: winner.open.open, closesAt: winner.open.closesAt || null, opensAt: winner.open.opensAt || null }
+          : null,
+        pickReason: winner.judge?.reason || null,
+        imageUrl: winnerImage?.imageUrl || null,
+        imageSourceUrl: winnerImage?.imageSourceUrl || null,
+        imageCredit: winnerImage?.imageCredit || null,
+      },
+    ];
+
+    const newCount = req.currentSearchCount + 1;
+    countThisSearch(req, newCount).catch(() => {});
+    if (req.userId) {
+      recordVerdict(req.userId, winner, {
+        query: userRequest.trim(),
+        locationName,
+        matchScore: winner.matchScore,
+      }).catch(() => {});
+    }
+    stockPlacePool(rawCandidates, zipArea(req.body.zip || "")).catch(() => {});
+
+    if (req.userId) (async () => {
+      try {
+        const state = await loadGameState(req.userId);
+        const today = todayStr();
+        const nth = state.searches_date === today ? state.searches_today : 0;
+        await supabaseAdmin
+          .from("game_state")
+          .update({ searches_today: nth + 1, searches_date: today })
+          .eq("user_id", req.userId);
+        await touchStreak(req.userId, state);
+        const amount = SEARCH_XP_DECAY[Math.min(nth, SEARCH_XP_DECAY.length - 1)];
+        if (amount > 0) await awardXp(req.userId, amount, `search #${nth + 1}`);
+      } catch (err) {
+        console.error("search xp error:", err.message);
+      }
+    })();
+
+    if (req.userId && winner.place.type) {
+      supabaseAdmin
+        .from("stamps")
+        .upsert(
+          { user_id: req.userId, cuisine: winner.place.type, place_name: winner.place.title },
+          { onConflict: "user_id,cuisine", ignoreDuplicates: true }
+        )
+        .then(() => {})
+        .catch(() => {});
+    }
+
+    return res.json({
+      preferences: result.preferences,
+      locationName,
+      radiusUsed: result.radiusUsed,
+      radiusMode: result.radiusMode,
+      restaurants: finalPicks,
+      roomCandidates,
+      searchesRemaining: remainingFor(req, newCount),
+      trialUsed: !req.userId,
+      engine: "v2",
+      searchMeta: {
+        timings: result.timings,
+        queries: result.queries,
+        judge: result.judgeUsed,
+        intent: result.intentSource,
+        compared: contenders.length,
+      },
+    });
+  } catch (err) {
+    console.error("Unhandled /search v2 error:", err);
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Something went wrong on our end. Please try again." });
+    }
+  }
+}
+
+app.post("/search", requireAuthOrTrial, (req, res) =>
+  SEARCH_ALGORITHM === "legacy" ? legacySearch(req, res) : searchV2(req, res)
+);
+app.post("/search/legacy", requireAuthOrTrial, legacySearch);
+console.log(`search engine: ${SEARCH_ALGORITHM}${SEARCH_ALGORITHM === "v2" ? " (SEARCH_ALGORITHM=legacy switches back)" : " (legacy engine, set by SEARCH_ALGORITHM)"}`);
 
 /* ===========================================================================
    TASTE QUIZ

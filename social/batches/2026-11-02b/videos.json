@@ -1,0 +1,200 @@
+{
+ "date": "2026-11-02",
+ "batch": "2026-11-02b",
+ "videos": [
+  {
+   "id": "eating-alone",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/what-to-eat/eating-alone",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "Eating alone at a restaurant feels *awkward?*",
+     "q": [
+      "woman eating alone restaurant",
+      "man eating alone cafe",
+      "eating alone"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "It's not you. *It's the seat.*",
+     "q": [
+      "empty restaurant table for two",
+      "restaurant table chairs",
+      "cafe table"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "A table for two in the middle of the room feels exposed. *A counter doesn't.*",
+     "q": [
+      "ramen counter",
+      "sushi counter chef",
+      "restaurant counter seating"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "item",
+     "num": "1",
+     "text": "Sit at the counter or the bar",
+     "sub": "Eating alone is normal there. Nobody wonders why.",
+     "q": [
+      "eating at bar counter",
+      "person eating at counter",
+      "diner counter"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "item",
+     "num": "2",
+     "text": "Pick a place with an open kitchen",
+     "sub": "You get something to watch besides your phone.",
+     "q": [
+      "open kitchen chef cooking",
+      "chef cooking open kitchen",
+      "cooks in restaurant kitchen"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "item",
+     "num": "3",
+     "text": "Order a one-person dish",
+     "sub": "Ramen, a rice bowl, pasta, a sandwich. Skip the shared plates.",
+     "q": [
+      "ramen bowl",
+      "rice bowl",
+      "bowl of pasta"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "item",
+     "num": "4",
+     "text": "Go somewhere busy",
+     "sub": "In a busy place, nobody notices how long you stay.",
+     "q": [
+      "busy restaurant",
+      "busy cafe people",
+      "crowded diner"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "The best part: you order *exactly what you want.* No negotiating.",
+     "q": [
+      "person enjoying food alone",
+      "woman eating noodles",
+      "man eating burger"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to the friend who won't eat out alone",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 2
+    }
+   ]
+  },
+  {
+   "id": "late-night",
+   "mood": "groove",
+   "source": "https://www.savorscout.net/what-to-eat/late-night",
+   "scenes": [
+    {
+     "beats": 6,
+     "style": "hook",
+     "text": "The app said it's open until 2am. *The kitchen closed at midnight.*",
+     "q": [
+      "closed restaurant at night",
+      "city street at night neon",
+      "night street empty"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "How to actually find food *after 11pm*:",
+     "q": [
+      "night city lights",
+      "neon sign at night",
+      "city at night"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Read the reviews, not the hours",
+     "sub": "\"Went at 1am, kitchen still open\" beats any hours listing.",
+     "q": [
+      "scrolling phone at night",
+      "phone in dark",
+      "using phone at night"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "An open bar doesn't mean an open kitchen",
+     "sub": "The hours you see are usually the bar's. The kitchen can close first.",
+     "q": [
+      "bartender at night",
+      "bar at night",
+      "pouring drinks bar"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Go to places built for late night",
+     "sub": "24-hour diners, taquerias, Korean and Chinese kitchens, halal carts.",
+     "q": [
+      "diner at night",
+      "food cart at night",
+      "street food night"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Call before you walk over",
+     "sub": "30 seconds on the phone beats a 20-minute walk to a locked door.",
+     "q": [
+      "making a phone call at night",
+      "talking on phone street",
+      "phone call"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "And skip delivery after midnight. *The kitchen might be open with no driver to bring it.*",
+     "q": [
+      "delivery rider at night",
+      "food delivery scooter",
+      "delivery driver"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for your next 1am craving",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 1
+    }
+   ]
+  }
+ ]
+}

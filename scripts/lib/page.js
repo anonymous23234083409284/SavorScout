@@ -121,6 +121,8 @@ const STYLE = `
   .ss-find .ss-btn{padding:0 26px;font-size:15px}
   .ss-static .ss-find__meta{margin:10px 8px 2px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;line-height:1.5;color:var(--mid)}
   .ss-find__meta b{color:var(--text);font-weight:500}
+  .ss-after{margin:0 0 26px}
+  .ss-static .ss-after__h{margin:0 0 10px;font-size:16px;color:var(--text)}
 
   /* ---- sections ---- */
   .ss-sec{margin:0 0 18px;padding:26px 28px 10px;border-radius:22px;background:rgba(19,16,28,.72);
@@ -174,6 +176,32 @@ const STYLE = `
   .ss-static .faq dt{font-weight:600;color:var(--ink);margin:0;padding:14px 0 4px;border-top:1px solid var(--line)}
   .ss-static .faq dt:first-child{border-top:0;padding-top:0}
   .ss-static .faq dd{margin:0 0 12px;color:var(--text)}
+  .ss-static .faq h3{margin:0;padding:14px 0 6px;border-top:1px solid var(--line);font-size:17px;line-height:1.4}
+  .ss-static .faq h3:first-child{border-top:0;padding-top:0}
+  .ss-static .faq h3+p{margin:0 0 12px}
+  .ss-static .tbl{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:15.5px;line-height:1.5}
+  .ss-static .tbl th,.ss-static .tbl td{text-align:left;vertical-align:top;padding:10px 14px 10px 0;border-bottom:1px solid var(--line)}
+  .ss-static .tbl thead th{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--mid);font-weight:500;padding-top:0}
+  .ss-static .tbl tbody th{color:var(--ink);font-weight:600;white-space:nowrap}
+  .ss-static .tbl td:last-child{color:var(--soft);padding-right:0}
+  .ss-static .tbl tbody tr:last-child>*{border-bottom:0}
+  /* A ranking: one bar per school, from a single baseline, the count at its tip
+     in text colour. #e0701a is checked against the section surface (#13101c):
+     inside the dark lightness band, contrast above 3:1. */
+  .ss-static .rank-tbl{width:100%;border-collapse:collapse;margin:4px 0 16px;font-size:15.5px;line-height:1.35}
+  .ss-static .rank-tbl th,.ss-static .rank-tbl td{text-align:left;vertical-align:middle;padding:9px 10px 9px 0;border-bottom:1px solid var(--line)}
+  .ss-static .rank-tbl thead th{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--mid);font-weight:500;padding-top:0;vertical-align:bottom}
+  .ss-static .rank-tbl .rk{width:2.8em;color:var(--mid);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ss-static .rank-tbl .sch a{color:var(--ink);font-weight:600;border:0}
+  .ss-static .rank-tbl .sch a:hover{color:var(--link)}
+  .ss-static .rank-tbl .sch small{display:block;font-size:13px;font-weight:400;color:var(--mid);margin-top:2px}
+  .ss-static .rank-tbl .ct{width:48%;padding-right:0}
+  .ss-static .rank-tbl .bar{display:flex;align-items:center;gap:8px}
+  .ss-static .rank-tbl .bar i{display:block;flex:none;height:10px;min-width:2px;background:#e0701a;border-radius:0 4px 4px 0}
+  .ss-static .rank-tbl .bar b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .ss-static .rank-tbl tbody tr:last-child>*{border-bottom:0}
   .ss-static .ranks{list-style:none;padding-left:0}
   .ss-static .ranks li{margin:0 0 8px;display:grid;grid-template-columns:42px 1fr}
   .ss-static .ranks b{color:var(--link);font-variant-numeric:tabular-nums}
@@ -227,6 +255,17 @@ const STYLE = `
     .ss-static .stats{gap:8px}
     .ss-static .stat{padding:12px 10px 10px}
     .ss-static .cols{column-gap:16px;font-size:15px}
+    .ss-static .tbl thead{display:none}
+    .ss-static .tbl,.ss-static .tbl tbody,.ss-static .tbl tr,.ss-static .tbl th,.ss-static .tbl td{display:block}
+    .ss-static .tbl tr{padding:11px 0;border-bottom:1px solid var(--line)}
+    .ss-static .tbl tbody tr:last-child{border-bottom:0}
+    .ss-static .tbl th,.ss-static .tbl td{border:0;padding:0}
+    .ss-static .tbl tbody th{white-space:normal;margin:0 0 2px}
+    .ss-static .tbl td+td{margin-top:3px;font-size:14.5px}
+    .ss-static .tbl td+td::before{content:attr(data-label) ": ";color:var(--mid)}
+    .ss-static .rank-tbl .ct{width:40%}
+    .ss-static .rank-tbl .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .ss-static .rank-tbl thead .sch-h::after{content:" · food street"}
     .ss-foot__in{grid-template-columns:1fr;gap:28px;padding:34px 16px 18px}
     .ss-foot__nav{grid-template-columns:1fr 1fr}
     .ss-foot__base{padding:16px 16px 30px}
@@ -270,6 +309,8 @@ const KICKERS = [
   [/^\/eat\/[a-z]{2}$/, "Cities by state"],
   [/^\/eat\/$/, "Where to eat"],
   [/^\/eat\//, "City guide"],
+  [/^\/rankings\/$/, "College food rankings"],
+  [/^\/rankings\//, "College food ranking"],
   [/^\/food\/$/, "Food guides"],
   [/^\/food\//, "Food guide"],
   [/^\/what-to-eat\/$/, "What to eat when…"],
@@ -280,7 +321,7 @@ const KICKERS = [
   [/^\/type\//, "Food personality"],
   [/^\/about\//, "About the data"],
 ];
-const NAV = [["/campus/", "Campuses"], ["/eat/", "Cities"], ["/food/", "Food"], ["/what-to-eat/", "What to eat"], ["/diet/", "Diets"]];
+const NAV = [["/campus/", "Campuses"], ["/rankings/", "Rankings"], ["/eat/", "Cities"], ["/food/", "Food"], ["/what-to-eat/", "What to eat"], ["/diet/", "Diets"]];
 
 const textOf = (h) => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&#39;|&rsquo;/g, "'")
   .replace(/&hellip;/g, "…").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
@@ -309,7 +350,7 @@ function footer() {
       <p>One pick, not a list. Say what you're craving and Savor Scout finds one place nearby and shows you why.</p>
     </div>
     <nav class="ss-foot__nav" aria-label="Site">
-      <div><p>Explore</p><a href="/campus/">Near campus</a><a href="/eat/">Cities</a><a href="/food/">Food guides</a></div>
+      <div><p>Explore</p><a href="/campus/">Near campus</a><a href="/rankings/">College food rankings</a><a href="/eat/">Cities</a><a href="/food/">Food guides</a></div>
       <div><p>Decide</p><a href="/what-to-eat/">What to eat when&hellip;</a><a href="/diet/">Dietary guides</a><a href="/type/">Food personalities</a></div>
       <div><p>Savor Scout</p><a href="/">Find a place to eat</a><a href="/about/data">Where our data comes from</a></div>
     </nav>
@@ -350,11 +391,27 @@ function layout(body, { url, desc }) {
   if (hr >= 0) { tail = rest.slice(hr + 4); rest = rest.slice(0, hr); }
 
   /* The first button into the app becomes the search bar. A quiz button
-     stays a button: that page's next step is the quiz, not a search. */
+     stays a button: that page's next step is the quiz, not a search.
+
+     On a page that lists places (a campus, a campus x food, a city), the list
+     comes first and the search bar follows it. Someone who searched
+     "restaurants near <campus>" came for the list; with the bar on top, the
+     first restaurant sat below the first screen of a phone (measured: 926px
+     down on an 844px screen), and a page that shows no answer on arrival is
+     the one people leave straight back to the results. */
+  const listFirst = /^\/campus\/[^/]{3,}(\/[^/]+)?$/.test(pathname) || /^\/eat\/[^/]{3,}$/.test(pathname);
   let near = "";
+  let laterForm = "";
   pre = pre.replace(/<p>\s*<a class="cta"[^>]*?href="([^"]*)"[^>]*>[\s\S]*?<\/a>\s*<\/p>/, (m, href) => {
     if (!(href === "/" || /^\/\?(?:[^"]*&)?(?:near|craving)=/.test(href))) return m;
     near = new URLSearchParams(href.split("?")[1] || "").get("near") || "";
+    if (listFirst) {
+      laterForm = `
+      <div class="ss-after">
+        <p class="ss-after__h">Can't decide between them? Say what you're craving and Savor Scout picks one${near ? ` near ${esc(near)}` : ""}.</p>${searchForm(href)}
+      </div>`;
+      return "";
+    }
     return searchForm(href);
   });
   const kicker = (KICKERS.find(([re]) => re.test(pathname)) || [])[1];
@@ -397,7 +454,9 @@ function layout(body, { url, desc }) {
   const links = [...tail.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)].map((m) => m[0]);
   const endnav = links.length ? `\n      <nav class="ss-endnav" aria-label="More">\n        ${links.join("\n        ")}\n      </nav>` : "";
 
-  const main = `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>${tocHtml("ss-toc--inline")}\n${sections.join("\n")}${endnav}`;
+  const main = laterForm && sections.length
+    ? `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>\n${sections[0]}${laterForm}${tocHtml("ss-toc--inline")}\n${sections.slice(1).join("\n")}${endnav}`
+    : `      <div class="ss-hero">\n${pre.trim().replace(/^/, "      ")}\n      </div>${tocHtml("ss-toc--inline")}\n${sections.join("\n")}${endnav}`;
   const side = tocHtml("ss-toc--side");
   const aside = side ? `
   <aside class="ss-aside">${side}
@@ -426,7 +485,10 @@ function render(shell, { title, desc, url, body, ld, who }) {
      nowhere else. Inherited by a generated page it describes content that page
      does not show (Google's structured-data rules call that misleading), and on
      campus and city pages it made a second FAQPage beside the page's own. */
-  html = html.replace(/<script type="application\/ld\+json">(?:(?!<\/script>)[\s\S])*?"FAQPage"[\s\S]*?<\/script>/, "");
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, "");
+  /* Likewise the homepage's WebApplication and WebSite blocks: they describe
+     the app and the site, which is the homepage's subject, not a guide's or a
+     campus page's. Every block the shell carried goes; the page adds its own. */
   if (/"FAQPage"/.test(html) && !/"FAQPage"/.test(ld || "")) {
     console.error(`${who}: the homepage FAQ schema survived into a generated page`);
     process.exit(1);

@@ -1,0 +1,519 @@
+{
+ "campus": "UT Austin",
+ "count": 25,
+ "nounPlural": "pizza places",
+ "hook": {
+  "kicker": "UT AUSTIN",
+  "big": "Pizza",
+  "bigSize": 250,
+  "line": "you can walk to",
+  "lineSize": 120,
+  "sub": "25 spots within a mile \u00b7 5 closest"
+ },
+ "outro": {
+  "more": "+20 more",
+  "moreSize": 170,
+  "line": "pizza places within a mile of UT\u00a0Austin",
+  "site": "savorscout.net",
+  "follow": "Follow for your campus next"
+ },
+ "map": {
+  "width": 4200,
+  "height": 2400,
+  "scale": 1.6288919828787418,
+  "campus": {
+   "x": 2504.8,
+   "y": 1715.9,
+   "label": "UT Austin"
+  },
+  "labels": [
+   {
+    "name": "N Lamar Blvd",
+    "x": 472.3,
+    "y": 243.2,
+    "angle": -52.3
+   },
+   {
+    "name": "E Dean Keeton St",
+    "x": 3518.3,
+    "y": 570.6,
+    "angle": -4.2
+   },
+   {
+    "name": "N Interstate 35",
+    "x": 4091.8,
+    "y": 2125.4,
+    "angle": -68.1
+   },
+   {
+    "name": "San Jacinto Blvd",
+    "x": 3177.5,
+    "y": 782.3,
+    "angle": 53.1
+   },
+   {
+    "name": "W 15th St",
+    "x": 504.8,
+    "y": 2222.9,
+    "angle": 5.4
+   },
+   {
+    "name": "Shoal Creek Blvd",
+    "x": 614.8,
+    "y": 1872.7,
+    "angle": 63.7
+   },
+   {
+    "name": "Nueces St",
+    "x": 1588.7,
+    "y": 1655.0,
+    "angle": -85.4
+   }
+  ],
+  "attribution": "\u00a9 OpenStreetMap contributors \u00b7 Overture Maps Foundation",
+  "src": "batch/2026-10-31/the-university-of-texas-at-austin--pizza/map.png",
+  "spots": [
+   {
+    "name": "Jesta Pizza",
+    "raw": "Jesta Pizza",
+    "category": "Pizza",
+    "street": "201 E 21st St",
+    "city": "Austin",
+    "region": "TX",
+    "lat": 30.28297,
+    "lng": -97.73676,
+    "mi": 0.1,
+    "x": 2741.2,
+    "y": 1688.9,
+    "walk_m": 326,
+    "walk_min": 4,
+    "walk_mi": 0.2,
+    "route": [
+     [
+      2504.8,
+      1715.9
+     ],
+     [
+      2541.0,
+      1656.6
+     ],
+     [
+      2506.9,
+      1613.9
+     ],
+     [
+      2474.3,
+      1607.6
+     ],
+     [
+      2467.2,
+      1598.2
+     ],
+     [
+      2760.2,
+      1625.6
+     ],
+     [
+      2757.3,
+      1657.5
+     ],
+     [
+      2741.2,
+      1688.9
+     ]
+    ],
+    "nameSize": 118,
+    "nameLines": [
+     "Jesta Pizza"
+    ]
+   },
+   {
+    "name": "Dollar Slice Club",
+    "raw": "Dollar Slice Club",
+    "category": "Pizza",
+    "street": "2300 Guadalupe St",
+    "city": "Austin",
+    "region": "TX",
+    "lat": 30.28665,
+    "lng": -97.74198,
+    "mi": 0.3,
+    "x": 1923.8,
+    "y": 1026.2,
+    "walk_m": 773,
+    "walk_min": 10,
+    "walk_mi": 0.5,
+    "route": [
+     [
+      2504.8,
+      1715.9
+     ],
+     [
+      2541.0,
+      1656.6
+     ],
+     [
+      2506.9,
+      1613.9
+     ],
+     [
+      2474.3,
+      1607.6
+     ],
+     [
+      2467.2,
+      1598.2
+     ],
+     [
+      2189.5,
+      1573.5
+     ],
+     [
+      2190.5,
+      1561.1
+     ],
+     [
+      2097.5,
+      1553.0
+     ],
+     [
+      2098.7,
+      1536.4
+     ],
+     [
+      1955.1,
+      1523.7
+     ],
+     [
+      1966.2,
+      1341.7
+     ],
+     [
+      1969.5,
+      1338.4
+     ],
+     [
+      1981.4,
+      1175.5
+     ],
+     [
+      1962.2,
+      1174.2
+     ],
+     [
+      1970.5,
+      1064.1
+     ],
+     [
+      1951.1,
+      1062.3
+     ],
+     [
+      1923.8,
+      1026.2
+     ]
+    ],
+    "nameSize": 118,
+    "nameLines": [
+     "Dollar Slice Club"
+    ]
+   },
+   {
+    "name": "Big Bite Pizza & Grill",
+    "raw": "Big Bite Pizza & Grill",
+    "category": "Pizza",
+    "street": "415 W 24th St",
+    "city": "Austin",
+    "region": "TX",
+    "lat": 30.28765,
+    "lng": -97.74234,
+    "mi": 0.4,
+    "x": 1867.5,
+    "y": 846.2,
+    "walk_m": 958,
+    "walk_min": 12,
+    "walk_mi": 0.6,
+    "route": [
+     [
+      2504.8,
+      1715.9
+     ],
+     [
+      2541.0,
+      1656.6
+     ],
+     [
+      2506.9,
+      1613.9
+     ],
+     [
+      2474.3,
+      1607.6
+     ],
+     [
+      2467.2,
+      1598.2
+     ],
+     [
+      2189.5,
+      1573.5
+     ],
+     [
+      2190.5,
+      1561.1
+     ],
+     [
+      2097.5,
+      1553.0
+     ],
+     [
+      2098.7,
+      1536.4
+     ],
+     [
+      1955.1,
+      1523.7
+     ],
+     [
+      1966.2,
+      1341.7
+     ],
+     [
+      1969.5,
+      1338.4
+     ],
+     [
+      1981.4,
+      1175.5
+     ],
+     [
+      1962.2,
+      1174.2
+     ],
+     [
+      1970.5,
+      1064.1
+     ],
+     [
+      1951.1,
+      1062.3
+     ],
+     [
+      1966.1,
+      880.8
+     ],
+     [
+      1964.2,
+      837.1
+     ],
+     [
+      1862.5,
+      827.7
+     ],
+     [
+      1867.5,
+      846.2
+     ]
+    ],
+    "nameSize": 102,
+    "nameLines": [
+     "Big Bite Pizza & Grill"
+    ]
+   },
+   {
+    "name": "Tower Pizza Bistro",
+    "raw": "Tower Pizza Bistro",
+    "category": "Pizza",
+    "street": "2222 Rio Grande St",
+    "city": "Austin",
+    "region": "TX",
+    "lat": 30.28664,
+    "lng": -97.74495,
+    "mi": 0.5,
+    "x": 1458.8,
+    "y": 1028.0,
+    "walk_m": 1049,
+    "walk_min": 13,
+    "walk_mi": 0.7,
+    "route": [
+     [
+      2504.8,
+      1715.9
+     ],
+     [
+      2541.0,
+      1656.6
+     ],
+     [
+      2506.9,
+      1613.9
+     ],
+     [
+      2474.3,
+      1607.6
+     ],
+     [
+      2467.2,
+      1598.2
+     ],
+     [
+      2189.5,
+      1573.5
+     ],
+     [
+      2190.5,
+      1561.1
+     ],
+     [
+      1456.2,
+      1497.4
+     ],
+     [
+      1468.2,
+      1295.9
+     ],
+     [
+      1458.5,
+      1295.2
+     ],
+     [
+      1482.7,
+      1021.8
+     ],
+     [
+      1458.8,
+      1028.0
+     ]
+    ],
+    "nameSize": 108,
+    "nameLines": [
+     "Tower Pizza Bistro"
+    ]
+   },
+   {
+    "name": "Pizzeria Vetri",
+    "raw": "Pizzeria Vetri",
+    "category": "Pizza",
+    "street": "2421 San Antonio St",
+    "city": "Austin",
+    "region": "TX",
+    "lat": 30.28855,
+    "lng": -97.74203,
+    "mi": 0.5,
+    "x": 1916.0,
+    "y": 684.1,
+    "walk_m": 1086,
+    "walk_min": 14,
+    "walk_mi": 0.7,
+    "route": [
+     [
+      2504.8,
+      1715.9
+     ],
+     [
+      2541.0,
+      1656.6
+     ],
+     [
+      2506.9,
+      1613.9
+     ],
+     [
+      2474.3,
+      1607.6
+     ],
+     [
+      2467.2,
+      1598.2
+     ],
+     [
+      2189.5,
+      1573.5
+     ],
+     [
+      2190.5,
+      1561.1
+     ],
+     [
+      2097.5,
+      1553.0
+     ],
+     [
+      2098.7,
+      1536.4
+     ],
+     [
+      1955.1,
+      1523.7
+     ],
+     [
+      1966.2,
+      1341.7
+     ],
+     [
+      1969.5,
+      1338.4
+     ],
+     [
+      1981.4,
+      1175.5
+     ],
+     [
+      1962.2,
+      1174.2
+     ],
+     [
+      1970.5,
+      1064.1
+     ],
+     [
+      1951.1,
+      1062.3
+     ],
+     [
+      1966.1,
+      880.8
+     ],
+     [
+      1964.5,
+      826.8
+     ],
+     [
+      1875.3,
+      818.6
+     ],
+     [
+      1889.9,
+      642.3
+     ],
+     [
+      1895.0,
+      642.8
+     ],
+     [
+      1916.0,
+      684.1
+     ]
+    ],
+    "nameSize": 118,
+    "nameLines": [
+     "Pizzeria Vetri"
+    ]
+   }
+  ]
+ },
+ "clips": [
+  "batch/2026-10-31/the-university-of-texas-at-austin--pizza/clip0.mp4",
+  "batch/2026-10-31/the-university-of-texas-at-austin--pizza/clip1.mp4",
+  "batch/2026-10-31/the-university-of-texas-at-austin--pizza/clip2.mp4",
+  "batch/2026-10-31/the-university-of-texas-at-austin--pizza/clip3.mp4",
+  "batch/2026-10-31/the-university-of-texas-at-austin--pizza/clip4.mp4",
+  "batch/2026-10-31/the-university-of-texas-at-austin--pizza/clip5.mp4"
+ ],
+ "audio": "batch/2026-10-31/the-university-of-texas-at-austin--pizza/audio.wav",
+ "timing": {
+  "hook": 75,
+  "spot": 90,
+  "outro": 105
+ },
+ "credits": "Footage: Pexels \u00b7 Map data \u00a9 OpenStreetMap contributors, Overture Maps"
+}

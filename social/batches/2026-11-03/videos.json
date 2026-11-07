@@ -1,0 +1,404 @@
+{
+ "date": "2026-11-03",
+ "videos": [
+  {
+   "id": "sandwich-day",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/food/sandwiches",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "Today is *National Sandwich Day.*",
+     "q": [
+      "sandwich close up",
+      "deli sandwich",
+      "making a sandwich"
+     ],
+     "clip": 8526488
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "5 signs a sandwich shop is *actually good:*",
+     "q": [
+      "sandwich shop counter",
+      "deli counter",
+      "sandwich shop"
+     ],
+     "clip": 13736705
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Meat sliced to order",
+     "sub": "Fresh-sliced meat stays tender. Pre-sliced meat dries out.",
+     "q": [
+      "slicing salami",
+      "slicing ham",
+      "deli meat"
+     ],
+     "clip": 10277806
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Bread that tastes like something",
+     "sub": "Good bread holds together without scraping the roof of your mouth.",
+     "q": [
+      "slicing bread loaf",
+      "fresh bread",
+      "bread loaf bakery"
+     ],
+     "clip": 6975698
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Something tangy inside",
+     "sub": "Pickles, pickled onions or a sharp dressing keep the sandwich from tasting heavy.",
+     "q": [
+      "slicing pickles",
+      "pickles",
+      "pickled onions"
+     ],
+     "clip": 8879541
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Built to be eaten, not photographed",
+     "sub": "A sandwich too tall to bite falls apart. Balance beats size.",
+     "q": [
+      "photographing food phone",
+      "taking photo of food",
+      "eating a sandwich"
+     ],
+     "clip": 7253382
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "5",
+     "text": "Made in front of you",
+     "sub": "Pre-made sandwiches sit in a fridge, and the bread goes soggy.",
+     "q": [
+      "making sandwich kitchen",
+      "assembling sandwich",
+      "chef making sandwich"
+     ],
+     "clip": 5907458
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for your next sandwich run",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 0
+    }
+   ],
+   "track": "disco-105"
+  },
+  {
+   "id": "ramen-broths",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/ramen",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "Not sure what to order at a *ramen shop?*",
+     "q": [
+      "ramen bowl",
+      "ramen restaurant",
+      "ramen egg"
+     ],
+     "clip": 28316820
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Start with the broth. *There are four main kinds.*",
+     "q": [
+      "pouring broth ramen",
+      "ladling soup",
+      "ramen broth"
+     ],
+     "clip": 33400919
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "text": "Tonkotsu",
+     "sub": "Pork bone broth, simmered until it's rich and cloudy.",
+     "q": [
+      "creamy ramen broth",
+      "tonkotsu ramen",
+      "pork ramen"
+     ],
+     "clip": 34579622
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "text": "Shoyu",
+     "sub": "A clear chicken or pork broth seasoned with soy sauce. Lighter and savory.",
+     "q": [
+      "dark broth noodle soup",
+      "soy sauce ramen",
+      "noodle soup"
+     ],
+     "clip": 31195441
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "text": "Miso",
+     "sub": "Broth seasoned with fermented soybean paste. Sweeter and nuttier.",
+     "q": [
+      "miso soup",
+      "miso paste",
+      "miso soup tofu"
+     ],
+     "clip": 37876542
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "text": "Shio",
+     "sub": "Seasoned with salt. The lightest of the four, and the hardest to make well.",
+     "q": [
+      "salt into pot",
+      "sprinkling salt soup",
+      "adding salt cooking"
+     ],
+     "clip": 10431976
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "One more tip: *pick a shop that mostly sells ramen.* Good broth simmers for hours.",
+     "q": [
+      "simmering broth",
+      "stock pot",
+      "bone broth"
+     ],
+     "clip": 8051335
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for your next ramen run",
+     "sub": "Which broth is your pick?",
+     "reuse": 0
+    }
+   ],
+   "track": "lofi-110"
+  },
+  {
+   "id": "group-dinner",
+   "mood": "groove",
+   "source": "https://www.savorscout.net/what-to-eat/big-group",
+   "scenes": [
+    {
+     "beats": 6,
+     "style": "hook",
+     "text": "Picking a restaurant for 8 people *shouldn't take 90 minutes.*",
+     "q": [
+      "friends dinner table",
+      "group dinner restaurant",
+      "dinner party friends"
+     ],
+     "clip": 6961598
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "With more than six people, picking a place stops being about taste. *It's logistics.*",
+     "q": [
+      "friends looking at phones",
+      "group chat phones",
+      "friends deciding"
+     ],
+     "clip": 7976865
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Ask for one long table",
+     "sub": "Split across two tables, you get two separate dinners. Ask when you book.",
+     "q": [
+      "long table dinner",
+      "long dinner table",
+      "table set for dinner"
+     ],
+     "clip": 38242906
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Pick a place with shared plates",
+     "sub": "Eight separate orders come out at eight different times.",
+     "q": [
+      "sharing dishes",
+      "friends sharing food",
+      "family style food"
+     ],
+     "clip": 36579961
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Pick a menu with cheap and pricey dishes",
+     "sub": "Someone's always on a budget. Someone always isn't.",
+     "q": [
+      "restaurant menu",
+      "reading menu restaurant",
+      "menu friends"
+     ],
+     "clip": 4255455
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Go somewhere a little loud",
+     "sub": "In a quiet room, your group becomes the noise.",
+     "q": [
+      "friends laughing dinner",
+      "friends toast dinner",
+      "group laughing dinner"
+     ],
+     "clip": 3189297
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "And skip the group-chat vote. *Give everyone one veto instead.*",
+     "q": [
+      "texting phone",
+      "group chat",
+      "friends phones laughing"
+     ],
+     "clip": 9898435
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to whoever's planning the group dinner",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 0
+    }
+   ],
+   "track": "house-109"
+  },
+  {
+   "id": "campus-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
+   "scenes": [
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "",
+     "text_style": "maptitle",
+     "text": "How many places to eat are a *10-minute walk* from NYU?",
+     "count": 1462,
+     "sub": "Washington Square, Manhattan",
+     "map": "new-york-university"
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "The typical U.S. college campus has *12.*",
+     "q": [
+      "college campus",
+      "students walking campus",
+      "campus quad"
+     ],
+     "clip": 6082985
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "The six campuses with the most places to eat within half a mile are *all in Manhattan.*",
+     "q": [
+      "manhattan aerial",
+      "new york aerial",
+      "nyc skyline"
+     ],
+     "clip": 14607104
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "Places to eat within half a mile",
+     "rows": [
+      [
+       "1",
+       "CUNY Graduate Center",
+       "1,516"
+      ],
+      [
+       "2",
+       "Touro University",
+       "1,478"
+      ],
+      [
+       "3",
+       "NYU",
+       "1,462"
+      ],
+      [
+       "4",
+       "The New School",
+       "1,377"
+      ],
+      [
+       "5",
+       "Fashion Institute of Technology",
+       "1,146"
+      ],
+      [
+       "6",
+       "Baruch College",
+       "1,108"
+      ]
+     ],
+     "q": [
+      "new york street night",
+      "nyc street",
+      "times square"
+     ],
+     "clip": 5827624
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "How many places to eat are near your campus? *Look it up on SavorScout.*",
+     "q": [
+      "student using phone campus",
+      "college student phone",
+      "student on phone"
+     ],
+     "clip": 5963201
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "How does your campus compare? Comment below.",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 2
+    }
+   ],
+   "track": "disco-108"
+  }
+ ]
+}

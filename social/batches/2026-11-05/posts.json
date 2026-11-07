@@ -1,0 +1,401 @@
+{
+ "tiktok": [
+  {
+   "video": "sushi-tell",
+   "at": "2026-11-05T12:18:00-05:00",
+   "text": "Can you tell good sushi from bad before you order? 🍣 Start with the rice. Save this for your next sushi night.\n\n#sushi #sushitok #foodtips #japanesefood #nigiri"
+  },
+  {
+   "video": "big12-walkable",
+   "at": "2026-11-05T15:23:00-05:00",
+   "text": "Which Big 12 school can walk to the most restaurants? 🏈 We counted every place to eat within a 10-minute walk of all 16 campuses. Send this to your group chat.\n\n#big12 #cincinnati #collegelife #collegefood #campuslife"
+  },
+  {
+   "video": "acc-walkable",
+   "at": "2026-11-05T18:17:00-05:00",
+   "text": "Which ACC school can walk to the most food? It's not UNC 👀 We counted every place to eat within a 10-minute walk of all 18 campuses. Send this to someone at a rival school.\n\n#acc #berkeley #collegelife #collegefood #campuslife"
+  },
+  {
+   "video": "texas-walkable",
+   "at": "2026-11-05T21:22:00-05:00",
+   "text": "Texas A&M didn't make the top 5 👀 Which big Texas university has the most restaurants within a 10-minute walk? Send this to your friend at A&M.\n\n#texas #utaustin #tamu #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-texas",
+   "at": "2026-11-05T16:43:00-05:00",
+   "card": "texas",
+   "thread": [
+    "Texas A&M is 8th.\n\nWe counted every place to eat within a 10-minute walk (half a mile) of each Texas university with 20,000+ students:",
+    "1. UT Austin: 115\n2. Texas State: 79\n3. North Texas: 51\n4. Baylor: 49\n4. Texas Tech: 49\n6. UTEP: 47\n7. UTRGV: 42",
+    "8. Texas A&M: 40\n9. UT Arlington: 35\n10. Sam Houston State: 29\n11. Houston: 20\n12. UTSA: 16\n13. UT Dallas: 10",
+    "Measured from each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/tx"
+   ]
+  },
+  {
+   "id": "x-big12",
+   "at": "2026-11-05T17:37:00-05:00",
+   "card": "big12",
+   "thread": [
+    "Which Big 12 school has the most restaurants within a 10-minute walk of campus? Not Arizona State.\n\nWe counted every place to eat within half a mile of all 16:",
+    "1. Cincinnati: 101\n2. Arizona: 84\n3. West Virginia: 81\n4. Arizona State: 76\n5. Colorado: 70\n6. Kansas State: 52\n7. Baylor: 49\n7. Iowa State: 49",
+    "7. Texas Tech: 49\n10. TCU: 35\n11. UCF: 30\n12. BYU: 29\n13. Oklahoma State: 24\n14. Houston: 20\n15. Utah: 16\n16. Kansas: 11",
+    "Measured from each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/"
+   ]
+  },
+  {
+   "id": "x-acc",
+   "at": "2026-11-05T18:42:00-05:00",
+   "card": "acc",
+   "thread": [
+    "Which ACC school has the most restaurants within a 10-minute walk of campus? It isn't UNC.\n\nWe counted every place to eat within half a mile of all 18:",
+    "1. UC Berkeley: 277\n2. Pitt: 135\n3. UNC: 87\n4. NC State: 75\n5. Virginia Tech: 64\n6. SMU: 62\n7. Virginia: 58\n8. Florida State: 50\n9. Syracuse: 47",
+    "10. Clemson: 43\n11. Georgia Tech: 34\n12. Stanford: 29\n13. Louisville: 27\n14. Miami: 16\n15. Duke: 9\n16. Boston College: 8\n17. Notre Dame: 6\n17. Wake Forest: 6",
+    "Measured from each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/"
+   ]
+  },
+  {
+   "id": "x-sushi",
+   "at": "2026-11-05T19:39:00-05:00",
+   "card": "sushi",
+   "thread": [
+    "How to tell good sushi from bad sushi before you order. Start with the rice, not the fish:",
+    "The rice should be just warm, about body temperature, and lightly seasoned with vinegar. Cold, packed rice means the kitchen treats sushi like an assembly line.",
+    "Look for a short menu that changes. Sixty kinds of fish all year usually means frozen fish. A dozen that change means they're buying what's good.",
+    "Check how much of the menu is nigiri (fish on rice) and how much is rolls. A menu of rolls with three sauces is selling something other than sushi.\n\nAnd sit at the counter if there is one: you can ask what's good today.",
+    "If the chef puts the wasabi between the fish and the rice, you're somewhere serious.\n\nWhat to order, from omakase to chirashi: https://www.savorscout.net/food/sushi"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-texas",
+   "at": "2026-11-05T17:12:00-05:00",
+   "card": "texas",
+   "topic": "Texas",
+   "thread": [
+    "Texas A&M is 8th. We counted every place to eat within a 10-minute walk (half a mile) of each Texas university with 20,000+ students.\n\nUT Austin 115, Texas State 79, North Texas 51, Baylor and Texas Tech 49, UTEP 47, UTRGV 42, Texas A&M 40, UT Arlington 35, Sam Houston State 29, Houston 20, UTSA 16, UT Dallas 10.\n\nWhere should your school be?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/tx"
+   ]
+  },
+  {
+   "id": "t-big12",
+   "at": "2026-11-05T18:08:00-05:00",
+   "card": "big12",
+   "topic": "Big 12",
+   "thread": [
+    "Which Big 12 school can walk to the most food? Not Arizona State. We counted every place to eat within a 10-minute walk of all 16 campuses.\n\nCincinnati 101, Arizona 84, West Virginia 81, Arizona State 76, Colorado 70, Kansas State 52, Baylor, Iowa State and Texas Tech 49, TCU 35, UCF 30, BYU 29, Oklahoma State 24, Houston 20, Utah 16, Kansas 11.\n\nWhere should your school be?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/"
+   ]
+  },
+  {
+   "id": "t-acc",
+   "at": "2026-11-05T19:13:00-05:00",
+   "card": "acc",
+   "topic": "ACC",
+   "thread": [
+    "Which ACC school can walk to the most food? Not UNC. We counted every place to eat within a 10-minute walk of all 18 campuses.\n\nUC Berkeley 277, Pitt 135, UNC 87, NC State 75, Virginia Tech 64, SMU 62, Virginia 58, Florida State 50, Syracuse 47, Clemson 43, Georgia Tech 34, Stanford 29, Louisville 27, Miami 16, Duke 9, Boston College 8, Notre Dame and Wake Forest 6.\n\nWhere should your school be?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/"
+   ]
+  },
+  {
+   "id": "t-sushi",
+   "at": "2026-11-05T20:07:00-05:00",
+   "card": "sushi",
+   "topic": "Sushi",
+   "thread": [
+    "How to tell good sushi from bad before you order: start with the rice, not the fish.\n\nIt should be just warm and lightly seasoned; cold, packed rice means an assembly line. A short menu that changes beats sixty kinds of fish all year. And a menu that's mostly rolls with three sauces is selling something other than sushi.\n\nWhat's your go-to sushi order?",
+    "What to order, from omakase to chirashi: https://www.savorscout.net/food/sushi"
+   ]
+  }
+ ],
+ "cards": {
+  "texas": {
+   "type": "ranking",
+   "title": "Big Texas universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UT Austin",
+     115
+    ],
+    [
+     "2",
+     "Texas State",
+     79
+    ],
+    [
+     "3",
+     "North Texas",
+     51
+    ],
+    [
+     "4",
+     "Baylor",
+     49
+    ],
+    [
+     "4",
+     "Texas Tech",
+     49
+    ],
+    [
+     "6",
+     "UTEP",
+     47
+    ],
+    [
+     "7",
+     "UTRGV",
+     42
+    ],
+    [
+     "8",
+     "Texas A&M",
+     40
+    ],
+    [
+     "9",
+     "UT Arlington",
+     35
+    ],
+    [
+     "10",
+     "Sam Houston State",
+     29
+    ],
+    [
+     "11",
+     "Houston",
+     20
+    ],
+    [
+     "12",
+     "UTSA",
+     16
+    ],
+    [
+     "13",
+     "UT Dallas",
+     10
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "big12": {
+   "type": "ranking",
+   "title": "Big 12 schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus",
+   "rows": [
+    [
+     "1",
+     "Cincinnati",
+     101
+    ],
+    [
+     "2",
+     "Arizona",
+     84
+    ],
+    [
+     "3",
+     "West Virginia",
+     81
+    ],
+    [
+     "4",
+     "Arizona State",
+     76
+    ],
+    [
+     "5",
+     "Colorado",
+     70
+    ],
+    [
+     "6",
+     "Kansas State",
+     52
+    ],
+    [
+     "7",
+     "Baylor",
+     49
+    ],
+    [
+     "7",
+     "Iowa State",
+     49
+    ],
+    [
+     "7",
+     "Texas Tech",
+     49
+    ],
+    [
+     "10",
+     "TCU",
+     35
+    ],
+    [
+     "11",
+     "UCF",
+     30
+    ],
+    [
+     "12",
+     "BYU",
+     29
+    ],
+    [
+     "13",
+     "Oklahoma State",
+     24
+    ],
+    [
+     "14",
+     "Houston",
+     20
+    ],
+    [
+     "15",
+     "Utah",
+     16
+    ],
+    [
+     "16",
+     "Kansas",
+     11
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "acc": {
+   "type": "ranking",
+   "title": "ACC schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "Pitt",
+     135
+    ],
+    [
+     "3",
+     "UNC",
+     87
+    ],
+    [
+     "4",
+     "NC State",
+     75
+    ],
+    [
+     "5",
+     "Virginia Tech",
+     64
+    ],
+    [
+     "6",
+     "SMU",
+     62
+    ],
+    [
+     "7",
+     "Virginia",
+     58
+    ],
+    [
+     "8",
+     "Florida State",
+     50
+    ],
+    [
+     "9",
+     "Syracuse",
+     47
+    ],
+    [
+     "10",
+     "Clemson",
+     43
+    ],
+    [
+     "11",
+     "Georgia Tech",
+     34
+    ],
+    [
+     "12",
+     "Stanford",
+     29
+    ],
+    [
+     "13",
+     "Louisville",
+     27
+    ],
+    [
+     "14",
+     "Miami",
+     16
+    ],
+    [
+     "15",
+     "Duke",
+     9
+    ],
+    [
+     "16",
+     "Boston College",
+     8
+    ],
+    [
+     "17",
+     "Notre Dame",
+     6
+    ],
+    [
+     "17",
+     "Wake Forest",
+     6
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "sushi": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "sushi-tell",
+     0,
+     0.4
+    ]
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell good sushi from *bad sushi*",
+   "items": [
+    [
+     "Rice that's barely warm",
+     "Cold, packed rice means an assembly line."
+    ],
+    [
+     "A short menu that changes",
+     "Sixty fish all year usually means frozen."
+    ],
+    [
+     "More nigiri than rolls",
+     "Fish on rice is where the skill shows."
+    ]
+   ],
+   "note": "Wasabi already under the fish? You're somewhere serious."
+  }
+ }
+}

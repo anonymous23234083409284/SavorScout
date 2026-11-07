@@ -1,0 +1,377 @@
+{
+ "date": "2026-11-06",
+ "videos": [
+  {
+   "id": "uc-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ca",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which UC campus has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UCLA."
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "9",
+       "UC Merced",
+       "0"
+      ],
+      [
+       "8",
+       "UC Santa Cruz",
+       "1"
+      ],
+      [
+       "7",
+       "UC Santa Barbara",
+       "2"
+      ],
+      [
+       "6",
+       "UC Riverside",
+       "12"
+      ]
+     ],
+     "q": [
+      "california campus palm trees",
+      "university campus california",
+      "college campus sunny"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UCLA",
+     "count": 14,
+     "sub": "Busiest food street: Gayley Ave",
+     "map": "university-of-california-los-angeles",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UC San Diego",
+     "count": 29,
+     "sub": "Busiest food street: Villa La Jolla Dr",
+     "map": "university-of-california-san-diego",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UC Irvine",
+     "count": 37,
+     "sub": "Busiest food street: Campus Dr",
+     "map": "university-of-california-irvine",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UC Davis",
+     "count": 43,
+     "sub": "Busiest food street: G St",
+     "map": "university-of-california-davis",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which schools should we rank next?",
+     "reuse": 1
+    }
+   ]
+  },
+  {
+   "id": "pho-tell",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/pho",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "How to tell *good pho* before you order",
+     "q": [
+      "pho bowl",
+      "beef pho",
+      "vietnamese pho"
+     ],
+     "clip": 14227021
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "It's all in *the broth.*",
+     "q": [
+      "pouring broth pho",
+      "pho broth",
+      "ladling soup"
+     ],
+     "clip": 30320645,
+     "clip_from": 0
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Clear broth",
+     "sub": "It should be clear and still taste of beef. Cloudy broth was boiled too hard, and it tastes muddy.",
+     "q": [
+      "clear soup broth",
+      "pho broth close up",
+      "beef broth"
+     ],
+     "clip": 13426752
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "You can smell the spices",
+     "sub": "Star anise, cinnamon and clove. Broth that smells only of salt came from a stock cube.",
+     "q": [
+      "star anise",
+      "spices cinnamon star anise",
+      "whole spices"
+     ],
+     "clip": 5742199
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Herbs on the side",
+     "sub": "Basil, bean sprouts and lime come on a plate, so you add them fresh.",
+     "q": [
+      "thai basil bean sprouts lime",
+      "fresh herbs plate",
+      "adding herbs to pho"
+     ],
+     "clip": 7889400
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Noodles that aren't clumped",
+     "sub": "Clumped noodles were cooked ahead of time.",
+     "q": [
+      "rice noodles",
+      "noodles chopsticks lift",
+      "eating noodles"
+     ],
+     "clip": 8107383
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "First time at a new place? Order pho tai: *thin rare beef that cooks in the hot broth.*",
+     "q": [
+      "rare beef pho",
+      "sliced beef",
+      "pho beef"
+     ],
+     "clip": 3298478
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for your next pho night",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 0
+    }
+   ],
+   "track": "lofi-119"
+  },
+  {
+   "id": "florida-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/fl",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "florida-state-university",
+     "text": "Which big Florida university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UF."
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "Universities with 20,000+ students",
+     "rows": [
+      [
+       "6",
+       "Florida Atlantic",
+       "7"
+      ],
+      [
+       "6",
+       "Nova Southeastern",
+       "7"
+      ]
+     ],
+     "q": [
+      "florida campus palm trees",
+      "university campus florida",
+      "college campus sunny walkway"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "USF",
+     "count": 16,
+     "sub": "Busiest food street: Fowler Ave",
+     "map": "university-of-south-florida",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UCF",
+     "count": 30,
+     "sub": "Busiest food street: Collegiate Way",
+     "map": "university-of-central-florida",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "FIU",
+     "count": 45,
+     "sub": "Busiest food street: 107th Ave",
+     "map": "florida-international-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Florida",
+     "count": 48,
+     "sub": "Just 2 behind #1",
+     "map": "university-of-florida",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Florida State",
+     "count": 50,
+     "sub": "Busiest food street: Tennessee St",
+     "map": "florida-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend in Gainesville.",
+     "reuse": 1
+    }
+   ]
+  },
+  {
+   "id": "penn-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/pa",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "pennsylvania-state-university-main-campus",
+     "text": "Which big Pennsylvania university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Penn."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Temple",
+     "count": 91,
+     "sub": "Busiest food street: N Broad St",
+     "map": "temple-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Penn",
+     "count": 125,
+     "sub": "Busiest food street: Walnut St",
+     "map": "university-of-pennsylvania",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Drexel",
+     "count": 135,
+     "sub": "Tied with Pitt for 2nd",
+     "map": "drexel-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Pitt",
+     "count": 135,
+     "sub": "Tied with Drexel for 2nd",
+     "map": "university-of-pittsburgh-pittsburgh-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Penn State",
+     "count": 156,
+     "sub": "Busiest food street: College Ave",
+     "map": "pennsylvania-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which state should we rank next?",
+     "q": [
+      "college students walking campus fall",
+      "university campus autumn",
+      "students walking"
+     ]
+    }
+   ]
+  }
+ ]
+}

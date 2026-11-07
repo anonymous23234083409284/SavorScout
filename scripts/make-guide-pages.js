@@ -89,6 +89,57 @@ const qaHtml = (qa) => qa ? `
       <h2>${esc(qa[0])}</h2>
       <p class="qa">${esc(qa[1])}</p>` : "";
 
+/* ---- the long form (data/guide-deep.js) ------------------------------------
+   For the guides Google shows most: a "start here" list, every dish or drink
+   in a table, short explainers, and the questions people type, each answered
+   under its own heading in a sentence or two. */
+const DEEP = require("./data/guide-deep");
+const deepCount = (d) => (d.menu ? d.menu.groups.reduce((n, g) => n + g.rows.length, 0) : d.table ? d.table.rows.length : 0);
+const fillCount = (t, n) => t.replace(/\{n-(\d+)\}/g, (m, k) => String(n - Number(k))).replace(/\{n\}/g, String(n));
+/* A dish name that has its own guide links to it, where the guide exists. */
+const named = (name, links) => {
+  const slug = links && links[name];
+  return slug && dishMap.has(slug) ? `<a href="/food/${slug}">${esc(name)}</a>` : esc(name);
+};
+const quickHtml = (q, links) => `
+      <h2>${esc(q.h)}</h2>
+      <ul>
+${q.items.map(([h, p]) => `        <li><strong>${named(h, links)}</strong> — ${esc(p)}</li>`).join("\n")}
+      </ul>`;
+/* A real table, so the rows can be lifted into a search result as one. On a
+   phone each row stacks into a small card (page.js), labelled from the header. */
+function tableHtml(cols, rows, links) {
+  return `<table class="tbl">
+        <thead><tr>${cols.map((c) => `<th scope="col">${esc(c)}</th>`).join("")}</tr></thead>
+        <tbody>
+${rows.map((r) => `          <tr><th scope="row">${named(r[0], links)}</th>${r.slice(1).map((v, i) =>
+    `<td data-label="${esc(cols[i + 1])}">${esc(v)}</td>`).join("")}</tr>`).join("\n")}
+        </tbody>
+      </table>`;
+}
+const menuHtml = (m, links) => `
+      <h2>${esc(m.h)}</h2>
+      <p>${esc(m.intro)}</p>${m.groups.map((g) => `
+      <h3>${named(g.h, links)}</h3>
+      ${tableHtml(["Dish", "What it is", "Spice"], g.rows, links)}`).join("")}`;
+const drinksHtml = (t, links) => `
+      <h2>${esc(t.h)}</h2>
+      <p>${esc(t.intro)}</p>
+      ${tableHtml(t.cols, t.rows, links)}${t.note ? `
+      <p class="note">${esc(t.note)}</p>` : ""}`;
+const moreHtml = (more) => more.map((m) => `
+      <h2>${esc(m.h)}</h2>${m.paras ? `\n${paras(m.paras)}` : ""}${m.list ? `
+      ${defs(m.list)}` : ""}`).join("");
+const faqHtml = (f) => `
+      <h2>${esc(f.h)}</h2>
+      <div class="faq">
+${f.items.map(([q, a]) => `        <h3>${esc(q)}</h3>\n        <p>${esc(a)}</p>`).join("\n")}
+      </div>`;
+const faqLd = (f) => ({
+  "@type": "FAQPage",
+  mainEntity: f.items.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+});
+
 /* Titles for the food guides, rewritten to the phrasing people actually type.
 
    Search Console, 24 September: "korean restaurants near me" (22), "korean
@@ -117,11 +168,22 @@ const titleCase = (t) => t.replace(/\b([a-z])/g, (m) => m.toUpperCase())
    Drafted three ways (exact query match, concrete specifics, the searcher's
    job), then judged against the page text: nothing here promises what the page
    does not have. */
+/* Korean food and coffee, third pass (November 2026). Over three months the
+   two drew 638 and 667 impressions at positions 31.7 and 24.2, and no clicks,
+   almost all from "near me" searches. Page one of those is a map of the
+   searcher's own city, which a national page can't join, so these keep "near
+   you" for the impressions they have and add what a guide can rank for: every
+   common dish or drink explained, in tables (data/guide-deep.js), and the
+   questions behind the searches. {n} is the count of dishes or drinks in
+   those tables. */
 const SEARCH_COPY = {
   "coffee": {
-    seoTitle: ["Coffee Shops Near You to Work, Meet or Grab a Cup | Savor Scout", "Coffee Shops Near You to Work, Meet or Grab a Cup"],
-    h1: "How to find a good coffee shop near you",
-    desc: "Say what you need and Savor Scout picks one coffee shop near you. Plus how to spot fresh-roasted beans, a good cortado and silky milk, and what to order.",
+    seoTitle: ["Coffee Shops Near You & {n} Coffee Drinks Explained | Savor Scout", "Coffee Shops Near You & {n} Coffee Drinks Explained"],
+    h1: "Coffee drinks explained, and how to find a good coffee shop near you",
+    desc: "Latte, cappuccino, flat white, cortado, cold brew and {n-5} more coffee drinks explained, plus what to order and how to find a good coffee shop near you.",
+    lede: "A coffee shop menu looks long, but nearly every coffee drink on it is espresso, filter coffee or cold brew with more or less milk. Here's what each one is and how it tastes, what to order if you're not sure, and how to tell a good coffee shop near you.",
+    goodH: "How to tell a good coffee shop",
+    orderH: "What to order at a new coffee shop",
   },
   "chicken-sandwich": {
     seoTitle: ["Fried Chicken Sandwich Near You, Classic or Spicy | Savor Scout", "Fried Chicken Sandwich Near You, Classic or Spicy"],
@@ -166,12 +228,11 @@ const SEARCH_COPY = {
     desc: "Afghan restaurants are often signed Mediterranean or Middle Eastern, so cuisine filters miss them. Savor Scout searches by dish name. Plus what to order.",
   },
   "korean-food": {
-    seoTitle: [
-      "Korean Food & Korean BBQ Near You — What to Order | Savor Scout",
-      "Korean Food & Korean BBQ Near You — What to Order",
-    ],
-    h1: "Korean food near you: how to find a good one",
-    desc: "Korean BBQ, sundubu, bibimbap and fried chicken: what to order, how the banchan tells you a kitchen is good, and where the most Korean restaurants are.",
+    seoTitle: ["Korean Food Near You: {n} Dishes to Order, From BBQ to Stews"],
+    h1: "Korean food near you: what to order, and how to find a good one",
+    desc: "Bibimbap, bulgogi, kimchi jjigae and {n-3} more Korean dishes explained with spice levels, plus how Korean BBQ works and how to spot a good Korean restaurant.",
+    lede: "Korean food is a lot more than barbecue: there are bubbling stews, rice and noodle bowls, savory pancakes and fried chicken made for sharing. Here's what each common dish is and how spicy it usually is, how Korean barbecue works, and how to tell a good Korean restaurant before you order.",
+    goodH: "How to tell a good Korean restaurant",
   },
   soup: {
     seoTitle: [
@@ -332,10 +393,16 @@ function withCount(desc, g) {
 }
 
 function dishPage(x) {
+  const deep = DEEP[x.s];
   if (SEARCH_COPY[x.s]) {
     x = { ...x, ...SEARCH_COPY[x.s] };
     const g = guideFor(x.s);
     if (g) x.desc = x.desc.replace("{natl}", g.natl.toLocaleString("en-US"));
+    if (deep) {
+      const n = deepCount(deep);
+      x.desc = fillCount(x.desc, n);
+      if (x.seoTitle) x.seoTitle = x.seoTitle.map((t) => fillCount(t, n));
+    }
   } else {
     x = { ...x, desc: withCount(x.desc, guideFor(x.s)) };
   }
@@ -352,20 +419,26 @@ function dishPage(x) {
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(x.h1)}</h1>
       <p class="lede">${esc(x.lede)}</p>
-      <p><a class="cta" href="${app(x.n)}">Find ${esc(inSentence(x.n))} near you &rarr;</a></p>${qaHtml(x.qa)}
+      <p><a class="cta" href="${app(x.n)}">Find ${esc(inSentence(x.n))} near you &rarr;</a></p>${qaHtml(x.qa)}${deep ? [
+    deep.quick && quickHtml(deep.quick, deep.links),
+    deep.menu && menuHtml(deep.menu, deep.links),
+    deep.table && drinksHtml(deep.table, deep.links),
+    deep.more && moreHtml(deep.more),
+  ].filter(Boolean).join("") : ""}
 
-      <h2>What separates a good one from a bad one</h2>
+      <h2>${esc(x.goodH || "What separates a good one from a bad one")}</h2>
       ${defs(x.good)}
-
-      <h2>What to order</h2>
-      ${defs(x.order)}
+${deep && deep.order === false ? "" : `
+      <h2>${esc(x.orderH || "What to order")}</h2>
+      ${defs(x.order)}`}
 ${x.hub ? hubHtml(x) : ""}
-${whereHtml(guideFor(x.s), x.n)}
+${whereHtml(guideFor(x.s), inSentence(x.n))}
 ${guideLinksHtml(x.s)}
 
       <h2>How Savor Scout looks for it</h2>
       <p>${esc(x.signals)}</p>
       <p><a class="cta" href="${app(x.n)}">Find ${esc(inSentence(x.n))} near you &rarr;</a></p>
+${deep && deep.faq ? faqHtml(deep.faq) : ""}
 
       <h2>Looking in a particular city?</h2>
       <p>
@@ -393,8 +466,7 @@ ${SHELLFISH.has(x.s) ? `
          <a href="/what-to-eat/">What to eat when&hellip;</a> &middot;
          <a href="/">Savor Scout home</a></p>`;
 
-  const ld = JSON.stringify({
-    "@context": "https://schema.org",
+  const article = {
     "@type": "Article",
     headline: x.h1,
     description: x.desc,
@@ -403,8 +475,13 @@ ${SHELLFISH.has(x.s) ? `
     publisher: { "@type": "Organization", name: "Savor Scout", url: `${ORIGIN}/` },
     mainEntityOfPage: url,
     ...(whereLd(guideFor(x.s), x.n, x.s) ? { mentions: whereLd(guideFor(x.s), x.n, x.s) } : {}),
-    breadcrumb: breadcrumb(trail),
-  });
+  };
+  /* With a FAQ on the page, the page's facts sit side by side: the article,
+     its trail as a BreadcrumbList of its own, and the questions as a FAQPage
+     matching the ones shown. Article stays first, where the date goes. */
+  const ld = JSON.stringify(deep && deep.faq
+    ? { "@context": "https://schema.org", "@graph": [article, breadcrumb(trail), faqLd(deep.faq)] }
+    : { "@context": "https://schema.org", ...article, breadcrumb: breadcrumb(trail) });
 
   return { url, html: render(shell, { title: dishTitle(x), desc: x.desc, url, body, ld, who: WHO }) };
 }

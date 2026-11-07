@@ -1,0 +1,616 @@
+{
+ "videos": [
+  {
+   "id": "cold-night",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/what-to-eat/cold-rainy-night",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "It gets dark at *5pm* now.",
+     "q": [
+      "rainy night city street",
+      "city night rain lights",
+      "night street rain umbrella"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "Here's what's actually *worth leaving your dorm for*",
+     "q": [
+      "steaming bowl soup close up",
+      "steam rising food",
+      "hot soup steam"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "The rule: food that's *better in a restaurant* than in a dorm kitchen",
+     "q": [
+      "wok fire kitchen",
+      "chef cooking flames",
+      "wok cooking"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "num": "1",
+     "text": "Hotpot",
+     "sub": "Cooked at the table. Warm, and something to do.",
+     "q": [
+      "hot pot",
+      "hotpot boiling",
+      "shabu shabu"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "num": "2",
+     "text": "Korean BBQ",
+     "sub": "Sizzling at the table. Built for a group.",
+     "q": [
+      "korean bbq",
+      "korean barbecue grill",
+      "grilling meat table"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "num": "3",
+     "text": "Ramen",
+     "sub": "The bowl that fogs up your glasses.",
+     "q": [
+      "ramen",
+      "ramen noodles steam",
+      "noodle soup chopsticks"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "num": "4",
+     "text": "Birria",
+     "sub": "Slow-braised. Dip it in the broth.",
+     "q": [
+      "birria tacos",
+      "tacos consomme",
+      "tacos dipping sauce"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "num": "5",
+     "text": "A real curry",
+     "sub": "Someone started it hours ago. Let them.",
+     "q": [
+      "curry",
+      "indian curry",
+      "thai curry"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Best sign you picked right: the windows are *fogged from the inside*",
+     "q": [
+      "foggy window",
+      "condensation window",
+      "rain on window night"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "Cold-night rule: the good spot *5 minutes away* beats the great one 20 minutes away",
+     "q": [
+      "walking winter night street",
+      "people walking cold night",
+      "walking city night"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Save this for the first cold night",
+     "sub": "What's your go-to? Comment it.",
+     "reuse": 5
+    }
+   ]
+  },
+  {
+   "id": "sick-day",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/what-to-eat/sick-with-a-cold",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "Why food tastes like *nothing* when you're sick",
+     "q": [
+      "sick woman blanket tea",
+      "sick person couch blanket",
+      "person with cold tea"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "It's not the kitchen. *It's your nose.*",
+     "q": [
+      "smelling food",
+      "woman smelling coffee",
+      "smell aroma cooking"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Most of what you call taste is *actually smell*",
+     "q": [
+      "coffee steam aroma",
+      "steam rising cup",
+      "hot drink steam"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "Stuffed up, you're down to five:",
+     "q": [
+      "chef seasoning",
+      "seasoning food",
+      "sprinkle spices"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Salt*",
+     "q": [
+      "salt sprinkle",
+      "sprinkling salt",
+      "salt"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Sweet*",
+     "q": [
+      "honey drip",
+      "honey dripping",
+      "honey"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Sour*",
+     "q": [
+      "lemon squeeze",
+      "squeezing lime",
+      "lemon"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Bitter*",
+     "q": [
+      "espresso pour",
+      "black coffee",
+      "dark chocolate"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Heat*",
+     "q": [
+      "chili peppers",
+      "red chili",
+      "hot peppers"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "Chili heat isn't a taste. It's a *pain signal*, and a stuffy nose can't block it.",
+     "q": [
+      "chili oil",
+      "chili oil drizzle",
+      "red chili flakes"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "So order *hot, sour and spicy*:",
+     "q": [
+      "soup ladle",
+      "hot soup pot",
+      "pouring soup"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "text": "Tom yum",
+     "sub": "Hot, sour, lemongrass.",
+     "q": [
+      "tom yum",
+      "thai soup",
+      "spicy soup shrimp"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "text": "Hot & sour soup",
+     "sub": "It's literally in the name.",
+     "q": [
+      "hot and sour soup",
+      "chinese soup",
+      "egg drop soup"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "text": "Pho",
+     "sub": "Extra lime. Extra chili.",
+     "q": [
+      "pho",
+      "pho noodle soup",
+      "vietnamese soup"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "item",
+     "text": "Congee",
+     "sub": "Rice porridge. Pickles on top.",
+     "q": [
+      "congee",
+      "rice porridge",
+      "porridge bowl"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "small",
+     "text": "Not a cure. Just food you can *actually taste*.",
+     "q": [
+      "soup steam close up",
+      "bowl of soup",
+      "soup bowl"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to your sick roommate",
+     "sub": "Save it for flu season.",
+     "reuse": 13
+    }
+   ]
+  },
+  {
+   "id": "big-ten-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
+   "scenes": [
+    {
+     "beats": 6,
+     "style": "hook",
+     "text": "Big Ten schools ranked by *how much food you can walk to*",
+     "q": [
+      "college campus students walking",
+      "university campus autumn",
+      "students walking campus"
+     ]
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Every place to eat within *half a mile* of campus",
+     "sub": "Measured from each campus's center point.",
+     "q": [
+      "aerial city streets",
+      "college town street",
+      "downtown street aerial"
+     ]
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "18 to 12",
+     "rows": [
+      [
+       "18",
+       "UCLA",
+       "14"
+      ],
+      [
+       "17",
+       "Maryland",
+       "21"
+      ],
+      [
+       "16",
+       "Minnesota",
+       "55"
+      ],
+      [
+       "15",
+       "Oregon",
+       "57"
+      ],
+      [
+       "14",
+       "Purdue",
+       "61"
+      ],
+      [
+       "13",
+       "Washington",
+       "70"
+      ],
+      [
+       "12",
+       "Michigan State",
+       "84"
+      ]
+     ],
+     "q": [
+      "students walking campus",
+      "college students walking",
+      "campus autumn"
+     ]
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "10 to 6",
+     "rows": [
+      [
+       "T-10",
+       "Ohio State",
+       "86"
+      ],
+      [
+       "T-10",
+       "Wisconsin",
+       "86"
+      ],
+      [
+       "9",
+       "USC",
+       "94"
+      ],
+      [
+       "8",
+       "Nebraska",
+       "102"
+      ],
+      [
+       "7",
+       "Illinois",
+       "109"
+      ],
+      [
+       "6",
+       "Iowa",
+       "132"
+      ]
+     ],
+     "q": [
+      "college town street",
+      "students walking street",
+      "university street"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Indiana",
+     "count": 138,
+     "sub": "Busiest food street: Kirkwood Ave",
+     "map": "indiana-university-bloomington"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Penn State",
+     "count": 156,
+     "sub": "Busiest food street: College Ave",
+     "map": "pennsylvania-state-university-main-campus"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Northwestern",
+     "count": 162,
+     "sub": "Busiest food street: Davis St",
+     "map": "northwestern-university"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Rutgers",
+     "count": 182,
+     "sub": "Busiest food street: Easton Ave",
+     "map": "rutgers-university-new-brunswick"
+    },
+    {
+     "beats": 9,
+     "style": "rank",
+     "num": "1",
+     "text": "Michigan",
+     "count": 224,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-michigan-ann-arbor"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Where should your school be?",
+     "sub": "Tell us in the comments.",
+     "reuse": 0
+    }
+   ]
+  },
+  {
+   "id": "cheap-vs-bad",
+   "mood": "groove",
+   "source": "https://www.savorscout.net/what-to-eat/on-a-budget",
+   "scenes": [
+    {
+     "beats": 6,
+     "style": "hook",
+     "text": "How to tell *cheap food* from *bad food*",
+     "q": [
+      "taco truck",
+      "street food tacos",
+      "food truck night"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "before you even order",
+     "q": [
+      "menu board restaurant",
+      "looking at menu",
+      "restaurant menu"
+     ]
+    },
+    {
+     "beats": 8,
+     "style": "item",
+     "num": "1",
+     "text": "Short menu = good sign",
+     "sub": "A taqueria selling four things buys in bulk and wastes nothing.",
+     "q": [
+      "taqueria",
+      "making tacos",
+      "tacos preparation"
+     ]
+    },
+    {
+     "beats": 8,
+     "style": "item",
+     "num": "2",
+     "text": "Go at lunch",
+     "sub": "Same kitchen, same plate, often a lot cheaper.",
+     "q": [
+      "lunch plate",
+      "lunch special",
+      "plate of food lunch"
+     ]
+    },
+    {
+     "beats": 8,
+     "style": "item",
+     "num": "3",
+     "text": "Ignore the $ signs",
+     "sub": "They average the whole menu. Look up one filling dish instead.",
+     "q": [
+      "scrolling phone food",
+      "phone menu restaurant",
+      "looking at phone restaurant"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "Where the value hides:",
+     "q": [
+      "street food market",
+      "night market food",
+      "food market"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Taquerias*",
+     "q": [
+      "tacos al pastor",
+      "tacos",
+      "street tacos"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Pho*",
+     "q": [
+      "pho",
+      "pho bowl",
+      "noodle soup"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Halal plates*",
+     "q": [
+      "chicken over rice",
+      "shawarma plate",
+      "halal food"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Burritos*",
+     "q": [
+      "burrito",
+      "burrito cut in half",
+      "mexican burrito"
+     ]
+    },
+    {
+     "beats": 2,
+     "style": "word",
+     "text": "*Gyros*",
+     "q": [
+      "gyro",
+      "shawarma wrap",
+      "doner kebab"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "Cheap because they *specialize*, not because they cut corners.",
+     "q": [
+      "cook preparing food",
+      "street food cook",
+      "chef cooking"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Save this for the end of the month",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 2
+    }
+   ]
+  }
+ ],
+ "date": "2026-11-02"
+}

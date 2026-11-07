@@ -1,0 +1,460 @@
+{
+ "date": "2026-11-04",
+ "videos": [
+  {
+   "id": "ivy-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "yale-university",
+     "text": "Which Ivy has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Columbia."
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "8",
+       "Dartmouth",
+       "39"
+      ],
+      [
+       "7",
+       "Cornell",
+       "69"
+      ],
+      [
+       "6",
+       "Princeton",
+       "97"
+      ]
+     ],
+     "q": [
+      "old university building",
+      "ivy covered building",
+      "historic campus building"
+     ],
+     "clip": 36323345
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Penn",
+     "count": 125,
+     "sub": "Busiest food street: Walnut St",
+     "map": "university-of-pennsylvania",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Brown",
+     "count": 133,
+     "sub": "Busiest food street: Thayer St",
+     "map": "brown-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Harvard",
+     "count": 156,
+     "sub": "Busiest food street: Mass Ave",
+     "map": "harvard-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Columbia",
+     "count": 214,
+     "sub": "Busiest food street: Broadway",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Yale",
+     "count": 223,
+     "sub": "Busiest food street: Chapel St",
+     "map": "yale-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which conference should we rank next?",
+     "reuse": 1
+    }
+   ]
+  },
+  {
+   "id": "boba-signs",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/boba",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "A lot of boba is just *sugar with pearls in it.*",
+     "q": [
+      "bubble tea",
+      "boba tea",
+      "milk tea pearls"
+     ],
+     "clip": 6414273
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Here's how to find a boba shop *that actually makes tea:*",
+     "q": [
+      "making bubble tea",
+      "bubble tea shop",
+      "boba shop"
+     ],
+     "clip": 34164107
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Chewy pearls with a soft center",
+     "sub": "Cooked pearls are only good for about four hours. Old ones go hard in the middle.",
+     "q": [
+      "tapioca pearls",
+      "boba pearls",
+      "tapioca pearls cooking"
+     ],
+     "clip": 8473926
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Tea that's brewed, not powdered",
+     "sub": "If every flavor comes from a powder, the tea is just there to carry sugar.",
+     "q": [
+      "brewing tea",
+      "tea brewing",
+      "pouring tea"
+     ],
+     "clip": 8296117
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "You choose the sweetness",
+     "sub": "Look for 25%, 50% or 75% sugar. A shop that asks wants you to taste the tea.",
+     "q": [
+      "pouring milk tea",
+      "milk tea",
+      "iced milk tea"
+     ],
+     "clip": 14461052
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Brown sugar syrup made in house",
+     "sub": "It should taste caramelized and a little bitter, not just sweet.",
+     "q": [
+      "brown sugar boba",
+      "brown sugar syrup",
+      "brown sugar milk tea"
+     ],
+     "clip": 26245626
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "New shop? Order a classic milk tea at 50% sugar. *If that's good, everything else will be.*",
+     "q": [
+      "drinking bubble tea",
+      "holding bubble tea",
+      "boba drink"
+     ],
+     "clip": 25692386,
+     "clip_from": 0
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to your boba buddy",
+     "sub": "What's your usual order?",
+     "reuse": 0
+    }
+   ],
+   "track": "lofi-113"
+  },
+  {
+   "id": "sec-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "vanderbilt-university",
+     "text": "Which SEC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows."
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "Places to eat within a 10-minute walk",
+     "rows": [
+      [
+       "16",
+       "Mississippi State",
+       "8"
+      ],
+      [
+       "14",
+       "Ole Miss",
+       "10"
+      ],
+      [
+       "14",
+       "Arkansas",
+       "10"
+      ],
+      [
+       "12",
+       "Auburn",
+       "21"
+      ],
+      [
+       "12",
+       "Tennessee",
+       "21"
+      ],
+      [
+       "11",
+       "Alabama",
+       "27"
+      ],
+      [
+       "10",
+       "Texas A&M",
+       "40"
+      ],
+      [
+       "9",
+       "LSU",
+       "41"
+      ],
+      [
+       "8",
+       "South Carolina",
+       "47"
+      ],
+      [
+       "7",
+       "Florida",
+       "48"
+      ],
+      [
+       "6",
+       "Oklahoma",
+       "64"
+      ]
+     ],
+     "q": [
+      "college stadium crowd night",
+      "college campus evening",
+      "university campus aerial"
+     ],
+     "clip": 5957445
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Kentucky",
+     "count": 69,
+     "sub": "Busiest food street: Broadway",
+     "map": "university-of-kentucky",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Missouri",
+     "count": 98,
+     "sub": "Tied with Georgia for 3rd",
+     "map": "university-of-missouri-columbia",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Georgia",
+     "count": 98,
+     "sub": "Tied with Missouri for 3rd",
+     "map": "university-of-georgia",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Texas",
+     "count": 115,
+     "sub": "Busiest food street: Guadalupe St",
+     "map": "the-university-of-texas-at-austin",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Vanderbilt",
+     "count": 129,
+     "sub": "Busiest food street: West End Ave",
+     "map": "vanderbilt-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which conference should we rank next?",
+     "reuse": 1
+    }
+   ]
+  },
+  {
+   "id": "food-streets",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/university-of-north-carolina-at-chapel-hill",
+   "scenes": [
+    {
+     "beats": 6,
+     "style": "hook",
+     "map": "unc-franklin",
+     "text": "In some college towns, *most of the restaurants are on one street.*"
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "UNC Chapel Hill",
+     "count": 70,
+     "suffix": "%",
+     "label": "of the places to eat within a mile of campus are on Franklin Street",
+     "sub": "Chapel Hill, North Carolina",
+     "map": "unc-franklin"
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "These big schools have *the biggest share of their restaurants on one street:*",
+     "q": [
+      "aerial college town",
+      "aerial town street",
+      "town aerial view"
+     ],
+     "clip": 19543873,
+     "sub": "Universities with 20,000+ students."
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "Share of nearby places to eat on one street",
+     "rows": [
+      [
+       "1",
+       "University of Delaware",
+       "73%",
+       "Main St"
+      ],
+      [
+       "2",
+       "UNC Chapel Hill",
+       "70%",
+       "Franklin St"
+      ],
+      [
+       "3",
+       "UC Riverside",
+       "66%",
+       "University Ave"
+      ],
+      [
+       "4",
+       "Cal State Northridge",
+       "66%",
+       "Reseda Blvd"
+      ],
+      [
+       "5",
+       "University of New Mexico",
+       "66%",
+       "Central Ave"
+      ],
+      [
+       "6",
+       "University of Maryland",
+       "63%",
+       "Baltimore Ave"
+      ],
+      [
+       "7",
+       "Michigan State",
+       "60%",
+       "Grand River Ave"
+      ],
+      [
+       "8",
+       "NC State",
+       "53%",
+       "Hillsborough St"
+      ]
+     ],
+     "q": [
+      "street lights night",
+      "city street night",
+      "street at night"
+     ],
+     "clip": 29631359
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "What's the food street at your school? *Comment it below.*",
+     "q": [
+      "college students walking",
+      "friends walking street",
+      "students walking downtown"
+     ],
+     "clip": 7970444
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to a friend at one of these schools",
+     "sub": "Follow for more food that's worth it.",
+     "reuse": 2
+    }
+   ],
+   "track": "disco-114"
+  }
+ ]
+}

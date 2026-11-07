@@ -1,0 +1,232 @@
+{
+ "tiktok": [
+  {
+   "video": "eating-alone",
+   "at": "2026-11-02T20:00:00-05:00",
+   "text": "Eating alone at a restaurant feels awkward? It's the seat, not you 🍜 Here's where to sit and what to order. Send this to the friend who won't eat out alone.\n\n#eatingalone #solodining #collegelife #foodtips #ramen"
+  },
+  {
+   "video": "late-night",
+   "at": "2026-11-02T21:45:00-05:00",
+   "text": "The app said open until 2am. The kitchen closed at midnight 🌙 How to actually find food after 11pm. Save this for your next late-night craving. What's your go-to?\n\n#latenightfood #collegelife #foodtips #midnightsnack #studentlife"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-campus-food",
+   "at": "2026-11-02T17:15:00-05:00",
+   "card": "campus-food",
+   "thread": [
+    "We looked at the restaurants within a mile of 910 U.S. college campuses.\n\nThe most common kind of restaurant near campus? Pizza. It's the top type near 38% of those campuses, and one of the top three near 71%.",
+    "Mexican food is the most common type near 22% of campuses. After that: sandwich shops (8%), American restaurants (7%) and coffee shops (6%).",
+    "A typical campus in our data has about 50 places to eat within a mile, and about 15 within half a mile.\n\nAnd 71% of all the restaurants we counted are local places, not chains.",
+    "What's the most common food near your campus? Every campus, closest places first: https://www.savorscout.net/campus/"
+   ]
+  },
+  {
+   "id": "x-eating-alone",
+   "at": "2026-11-02T18:15:00-05:00",
+   "card": "eating-alone",
+   "thread": [
+    "Eating alone at a restaurant feels awkward for one reason: you're in the wrong seat.\n\nA table for two in the middle of a room full of couples feels exposed. A counter doesn't.",
+    "At a counter or a bar, eating alone is the normal thing to do. Ramen counters, sushi counters, diner counters, taco counters.\n\nYou get served faster, you can leave whenever you want, and you get to watch someone cook.",
+    "What makes a place good for eating alone:\n\n• A counter or bar that serves the full menu\n• An open kitchen\n• One-person dishes: ramen, a rice bowl, pasta, a sandwich\n• Somewhere busy, where nobody notices how long you stay",
+    "And the best part: it's the one meal where you order exactly what you want, with no negotiating.\n\nMore: https://www.savorscout.net/what-to-eat/eating-alone"
+   ]
+  },
+  {
+   "id": "x-pizza",
+   "at": "2026-11-02T19:15:00-05:00",
+   "card": "pizza",
+   "thread": [
+    "Pizza is the most common restaurant near U.S. college campuses. Here's how to tell a good pizza place from the rest, before you order:",
+    "1. Look at the edge of the crust.\n\nDark, uneven blisters on the rim mean a very hot oven and well-fermented dough. A pale crust that's the same color all over usually means a conveyor oven.",
+    "2. Count the toppings.\n\nGood pizzerias put about three things on a pie, not nine. Too many toppings release water and steam the crust soggy.",
+    "3. Taste the sauce.\n\nIt should taste like tomatoes: simple and bright. A thick, sweet sauce is usually covering for tomatoes that weren't worth tasting.",
+    "4. Lift a slice.\n\nA little oil on top is fine. A puddle of grease underneath means too much cheap cheese and a crust that wasn't baked hot enough.\n\nMore: https://www.savorscout.net/food/pizza"
+   ]
+  },
+  {
+   "id": "x-late-night",
+   "at": "2026-11-02T20:15:00-05:00",
+   "card": "late-night",
+   "thread": [
+    "\"Open until 2am\" is a plan, not a promise. Plenty of kitchens stop cooking hours before the listing says they close.\n\nHow to actually find food after 11pm:",
+    "1. Read the reviews, not the hours.\n\nA recent review that says \"went at 1am, kitchen still open\" is worth more than any hours listing.",
+    "2. An open bar doesn't mean an open kitchen.\n\nThe closing time you see is usually the bar's. The kitchen can close well before it, so a busy bar isn't proof you can get food.",
+    "3. Go to places built for late night: 24-hour diners, taquerias near nightlife, Korean and Chinese kitchens that stay open late, halal carts.\n\nA kitchen that does most of its business after midnight is good after midnight.",
+    "4. Call before you walk over. Thirty seconds on the phone beats a 20-minute walk to a locked door.\n\nAnd skip delivery after midnight: the kitchen can be open with no driver willing to bring it.\n\nMore: https://www.savorscout.net/what-to-eat/late-night"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-campus-food",
+   "at": "2026-11-02T17:45:00-05:00",
+   "card": "campus-food",
+   "topic": "College Food",
+   "thread": [
+    "We looked at the restaurants within a mile of 910 U.S. college campuses. The most common kind? Pizza.\n\nIt's the top restaurant type near 38% of those campuses, and one of the top three near 71%. Mexican food is the most common near 22%. Sandwich shops, American restaurants and coffee shops round out the top five.\n\nWhat's the most common food near your campus?",
+    "Every campus, with the closest places first: https://www.savorscout.net/campus/"
+   ]
+  },
+  {
+   "id": "t-eating-alone",
+   "at": "2026-11-02T18:45:00-05:00",
+   "card": "eating-alone",
+   "topic": "Food",
+   "thread": [
+    "Eating alone at a restaurant only feels awkward because of where you sit.\n\nA table for two in the middle of a room full of couples feels exposed. A counter or a bar doesn't, because eating alone is normal there. Think ramen counters, sushi counters, diner counters.\n\nBonus: it's the one meal where you order exactly what you want, no negotiating.\n\nWhere's your go-to spot for eating alone?",
+    "More on eating out alone: https://www.savorscout.net/what-to-eat/eating-alone"
+   ]
+  },
+  {
+   "id": "t-pizza",
+   "at": "2026-11-02T19:45:00-05:00",
+   "card": "pizza",
+   "topic": "Pizza",
+   "thread": [
+    "How to tell if a pizza place is good before you order:\n\n• Dark, uneven blisters on the edge of the crust mean a very hot oven\n• About three toppings, not nine (too many make it soggy)\n• Sauce that tastes like tomatoes, not sugar\n• No puddle of grease when you lift a slice\n\nWhich pizza place near you passes all four?",
+    "The full guide to good pizza: https://www.savorscout.net/food/pizza"
+   ]
+  },
+  {
+   "id": "t-late-night",
+   "at": "2026-11-02T20:45:00-05:00",
+   "card": "late-night",
+   "topic": "Late Night Food",
+   "thread": [
+    "\"Open until 2am\" is a plan, not a promise. Plenty of kitchens stop cooking before the listing says they close.\n\nBefore a late-night food run:\n• Read recent reviews that mention a time (\"went at 1am, still serving\")\n• The closing time you see is often the bar's, not the kitchen's\n• Go to places built for late night: 24-hour diners, taquerias, halal carts\n• Call first\n\nWhat's your 1am spot?",
+    "More on finding food late at night: https://www.savorscout.net/what-to-eat/late-night"
+   ]
+  }
+ ],
+ "cards": {
+  "campus-food": {
+   "type": "ranking",
+   "title": "The most common restaurant near U.S. *college campuses*",
+   "subtitle": "Share of 910 campuses where it's the top type within a mile",
+   "rows": [
+    [
+     "1",
+     "Pizza",
+     38
+    ],
+    [
+     "2",
+     "Mexican",
+     22
+    ],
+    [
+     "3",
+     "Sandwiches",
+     8
+    ],
+    [
+     "4",
+     "American",
+     7
+    ],
+    [
+     "5",
+     "Coffee",
+     6
+    ],
+    [
+     "6",
+     "Bakery",
+     3
+    ],
+    [
+     "7",
+     "Italian",
+     3
+    ],
+    [
+     "8",
+     "Chinese",
+     3
+    ]
+   ],
+   "source": "Data: Overture Maps",
+   "suffix": "%"
+  },
+  "eating-alone": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "eating-alone",
+     2,
+     1.0
+    ]
+   },
+   "kicker": "EATING ALONE",
+   "title": "It's not you. *It's the seat.*",
+   "items": [
+    [
+     "Sit at a counter or the bar",
+     "Eating alone is normal there. Nobody wonders why."
+    ],
+    [
+     "Pick an open kitchen",
+     "Something to watch besides your phone."
+    ],
+    [
+     "Order a one-person dish",
+     "Ramen, a rice bowl, pasta, a sandwich."
+    ]
+   ],
+   "note": "Best part: you order exactly what you want. No negotiating."
+  },
+  "pizza": {
+   "type": "tips",
+   "photo": {
+    "pexels": 12096782
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell a pizza place is *actually good*",
+   "items": [
+    [
+     "Check the crust's edge",
+     "Dark, uneven blisters mean a very hot oven."
+    ],
+    [
+     "Count the toppings",
+     "About three, not nine. Too many make it soggy."
+    ],
+    [
+     "Lift a slice",
+     "No puddle of grease underneath."
+    ]
+   ],
+   "note": "And the sauce should taste like tomatoes, not sugar."
+  },
+  "late-night": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "late-night",
+     4,
+     1.5
+    ]
+   },
+   "kicker": "AFTER 11PM",
+   "title": "How to actually find *late-night food*",
+   "items": [
+    [
+     "Read reviews, not hours",
+     "\"Went at 1am, still serving\" beats any listing."
+    ],
+    [
+     "Open bar doesn't mean open kitchen",
+     "The hours you see are often the bar's."
+    ],
+    [
+     "Go to places built for late night",
+     "24-hour diners, taquerias, halal carts. And call first."
+    ]
+   ],
+   "note": "Skip delivery after midnight: the kitchen may be open with no driver."
+  }
+ }
+}

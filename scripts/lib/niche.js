@@ -239,11 +239,11 @@ function guideLinksHtml(food) {
   if (!mine.length) return "";
   const [L] = label(food);
   return `
-      <h2>${esc(L)} near campus</h2>
+      <h2>${esc(/^[A-Z]+$/.test(L) ? L : L[0] + L.slice(1).toLowerCase())} near campus</h2>
       <ul class="cards">
         ${mine.map((p) => { const c = CAMPUS.get(p.campus); return `<li class="card"><a href="${urlPath(p)}">${esc(L)} near ${esc(shortOf(c))}</a>` +
           `<span class="meta">${fmt(p.n)} within a mile · ${esc(c.c)}, ${esc(c.r)}</span></li>`; }).join("\n        ")}
       </ul>`;
 }
 
-module.exports = { PAGES, build, campusLinksHtml, campusInlineLinks, guideLinksHtml, urlPath };
+module.exports = { PAGES, build, campusLinksHtml, campusInlineLinks, guideLinksHtml, urlPath, label };

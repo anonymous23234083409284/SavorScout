@@ -1,0 +1,268 @@
+{
+ "tiktok": [
+  {
+   "video": "uc-walkable",
+   "at": "2026-11-06T12:22:00-05:00",
+   "text": "UCLA is 5th 👀 Which UC campus has the most restaurants within a 10-minute walk? Send this to your friend at another UC.\n\n#uc #berkeley #ucla #collegelife #collegefood"
+  },
+  {
+   "video": "pho-tell",
+   "at": "2026-11-06T15:18:00-05:00",
+   "text": "Can you tell good pho from bad before you order? 🍜 Start with the broth. Save this for your next pho night.\n\n#pho #vietnamesefood #foodtips #noodles #soup"
+  },
+  {
+   "video": "florida-walkable",
+   "at": "2026-11-06T18:23:00-05:00",
+   "text": "It's not UF 👀 Which big Florida university has the most restaurants within a 10-minute walk? Send this to your friend in Gainesville.\n\n#florida #fsu #gators #collegelife #collegefood"
+  },
+  {
+   "video": "penn-walkable",
+   "at": "2026-11-06T21:17:00-05:00",
+   "text": "Pitt and Drexel are tied 👀 Which big Pennsylvania university has the most restaurants within a 10-minute walk? Send this to someone at Penn.\n\n#pennstate #pitt #drexel #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-uc",
+   "at": "2026-11-06T16:44:00-05:00",
+   "card": "uc",
+   "thread": [
+    "UCLA is 5th.\n\nWe counted every place to eat within a 10-minute walk (half a mile) of all nine UC campuses:",
+    "1. UC Berkeley: 277\n2. UC Davis: 43\n3. UC Irvine: 37\n4. UC San Diego: 29\n5. UCLA: 14\n6. UC Riverside: 12\n7. UC Santa Barbara: 2\n8. UC Santa Cruz: 1\n9. UC Merced: 0",
+    "Measured from each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ca"
+   ]
+  },
+  {
+   "id": "x-florida",
+   "at": "2026-11-06T17:38:00-05:00",
+   "card": "florida",
+   "thread": [
+    "Florida State has more restaurants within a 10-minute walk of campus than UF. By two.\n\nEvery Florida university with 20,000+ students:",
+    "1. Florida State: 50\n2. Florida: 48\n3. FIU: 45\n4. UCF: 30\n5. USF: 16\n6. Florida Atlantic: 7\n6. Nova Southeastern: 7",
+    "Measured from each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/fl"
+   ]
+  },
+  {
+   "id": "x-penn",
+   "at": "2026-11-06T18:43:00-05:00",
+   "card": "penn",
+   "thread": [
+    "Penn State beats Penn, Pitt and Drexel for restaurants within a 10-minute walk of campus.\n\nEvery Pennsylvania university with 20,000+ students:",
+    "1. Penn State: 156\n2. Pitt: 135\n2. Drexel: 135\n4. Penn: 125\n5. Temple: 91",
+    "Measured from each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/pa"
+   ]
+  },
+  {
+   "id": "x-pho",
+   "at": "2026-11-06T19:37:00-05:00",
+   "card": "pho",
+   "thread": [
+    "How to tell good pho before you order. It's all in the broth:",
+    "It should be clear and still taste of beef. Cloudy broth was boiled too hard, and boiled broth tastes muddy no matter how long it cooked.",
+    "You should smell the spices before you taste them: star anise, cinnamon, clove. Broth that smells only of salt came from a stock cube.",
+    "Herbs come on the side, so you add basil, bean sprouts and lime fresh. And the noodles shouldn't be clumped: that means they were cooked ahead.",
+    "First time at a new place? Order pho tai, thin rare beef that cooks in the broth. It shows how hot the broth really is.\n\nMore on finding good pho: https://www.savorscout.net/food/pho"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-uc",
+   "at": "2026-11-06T17:13:00-05:00",
+   "card": "uc",
+   "topic": "UC",
+   "thread": [
+    "UCLA is 5th. We counted every place to eat within a 10-minute walk (half a mile) of all nine UC campuses.\n\nUC Berkeley 277, UC Davis 43, UC Irvine 37, UC San Diego 29, UCLA 14, UC Riverside 12, UC Santa Barbara 2, UC Santa Cruz 1, UC Merced 0.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ca"
+   ]
+  },
+  {
+   "id": "t-florida",
+   "at": "2026-11-06T18:09:00-05:00",
+   "card": "florida",
+   "topic": "Florida",
+   "thread": [
+    "Florida State has more restaurants within a 10-minute walk of campus than UF, by two. Every Florida university with 20,000+ students:\n\nFlorida State 50, Florida 48, FIU 45, UCF 30, USF 16, Florida Atlantic and Nova Southeastern 7.\n\nWhere should your school be?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/fl"
+   ]
+  },
+  {
+   "id": "t-penn",
+   "at": "2026-11-06T19:12:00-05:00",
+   "card": "penn",
+   "topic": "Pennsylvania",
+   "thread": [
+    "Penn State beats Penn, Pitt and Drexel for restaurants within a 10-minute walk of campus. Every Pennsylvania university with 20,000+ students:\n\nPenn State 156, Pitt and Drexel 135, Penn 125, Temple 91.\n\nWhere should your school be?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/pa"
+   ]
+  },
+  {
+   "id": "t-pho",
+   "at": "2026-11-06T20:08:00-05:00",
+   "card": "pho",
+   "topic": "Pho",
+   "thread": [
+    "How to tell good pho before you order: it's all in the broth.\n\nIt should be clear and still taste of beef; cloudy means it was boiled too hard. You should smell star anise and cinnamon before you taste it. Herbs come on the side, and the noodles shouldn't be clumped.\n\nWhat's your go-to pho order?",
+    "More on finding good pho: https://www.savorscout.net/food/pho"
+   ]
+  }
+ ],
+ "cards": {
+  "uc": {
+   "type": "ranking",
+   "title": "UC campuses ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "UC Davis",
+     43
+    ],
+    [
+     "3",
+     "UC Irvine",
+     37
+    ],
+    [
+     "4",
+     "UC San Diego",
+     29
+    ],
+    [
+     "5",
+     "UCLA",
+     14
+    ],
+    [
+     "6",
+     "UC Riverside",
+     12
+    ],
+    [
+     "7",
+     "UC Santa Barbara",
+     2
+    ],
+    [
+     "8",
+     "UC Santa Cruz",
+     1
+    ],
+    [
+     "9",
+     "UC Merced",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "florida": {
+   "type": "ranking",
+   "title": "Big Florida universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Florida State",
+     50
+    ],
+    [
+     "2",
+     "Florida",
+     48
+    ],
+    [
+     "3",
+     "FIU",
+     45
+    ],
+    [
+     "4",
+     "UCF",
+     30
+    ],
+    [
+     "5",
+     "USF",
+     16
+    ],
+    [
+     "6",
+     "Florida Atlantic",
+     7
+    ],
+    [
+     "6",
+     "Nova Southeastern",
+     7
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "penn": {
+   "type": "ranking",
+   "title": "Big Pennsylvania universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Penn State",
+     156
+    ],
+    [
+     "2",
+     "Pitt",
+     135
+    ],
+    [
+     "2",
+     "Drexel",
+     135
+    ],
+    [
+     "4",
+     "Penn",
+     125
+    ],
+    [
+     "5",
+     "Temple",
+     91
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "pho": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "pho-tell",
+     0,
+     1.0
+    ]
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell *good pho*",
+   "items": [
+    [
+     "Clear broth",
+     "Cloudy broth was boiled too hard."
+    ],
+    [
+     "You can smell the spices",
+     "Star anise, cinnamon, clove."
+    ],
+    [
+     "Herbs on the side",
+     "So you add them fresh."
+    ]
+   ],
+   "note": "First time? Order pho tai: rare beef cooked by the broth."
+  }
+ }
+}

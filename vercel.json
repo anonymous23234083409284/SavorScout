@@ -60,6 +60,11 @@
       "source": "/about/:slug/",
       "destination": "/about/:slug",
       "permanent": true
+    },
+    {
+      "source": "/rankings/:slug/",
+      "destination": "/rankings/:slug",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -148,7 +153,19 @@
       "destination": "/about/:slug.html"
     },
     {
-      "source": "/((?!static/|eat/|type/|what-to-eat/|food/|diet/|campus/|about/|.*\\.[a-zA-Z0-9]+$).*)",
+      "source": "/rankings",
+      "destination": "/rankings/index.html"
+    },
+    {
+      "source": "/rankings/",
+      "destination": "/rankings/index.html"
+    },
+    {
+      "source": "/rankings/:slug",
+      "destination": "/rankings/:slug.html"
+    },
+    {
+      "source": "/((?!static/|eat/|type/|what-to-eat/|food/|diet/|campus/|rankings/|about/|.*\\.[a-zA-Z0-9]+$).*)",
       "destination": "/index.html"
     }
   ]

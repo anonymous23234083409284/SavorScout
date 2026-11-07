@@ -1,0 +1,27 @@
+{
+ "_why": "Posting times, read by the daily batch (social/DAILY.md) and the walkable-five runner (pipeline/make_batch.py). Local to `timezone`; each gets a few minutes of jitter. TikTok is spread three hours apart so each video gets its own push; X and Threads post an hour apart, staggered half an hour from each other. `mode`: \"schedule\" posts at these times; \"draft\" leaves everything in Buffer as drafts.",
+ "timezone": "America/New_York",
+ "mode": "schedule",
+ "videos_per_day": 4,
+ "jitter_minutes": 6,
+ "slots": {
+  "tiktok": [
+   "12:20",
+   "15:20",
+   "18:20",
+   "21:20"
+  ],
+  "twitter": [
+   "16:40",
+   "17:40",
+   "18:40",
+   "19:40"
+  ],
+  "threads": [
+   "17:10",
+   "18:10",
+   "19:10",
+   "20:10"
+  ]
+ }
+}

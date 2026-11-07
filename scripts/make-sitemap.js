@@ -15,7 +15,7 @@ const fs = require("fs");
 const path = require("path");
 const { BUILD, ORIGIN, MANIFEST_DIR } = require("./lib/page");
 
-const EXPECTED = ["cities", "types", "guides", "campus", "about"];
+const EXPECTED = ["cities", "types", "guides", "campus", "rankings", "about"];
 
 if (!fs.existsSync(MANIFEST_DIR)) {
   console.error("make-sitemap: build/.sitemap missing — no generator ran?");
@@ -79,7 +79,7 @@ if (dupes.length) {
    than something buried in 2,400 mixed URLs. robots.txt and the sitemap
    already submitted in Search Console both point at /sitemap.xml, which is now
    the index, so nothing has to be resubmitted. */
-const GROUPS = { cities: "cities", campus: "campuses", guides: "guides", types: "pages", about: "pages" };
+const GROUPS = { cities: "cities", campus: "campuses", guides: "guides", types: "pages", about: "pages", rankings: "pages" };
 const byFile = new Map([["pages", [urls[0]]]]);
 for (const name of found) {
   const file = GROUPS[name] || name;

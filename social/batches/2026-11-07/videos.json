@@ -1,0 +1,373 @@
+{
+ "date": "2026-11-07",
+ "videos": [
+  {
+   "id": "csu-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ca",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "san-jose-state-university",
+     "text": "Which big Cal State campus has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not San Diego State."
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "Cal State campuses with 20,000+ students",
+     "rows": [
+      [
+       "10",
+       "Cal Poly SLO",
+       "4"
+      ],
+      [
+       "9",
+       "Fresno State",
+       "9"
+      ],
+      [
+       "8",
+       "Long Beach State",
+       "11"
+      ],
+      [
+       "7",
+       "Cal State LA",
+       "14"
+      ],
+      [
+       "6",
+       "Sacramento State",
+       "31"
+      ]
+     ],
+     "q": [
+      "california college campus",
+      "university campus palm trees",
+      "college students walking campus"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Cal State Fullerton",
+     "count": 37,
+     "sub": "Busiest food street: State College Blvd",
+     "map": "california-state-university-fullerton",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "San Diego State",
+     "count": 40,
+     "sub": "Busiest food street: El Cajon Blvd",
+     "map": "san-diego-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "SF State",
+     "count": 62,
+     "sub": "Busiest food street: 20th Ave",
+     "map": "san-francisco-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "CSUN",
+     "count": 79,
+     "sub": "Busiest food street: Reseda Blvd",
+     "map": "california-state-university-northridge",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "San Jose State",
+     "count": 140,
+     "sub": "Busiest food street: Santa Clara St",
+     "map": "san-jose-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "reuse": 1,
+     "sub": "Send this to your friend at another Cal State."
+    }
+   ]
+  },
+  {
+   "id": "tacos-tell",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/tacos",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "How to tell *good tacos* before you order",
+     "q": [
+      "street tacos",
+      "tacos plate",
+      "taco close up"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "Start with *the tortilla.*",
+     "q": [
+      "making corn tortillas",
+      "tortilla press",
+      "tortillas on griddle"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Tortillas pressed to order",
+     "sub": "Fresh corn tortillas off the griddle are the biggest difference. A cold packet tortilla can't be saved.",
+     "q": [
+      "corn tortillas griddle",
+      "pressing masa",
+      "fresh tortillas"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Salsa made there",
+     "sub": "Three or four house salsas at different heats. One bottle of hot sauce means they don't care.",
+     "q": [
+      "salsa bowls",
+      "red and green salsa",
+      "making salsa"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "A short menu",
+     "sub": "The best taquerias sell five or six fillings, not forty items and a burger.",
+     "q": [
+      "taco filling meat",
+      "chopping meat tacos",
+      "grilled meat chopping"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Onion, cilantro, lime",
+     "sub": "That's the traditional topping. The meat is supposed to carry it.",
+     "q": [
+      "chopped onion cilantro",
+      "lime wedges cilantro",
+      "tacos with cilantro onion"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "New place? If you see a spit of pork with pineapple, *order al pastor.*",
+     "q": [
+      "al pastor trompo",
+      "al pastor spit",
+      "shaving al pastor"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to your taco friend",
+     "sub": "What's your go-to taco?",
+     "reuse": 0
+    }
+   ]
+  },
+  {
+   "id": "virginia-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/va",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "virginia-commonwealth-university",
+     "text": "Which big Virginia university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UVA."
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Universities with 20,000+ students",
+     "rows": [
+      [
+       "7",
+       "James Madison",
+       "11"
+      ],
+      [
+       "6",
+       "George Mason",
+       "17"
+      ]
+     ],
+     "q": [
+      "virginia college campus brick",
+      "university campus fall leaves",
+      "historic campus building"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Old Dominion",
+     "count": 35,
+     "sub": "Busiest food street: Hampton Blvd",
+     "map": "old-dominion-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Liberty",
+     "count": 40,
+     "sub": "Busiest food street: Wards Rd",
+     "map": "liberty-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UVA",
+     "count": 58,
+     "sub": "Busiest food street: W Main St",
+     "map": "university-of-virginia-main-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Virginia Tech",
+     "count": 64,
+     "sub": "Busiest food street: Main St",
+     "map": "virginia-polytechnic-institute-and-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "VCU",
+     "count": 130,
+     "sub": "Busiest food street: Broad St",
+     "map": "virginia-commonwealth-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "reuse": 1,
+     "sub": "Send this to your friend in Blacksburg."
+    }
+   ]
+  },
+  {
+   "id": "nc-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/nc",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "text": "Which big North Carolina university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not NC State."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UNC Charlotte",
+     "count": 23,
+     "sub": "Busiest food street: University City Blvd",
+     "map": "university-of-north-carolina-at-charlotte",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "App State",
+     "count": 47,
+     "sub": "Busiest food street: King St",
+     "map": "appalachian-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "East Carolina",
+     "count": 57,
+     "sub": "Busiest food street: 5th St",
+     "map": "east-carolina-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "NC State",
+     "count": 75,
+     "sub": "Busiest food street: Hillsborough St",
+     "map": "north-carolina-state-university-at-raleigh",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UNC Chapel Hill",
+     "count": 87,
+     "sub": "Busiest food street: Franklin St",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Universities with 20,000+ students. Who should we rank next?",
+     "q": [
+      "college students walking campus",
+      "university campus autumn",
+      "students on campus quad"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -13,8 +13,9 @@
    irrelevant place sometimes won. A geometric mean needs a place to be decent
    on everything that matters to this request: one near-zero drags it down.
 
-   Then multipliers (chains when they asked for independent, things they said
-   to avoid, what they've rated before, their taste quiz, listing quality) and
+   Then multipliers (chains, but only when the search itself asks for no chains
+   or independent places; things they said to avoid; what they've rated
+   before; their taste quiz; listing quality) and
    gates (not open, clearly irrelevant, not a restaurant) remove the obvious
    misses before the finalists are picked.
 
@@ -73,14 +74,15 @@ function geometric(values, weights) {
 }
 
 /* Small personal nudges from the taste quiz, capped at ±8%. Discovery-minded
-   people get a lean toward independents and well-rated places that aren't
-   famous yet; value-minded people lean cheaper when they didn't name a budget. */
+   people get a lean toward well-rated places that aren't famous yet (the quiz
+   asks exactly that: a 4.8 from 30 reviews or a 4.6 from 3,000); value-minded
+   people lean cheaper when they didn't name a budget. The quiz never asks
+   about chains, so it never moves one. */
 function quizMultiplier(c, quiz, budgetWant) {
   if (!quiz) return 1;
   let adj = 0;
   if (typeof quiz.discovery === "number") {
     const d = (quiz.discovery - 50) / 50;
-    if (c.chain) adj -= 0.05 * d;
     if (c.quality.rated && c.rating >= 4.5 && c.reviewCount >= 15 && c.reviewCount <= 300) adj += 0.04 * d;
   }
   if (typeof quiz.value === "number" && budgetWant == null && c.priceLevel != null) {
@@ -118,10 +120,6 @@ function mealFit(c, meal, spec) {
   if (meal === "breakfast") return BREAKFAST_PLACE.test(cat) ? 1.08 : 0.85;
   return 1;
 }
-
-const wantsNoChains = (intent) =>
-  intent.independentOnly || intent.avoid.some((a) => /\bchains?\b|franchise|corporate/i.test(a));
-const wantsNoFastFood = (intent) => intent.avoid.some((a) => /fast[- ]?food|drive[- ]?thru/i.test(a));
 
 /* Every signal for one candidate. */
 function describeCandidate(entry, ctx) {
@@ -167,8 +165,10 @@ function scoreStage1(c, ctx) {
     weights
   );
   let mult = 1;
+  // Chains only lose points when this search asked to skip them. "No fast
+  // food" marks down fast food, not every chain (a sit-down chain isn't).
   if (c.chain && ctx.noChains) mult *= 0.55;
-  if (ctx.noFastFood && (c.fastFood || c.chain)) mult *= 0.55;
+  if (ctx.noFastFood && c.fastFood) mult *= 0.55;
   if (c.avoided) mult *= 0.4;
   mult *= mealFit(c, ctx.meal, ctx.spec);
   mult *= ctx.tasteMultiplier ? ctx.tasteMultiplier(c, ctx.tasteProfile) : 1;
@@ -369,5 +369,5 @@ function dishLabels(c, intent, spec) {
 
 module.exports = {
   stage1Weights, geometric, quizMultiplier, mealContext, mealFit, describeCandidate, scoreStage1, pickFinalists,
-  evidenceFeatures, finalize, dishLabels, wantsNoChains, wantsNoFastFood, HALF_DISTANCE, DISPLAY_WEIGHTS,
+  evidenceFeatures, finalize, dishLabels, HALF_DISTANCE, DISPLAY_WEIGHTS,
 };

@@ -13,7 +13,7 @@ own file:
 | `rank.js` | Stage 1 scoring of every candidate, gates, finalists, evidence features, final blend, the numbers on the card. |
 | `research.js` | Reads menus (6 finalists) and reviews (top 4) through Exa, with a per-dish cache. |
 | `judge.js` | A model scores the finalists 0–10 for fit with the evidence in front of it. Optional; the search works without it. |
-| `lexicon.js`, `chains.json` | Food knowledge: cravings and related terms, vibe synonyms, review sentiment words, non-restaurant categories, ~350 chain names. |
+| `lexicon.js`, `chains.json` | Food knowledge: cravings and related terms, vibe synonyms, review sentiment words, non-restaurant categories, ~350 chain names (used only when a search asks for no chains). |
 
 ## How a place is scored
 
@@ -28,7 +28,11 @@ These are combined as a **weighted geometric mean**, so a place has to be decent
 everything that matters to the request. The weights follow the request: a
 specific dish leads with relevance, "best" leans on quality, "closest" on
 distance, "cheap" on price. Then come multipliers:
-- chains, when they asked for independent places
+- chains, but only when the search itself says "no chains", "independent",
+  "locally owned" or similar. Otherwise a chain is treated exactly like any
+  other restaurant, and the judge isn't even told which places are chains.
+  "Local" on its own just means nearby, and "no fast food" marks down fast
+  food, not sit-down chains.
 - things they said to avoid
 - meal fit (no coffee shop for "dinner")
 - their rating history and taste quiz (small)
@@ -61,6 +65,6 @@ another finalist rates 6 or higher.
 ## Tests
 
 ```bash
-cd backend && npm test             # 18 scenarios, fake Google/Exa/OpenAI, no keys needed
+cd backend && npm test             # 22 scenarios, fake Google/Exa/OpenAI, no keys needed
 cd backend && npm run test:compare  # old vs new engine on the same scenarios
 ```

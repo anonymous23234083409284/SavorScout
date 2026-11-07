@@ -305,9 +305,20 @@ function isFastFood(p) {
   return FAST_FOOD.test(placeCategory(p));
 }
 
+/* Whether the search itself asks to skip chains, or fast food. Being a chain
+   counts for nothing otherwise: an ordinary search treats a chain exactly like
+   any other restaurant, in the scores and in what the judge is told. */
+function wantsNoChains(intent) {
+  return Boolean(intent.independentOnly) || (intent.avoid || []).some((a) => /\bchains?\b|franchise|corporate/i.test(a));
+}
+
+function wantsNoFastFood(intent) {
+  return (intent.avoid || []).some((a) => /fast[- ]?food|drive[- ]?thru/i.test(a));
+}
+
 module.exports = {
   norm, stem, tokens, hasPhrase, contentWords, placeCategory, placeText,
   detectCravings, relevanceSpec, textRelevance, googleRelevance, combinedRelevance, avoidHit,
   localPrior, quality, priceLevel, budgetLevel, budgetFit, miles, distanceUtility,
-  isChain, isNonFood, isFastFood, PRIOR_STRENGTH,
+  isChain, isNonFood, isFastFood, wantsNoChains, wantsNoFastFood, PRIOR_STRENGTH,
 };

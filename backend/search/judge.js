@@ -10,6 +10,8 @@
    rank.js), it only sees facts we pass it, and if it is slow or fails the
    search simply ranks without it. */
 
+const { wantsNoChains } = require("./features");
+
 const JUDGE_MODEL = process.env.SEARCH_JUDGE_MODEL || "gpt-4o-mini";
 const JUDGE_TIMEOUT_MS = Number(process.env.SEARCH_JUDGE_TIMEOUT_MS) || 3000;
 const JUDGE_ENABLED = process.env.SEARCH_JUDGE !== "off";
@@ -23,6 +25,7 @@ const SYSTEM = [
   "3. Any atmosphere, dietary needs or things to avoid that they mentioned, but only where the passages support it.",
   "4. Price fit and distance, weighed by what they said matters most (priority).",
   "Closed now, or matching something they want to avoid, should cost points.",
+  "Being a chain or independent counts for nothing, either way, unless the request asks for independent places or no chains.",
   'Return JSON: {"results":[{"id":"r1","fit":0-10,"serves":"yes|likely|unclear|no","reason":"one short factual sentence citing the facts"}]} with one entry per candidate.',
 ].join("\n");
 
@@ -31,7 +34,10 @@ const clip = (s, n) => {
   return t.length > n ? `${t.slice(0, n - 1)}…` : t;
 };
 
-function describe(c, i) {
+/* One line per candidate. Chain status is only mentioned when the search asked
+   to skip chains: a label the request doesn't care about would only invite
+   the model to favour one kind of place over another. */
+function describe(c, i, showChain = false) {
   const p = c.place;
   const bits = [
     `${`r${i + 1}`}: ${clip(p.title, 70)}`,
@@ -40,8 +46,8 @@ function describe(c, i) {
     `${c.distance.toFixed(1)} miles away`,
     c.priceLevel ? `price ${"$".repeat(c.priceLevel)}` : "price unknown",
     c.open?.known ? (c.open.open ? `open now${c.open.closesAt ? ` until ${c.open.closesAt}` : ""}` : "closed now") : "hours unknown",
-    c.chain ? "chain" : "independent or unknown",
   ];
+  if (showChain) bits.push(c.chain ? "chain" : "independent or unknown");
   const menu = (c.research?.menu?.highlights || []).slice(0, 2).map((h) => clip(h, 260));
   const reviews = (c.research?.reviews?.highlights || []).slice(0, 2).map((h) => clip(h, 260));
   if (menu.length) bits.push(`menu passages: "${menu.join('" | "')}"`);
@@ -66,7 +72,8 @@ function requestSummary(userText, intent) {
    not run or its answer was unusable. */
 async function judgeFinalists(openai, userText, intent, finalists, log = console) {
   if (!JUDGE_ENABLED || !openai || finalists.length < 2) return null;
-  const user = `${requestSummary(userText, intent)}\n\ncandidates:\n${finalists.map(describe).join("\n")}`;
+  const showChain = wantsNoChains(intent);
+  const user = `${requestSummary(userText, intent)}\n\ncandidates:\n${finalists.map((c, i) => describe(c, i, showChain)).join("\n")}`;
   try {
     const res = await openai.chat.completions.create(
       {

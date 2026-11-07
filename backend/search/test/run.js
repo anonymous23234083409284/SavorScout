@@ -173,6 +173,75 @@ scenario("display: match percentages never rise down the ranking", async () => {
   return null;
 });
 
+/* Chains are ordinary restaurants unless the search itself asks to skip them. */
+
+scenario("chains: an ordinary search ranks exactly the same whether or not places are known chains (taste quiz included)", async () => {
+  const F = require("../features");
+  const quiz = { discovery: 100, value: 50 }; // the most discovery-minded person possible
+  const a = await search("burgers", { quiz });
+  assert.ok(a.ranked.some((c) => c.chain), "the test needs a chain among the results");
+  const realIsChain = F.isChain;
+  F.isChain = () => false; // as if the chain list didn't exist
+  let b;
+  try {
+    b = await search("burgers", { quiz });
+  } finally {
+    F.isChain = realIsChain;
+  }
+  const view = (r) => r.ranked.map((c) => `${c.place.title} ${c.matchScore}%`);
+  assert.deepStrictEqual(view(a), view(b), "being a chain changed an ordinary search");
+  return a;
+});
+
+scenario("chains: the judge only hears which places are chains when the search asks to skip them", async () => {
+  const seen = [];
+  const openai = fakeOpenAI();
+  const create = openai.chat.completions.create;
+  openai.chat.completions.create = async (body, opts) => {
+    seen.push(body.messages[1].content);
+    return create(body, opts);
+  };
+  await search("burgers", { openai });
+  const plain = seen.find((m) => m.includes("candidates:"));
+  assert.ok(plain, "the judge didn't run");
+  assert.ok(!/\bchain\b|independent/i.test(plain), "the judge was told about chains on an ordinary search");
+  seen.length = 0;
+  await search("burgers, no chains", { openai });
+  const asked = seen.find((m) => m.includes("candidates:"));
+  assert.ok(asked && /\bchain\b/.test(asked), "the judge wasn't told which places are chains when the search asked");
+  return null;
+});
+
+scenario("chains: only explicit wording counts as asking to skip chains", async () => {
+  const { heuristicIntent } = require("../intent");
+  const { wantsNoChains } = require("../features");
+  for (const q of ["best local burgers", "authentic tacos", "hole in the wall pho", "hidden gem sushi", "cheap eats"]) {
+    assert.strictEqual(wantsNoChains(heuristicIntent(q)), false, `"${q}" was read as no chains`);
+  }
+  for (const q of ["burgers, no chains", "not a chain", "independent coffee shop", "locally owned pizza", "family-owned italian", "non-chain breakfast", "mom and pop diner"]) {
+    assert.strictEqual(wantsNoChains(heuristicIntent(q)), true, `"${q}" wasn't read as no chains`);
+  }
+  return null;
+});
+
+scenario("chains: 'no fast food' marks down fast food, not sit-down chains", async () => {
+  const R = require("../rank");
+  const place = {
+    relevance: 0.9, quality: { score: 0.8, rated: true }, distanceUtil: 0.8, budget: null, openScore: null,
+    avoided: false, categoryText: "American restaurant", place: { title: "x" }, dataTrust: 1, rating: 4.4, reviewCount: 900, priceLevel: 2,
+  };
+  const ctx = {
+    weights: { relevance: 0.4, quality: 0.3, distance: 0.3 }, noChains: false, noFastFood: true, meal: null,
+    spec: { specific: true }, quiz: { discovery: 100, value: 50 }, budgetWant: null,
+  };
+  const score = (extra, c = ctx) => R.scoreStage1({ ...place, ...extra }, c).stage1;
+  assert.strictEqual(score({ chain: true, fastFood: false }), score({ chain: false, fastFood: false }), "a sit-down chain lost points");
+  assert.ok(score({ chain: true, fastFood: true }) < 0.6 * score({ chain: false, fastFood: false }), "fast food wasn't marked down");
+  const asked = { ...ctx, noChains: true, noFastFood: false };
+  assert.ok(score({ chain: true, fastFood: false }, asked) < score({ chain: false, fastFood: false }, asked), "'no chains' didn't mark a chain down");
+  return null;
+});
+
 /* ---- run ------------------------------------------------------------------ */
 
 (async () => {

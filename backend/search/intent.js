@@ -22,12 +22,12 @@ const SYSTEM_PROMPT = [
   '- budget: the price wish in the user\'s own words ("cheap", "under $15", "fancy"). "" if not mentioned.',
   '- dietaryRestrictions: dietary needs mentioned (e.g. "vegetarian", "gluten-free", "halal"). [] if none.',
   "- importantFactors: ONLY atmosphere, company or occasion (quiet, cozy, romantic, good for groups, family friendly, late night, outdoor seating, study spot, fast service). Never food or taste words.",
-  '- avoid: things they want to avoid (e.g. "chains", "fast food", "spicy", "buffet"). [] if none.',
+  '- avoid: things they explicitly say to avoid (e.g. "chains", "fast food", "spicy", "buffet"). Never infer one. [] if none.',
   '- relatedTerms: 3 to 8 short words or phrases a fitting restaurant\'s name or Google Maps category would likely contain: the dish, the kinds of restaurant that serve it, close variants (ramen -> ["ramen", "noodle bar", "japanese", "izakaya"]). No generic words like "food", "restaurant" or "grill".',
   '- searchQueries: 1 or 2 short Google Maps searches, worded the way restaurants describe themselves, that would find the right places (["ramen shop", "japanese noodle restaurant"]). No location in them.',
   '- priority: "quality" if they ask for the best, top or highly rated; "distance" if they stress close, quick or walking; "price" if cost is the main point; otherwise "balanced".',
   '- timeContext: "now", unless they name a later time or meal ("tonight", "tomorrow", "breakfast tomorrow"), then "later".',
-  "- independentOnly: true only if they ask for local, independent, family-owned, non-chain or hole-in-the-wall places; otherwise false.",
+  '- independentOnly: true only if they explicitly ask for independent places or to skip chains ("no chains", "non-chain", "independent", "locally owned", "family-owned", "mom and pop"). "Local", "authentic", "hidden gem" or "hole-in-the-wall" on their own do not count. Otherwise false.',
   "Never put a city, neighborhood or address in any field. Use \"\" or [] for anything not mentioned. No other keys.",
 ].join("\n");
 
@@ -101,7 +101,8 @@ function heuristicIntent(text) {
     searchQueries: lex.map((l) => l.query).slice(0, 2),
     priority,
     timeContext: /\b(tomorrow|later|tonight at|next week|this weekend)\b/.test(low) ? "later" : "now",
-    independentOnly: /\b(local|independent|family[- ]owned|non[- ]?chain|no chains?|hole[- ]in[- ]the[- ]wall|mom and pop)\b/.test(low),
+    // Explicit wording only: "local" usually just means nearby.
+    independentOnly: /\b(independent(?:ly owned)?|locally[- ]owned|family[- ]owned|non[- ]?chains?|no chains?|mom[- ](?:and|&)[- ]pop)\b/.test(low),
   };
 }
 

@@ -1,0 +1,306 @@
+{
+ "tiktok": [
+  {
+   "video": "ohio-walkable",
+   "at": "2026-11-09T12:22:00-05:00",
+   "text": "Ohio State is 2nd 👀 Which big Ohio university has the most restaurants within a 10-minute walk? Send this to your friend at another Ohio school.\n\n#ohiostate #bearcats #ohiou #collegelife #collegefood"
+  },
+  {
+   "video": "pizza-tell",
+   "at": "2026-11-09T15:18:00-05:00",
+   "text": "Can you tell good pizza from bad before you order? 🍕 Start with the crust. Save this for your next pizza night.\n\n#pizza #pizzatips #foodtips #neapolitanpizza #collegefood"
+  },
+  {
+   "video": "georgia-walkable",
+   "at": "2026-11-09T18:21:00-05:00",
+   "text": "UGA is 2nd 👀 Which big Georgia university has the most restaurants within a 10-minute walk? Send this to your friend at another Georgia school.\n\n#georgiastate #uga #georgiatech #collegelife #collegefood"
+  },
+  {
+   "video": "michigan-walkable",
+   "at": "2026-11-09T21:19:00-05:00",
+   "text": "Michigan State is 2nd 👀 Which big Michigan university has the most restaurants within a 10-minute walk? Send this to your friend in East Lansing.\n\n#umich #michiganstate #waynestate #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-ohio",
+   "at": "2026-11-09T16:42:00-05:00",
+   "card": "ohio",
+   "thread": [
+    "Cincinnati has more restaurants within a 10-minute walk of campus than any other big Ohio university. Ohio State is 15 behind.\n\nEvery Ohio university with 10,000+ students:",
+    "1. Cincinnati: 101\n2. Ohio State: 86\n3. Cleveland State: 71\n4. Ohio University: 63\n5. Case Western: 60\n6. Bowling Green: 47\n7. Dayton: 46\n8. Youngstown State: 42\n9. Akron: 30\n10. Toledo: 13\n10. Miami (Ohio): 13\n12. Kent State: 5",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/oh"
+   ]
+  },
+  {
+   "id": "x-pizza",
+   "at": "2026-11-09T17:39:00-05:00",
+   "card": "pizza",
+   "thread": [
+    "How to tell good pizza before you order:\n\nLook at the edge of the crust. Dark, uneven blisters mean a very hot oven. An even, pale crust usually means a conveyor oven.",
+    "Three more signs:\n\n- Dough fermented for days, not made that morning\n- Three toppings, not nine (too many make it soggy)\n- Sauce that tastes like tomato, not sugar",
+    "Lift a slice. If it leaves a pool of grease, the cheese is cheap.\n\nMore on pizza styles and what to order: https://www.savorscout.net/food/pizza"
+   ]
+  },
+  {
+   "id": "x-georgia",
+   "at": "2026-11-09T18:43:00-05:00",
+   "card": "georgia",
+   "thread": [
+    "Georgia State has nearly twice as many restaurants within a 10-minute walk of campus as UGA, the next closest.\n\nEvery Georgia university with 10,000+ students:",
+    "1. Georgia State: 194\n2. UGA: 98\n3. Georgia Tech: 34\n4. Emory: 30\n5. Georgia Southern: 28\n6. West Georgia: 18\n7. Kennesaw State: 9\n7. Valdosta State: 9",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ga"
+   ]
+  },
+  {
+   "id": "x-michigan",
+   "at": "2026-11-09T19:41:00-05:00",
+   "card": "michigan",
+   "thread": [
+    "The University of Michigan has more restaurants within a 10-minute walk of campus than Michigan State, Wayne State and Western Michigan combined.\n\nEvery Michigan university with 10,000+ students:",
+    "1. Michigan: 224\n2. Michigan State: 84\n3. Wayne State: 59\n4. Western Michigan: 27\n5. Oakland: 21\n6. Central Michigan: 20\n7. Ferris State: 16\n8. Eastern Michigan: 13\n9. Grand Valley: 8",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/mi"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-ohio",
+   "at": "2026-11-09T17:11:00-05:00",
+   "card": "ohio",
+   "topic": "Ohio",
+   "thread": [
+    "Cincinnati has the most restaurants within a 10-minute walk of campus of any big Ohio university. Ohio State is 15 behind. Every Ohio university with 10,000+ students:\n\nCincinnati 101, Ohio State 86, Cleveland State 71, Ohio University 63, Case Western 60, Bowling Green 47, Dayton 46, Youngstown State 42, Akron 30, Toledo 13, Miami (Ohio) 13, Kent State 5.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/oh"
+   ]
+  },
+  {
+   "id": "t-pizza",
+   "at": "2026-11-09T18:09:00-05:00",
+   "card": "pizza",
+   "topic": "Pizza",
+   "thread": [
+    "The fastest way to judge a pizzeria: look at the edge of the crust. Dark, uneven blisters mean a very hot oven. An even, pale crust usually means a conveyor oven.\n\nAlso good signs: dough fermented for days, three toppings instead of nine, and sauce that tastes like tomato, not sugar.\n\nWhat's the one pizza you order everywhere?",
+    "More on pizza styles and what to order: https://www.savorscout.net/food/pizza"
+   ]
+  },
+  {
+   "id": "t-georgia",
+   "at": "2026-11-09T19:12:00-05:00",
+   "card": "georgia",
+   "topic": "Georgia",
+   "thread": [
+    "Georgia State has nearly twice as many restaurants within a 10-minute walk of campus as UGA. Every Georgia university with 10,000+ students:\n\nGeorgia State 194, UGA 98, Georgia Tech 34, Emory 30, Georgia Southern 28, West Georgia 18, Kennesaw State 9, Valdosta State 9.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ga"
+   ]
+  },
+  {
+   "id": "t-michigan",
+   "at": "2026-11-09T20:10:00-05:00",
+   "card": "michigan",
+   "topic": "Michigan",
+   "thread": [
+    "The University of Michigan has more restaurants within a 10-minute walk of campus than Michigan State, Wayne State and Western Michigan combined. Every Michigan university with 10,000+ students:\n\nMichigan 224, Michigan State 84, Wayne State 59, Western Michigan 27, Oakland 21, Central Michigan 20, Ferris State 16, Eastern Michigan 13, Grand Valley 8.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/mi"
+   ]
+  }
+ ],
+ "cards": {
+  "ohio": {
+   "type": "ranking",
+   "title": "Big Ohio universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Cincinnati",
+     101
+    ],
+    [
+     "2",
+     "Ohio State",
+     86
+    ],
+    [
+     "3",
+     "Cleveland State",
+     71
+    ],
+    [
+     "4",
+     "Ohio University",
+     63
+    ],
+    [
+     "5",
+     "Case Western",
+     60
+    ],
+    [
+     "6",
+     "Bowling Green",
+     47
+    ],
+    [
+     "7",
+     "Dayton",
+     46
+    ],
+    [
+     "8",
+     "Youngstown State",
+     42
+    ],
+    [
+     "9",
+     "Akron",
+     30
+    ],
+    [
+     "10",
+     "Toledo",
+     13
+    ],
+    [
+     "10",
+     "Miami (Ohio)",
+     13
+    ],
+    [
+     "12",
+     "Kent State",
+     5
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "georgia": {
+   "type": "ranking",
+   "title": "Big Georgia universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Georgia State",
+     194
+    ],
+    [
+     "2",
+     "UGA",
+     98
+    ],
+    [
+     "3",
+     "Georgia Tech",
+     34
+    ],
+    [
+     "4",
+     "Emory",
+     30
+    ],
+    [
+     "5",
+     "Georgia Southern",
+     28
+    ],
+    [
+     "6",
+     "West Georgia",
+     18
+    ],
+    [
+     "7",
+     "Kennesaw State",
+     9
+    ],
+    [
+     "7",
+     "Valdosta State",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "michigan": {
+   "type": "ranking",
+   "title": "Big Michigan universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Michigan",
+     224
+    ],
+    [
+     "2",
+     "Michigan State",
+     84
+    ],
+    [
+     "3",
+     "Wayne State",
+     59
+    ],
+    [
+     "4",
+     "Western Michigan",
+     27
+    ],
+    [
+     "5",
+     "Oakland",
+     21
+    ],
+    [
+     "6",
+     "Central Michigan",
+     20
+    ],
+    [
+     "7",
+     "Ferris State",
+     16
+    ],
+    [
+     "8",
+     "Eastern Michigan",
+     13
+    ],
+    [
+     "9",
+     "Grand Valley",
+     8
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "pizza": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "pizza-tell",
+     0,
+     1.0
+    ]
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell *good pizza*",
+   "items": [
+    [
+     "Dark blisters on the crust",
+     "A very hot oven."
+    ],
+    [
+     "Dough made days ahead",
+     "It tastes like bread."
+    ],
+    [
+     "Three toppings, not nine",
+     "More makes it soggy."
+    ]
+   ],
+   "note": "Lift a slice. A pool of grease means cheap cheese."
+  }
+ }
+}

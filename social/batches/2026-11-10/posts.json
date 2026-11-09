@@ -1,0 +1,261 @@
+{
+ "tiktok": [
+  {
+   "video": "illinois-walkable",
+   "at": "2026-11-10T12:21:00-05:00",
+   "text": "UIUC is 3rd 👀 Which big Illinois university has the most restaurants within a 10-minute walk? Send this to your friend at another Illinois school.\n\n#uiuc #northwestern #depaul #collegelife #collegefood"
+  },
+  {
+   "video": "burger-tell",
+   "at": "2026-11-10T15:19:00-05:00",
+   "text": "Can you tell a good burger from a bad one before you order? 🍔 Start with the patty. Save this for your next burger run.\n\n#burgers #smashburger #foodtips #cheeseburger #collegefood"
+  },
+  {
+   "video": "alabama-walkable",
+   "at": "2026-11-10T18:22:00-05:00",
+   "text": "Alabama is 2nd, Auburn is 3rd 👀 Which big Alabama university has the most restaurants within a 10-minute walk? Send this to your friend across the Iron Bowl.\n\n#rolltide #wareagle #uab #collegelife #collegefood"
+  },
+  {
+   "video": "colorado-walkable",
+   "at": "2026-11-10T21:18:00-05:00",
+   "text": "CU Boulder is 2nd 👀 Which big Colorado university has the most restaurants within a 10-minute walk? Send this to your friend at another Colorado school.\n\n#cuboulder #coloradostate #msudenver #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-illinois",
+   "at": "2026-11-10T16:41:00-05:00",
+   "card": "illinois",
+   "thread": [
+    "DePaul's Loop campus has more restaurants within a 10-minute walk than any other big Illinois university, three times as many as Northwestern.\n\nEvery Illinois university with 10,000+ students:",
+    "1. DePaul (Loop campus): 488\n2. Northwestern: 162\n3. UIUC: 109\n4. UIC: 85\n5. Loyola Chicago: 72\n6. Northern Illinois: 42\n7. Illinois State: 40\n8. UChicago: 25\n9. SIU Carbondale: 19\n10. SIU Edwardsville: 0",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/il"
+   ]
+  },
+  {
+   "id": "x-burger",
+   "at": "2026-11-10T17:42:00-05:00",
+   "card": "burger",
+   "thread": [
+    "How to tell a good burger before you order:\n\nLook at the patty. A thin patty pressed hard on a hot griddle gets a dark, crispy crust, and that crust is most of the flavor.",
+    "Three more signs:\n\n- Beef ground in-house (about 20% fat)\n- A soft, toasted bun that isn't twice the height of the patty\n- Three or four toppings, not seven",
+    "First visit? Order the plain cheeseburger. It's the only way to judge the kitchen.\n\nMore on burger styles: https://www.savorscout.net/food/burgers"
+   ]
+  },
+  {
+   "id": "x-alabama",
+   "at": "2026-11-10T18:40:00-05:00",
+   "card": "alabama",
+   "thread": [
+    "UAB has more restaurants within a 10-minute walk of campus than Alabama and Auburn combined, twice over.\n\nEvery Alabama university with 10,000+ students:",
+    "1. UAB: 109\n2. Alabama: 27\n3. Auburn: 21\n4. South Alabama: 12\n5. Troy: 6",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/al"
+   ]
+  },
+  {
+   "id": "x-colorado",
+   "at": "2026-11-10T19:43:00-05:00",
+   "card": "colorado",
+   "thread": [
+    "MSU Denver has more restaurants within a 10-minute walk of campus than any other big Colorado university. CU Boulder is 24 behind.\n\nEvery Colorado university with 10,000+ students:",
+    "1. MSU Denver: 94\n2. CU Boulder: 70\n3. Colorado State: 62\n4. Denver: 59\n5. UCCS: 3",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/co"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-illinois",
+   "at": "2026-11-10T17:10:00-05:00",
+   "card": "illinois",
+   "topic": "Illinois",
+   "thread": [
+    "DePaul's Loop campus has the most restaurants within a 10-minute walk of any big Illinois university, three times as many as Northwestern. Every Illinois university with 10,000+ students:\n\nDePaul (Loop campus) 488, Northwestern 162, UIUC 109, UIC 85, Loyola Chicago 72, Northern Illinois 42, Illinois State 40, UChicago 25, SIU Carbondale 19, SIU Edwardsville 0.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/il"
+   ]
+  },
+  {
+   "id": "t-burger",
+   "at": "2026-11-10T18:12:00-05:00",
+   "card": "burger",
+   "topic": "Burgers",
+   "thread": [
+    "The fastest way to judge a burger place: look at the patty. A thin patty pressed hard on a hot griddle gets a dark, crispy crust, and that's most of the flavor.\n\nAlso good signs: beef ground in-house, a toasted bun that fits, and three or four toppings instead of seven.\n\nWhat's the one burger you'd send a friend to get?",
+    "More on burger styles: https://www.savorscout.net/food/burgers"
+   ]
+  },
+  {
+   "id": "t-alabama",
+   "at": "2026-11-10T19:09:00-05:00",
+   "card": "alabama",
+   "topic": "Alabama",
+   "thread": [
+    "UAB has more restaurants within a 10-minute walk of campus than Alabama and Auburn combined, twice over. Every Alabama university with 10,000+ students:\n\nUAB 109, Alabama 27, Auburn 21, South Alabama 12, Troy 6.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/al"
+   ]
+  },
+  {
+   "id": "t-colorado",
+   "at": "2026-11-10T20:11:00-05:00",
+   "card": "colorado",
+   "topic": "Colorado",
+   "thread": [
+    "MSU Denver has the most restaurants within a 10-minute walk of campus of any big Colorado university. CU Boulder is 24 behind. Every Colorado university with 10,000+ students:\n\nMSU Denver 94, CU Boulder 70, Colorado State 62, Denver 59, UCCS 3.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/co"
+   ]
+  }
+ ],
+ "cards": {
+  "illinois": {
+   "type": "ranking",
+   "title": "Big Illinois universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "DePaul (Loop campus)",
+     488
+    ],
+    [
+     "2",
+     "Northwestern",
+     162
+    ],
+    [
+     "3",
+     "UIUC",
+     109
+    ],
+    [
+     "4",
+     "UIC",
+     85
+    ],
+    [
+     "5",
+     "Loyola Chicago",
+     72
+    ],
+    [
+     "6",
+     "Northern Illinois",
+     42
+    ],
+    [
+     "7",
+     "Illinois State",
+     40
+    ],
+    [
+     "8",
+     "UChicago",
+     25
+    ],
+    [
+     "9",
+     "SIU Carbondale",
+     19
+    ],
+    [
+     "10",
+     "SIU Edwardsville",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "alabama": {
+   "type": "ranking",
+   "title": "Big Alabama universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UAB",
+     109
+    ],
+    [
+     "2",
+     "Alabama",
+     27
+    ],
+    [
+     "3",
+     "Auburn",
+     21
+    ],
+    [
+     "4",
+     "South Alabama",
+     12
+    ],
+    [
+     "5",
+     "Troy",
+     6
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "colorado": {
+   "type": "ranking",
+   "title": "Big Colorado universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "MSU Denver",
+     94
+    ],
+    [
+     "2",
+     "CU Boulder",
+     70
+    ],
+    [
+     "3",
+     "Colorado State",
+     62
+    ],
+    [
+     "4",
+     "Denver",
+     59
+    ],
+    [
+     "5",
+     "UCCS",
+     3
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "burger": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "burger-tell",
+     0,
+     1.0
+    ]
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell a *good burger*",
+   "items": [
+    [
+     "A dark, crispy crust",
+     "That's most of the flavor."
+    ],
+    [
+     "Beef ground in-house",
+     "About 20% fat."
+    ],
+    [
+     "A bun that fits",
+     "Not twice the patty."
+    ]
+   ],
+   "note": "First visit? Order the plain cheeseburger."
+  }
+ }
+}

@@ -1,0 +1,359 @@
+{
+ "date": "2026-11-10",
+ "videos": [
+  {
+   "id": "illinois-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/il",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "depaul-university",
+     "text": "Which big Illinois university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UIUC."
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "Illinois universities with 10,000+ students",
+     "rows": [
+      [
+       "10",
+       "SIU Edwardsville",
+       "0"
+      ],
+      [
+       "9",
+       "SIU Carbondale",
+       "19"
+      ],
+      [
+       "8",
+       "UChicago",
+       "25"
+      ],
+      [
+       "7",
+       "Illinois State",
+       "40"
+      ],
+      [
+       "6",
+       "Northern Illinois",
+       "42"
+      ]
+     ],
+     "q": [
+      "chicago college campus",
+      "university campus autumn",
+      "college students walking campus"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Loyola Chicago",
+     "count": 72,
+     "sub": "Busiest food street: N Clark St",
+     "map": "loyola-university-chicago",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UIC",
+     "count": 85,
+     "sub": "Busiest food street: W Taylor St",
+     "map": "university-of-illinois-chicago",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UIUC",
+     "count": 109,
+     "sub": "Busiest food street: Green St",
+     "map": "university-of-illinois-urbana-champaign",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Northwestern",
+     "count": 162,
+     "sub": "Busiest food street: Davis St",
+     "map": "northwestern-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "DePaul (Loop campus)",
+     "count": 488,
+     "sub": "Busiest food street: Michigan Ave",
+     "map": "depaul-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Illinois school.",
+     "reuse": 1
+    }
+   ]
+  },
+  {
+   "id": "burger-tell",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/burgers",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "How to tell a *good burger* before you order",
+     "q": [
+      "cheeseburger close up",
+      "burger on table",
+      "juicy burger"
+     ]
+    },
+    {
+     "beats": 4,
+     "style": "cap",
+     "text": "Start with *the patty.*",
+     "q": [
+      "smash burger griddle",
+      "burger patty grill",
+      "pressing burger patty"
+     ],
+     "clip": 34697259
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "A dark, crispy crust",
+     "sub": "Browning is flavor. A thin patty pressed hard on a hot griddle beats a thick, pale one.",
+     "q": [
+      "smash burger griddle",
+      "burger patty searing",
+      "flipping burger patty"
+     ],
+     "clip": 34803863
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "Meat ground in-house",
+     "sub": "Places that grind their own beef say so. About 20% fat is the target.",
+     "q": [
+      "ground beef",
+      "meat grinder",
+      "raw ground beef patties"
+     ],
+     "clip": 27278504
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "A bun that fits",
+     "sub": "Soft, lightly toasted, just big enough. A bun twice the height of the patty is the most common mistake.",
+     "q": [
+      "toasted burger bun",
+      "burger bun griddle",
+      "assembling burger"
+     ],
+     "clip": 4253718
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Three or four toppings",
+     "sub": "Bacon, two cheeses, onion rings and an egg isn't a better burger. It's a worse one that costs more.",
+     "q": [
+      "cheeseburger lettuce tomato",
+      "simple cheeseburger",
+      "burger toppings"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "First visit? *Order the plain cheeseburger.* It's the only way to judge the kitchen.",
+     "q": [
+      "eating cheeseburger",
+      "cheeseburger bite",
+      "holding burger"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to your burger friend",
+     "sub": "What's your go-to burger?",
+     "reuse": 0
+    }
+   ]
+  },
+  {
+   "id": "alabama-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/al",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-alabama-at-birmingham",
+     "text": "Which big Alabama university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Alabama or Auburn."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Troy",
+     "count": 6,
+     "sub": "Busiest food street: S Brundidge St",
+     "map": "troy-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "South Alabama",
+     "count": 12,
+     "sub": "Busiest food street: Old Shell Rd",
+     "map": "university-of-south-alabama",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Auburn",
+     "count": 21,
+     "sub": "Busiest food street: College St",
+     "map": "auburn-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Alabama",
+     "count": 27,
+     "sub": "Busiest food street: University Blvd",
+     "map": "the-university-of-alabama",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UAB",
+     "count": 109,
+     "sub": "Busiest food street: 20th St",
+     "map": "university-of-alabama-at-birmingham",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend across the Iron Bowl.",
+     "q": [
+      "southern college campus",
+      "university campus brick building",
+      "college students walking campus"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "colorado-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/co",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "metropolitan-state-university-of-denver",
+     "text": "Which big Colorado university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not CU Boulder."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UCCS",
+     "count": 3,
+     "sub": "Busiest food street: N Nevada Ave",
+     "map": "university-of-colorado-colorado-springs",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Denver",
+     "count": 59,
+     "sub": "Busiest food street: S University Blvd",
+     "map": "university-of-denver",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Colorado State",
+     "count": 62,
+     "sub": "Busiest food street: College Ave",
+     "map": "colorado-state-university-fort-collins",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "CU Boulder",
+     "count": 70,
+     "sub": "Busiest food street: Pearl St",
+     "map": "university-of-colorado-boulder",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "MSU Denver",
+     "count": 94,
+     "sub": "Busiest food street: 16th St",
+     "map": "metropolitan-state-university-of-denver",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Colorado school.",
+     "q": [
+      "colorado mountains campus",
+      "denver skyline day",
+      "college students walking campus"
+     ]
+    }
+   ]
+  }
+ ]
+}

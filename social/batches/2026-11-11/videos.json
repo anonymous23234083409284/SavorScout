@@ -1,0 +1,365 @@
+{
+ "date": "2026-11-11",
+ "videos": [
+  {
+   "id": "pac12-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which old Pac-12 school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UCLA."
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "The 12 schools of the old Pac-12",
+     "rows": [
+      [
+       "12",
+       "Washington State",
+       "8"
+      ],
+      [
+       "11",
+       "UCLA",
+       "14"
+      ],
+      [
+       "10",
+       "Utah",
+       "16"
+      ],
+      [
+       "9",
+       "Stanford",
+       "29"
+      ],
+      [
+       "8",
+       "Oregon State",
+       "38"
+      ],
+      [
+       "7",
+       "Oregon",
+       "57"
+      ]
+     ],
+     "q": [
+      "west coast college campus",
+      "university campus palm trees",
+      "college students walking campus"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Colorado",
+     "count": 70,
+     "sub": "Tied with Washington for 5th. Busiest food street: Pearl St",
+     "map": "university-of-colorado-boulder",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Washington",
+     "count": 70,
+     "sub": "Tied with Colorado for 5th. Busiest food street: The Ave",
+     "map": "university-of-washington-seattle-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Arizona State",
+     "count": 76,
+     "sub": "Busiest food street: Mill Ave",
+     "map": "arizona-state-university-campus-immersion",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Arizona",
+     "count": 84,
+     "sub": "Busiest food street: E University Blvd",
+     "map": "university-of-arizona",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "USC",
+     "count": 94,
+     "sub": "Busiest food street: Figueroa St",
+     "map": "university-of-southern-california",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Cal",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Which old conference should we rank next?",
+     "reuse": 1
+    }
+   ]
+  },
+  {
+   "id": "chicken-tell",
+   "mood": "cozy",
+   "source": "https://www.savorscout.net/food/fried-chicken",
+   "scenes": [
+    {
+     "beats": 5,
+     "style": "hook",
+     "text": "How to tell *good fried chicken* before you order",
+     "q": [
+      "fried chicken close up",
+      "crispy fried chicken",
+      "fried chicken basket"
+     ],
+     "clip": 20416794
+    },
+    {
+     "beats": 5,
+     "style": "cap",
+     "text": "Listen first. *A crust that crackles* was fried right.",
+     "q": [
+      "biting fried chicken",
+      "crispy chicken crunch",
+      "fried chicken pieces"
+     ],
+     "clip": 9829921
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "1",
+     "text": "Fried to order",
+     "sub": "Good fried chicken takes 12 to 18 minutes. Chicken handed over instantly has been under a heat lamp.",
+     "q": [
+      "frying chicken in oil",
+      "deep frying chicken",
+      "chicken in fryer"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "2",
+     "text": "A crust that pulls away clean",
+     "sub": "Craggy and crisp, not a soggy layer stuck to the meat. That means the oil was hot enough.",
+     "q": [
+      "breading chicken flour",
+      "dredging chicken",
+      "coating chicken in flour"
+     ],
+     "clip": 36712863
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "3",
+     "text": "Seasoned all the way through",
+     "sub": "Brined or marinated overnight. A bite with no crust should still taste like something.",
+     "q": [
+      "marinating chicken buttermilk",
+      "raw chicken marinade",
+      "seasoning chicken"
+     ]
+    },
+    {
+     "beats": 6,
+     "style": "item",
+     "num": "4",
+     "text": "Thighs on the menu",
+     "sub": "Dark meat fries better, and a kitchen that pushes it knows what it's doing.",
+     "q": [
+      "fried chicken thighs",
+      "fried chicken plate",
+      "fried chicken sandwich"
+     ],
+     "clip": 35717613
+    },
+    {
+     "beats": 6,
+     "style": "cap",
+     "text": "Walk in and smell. *Nutty is good. Sharp and burnt means old oil.*",
+     "q": [
+      "fried chicken restaurant kitchen",
+      "fried chicken on tray",
+      "chicken frying close up"
+     ],
+     "clip": 14150484
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Send this to your fried chicken friend",
+     "sub": "Southern, Nashville hot or Korean?",
+     "reuse": 0
+    }
+   ]
+  },
+  {
+   "id": "sc-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/sc",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "college-of-charleston",
+     "text": "Which big South Carolina university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Clemson or South Carolina."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Coastal Carolina",
+     "count": 4,
+     "sub": "Busiest food street: Graduate Rd",
+     "map": "coastal-carolina-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Clemson",
+     "count": 43,
+     "sub": "Busiest food street: College Ave",
+     "map": "clemson-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "South Carolina",
+     "count": 47,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-south-carolina-columbia",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "College of Charleston",
+     "count": 180,
+     "sub": "Busiest food street: King St",
+     "map": "college-of-charleston",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend on the other side of the rivalry.",
+     "q": [
+      "southern college campus oak trees",
+      "charleston street",
+      "college students walking campus"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "indiana-walkable",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/in",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "indiana-university-bloomington",
+     "text": "Which big Indiana university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Purdue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Notre Dame",
+     "count": 6,
+     "sub": "Busiest food street: N Eddy St",
+     "map": "university-of-notre-dame",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Ball State",
+     "count": 25,
+     "sub": "Busiest food street: W University Ave",
+     "map": "ball-state-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "IU Indianapolis",
+     "count": 27,
+     "sub": "Busiest food street: Washington St",
+     "map": "indiana-university-purdue-university-indianapolis",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Purdue",
+     "count": 61,
+     "sub": "Busiest food street: State St",
+     "map": "purdue-university-main-campus",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Indiana",
+     "count": 138,
+     "sub": "Busiest food street: Kirkwood Ave",
+     "map": "indiana-university-bloomington",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Indiana school.",
+     "q": [
+      "midwest college campus",
+      "university campus autumn leaves",
+      "college students walking campus"
+     ]
+    }
+   ]
+  }
+ ]
+}

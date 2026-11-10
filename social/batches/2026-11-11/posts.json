@@ -1,0 +1,271 @@
+{
+ "tiktok": [
+  {
+   "video": "pac12-walkable",
+   "at": "2026-11-11T12:19:00-05:00",
+   "text": "UCLA is 11th 👀 Which old Pac-12 school has the most restaurants within a 10-minute walk? Send this to your friend at another Pac-12 school.\n\n#pac12 #ucla #usc #berkeley #collegefood"
+  },
+  {
+   "video": "chicken-tell",
+   "at": "2026-11-11T15:21:00-05:00",
+   "text": "Can you tell good fried chicken from bad before you order? 🍗 Listen to the crust first. Save this for your next chicken run.\n\n#friedchicken #foodtips #nashvillehot #koreanfriedchicken #collegefood"
+  },
+  {
+   "video": "sc-walkable",
+   "at": "2026-11-11T18:18:00-05:00",
+   "text": "Clemson and South Carolina didn't win this one 👀 Which big South Carolina university has the most restaurants within a 10-minute walk? Send this to your friend across the rivalry.\n\n#clemson #gamecocks #cofc #collegelife #collegefood"
+  },
+  {
+   "video": "indiana-walkable",
+   "at": "2026-11-11T21:22:00-05:00",
+   "text": "Purdue is 2nd and Notre Dame is 5th 👀 Which big Indiana university has the most restaurants within a 10-minute walk? Send this to your friend at another Indiana school.\n\n#iu #purdue #notredame #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-pac12",
+   "at": "2026-11-11T16:40:00-05:00",
+   "card": "pac12",
+   "thread": [
+    "Cal has almost three times as many restaurants within a 10-minute walk of campus as any other school from the old Pac-12. UCLA is 11th of 12.\n\nAll 12 schools:",
+    "1. Cal: 277\n2. USC: 94\n3. Arizona: 84\n4. Arizona State: 76\n5. Washington: 70\n5. Colorado: 70\n7. Oregon: 57\n8. Oregon State: 38\n9. Stanford: 29\n10. Utah: 16\n11. UCLA: 14\n12. Washington State: 8",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-chicken",
+   "at": "2026-11-11T17:41:00-05:00",
+   "card": "chicken",
+   "thread": [
+    "How to tell good fried chicken before you order:\n\nListen to the crust. One that crackles was fried right. One that gives softly sat too long or went into oil that wasn't hot enough.",
+    "Three more signs:\n\n- Fried to order (12 to 18 minutes is normal)\n- Seasoned all the way through, not just the coating\n- Thighs on the menu",
+    "Walk in and smell: nutty is good, sharp and burnt means old oil.\n\nMore on fried chicken styles: https://www.savorscout.net/food/fried-chicken"
+   ]
+  },
+  {
+   "id": "x-sc",
+   "at": "2026-11-11T18:42:00-05:00",
+   "card": "sc",
+   "thread": [
+    "College of Charleston has more restaurants within a 10-minute walk of campus than South Carolina and Clemson combined, twice over.\n\nEvery South Carolina university with 10,000+ students:",
+    "1. College of Charleston: 180\n2. South Carolina: 47\n3. Clemson: 43\n4. Coastal Carolina: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/sc"
+   ]
+  },
+  {
+   "id": "x-indiana",
+   "at": "2026-11-11T19:39:00-05:00",
+   "card": "indiana",
+   "thread": [
+    "Indiana has more restaurants within a 10-minute walk of campus than Purdue, IU Indianapolis and Ball State combined. Notre Dame has 6.\n\nEvery Indiana university with 10,000+ students:",
+    "1. Indiana: 138\n2. Purdue: 61\n3. IU Indianapolis: 27\n4. Ball State: 25\n5. Notre Dame: 6\n6. Vincennes: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/in"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-pac12",
+   "at": "2026-11-11T17:12:00-05:00",
+   "card": "pac12",
+   "topic": "Pac-12",
+   "thread": [
+    "Cal has almost three times as many restaurants within a 10-minute walk of campus as any other old Pac-12 school. UCLA is 11th of 12. All 12:\n\nCal 277, USC 94, Arizona 84, Arizona State 76, Washington 70, Colorado 70, Oregon 57, Oregon State 38, Stanford 29, Utah 16, UCLA 14, Washington State 8.\n\nDid your school land where you expected?",
+    "See more college food rankings: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-chicken",
+   "at": "2026-11-11T18:10:00-05:00",
+   "card": "chicken",
+   "topic": "Fried Chicken",
+   "thread": [
+    "The fastest way to judge fried chicken: listen to the crust. If it crackles, it was fried right. If it gives softly, it sat too long or the oil wasn't hot enough.\n\nAlso good signs: fried to order, seasoned all the way through, and thighs on the menu.\n\nSouthern, Nashville hot or Korean?",
+    "More on fried chicken styles: https://www.savorscout.net/food/fried-chicken"
+   ]
+  },
+  {
+   "id": "t-sc",
+   "at": "2026-11-11T19:11:00-05:00",
+   "card": "sc",
+   "topic": "South Carolina",
+   "thread": [
+    "College of Charleston has more restaurants within a 10-minute walk of campus than South Carolina and Clemson combined, twice over. Every South Carolina university with 10,000+ students:\n\nCollege of Charleston 180, South Carolina 47, Clemson 43, Coastal Carolina 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/sc"
+   ]
+  },
+  {
+   "id": "t-indiana",
+   "at": "2026-11-11T20:09:00-05:00",
+   "card": "indiana",
+   "topic": "Indiana",
+   "thread": [
+    "Indiana has more restaurants within a 10-minute walk of campus than Purdue, IU Indianapolis and Ball State combined. Notre Dame has 6. Every Indiana university with 10,000+ students:\n\nIndiana 138, Purdue 61, IU Indianapolis 27, Ball State 25, Notre Dame 6, Vincennes 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/in"
+   ]
+  }
+ ],
+ "cards": {
+  "pac12": {
+   "type": "ranking",
+   "title": "The old Pac-12 ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 12 schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Cal",
+     277
+    ],
+    [
+     "2",
+     "USC",
+     94
+    ],
+    [
+     "3",
+     "Arizona",
+     84
+    ],
+    [
+     "4",
+     "Arizona State",
+     76
+    ],
+    [
+     "5",
+     "Washington",
+     70
+    ],
+    [
+     "5",
+     "Colorado",
+     70
+    ],
+    [
+     "7",
+     "Oregon",
+     57
+    ],
+    [
+     "8",
+     "Oregon State",
+     38
+    ],
+    [
+     "9",
+     "Stanford",
+     29
+    ],
+    [
+     "10",
+     "Utah",
+     16
+    ],
+    [
+     "11",
+     "UCLA",
+     14
+    ],
+    [
+     "12",
+     "Washington State",
+     8
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "sc": {
+   "type": "ranking",
+   "title": "Big South Carolina universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "College of Charleston",
+     180
+    ],
+    [
+     "2",
+     "South Carolina",
+     47
+    ],
+    [
+     "3",
+     "Clemson",
+     43
+    ],
+    [
+     "4",
+     "Coastal Carolina",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "indiana": {
+   "type": "ranking",
+   "title": "Big Indiana universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Universities with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Indiana",
+     138
+    ],
+    [
+     "2",
+     "Purdue",
+     61
+    ],
+    [
+     "3",
+     "IU Indianapolis",
+     27
+    ],
+    [
+     "4",
+     "Ball State",
+     25
+    ],
+    [
+     "5",
+     "Notre Dame",
+     6
+    ],
+    [
+     "6",
+     "Vincennes",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "chicken": {
+   "type": "tips",
+   "photo": {
+    "clip": [
+     "chicken-tell",
+     0,
+     1.0
+    ]
+   },
+   "kicker": "BEFORE YOU ORDER",
+   "title": "How to tell *good fried chicken*",
+   "items": [
+    [
+     "A crust that crackles",
+     "It was fried right."
+    ],
+    [
+     "Fried to order",
+     "12 to 18 minutes."
+    ],
+    [
+     "Thighs on the menu",
+     "Dark meat fries better."
+    ]
+   ],
+   "note": "Smell when you walk in: nutty is good, burnt means old oil."
+  }
+ }
+}

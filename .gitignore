@@ -38,3 +38,6 @@ social/video/node_modules/
 social/video/public/batch/
 social/video/public/reel/
 social/out/
+
+# Reporter pitches hold personal email addresses: they live in the private pitch tracker, not in git.
+outreach/reporters.json

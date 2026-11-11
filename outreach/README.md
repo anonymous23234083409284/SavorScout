@@ -17,3 +17,12 @@ to and linked.
 
 A new ranking needs its schools' papers added to `contacts.jsonl`, then a
 rebuild and republish of the tracker.
+
+## Reporters (from Featured)
+
+Hand-written pitches to individual reporters and newsletter writers found
+through the Featured connector (food, local and restaurant-industry beats)
+go in `outreach/reporters.json`, one object per reporter in the tracker's
+pitch format. `make-pitches.js` adds them as their own section at the top of
+the tracker. The file is kept out of git because it holds personal email
+addresses; the published, private tracker is the copy of record.

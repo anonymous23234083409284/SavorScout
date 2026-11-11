@@ -161,6 +161,11 @@ for (const [paper, site, slug, town] of LOCAL) {
     body, lead: finding(top[0]).split(". ")[0] + ".", link: links[0],
   });
 }
+/* Reporters found on Featured: hand-written pitches, one per reporter (reporters.json). */
+const repFile = path.join(path.dirname(contactsFile), "reporters.json");
+if (fs.existsSync(repFile)) {
+  for (const r of JSON.parse(fs.readFileSync(repFile, "utf8"))) out.push({ tier: 6, rankings: [], local: false, ...r });
+}
 out.sort((a, b) => a.tier - b.tier || (b.email ? 1 : 0) - (a.email ? 1 : 0) || a.school.localeCompare(b.school));
 fs.writeFileSync(outFile, JSON.stringify(out, null, 1));
 console.log(out.length, "pitches; by tier:", [1, 2, 3, 4, 5].map((t) => out.filter((p) => p.tier === t).length).join(" / "));

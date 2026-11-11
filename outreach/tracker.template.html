@@ -161,7 +161,8 @@ summary{cursor:pointer;font-weight:500;color:var(--muted);font-size:14px}
   var canSave = false;
   var filter = "all", query = "";
   var TIERS = [
-    [1, "#1 schools", "The clearest story. Send these first."],
+    [6, "New: reporters found on Featured", "Each pitch is written for that reporter. Send these first."],
+    [1, "#1 schools", "The clearest story. Send these next."],
     [2, "Last place", "Students argue about these. Send next."],
     [3, "Top five", "A good number for the school paper to report."],
     [4, "Everyone else", "Every school in a ranking has a story."],
@@ -397,12 +398,12 @@ summary{cursor:pointer;font-weight:500;color:var(--muted);font-size:14px}
   document.getElementById("you-saved").hidden = !you();
 
   var list = document.getElementById("list");
-  TIERS.forEach(function (t) {
+  TIERS.forEach(function (t, ti) {
     var cards = el("div", { class: "cards" });
     P.filter(function (p) { return p.tier === t[0]; }).forEach(function (p) { cards.appendChild(card(p)); });
     var n = P.filter(function (p) { return p.tier === t[0]; }).length;
     list.appendChild(el("section", { class: "tier", id: "tier-" + t[0], "aria-labelledby": "h-" + t[0] }, [
-      el("header", null, [el("h2", { id: "h-" + t[0] }, [el("span", { class: "num", text: t[0] + "/5" }), t[1] + " (" + n + ")"]), el("p", { text: t[2] })]),
+      el("header", null, [el("h2", { id: "h-" + t[0] }, [el("span", { class: "num", text: (ti + 1) + "/" + TIERS.length }), t[1] + " (" + n + ")"]), el("p", { text: t[2] })]),
       cards
     ]));
   });

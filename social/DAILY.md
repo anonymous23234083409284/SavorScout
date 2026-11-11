@@ -8,11 +8,54 @@ the `social-media` branch (`sounds/`) rotates, least recently used first.
 A scheduled Claude session runs this every afternoon and schedules the next
 day. These are its steps. A person can run them the same way.
 
-## 0. Read the numbers first
+## 0. Read the numbers first, then ask the lab
 
 ```bash
 python social/pipeline/make_day.py stats    # writes social/stats.json, best first
+python social/pipeline/lab.py snapshot      # adds today's numbers to social/lab/snapshots.jsonl
+python social/pipeline/lab.py score         # scores experiments 3+ days old (promote / retry / drop)
+python social/pipeline/lab.py report        # writes social/lab/report.md: read it
 ```
+
+**The lab** (`social/pipeline/lab.py`) is the producer's notebook. It turns
+every posted TikTok into features (format, how famous the schools are,
+whether the hook names an upset, #1's lead, how many schools, posting time)
+and learns, with honest uncertainty, what drives views, watch time and shares.
+Then it generates candidate videos from SavorScout's data (conferences,
+states, systems, cities, famous schools, rivalries, guess-the-campus, short
+cuts, part 2s, two metrics) and picks by **Thompson sampling**: it draws one
+plausible version of what it has learned and picks the best ideas under it,
+so untested ideas get tried and failures stop being picked. It penalizes
+groupings, teases, regions and formats used recently, so it varies itself
+instead of copying a template. `report.md` says what it believes and what it
+hasn't tested yet.
+
+**Trends.** After the research step (1), write `social/lab/trends.json` when
+something in the news should lift an idea (a school in the headlines, a big
+game, a viral campus moment):
+
+```json
+{"date": "2026-11-12", "boost": [{"match": "Ohio State|Michigan", "weight": 0.2, "why": "The Game is in two weeks"}]}
+```
+
+`match` is a regex over the schools' names and the grouping key; `weight` is
+in log-views (0.1 small, 0.3 large). The lab also knows a calendar (rivalry
+week, Thanksgiving, finals, conference championships).
+
+**Plan and script:**
+
+```bash
+python social/pipeline/lab.py plan <date>     # 2 proven countdowns + 2 one-change experiments, with reasons
+python social/pipeline/lab.py script <date>   # writes batches/<date>/videos.json and posts.json
+python social/pipeline/lab.py maps <date>     # "slug lat lng [street]" lines for rankmap.py
+```
+
+Use the lab's picks unless one is wrong: bad data (check every map), a
+grouping that reads badly, or a fact you can't stand behind. Then take the
+next candidate from `social/lab/plan-<date>.json` or write one by hand, keep
+the `"lab"` field on every video (it's how the lab learns), and say why in the
+report. Then do steps 4 and 5 as always: every line read as a first-time
+viewer, every clip checked.
 
 TikTok decides how far a video travels mostly by **average watch time**:
 it shows each new video to a small test audience and keeps pushing only the

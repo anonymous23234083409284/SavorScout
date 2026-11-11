@@ -31,9 +31,34 @@ ones people stay with and share. What the account's first week showed:
 Re-read this every day and follow the numbers, not this list: whatever holds
 people longest and gets shared is what to make more of.
 
-## The format that works
+## The daily mix: 2 proven + 2 experiments (from Nov 12)
 
-**At least three of the four daily TikToks are countdowns of named schools.**
+The goal is an average of **1,000+ views per video**. By Nov 11, 15 of 17
+countdowns had passed 1,000 (median about 2,400), while every "how to tell"
+tip stayed at 230–390 with no shares. So the tip slot is gone. Each day:
+
+- **2 countdowns** (the proven format below), keeping the floor high. Vary
+  them: a new grouping or a new metric, a different tease, never the same
+  hook wording two days running.
+- **2 experiments**, each changing **one thing** from the countdown so the
+  result says what caused it. Pick from the backlog in
+  `social/experiments.json` (or add a new idea there first), never the same
+  experiment twice in one day.
+
+**Scoring, 72 hours after posting** (use `make_day.py stats`):
+- 1,000+ views and 9+ seconds average watch: **promote**. It joins the proven
+  rotation and can take a countdown slot.
+- Under 500 views: **drop** it, and note why you think it missed.
+- In between: **retry once** with one tweak.
+
+Every run starts by scoring the experiments that are 3+ days old and writing
+the result into `social/experiments.json` (`results`), then picks today's
+two. The famous-name groupings (UC, Ivy, Penn, the old Pac-12) have done best,
+so lean on recognisable schools in both slots.
+
+## The proven format: countdowns
+
+**Countdowns of named schools.**
 People stay to see where their school lands, argue in the comments and send
 it to friends at the other schools. Group the schools by something people
 identify with: a conference (Big Ten, SEC, ACC, Big 12, Big East, Ivy
@@ -43,7 +68,7 @@ rivalries. Rank by a number from `food-scene.json`: places to eat within a
 10-minute walk (`w`), the share on one street (`st`), coffee shops (`cof`),
 local restaurants (`loc`), fast food (`ff`), cuisines (`cz`, `top`). Don't
 repeat a grouping and metric within two weeks (Big Ten Nov 1; SEC and Ivy
-League Nov 4). The fourth video is a "how to tell X from Y before you order" tip.
+League Nov 4).
 
 How a countdown is built (`social/batches/2026-11-04/videos.json`, `sec-walkable`):
 
@@ -88,8 +113,8 @@ Every claim has to come from SavorScout's own data or guides:
 | `scripts/data/campus-cuisine.json`, `social/pipeline/combos.js` | the closest places of one food to one campus |
 
 Never claim what the data can't back: no "best", "cheapest", "open now",
-prices or ratings. Follow "The format that works" above: three countdowns of
-named schools and one "how to tell" tip, unless the numbers say otherwise.
+prices or ratings. Follow "The daily mix" above: two countdowns of named
+schools and two experiments from `social/experiments.json`.
 Use the X and Threads posts for the same rankings (with a ranking card), and
 for the guides' tips.
 

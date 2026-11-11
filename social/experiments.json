@@ -1,0 +1,22 @@
+{
+  "_why": "The video lab notebook (social/DAILY.md, 'The daily mix'). Each day runs two experiments, each changing ONE thing from the countdown format. 'backlog' is what to try, best bets first; 'results' records each run, scored 72 hours after posting: 1,000+ views and 9+ s watch = promote, under 500 = drop, between = retry once with one tweak.",
+  "baseline": {
+    "as_of": "2026-11-11",
+    "countdown_median_views": 2400,
+    "countdown_median_watch_s": 9.6,
+    "tip_median_views": 260,
+    "note": "Famous-name groupings did best: UC 17,933 (241 shares), Penn 5,169, Ivy 3,888. Plain state groupings in week 2 ran 600-2,500."
+  },
+  "backlog": [
+    {"id": "part-2", "changes": "follow-up to the biggest hit", "idea": "Part 2 of the UC video (17.9K views): the same 9 UC campuses ranked by a different number, e.g. Asian restaurants nearby or the busiest food street. Open with 'You asked for part 2.'", "why": "TikTok pushes follow-ups to viewers of a hit."},
+    {"id": "rivalry", "changes": "2 schools instead of a list", "idea": "Head-to-head: Alabama vs Auburn (27 vs 21, close), USC vs UCLA (94 vs 14), Michigan vs Ohio State (224 vs 86). Split-screen maps, counts climb together, winner at the end.", "why": "Rivalry comments and shares; tests whether a close race holds people longer than a list."},
+    {"id": "guess", "changes": "school name hidden until the end", "idea": "'Guess the campus': the map with no name while the count climbs, three multiple-choice options on screen, reveal at the end.", "why": "Withholding the answer should raise watch time and comments."},
+    {"id": "elite", "changes": "grouping chosen for fame, not geography", "idea": "Stanford vs Harvard vs MIT vs Princeton vs Yale and other household names, ranked by restaurants within a 10-minute walk.", "why": "Every famous-name video beat the plain state ones."},
+    {"id": "city", "changes": "a city's colleges instead of a state's", "idea": "Every college in one city: Boston, New York, Chicago, LA. Check each campus map first (Boston University's count looked low).", "why": "Huge student populations; city pride."},
+    {"id": "short", "changes": "length 15-20 s, top 3 only", "idea": "The same countdown cut to the top 3.", "why": "Tests whether completion rate beats total watch time."},
+    {"id": "national-stat", "changes": "one surprising national number, no schools", "idea": "e.g. 'Pizza places outnumber salad places 20 to 1 near US campuses' (from the campus data).", "why": "Tests a broad hook against a school hook."},
+    {"id": "comment-reply", "changes": "answers a real comment", "idea": "Reply to a comment on a hit ('Where's my school?'). Needs the owner to read the comments and pass one on.", "why": "Comment replies are a strong TikTok growth signal."},
+    {"id": "voice", "changes": "a spoken voiceover", "idea": "The owner records a voiceover for one countdown.", "why": "Tests voice against text-only."}
+  ],
+  "results": []
+}

@@ -1,0 +1,195 @@
+{
+ "date": "2026-11-11",
+ "platforms": {
+  "tiktok": {
+   "videos": 180,
+   "channels": 161,
+   "effects": {
+    "question": {
+     "says": "asks a question",
+     "mult": 0.98,
+     "b": -0.0205,
+     "sd": 0.3266,
+     "z": -0.06,
+     "seen": 26
+    },
+    "superlative": {
+     "says": "a superlative (most, best, worst)",
+     "mult": 0.955,
+     "b": -0.0463,
+     "sd": 0.352,
+     "z": -0.13,
+     "seen": 22
+    },
+    "ranking": {
+     "says": "says it's a ranking or tier list",
+     "mult": 0.744,
+     "b": -0.2952,
+     "sd": 0.3356,
+     "z": -0.88,
+     "seen": 28
+    },
+    "number": {
+     "says": "has a number",
+     "mult": 1.032,
+     "b": 0.0319,
+     "sd": 0.3155,
+     "z": 0.1,
+     "seen": 47
+    },
+    "college": {
+     "says": "about college or campus",
+     "mult": 0.729,
+     "b": -0.3165,
+     "sd": 0.2708,
+     "z": -1.17,
+     "seen": 80
+    },
+    "famous": {
+     "says": "names a famous school",
+     "mult": 0.563,
+     "b": -0.5745,
+     "sd": 0.3432,
+     "z": -1.67,
+     "seen": 21
+    },
+    "surprise": {
+     "says": "a surprise or upset ('it's not...')",
+     "mult": 1.075,
+     "b": 0.0725,
+     "sd": 0.426,
+     "z": 0.17,
+     "seen": 6
+    },
+    "guess": {
+     "says": "a guessing game",
+     "mult": 1.0,
+     "b": 0.0,
+     "sd": 0.5,
+     "z": 0.0,
+     "seen": 0
+    },
+    "versus": {
+     "says": "a head-to-head ('X vs Y')",
+     "mult": 1.0,
+     "b": 0.0,
+     "sd": 0.5,
+     "z": 0.0,
+     "seen": 0
+    },
+    "part2": {
+     "says": "a part 2",
+     "mult": 0.831,
+     "b": -0.1855,
+     "sd": 0.4721,
+     "z": -0.39,
+     "seen": 2
+    },
+    "pov": {
+     "says": "a POV hook",
+     "mult": 0.751,
+     "b": -0.2858,
+     "sd": 0.4714,
+     "z": -0.61,
+     "seen": 2
+    },
+    "you": {
+     "says": "talks to 'you'",
+     "mult": 1.047,
+     "b": 0.0457,
+     "sd": 0.345,
+     "z": 0.13,
+     "seen": 21
+    },
+    "food": {
+     "says": "about food",
+     "mult": 0.992,
+     "b": -0.0083,
+     "sd": 0.2792,
+     "z": -0.03,
+     "seen": 49
+    },
+    "emoji": {
+     "says": "an emoji in the caption",
+     "mult": 0.828,
+     "b": -0.1889,
+     "sd": 0.2603,
+     "z": -0.73,
+     "seen": 94
+    },
+    "title_words": {
+     "says": "one more word in the caption",
+     "mult": 1.014,
+     "b": 0.0139,
+     "sd": 0.0139,
+     "z": 1.0,
+     "seen": 180
+    },
+    "dur_le20": {
+     "says": "lasting 20 seconds or less (vs. 40-60 seconds)",
+     "mult": 2.051,
+     "b": 0.7184,
+     "sd": 0.3176,
+     "z": 2.26,
+     "seen": 43
+    },
+    "dur_20_40": {
+     "says": "lasting 20 to 40 seconds (vs. 40-60 seconds)",
+     "mult": 1.114,
+     "b": 0.1078,
+     "sd": 0.3312,
+     "z": 0.33,
+     "seen": 31
+    },
+    "dur_over60": {
+     "says": "lasting over a minute (vs. 40-60 seconds)",
+     "mult": 1.018,
+     "b": 0.018,
+     "sd": 0.2963,
+     "z": 0.06,
+     "seen": 76
+    },
+    "original_sound": {
+     "says": "an original sound (vs. a song)",
+     "mult": 1.173,
+     "b": 0.1593,
+     "sd": 0.275,
+     "z": 0.58,
+     "seen": 130
+    },
+    "hashtags_n": {
+     "says": "one more hashtag",
+     "mult": 1.136,
+     "b": 0.1271,
+     "sd": 0.046,
+     "z": 2.77,
+     "seen": 180
+    }
+   }
+  }
+ },
+ "lab_priors": {
+  "named_tease": {
+   "mean": 0.0725,
+   "sd": 0.852
+  },
+  "guess": {
+   "mean": 0.0,
+   "sd": 1.0
+  },
+  "rivalry": {
+   "mean": 0.0,
+   "sd": 1.0
+  },
+  "part2": {
+   "mean": -0.1855,
+   "sd": 0.9442
+  },
+  "short": {
+   "mean": 0.6106,
+   "sd": 0.9177
+  }
+ },
+ "videos": 180,
+ "channels": 161
+}

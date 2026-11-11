@@ -279,8 +279,10 @@ def load_youtube(prefix="youtube"):
 
 TIKTOK_DEFAULTS = {
     "tiktok_actor": "clockworks~free-tiktok-scraper",   # any actor that takes hashtags; prefer one priced per result
+    # College-specific on purpose: broad food tags (#foodtiktok) pull in viral ASMR and recipe videos
+    # from outside the niche and drown out what works for college content.
     "tiktok_hashtags": ["collegefood", "collegelife", "campusfood", "dininghall", "collegetok",
-                        "foodranking", "collegerankings", "foodtiktok"],
+                        "collegerankings", "collegestudent", "universitylife"],
     "tiktok_per_hashtag": 30,
     "tiktok_max_results": 240,
 }
@@ -326,6 +328,9 @@ def parse_tiktok(item, source):
     vid = first(item, "id", "videoId", "aweme_id")
     plays = first(item, "playCount", "stats.playCount", "statistics.playCount", "views")
     if not vid or plays is None:
+        return None
+    # Ads and sponsored posts are paid reach; slideshows aren't videos; pinned posts are chosen hits.
+    if any(item.get(k) is True for k in ("isAd", "isSponsored", "isSlideshow", "isPinned")):
         return None
     created = first(item, "createTimeISO", "createTime", "create_time")
     if isinstance(created, (int, float)) or (isinstance(created, str) and created.isdigit()):
@@ -428,7 +433,8 @@ def platform_rows(platform):
                              "views": r["views"], "extra": {}})
     else:
         for r in load_youtube("tiktok"):
-            if r.get("plays") and r.get("duration_s") and r.get("created"):
+            if r.get("plays") and r.get("duration_s") and r.get("created") and r.get("followers") \
+                    and float(r["duration_s"]) <= 180:   # longer videos are a different format
                 # No per-creator average is public, so views are compared after controlling for followers.
                 rows.append({"text": f"{r['text']} {r.get('tags', '')}", "title": r["text"], "duration_s": float(r["duration_s"]),
                              "y": math.log1p(r["plays"]), "age": age(r["created"]), "size": r.get("followers", 0),

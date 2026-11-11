@@ -122,6 +122,11 @@ game, a viral campus moment):
 in log-views (0.1 small, 0.3 large). The lab also knows a calendar (rivalry
 week, Thanksgiving, finals, conference championships).
 
+To make sure a specific video runs on a date (the part 2 of a hit, a story in
+the news), pin its candidate id: `"pin": ["system:uc|mile|part2"]` beside
+`"date"`. Pins take their slot first; the draw fills the rest. Ids are
+`<grouping key>|<metric>|<format>`, as `lab.py plan` prints them.
+
 **Plan and script:**
 
 ```bash
@@ -212,6 +217,30 @@ How a countdown is built (`social/batches/2026-11-04/videos.json`, `sec-walkable
 Keep it to 30 to 40 seconds. For a single-campus number (NYU's 1,462), open
 on that campus's `rank` scene with the question as its title
 (`"text_style": "maptitle"`), so the count climbs from the first frame.
+
+**The voice (from Nov 12).** Every countdown is read aloud: the closest
+competitor countdowns talk and move from the first frame, ours sat silent
+and static for 5.7 s. The scripter writes a `say` line on each scene
+(`lab.narrate`): the question from frame 0, last place called out ("Dead
+last ... Pack a lunch."), the hinted school's surprise, each reveal with its
+busiest food street, #1 with its margin, and an end question asking what to
+rank next. The build fits each scene to its line (the first entry now lands
+at ~4.5 s), mixes the voice over the music (ducked ~10 dB, -14 LUFS), and the
+hook map pushes in from frame 0. Read every `say` line like the captions:
+names spoken the way students say them (`python social/pipeline/tts.py say
+"line" /tmp/x.wav` speaks one; `tts.speakable` shows how acronyms are read).
+`tts.py check` says whether the voice is installed here; without it, videos
+build as before and the report must say so.
+
+**Part 2s.** A grouping that pulled 1,500+ views can come back as a part 2,
+re-ranked by its busiest street or within a mile ("You asked for part two"),
+with the school that moved called out ("UCLA jumps from 5th to 2nd"). They
+follow a hit while its audience remembers it: worth pinning.
+
+**Swap weak picks.** Groupings need 5+ schools. Plain lists of small states
+(and shorts of them) have been our weakest (400-1,200 views): when the lab
+picks one, take the next candidate from a big state, a big city, a famous set,
+a part 2 of a hit or a conference, and say why in the report.
 
 ## 1. Research what will do well tomorrow
 

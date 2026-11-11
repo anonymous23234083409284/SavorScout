@@ -235,6 +235,10 @@ METRICS = {
     "w": {"value": lambda p: p.get("w"), "phrase": "restaurants within a 10-minute walk",
           "of_campus": "restaurants within a 10-minute walk of campus", "label": "places to eat within a 10-minute walk",
           "method": "Places to eat within half a mile of each campus's center, using Overture Maps listings."},
+    # Part 2s only (a hit, re-ranked with a wider circle): a mile is about a 20-minute walk.
+    "mile": {"value": lambda p: p.get("n"), "phrase": "restaurants within a mile",
+             "of_campus": "restaurants within a mile of campus", "label": "places to eat within a mile",
+             "method": "Places to eat within a mile of each campus's center, using Overture Maps listings."},
     "street": {"value": lambda p: (p.get("st") or [[None, None]])[0][1], "phrase": "places to eat on one street",
                "of_campus": "places to eat on its busiest food street", "label": None,
                "method": "Places to eat on each campus's busiest street, within a mile of its center, using Overture Maps listings."},
@@ -254,10 +258,17 @@ def ranking(members, metric):
     return [(1 + sum(1 for _, w in vals if w > v), s, v) for s, v in vals]
 
 
+# Mostly-online universities: their enrollment puts them in "10,000+ students" lists, but their address is an
+# office, so "restaurants within a 10-minute walk of campus" means nothing for them.
+ONLINE_ONLY = {"university-of-the-people", "western-governors-university", "national-university", "excelsior-university",
+               "southern-new-hampshire-university", "university-of-phoenix-arizona", "purdue-university-global",
+               "capella-university", "walden-university", "american-public-university-system"}
+
+
 def all_groups():
     out, seen = [], set()
     for g in RANKINGS:
-        members = [s for _, s in g["members"]]
+        members = [s for _, s in g["members"] if s not in ONLINE_ONLY]
         if g["s"] == "university-of-california":
             key, kind, which, head = "system:uc", "system", "Which UC campus", "UC campuses"
             title = desc = f"All {len(members)} UC campuses"
@@ -285,7 +296,7 @@ def all_groups():
                     link=f"{SITE}/rankings/", region="famous"))
     by_state, by_city = {}, {}
     for s, c in CAMP.items():
-        if s not in SCENE or not four_year(s):
+        if s not in SCENE or not four_year(s) or s in ONLINE_ONLY:
             continue
         if c.get("sz", 0) >= 4:
             by_state.setdefault(c["r"], []).append(s)
@@ -397,7 +408,7 @@ def features_of(v, at, fmt, key, metric):
     f["g_system"] = 1.0 if kind == "system" else 0.0
     f["g_city"] = 1.0 if kind == "city" else 0.0
     f["g_famous"] = 1.0 if kind == "famous" else 0.0
-    slugs = [s["map"] for s in ranks if s.get("map")]
+    slugs = [s["map"].split("@")[0] for s in ranks if s.get("map")]
     f["fame_mean"] = float(np.mean([fame(s) for s in slugs])) if slugs else 1.0
     m = re.search(r"it's not (.+?)\.?$", hook.get("sub", ""))
     names = re.split(r" or |, ", m.group(1)) if m else []
@@ -656,8 +667,9 @@ def candidates(date):
     out = []
     groups = all_groups()
     for g in groups:
-        for metric in METRICS:
-            if not all(comparable(s, metric) for s in g["members"]) or len(g["members"]) < 4:
+        for metric in ("w", "street"):         # "mile" is for part 2s only (below)
+            # 5+ schools: a 4-school list is thin, lopsided and ends up under 30 s (Washington, Kansas, Maryland).
+            if not all(comparable(s, metric) for s in g["members"]) or len(g["members"]) < 5:
                 continue
             rows = ranking(g["members"], metric)
             if rows[0][2] < 10 or rows[1][2] == rows[0][2] == 0:
@@ -703,14 +715,15 @@ def candidates(date):
                             f=base_features("guess", "", [sa, sb, sc], None, 0.0, 9, "w")))
     best = past_hits()
     for g in groups:
-        if g["key"] in best and comparable_all(g, "street"):
-            rows = ranking(g["members"], "street")
-            tease = pick_tease(rows)
-            margin = math.log2(max(rows[0][2], 1) / max(rows[1][2], 1))
-            out.append(dict(format="part2", id=f"{g['key']}|street|part2", key=g["key"], kind=g["kind"], metric="street",
-                            rows=rows, tease=tease, group=g,
-                            head=headline(rows, "street", g["noun1"]),
-                            f=base_features("part2", g["kind"], [s for _, s, _ in rows[:5]], tease, margin, len(rows), "street")))
+        for metric in ("street", "mile"):
+            if g["key"] in best and comparable_all(g, metric):
+                rows = ranking(g["members"], metric)
+                tease = pick_tease(rows)
+                margin = math.log2(max(rows[0][2], 1) / max(rows[1][2], 1))
+                out.append(dict(format="part2", id=f"{g['key']}|{metric}|part2", key=g["key"], kind=g["kind"], metric=metric,
+                                rows=rows, tease=tease, group=g,
+                                head=headline(rows, metric, g["noun1"]),
+                                f=base_features("part2", g["kind"], [s for _, s, _ in rows[:5]], tease, margin, len(rows), metric)))
     return out
 
 
@@ -733,8 +746,8 @@ def adjustments(c, date, history):
         if age < 0 or age > 14:
             continue
         if h["key"] and h["key"] == c["key"]:
-            if h["metric"] == c["metric"] and c["format"] != "part2":
-                return None
+            if h["metric"] == c["metric"] and (c["format"] != "part2" or h["format"] == "part2"):
+                return None                # never the same ranking twice in two weeks (a part 2 once)
             if c["format"] != "part2":
                 adj -= 0.25
                 why.append(f"same grouping {age}d ago (-0.25)")
@@ -745,7 +758,7 @@ def adjustments(c, date, history):
             adj -= 0.2
             why.append(f"{c['format']} used {age}d ago (-0.2)")
         tease = c.get("tease")
-        if tease and age <= 7:
+        if tease and age <= 7 and c["format"] != "part2":    # a part 2 answers the earlier tease on purpose
             hook = next((s for s in h["video"].get("scenes", []) if s.get("style") == "hook"), {})
             if short(tease[0]) in hook.get("sub", ""):
                 adj -= 0.3
@@ -793,6 +806,7 @@ def plan(date, seed=None, draws=300):
         nov = {n for n in untested if c["f"][n] == 1.0}
         if c["format"] == "part2":
             nov.discard("metric_street")          # a part 2 is defined by its new metric
+            nov -= {"g_system", "g_city", "g_famous"}   # and its grouping was already tested by the hit it follows
         c["novel"] = sorted(nov)
     is_cd = np.array([c["format"] == "countdown" and not c["novel"] for c in cands])
     is_ex = np.array([len(c["novel"]) == 1 for c in cands])
@@ -805,6 +819,20 @@ def plan(date, seed=None, draws=300):
         c["win_rate"] = float((scores[i] >= top).mean())
     s = scores[:, 0]
     chosen, used_keys, used_tops, used_kinds, used_novel = [], set(), set(), set(), set()
+    # Pinned for this date by the day's research (trends.json "pin"): e.g. the part 2 of a hit. They go first,
+    # in the slot they belong to, and the draw fills the rest.
+    trends = jload(os.path.join(LAB, "trends.json"), {})
+    for pid in (trends.get("pin", []) if trends.get("date") == date else []):
+        i = next((k for k, c in enumerate(cands) if c["id"] == pid and (is_cd[k] or is_ex[k])), None)
+        if i is None:
+            print(f"pinned {pid} isn't a candidate today (used recently, or more than one new thing); skipped")
+            continue
+        c, slot = cands[i], "proven" if is_cd[i] else "experiment"
+        if sum(1 for x in chosen if x["slot"] == slot) < 2:
+            c["sample"], c["slot"] = float(s[i]), slot
+            chosen.append(c)
+            used_keys.add(c["key"]), used_tops.add(c["rows"][0][1]), used_kinds.add(c["kind"])
+            used_novel.update(c["novel"] + (["metric_street"] if c["format"] == "part2" else []))
     for slot, pool, strict in (("proven", is_cd, True), ("proven", is_cd, False), ("experiment", is_ex, True)):
         order = sorted([i for i in range(len(cands)) if pool[i]], key=lambda i: -s[i])
         picked = sum(1 for c in chosen if c["slot"] == slot)
@@ -888,9 +916,12 @@ def rank_scene(c, i, num, label=None):
     sub = f"Busiest food street: {street}" if street else "Within half a mile of campus"
     if c["metric"] == "street":
         sub = "Within a mile of campus"
+    if c["metric"] == "mile":
+        sub = f"Within a mile of campus · {METRICS['w']['value'](p)} within a 10-minute walk"
     if ties and num:
         sub = f"Tied with {' and '.join(ties)} for {ordinal(r)}. " + sub
-    sc = {"beats": 8 if num == "1" else 7, "style": "rank", "num": num, "text": short(s), "count": v, "sub": sub, "map": s,
+    sc = {"beats": 8 if num == "1" else 7, "style": "rank", "num": num, "text": short(s), "count": v, "sub": sub,
+          "map": s + ("@mile" if c["metric"] == "mile" else ""),
           "label": label or METRICS[c["metric"]]["label"] or f"places to eat on {street}"}
     return sc
 
@@ -995,6 +1026,13 @@ def narrate(spec):
     tease = re.search(r"it's not (.+?)\.?$", hook.get("sub", ""))
     tease = tease.group(1) if tease else None
     hook["say"] = re.sub(r"\bbig\s+", "", re.sub(r"[*]", "", hook["text"]))
+    before = {}
+    if spec["lab"]["format"] == "part2":
+        q = re.sub(r"^Part 2:\s*", "", hook["say"])
+        hook["say"] = "You asked for part two. " + q[:1].upper() + q[1:]
+        g = next((g for g in all_groups() if g["key"] == spec["lab"].get("key")), None)
+        if g:   # where each school stood in the original video (restaurants within a 10-minute walk)
+            before = {short(s_): r for r, s_, _ in ranking(g["members"], "w")}
     counts = [sc.get("count") for sc in scenes if sc["style"] == "rank"]
     top, second = (counts[-1], counts[-2]) if len(counts) >= 2 else (None, None)
     for sc in scenes:
@@ -1038,7 +1076,10 @@ def narrate(spec):
                 sc["say"] = f"Number {num}: {name}. Zero."
             else:
                 sc["say"] = f"Number {num}: {name}. {'Just ' if isinstance(n, int) and n < 10 else ''}{n:,}." if isinstance(n, int) else f"Number {num}: {name}."
-                if street:
+                was = before.get(name)
+                if was and num.isdigit() and was - int(num) >= 2:
+                    sc["say"] += f" Up from {ORDINAL.get(was, was)} last time."
+                elif street:
                     sc["say"] += f" Busiest food street: {street}."
         elif sc["style"] == "end":
             key = spec.get("lab", {}).get("key") or ""
@@ -1048,17 +1089,28 @@ def narrate(spec):
     return True
 
 
+def mover(c):
+    """For a part 2: (school, was, now) for the most famous school that climbed 2+ places since the original
+    video (restaurants within a 10-minute walk), or None."""
+    g = c.get("group")
+    if c.get("format") != "part2" or not g:
+        return None
+    was = {s: r for r, s, _ in ranking(g["members"], "w")}
+    ups = [(s, was[s], r) for r, s, _ in c["rows"] if s in was and was[s] - r >= 2]
+    return max(ups, key=lambda u: (fame(u[0]), u[1] - u[2])) if ups else None
+
+
 def _video_spec(c, vid):
     g, metric, rows = c.get("group"), c["metric"], c["rows"]
     phrase = METRICS[metric]["phrase"]
     if c["format"] in ("countdown", "short", "part2"):
         q = "busiest *food street?*" if metric == "street" else f"most *{phrase}?*"
-        if metric == "street":
-            hook_text = f"{'Part 2: w' if c['format'] == 'part2' else 'W'}{g['which'][1:]} has the {q}"
-        else:
-            hook_text = f"{g['which']} has the {q}"
+        hook_text = f"{'Part 2: w' if c['format'] == 'part2' else 'W'}{g['which'][1:]} has the {q}"
         sub = f"Hint: it's not {tease_name(c['tease'][0], g)}." if c.get("tease") else "Guess before it shows."
-        scenes = [{"beats": 4, "style": "hook", "map": rows[0][1], "text": hook_text, "sub": sub}]
+        mv = mover(c)
+        if mv:
+            sub = f"Hint: {tease_name(mv[0], g)} moves up."
+        scenes = [{"beats": 4, "style": "hook", "map": rows[0][1] + ("@mile" if metric == "mile" else ""), "text": hook_text, "sub": sub}]
         top_n = min(3 if c["format"] == "short" else 5, len(rows))
         while top_n < len(rows) and top_n < 7 and rows[top_n][0] <= top_n:   # keep ties together
             top_n += 1
@@ -1141,6 +1193,9 @@ def posts_for(c, vid):
     if c["format"] in ("countdown", "short", "part2"):
         tease = c.get("tease")
         lead = f"{tease_name(tease[0], g)} is {ordinal(tease[1])}" if tease else f"{short(rows[1][1])} is {ordinal(rows[1][0])}"
+        mv = mover(c)
+        if mv:
+            lead = f"{tease_name(mv[0], g)} jumps from {ordinal(mv[1])} to {ordinal(mv[2])}"
         lead = lead[0].upper() + lead[1:]
         q = (f"{g['which']} has the busiest food street?" if metric == "street"
              else f"{g['which']} has the most {METRICS[metric]['phrase']}?")
@@ -1152,7 +1207,8 @@ def posts_for(c, vid):
         threads = [f"{c['head']} {g['desc']}{more}:\n\n{inline}.\n\nDid your campus land where you expected?",
                    f"Look up any campus, with the closest places first: {g['link']}"]
         card = {"type": "ranking", "title": f"{g['head']} ranked by *{'their busiest food street' if metric == 'street' else METRICS[metric]['phrase']}*",
-                "subtitle": f"{g['desc']}. " + ("Places to eat on one street, within a mile." if metric == "street" else "Places to eat within half a mile."),
+                "subtitle": f"{g['desc']}. " + {"street": "Places to eat on one street, within a mile.",
+                                                 "mile": "Places to eat within a mile."}.get(metric, "Places to eat within half a mile."),
                 "rows": [[str(r), short(s), v] for r, s, v in rows[:12]], "source": "Data: Overture Maps"}
         topic = g["head"].replace("Big ", "").replace(" universities", "").replace(" schools", "").replace(" campuses", "")
     elif c["format"] == "rivalry":
@@ -1249,11 +1305,13 @@ def cmd_maps(date):
     seen = {}
     for v in spec.get("videos", []):
         street_metric = v.get("lab", {}).get("metric") == "street"
+        mile_metric = v.get("lab", {}).get("metric") == "mile"
         for s in v["scenes"]:
             slug = s.get("map")
-            if slug and slug not in seen and slug in CAMP:
-                street = (SCENE.get(slug, {}).get("st") or [[None]])[0][0] if street_metric and s.get("style") == "rank" else None
-                seen[slug] = f"{slug} {CAMP[slug]['lat']} {CAMP[slug]['lng']}" + (f' "{street}"' if street else "")
+            base = (slug or "").split("@")[0]
+            if slug and slug not in seen and base in CAMP:
+                street = (SCENE.get(base, {}).get("st") or [[None]])[0][0] if street_metric and s.get("style") == "rank" else None
+                seen[slug] = f"{slug} {CAMP[base]['lat']} {CAMP[base]['lng']}" + (f' "{street}"' if street else " --mile" if slug.endswith("@mile") else "")
     print("\n".join(seen.values()))
 
 

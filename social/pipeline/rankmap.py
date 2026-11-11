@@ -10,7 +10,7 @@ eating category); the number the video states comes from SavorScout's own
 scene data (scripts/data/food-scene.json), so the two can differ slightly. The
 dots show density, the caption carries the count.
 
-    python rankmap.py <slug> <lat> <lng> <out_dir> ["Franklin St"]
+    python rankmap.py <slug> <lat> <lng> <out_dir> ["Franklin St" | --mile]
 """
 import json, math, os, re, sys
 from shapely import wkb
@@ -61,11 +61,11 @@ def is_food(r):
     return any("restaurant" in (h or "") for h in (tax.get("hierarchy") or []))
 
 
-def build(lat, lng, out_dir, half_w=1150.0, street=None):
+def build(lat, lng, out_dir, half_w=1150.0, street=None, mile=False):
     # half_w sets the ring's size on screen (Reel.tsx fills the frame with the
     # map, so the ring's radius is about 540 * radius / half_w pixels). At 1150
     # the ring clears the count under it even after the scene's slow zoom.
-    radius = MILE_M if street else HALF_MILE_M
+    radius = MILE_M if (street or mile) else HALF_MILE_M
     half_w = half_w * radius / HALF_MILE_M          # the same framing at either radius
     key = street_key("1 " + street) if street else None
     P = mapdata.Projection(lat, lng)
@@ -109,5 +109,6 @@ def build(lat, lng, out_dir, half_w=1150.0, street=None):
 
 
 if __name__ == "__main__":
-    m = build(float(sys.argv[2]), float(sys.argv[3]), sys.argv[4], street=sys.argv[5] if len(sys.argv) > 5 else None)
+    extra = sys.argv[5] if len(sys.argv) > 5 else None
+    m = build(float(sys.argv[2]), float(sys.argv[3]), sys.argv[4], street=None if extra == "--mile" else extra, mile=extra == "--mile")
     print(sys.argv[1], m["width"], m["height"], len(m["dots"]), "dots", len(m.get("hl", [])), "on the street")

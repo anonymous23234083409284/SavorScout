@@ -61,7 +61,8 @@
    "changes": "a spoken voiceover with one-word captions, the map moving from frame 0",
    "idea": "Open with a short spoken question (10 words or fewer) captioned one word at a time, the map already zooming in, and the first entry by ~3 s. A text-to-speech voice in the pipeline (owner's OK needed), or the owner records it.",
    "why": "Every video of both competitor map countdowns (4K-25K typical views on ~16K followers) talks and moves from the first frame; ours is silent and static for 4-6 s.",
-   "evidence": "expert-review.md (Nov 11), compete-report.md"
+   "evidence": "expert-review.md (Nov 11), compete-report.md",
+   "status": "running on every video from Nov 12; judge on views, watch time and shares vs. the silent baseline after 4+ videos"
   },
   {
    "id": "loser-frame",
@@ -109,6 +110,14 @@
    "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
    "status": "posted",
    "predicted": 4637
+  },
+  {
+   "date": "2026-11-12",
+   "video": "dc-countdown, houston-tx-countdown, ma-countdown, 20-countdown",
+   "experiment": "voice",
+   "what": "every video read aloud from frame 0 (Kokoro voice), the hook map pushing in, first entry at ~4.5 s instead of 5.7 s, last place called out, #1's margin spoken",
+   "status": "posted",
+   "baseline": "silent countdowns, last 7 days: median 1,183 views, 14 of 24 at 1,000+"
   }
  ]
 }

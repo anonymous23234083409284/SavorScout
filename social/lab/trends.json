@@ -1,0 +1,3 @@
+{"date": "2026-11-13",
+ "pin": ["system:uc|mile|part2"],
+ "boost": [{"match": "system:uc", "weight": 0.3, "why": "part 2 of our biggest hit (UC campuses, 17.9K views): within a mile, UCLA jumps from 5th to 2nd"}]}

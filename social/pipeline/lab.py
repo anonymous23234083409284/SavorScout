@@ -918,14 +918,15 @@ def style_for(vid, date):
     except Exception:
         k = {"shot_target_s": None, "hook_beats": 4, "loop_end": False}
     rng = random.Random(f"{date}:{vid}")
-    punch, loop = bool(k.get("shot_target_s")), bool(k.get("loop_end"))
-    if rng.random() < 0.25:
+    shot = float(k.get("shot_target_s") or 6.0)
+    punch, loop = shot < 5.0, bool(k.get("loop_end"))
+    if rng.random() < 0.25:            # a real test: punch-ins every ~2 s, or none at all
         if rng.random() < 0.5:
             punch = not punch
+            shot = 2.0 if punch else shot
         else:
             loop = not loop
-    return {"punch": punch, "loop_end": loop, "hook_beats": int(k.get("hook_beats") or 4),
-            "shot_target_s": float(k.get("shot_target_s") or 2.0)}
+    return {"punch": punch, "loop_end": loop, "hook_beats": int(k.get("hook_beats") or 4), "shot_target_s": shot}
 
 
 def apply_style(spec, style):

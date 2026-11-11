@@ -1,0 +1,796 @@
+{
+ "date": "2026-11-11",
+ "videos": 76,
+ "producible": 33,
+ "targets_from": "all videos (too few producible ones yet)",
+ "profiles": {
+  "median_shot_s": {
+   "winners": [
+    1.44,
+    2.13,
+    4.34
+   ],
+   "losers": [
+    1.35,
+    1.7,
+    4.215
+   ],
+   "diff": 0.43,
+   "ci90": [
+    -1.54,
+    1.5015
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "cuts_per_s": {
+   "winners": [
+    0.117,
+    0.261,
+    0.593
+   ],
+   "losers": [
+    0.144,
+    0.323,
+    0.593
+   ],
+   "diff": -0.062,
+   "ci90": [
+    -0.285,
+    0.185
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "first_cut_s": {
+   "winners": [
+    1.1,
+    3.87,
+    6.415
+   ],
+   "losers": [
+    1.165,
+    2.87,
+    8.265
+   ],
+   "diff": 1.0,
+   "ci90": [
+    -3.96,
+    2.84
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "cuts_first_3s": {
+   "winners": [
+    0.0,
+    0.0,
+    1.5
+   ],
+   "losers": [
+    0.0,
+    1.0,
+    2.0
+   ],
+   "diff": -1.0,
+   "ci90": [
+    -1.0,
+    1.0
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "gradual_share": {
+   "winners": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "losers": [
+    0.0,
+    0.0,
+    0.022
+   ],
+   "diff": 0.0,
+   "ci90": [
+    0.0,
+    0.0
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "motion": {
+   "winners": [
+    0.015,
+    0.024,
+    0.028
+   ],
+   "losers": [
+    0.013,
+    0.016,
+    0.025
+   ],
+   "diff": 0.0086,
+   "ci90": [
+    -0.0005,
+    0.0117
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "motion_first_1s": {
+   "winners": [
+    0.01,
+    0.016,
+    0.024
+   ],
+   "losers": [
+    0.013,
+    0.016,
+    0.028
+   ],
+   "diff": 0.0,
+   "ci90": [
+    -0.0098,
+    0.0056
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "camera_moving_share": {
+   "winners": [
+    0.686,
+    0.848,
+    0.941
+   ],
+   "losers": [
+    0.572,
+    0.707,
+    0.944
+   ],
+   "diff": 0.141,
+   "ci90": [
+    -0.091,
+    0.289
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "zoom_in_share": {
+   "winners": [
+    0.228,
+    0.279,
+    0.366
+   ],
+   "losers": [
+    0.209,
+    0.281,
+    0.334
+   ],
+   "diff": -0.002,
+   "ci90": [
+    -0.0573,
+    0.081
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "hook_words": {
+   "winners": [
+    0.5,
+    4.0,
+    6.0
+   ],
+   "losers": [
+    0.5,
+    3.0,
+    6.0
+   ],
+   "diff": 1.0,
+   "ci90": [
+    -3.0,
+    4.0
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "hook_question": {
+   "winners": 0.043,
+   "losers": 0.0,
+   "diff": 0.0435,
+   "ci90": [
+    0.0,
+    0.1304
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "hook_face": {
+   "winners": 0.696,
+   "losers": 0.609,
+   "diff": 0.087,
+   "ci90": [
+    -0.1304,
+    0.3478
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "hook_brightness": {
+   "winners": [
+    98.6,
+    109.7,
+    120.85
+   ],
+   "losers": [
+    78.75,
+    108.3,
+    126.9
+   ],
+   "diff": 1.4,
+   "ci90": [
+    -11.015,
+    18.6
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "hook_colorfulness": {
+   "winners": [
+    40.3,
+    49.1,
+    60.0
+   ],
+   "losers": [
+    32.05,
+    47.5,
+    67.55
+   ],
+   "diff": 1.6,
+   "ci90": [
+    -8.5,
+    16.2
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "text_share": {
+   "winners": [
+    0.267,
+    0.6,
+    1.0
+   ],
+   "losers": [
+    0.2,
+    0.6,
+    1.0
+   ],
+   "diff": 0.0,
+   "ci90": [
+    -0.4,
+    0.4
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "face_share": {
+   "winners": [
+    0.0,
+    0.333,
+    0.667
+   ],
+   "losers": [
+    0.333,
+    0.333,
+    1.0
+   ],
+   "diff": 0.0,
+   "ci90": [
+    -0.334,
+    0.167
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "loop_similarity": {
+   "winners": [
+    0.345,
+    0.488,
+    0.589
+   ],
+   "losers": [
+    0.248,
+    0.506,
+    0.628
+   ],
+   "diff": -0.018,
+   "ci90": [
+    -0.13,
+    0.11
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "duration_s": {
+   "winners": [
+    10.535,
+    46.95,
+    108.38
+   ],
+   "losers": [
+    41.655,
+    70.3,
+    90.735
+   ],
+   "diff": -23.35,
+   "ci90": [
+    -49.11,
+    26.98
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "lufs": {
+   "winners": [
+    -26.15,
+    -21.3,
+    -16.8
+   ],
+   "losers": [
+    -20.15,
+    -17.1,
+    -15.4
+   ],
+   "diff": -4.2,
+   "ci90": [
+    -6.3,
+    0.0
+   ],
+   "sure": "unclear",
+   "n": 76
+  },
+  "original_sound": {
+   "winners": 0.652,
+   "losers": 0.696,
+   "diff": -0.0435,
+   "ci90": [
+    -0.2609,
+    0.1739
+   ],
+   "sure": "unclear",
+   "n": 76
+  }
+ },
+ "effects": {
+  "median_shot_s": {
+   "per_sd": 0.883,
+   "sd_units": 4.684,
+   "z": -0.61,
+   "sure": "unclear"
+  },
+  "cuts_per_s": {
+   "per_sd": 0.795,
+   "sd_units": 0.296,
+   "z": -1.09,
+   "sure": "likely"
+  },
+  "first_cut_s": {
+   "per_sd": 0.962,
+   "sd_units": 7.904,
+   "z": -0.21,
+   "sure": "unclear"
+  },
+  "cuts_first_3s": {
+   "per_sd": 1.083,
+   "sd_units": 1.214,
+   "z": 0.42,
+   "sure": "unclear"
+  },
+  "gradual_share": {
+   "per_sd": 0.915,
+   "sd_units": 0.107,
+   "z": -0.53,
+   "sure": "unclear"
+  },
+  "motion": {
+   "per_sd": 1.259,
+   "sd_units": 0.014,
+   "z": 1.03,
+   "sure": "likely"
+  },
+  "motion_first_1s": {
+   "per_sd": 1.044,
+   "sd_units": 0.018,
+   "z": 0.24,
+   "sure": "unclear"
+  },
+  "camera_moving_share": {
+   "per_sd": 1.117,
+   "sd_units": 0.273,
+   "z": 0.51,
+   "sure": "unclear"
+  },
+  "zoom_in_share": {
+   "per_sd": 0.989,
+   "sd_units": 0.112,
+   "z": -0.05,
+   "sure": "unclear"
+  },
+  "hook_words": {
+   "per_sd": 1.042,
+   "sd_units": 5.864,
+   "z": 0.23,
+   "sure": "unclear"
+  },
+  "hook_question": {
+   "per_sd": 1.16,
+   "sd_units": 0.16,
+   "z": 1.02,
+   "sure": "likely"
+  },
+  "hook_face": {
+   "per_sd": 1.194,
+   "sd_units": 0.494,
+   "z": 1.11,
+   "sure": "likely"
+  },
+  "hook_brightness": {
+   "per_sd": 1.403,
+   "sd_units": 32.615,
+   "z": 1.97,
+   "sure": "likely"
+  },
+  "hook_colorfulness": {
+   "per_sd": 1.144,
+   "sd_units": 20.01,
+   "z": 0.82,
+   "sure": "unclear"
+  },
+  "text_share": {
+   "per_sd": 1.141,
+   "sd_units": 0.387,
+   "z": 0.76,
+   "sure": "unclear"
+  },
+  "face_share": {
+   "per_sd": 0.843,
+   "sd_units": 0.325,
+   "z": -0.96,
+   "sure": "unclear"
+  },
+  "loop_similarity": {
+   "per_sd": 1.129,
+   "sd_units": 0.239,
+   "z": 0.68,
+   "sure": "unclear"
+  },
+  "duration_s": {
+   "per_sd": 0.862,
+   "sd_units": 46.36,
+   "z": -0.84,
+   "sure": "unclear"
+  },
+  "lufs": {
+   "per_sd": 0.813,
+   "sd_units": 6.612,
+   "z": -1.4,
+   "sure": "likely"
+  },
+  "original_sound": {
+   "per_sd": 0.941,
+   "sd_units": 0.447,
+   "z": -0.41,
+   "sure": "unclear"
+  }
+ },
+ "sweet_spots": {
+  "median_shot_s": {
+   "range": [
+    2.13,
+    4.67
+   ],
+   "mean_breakout": 0.25,
+   "n": 16,
+   "bins": [
+    [
+     0.48,
+     1.3,
+     -0.005,
+     18
+    ],
+    [
+     1.3,
+     1.63,
+     -0.092,
+     19
+    ],
+    [
+     1.63,
+     2.13,
+     -0.078,
+     18
+    ],
+    [
+     2.13,
+     4.67,
+     0.25,
+     16
+    ],
+    [
+     4.67,
+     22.73,
+     0.045,
+     16
+    ]
+   ]
+  },
+  "first_cut_s": {
+   "range": [
+    3.7,
+    7.93
+   ],
+   "mean_breakout": 0.335,
+   "n": 16,
+   "bins": [
+    [
+     0.07,
+     1.13,
+     -0.039,
+     16
+    ],
+    [
+     1.13,
+     1.73,
+     -0.171,
+     16
+    ],
+    [
+     1.73,
+     3.7,
+     0.07,
+     16
+    ],
+    [
+     3.7,
+     7.93,
+     0.335,
+     16
+    ],
+    [
+     7.93,
+     62.07,
+     -0.299,
+     16
+    ]
+   ]
+  },
+  "duration_s": {
+   "range": [
+    6.29,
+    24.01
+   ],
+   "mean_breakout": 0.407,
+   "n": 16,
+   "bins": [
+    [
+     6.29,
+     24.01,
+     0.407,
+     16
+    ],
+    [
+     24.01,
+     47.74,
+     -0.204,
+     16
+    ],
+    [
+     47.74,
+     71.9,
+     -0.537,
+     16
+    ],
+    [
+     71.9,
+     112.53,
+     -0.067,
+     15
+    ],
+    [
+     112.53,
+     177.97,
+     0.31,
+     16
+    ]
+   ]
+  },
+  "hook_words": {
+   "range": [
+    2.0,
+    5.0
+   ],
+   "mean_breakout": 0.151,
+   "n": 20,
+   "bins": [
+    [
+     0.0,
+     0.0,
+     -0.151,
+     20
+    ],
+    [
+     0.0,
+     2.0,
+     -0.103,
+     35
+    ],
+    [
+     2.0,
+     5.0,
+     0.151,
+     20
+    ],
+    [
+     5.0,
+     7.0,
+     0.143,
+     18
+    ],
+    [
+     7.0,
+     38.0,
+     -0.06,
+     18
+    ]
+   ]
+  },
+  "cuts_first_3s": {
+   "range": [
+    2.0,
+    5.0
+   ],
+   "mean_breakout": 0.046,
+   "n": 20,
+   "bins": [
+    [
+     0.0,
+     0.0,
+     0.043,
+     35
+    ],
+    [
+     0.0,
+     0.0,
+     0.043,
+     35
+    ],
+    [
+     0.0,
+     1.0,
+     -0.016,
+     56
+    ],
+    [
+     1.0,
+     2.0,
+     -0.008,
+     31
+    ],
+    [
+     2.0,
+     5.0,
+     0.046,
+     20
+    ]
+   ]
+  }
+ },
+ "knobs": {
+  "shot_target_s": 3.71,
+  "first_cut_by_s": 5.71,
+  "length_s": [
+   6.3,
+   24.0
+  ],
+  "hook_words_max": 6,
+  "loop_end": false,
+  "transitions": "hard cuts",
+  "evidence": {
+   "shot": {
+    "niche_sweet_spot": [
+     2.13,
+     4.67
+    ],
+    "weight": 0.12,
+    "sure": "unclear"
+   },
+   "first_cut": {
+    "niche_sweet_spot": [
+     3.7,
+     7.93
+    ],
+    "weight": 0.12,
+    "sure": "unclear"
+   }
+  }
+ },
+ "ours": {
+  "date": "2026-11-11",
+  "median_shot_s": 3.755,
+  "first_cut_s": 5.7,
+  "cuts_first_3s": 0.0,
+  "duration_s": 34.935,
+  "hook_words": 12.0,
+  "loop_similarity": 0.169,
+  "gradual_share": 0.0,
+  "zoom_in_share": 0.142,
+  "lufs": -13.25
+ },
+ "hooks": [
+  {
+   "pattern": "place",
+   "says": "a named place",
+   "lift": 2.5,
+   "winners": 4,
+   "losers": 1
+  },
+  {
+   "pattern": "you",
+   "says": "talks to 'you'",
+   "lift": 2.33,
+   "winners": 6,
+   "losers": 2
+  },
+  {
+   "pattern": "question",
+   "says": "opens with a question",
+   "lift": 2.0,
+   "winners": 3,
+   "losers": 1
+  },
+  {
+   "pattern": "price",
+   "says": "a price or budget angle",
+   "lift": 1.0,
+   "winners": 2,
+   "losers": 2
+  },
+  {
+   "pattern": "number",
+   "says": "a number",
+   "lift": 0.88,
+   "winners": 6,
+   "losers": 7
+  },
+  {
+   "pattern": "surprise",
+   "says": "a surprise or warning",
+   "lift": 0.67,
+   "winners": 3,
+   "losers": 5
+  },
+  {
+   "pattern": "ranking",
+   "says": "a ranking or rating",
+   "lift": 0.12,
+   "winners": 0,
+   "losers": 7
+  }
+ ],
+ "topics": [
+  {
+   "topic": "sushi",
+   "guide": "sushi",
+   "lift": 2.0,
+   "winners": 5,
+   "losers": 2
+  },
+  {
+   "topic": "ramen",
+   "guide": "ramen",
+   "lift": 1.5,
+   "winners": 5,
+   "losers": 3
+  }
+ ]
+}

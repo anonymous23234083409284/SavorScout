@@ -1,0 +1,37 @@
+{
+ "date": "2026-11-11",
+ "videos": [
+  {
+   "id": "chicken-tell",
+   "score": 70,
+   "issues": [
+    "shots run 5.7 s; winners cut about every 3.7 s",
+    "46 s long; breakouts cluster at 6-24 s"
+   ]
+  },
+  {
+   "id": "indiana-walkable",
+   "score": 70,
+   "issues": [
+    "31 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "pac12-walkable",
+   "score": 70,
+   "issues": [
+    "39 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "sc-walkable",
+   "score": 70,
+   "issues": [
+    "29 s long; breakouts cluster at 6-24 s",
+    "13 words on the opening frame; winners use 6 or fewer"
+   ]
+  }
+ ]
+}

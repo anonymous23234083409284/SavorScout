@@ -234,14 +234,26 @@ def analyze():
     eff = joint_effects(R)
     spots = {n: sweet_spot(base, n) for n in ("median_shot_s", "first_cut_s", "duration_s", "hook_words", "cuts_first_3s")}
     ours = our_latest()
-    shot = spots["median_shot_s"]["range"] if spots.get("median_shot_s") else prof.get("median_shot_s", {}).get("winners", [None, 2.0])[1:2] * 2
+
+    def step(feature, current, target, n_band):
+        """Move from what we do now toward the niche target only as far as the evidence allows:
+        a small step on thin or unclear evidence, the full step once it's clear and well sampled."""
+        sure = eff.get(feature, {}).get("sure") or prof.get(feature, {}).get("sure") or "unclear"
+        w = min(1.0, n_band / 40) * {"clear": 1.0, "likely": 0.6}.get(sure, 0.3)
+        return (current + w * (target - current) if current is not None else target), round(w, 2), sure
+    sp = spots.get("median_shot_s")
+    shot, w_shot, s_shot = step("median_shot_s", ours.get("median_shot_s"), float(np.mean(sp["range"])) if sp else 2.5, sp["n"] if sp else 0)
+    fc = spots.get("first_cut_s")
+    first, w_first, s_first = step("first_cut_s", ours.get("first_cut_s"), float(np.mean(fc["range"])) if fc else 3.0, fc["n"] if fc else 0)
     knobs = {
-        "shot_target_s": round(float(np.clip(np.mean(shot), 1.0, 4.0)), 2),
-        "first_cut_by_s": round(float(np.clip(prof["first_cut_s"]["winners"][1], 1.0, 3.5)), 2) if "first_cut_s" in prof else 2.5,
+        "shot_target_s": round(float(np.clip(shot, 1.0, 6.0)), 2),
+        "first_cut_by_s": round(float(np.clip(first, 1.0, 6.0)), 2),
         "length_s": [round(float(x), 1) for x in spots["duration_s"]["range"]] if spots.get("duration_s") else [20, 40],
         "hook_words_max": int(prof["hook_words"]["winners"][2]) if "hook_words" in prof else 12,
         "loop_end": bool("loop_similarity" in prof and prof["loop_similarity"]["diff"] > 0 and prof["loop_similarity"]["sure"] == "clear"),
         "transitions": "hard cuts" if prof.get("gradual_share", {}).get("winners", [0, 0, 0])[1] < 0.2 else "mix in dissolves",
+        "evidence": {"shot": {"niche_sweet_spot": sp["range"] if sp else None, "weight": w_shot, "sure": s_shot},
+                     "first_cut": {"niche_sweet_spot": fc["range"] if fc else None, "weight": w_first, "sure": s_first}},
     }
     hooks = lift_table(R, HOOKS)
     out = {"date": dt.date.today().isoformat(), "videos": len(R), "producible": len(prod),
@@ -358,8 +370,12 @@ def write_report(pb):
          "\"Clear\" means the 90% interval on the difference excludes zero.", "",
          "## Production settings now in use", ""]
     k = pb["knobs"]
-    L += [f"- **Shot length target: {k['shot_target_s']} s.** Map scenes get punch-ins to reach it.",
-          f"- **First cut by: {k['first_cut_by_s']} s.**",
+    ev = k.get("evidence", {})
+    L += [f"- **Shot length target: {k['shot_target_s']} s.** Map scenes get punch-ins to reach it. "
+          f"(Niche sweet spot {ev.get('shot', {}).get('niche_sweet_spot')}; moved {ev.get('shot', {}).get('weight', 0):.0%} of the way "
+          f"there because the evidence is {ev.get('shot', {}).get('sure', 'unclear')}.)",
+          f"- **First cut by: {k['first_cut_by_s']} s.** (Niche sweet spot {ev.get('first_cut', {}).get('niche_sweet_spot')}; "
+          f"moved {ev.get('first_cut', {}).get('weight', 0):.0%} of the way.)",
           f"- **Length: {k['length_s'][0]:g}-{k['length_s'][1]:g} s** is where breakouts cluster.",
           f"- **Opening frame: {k['hook_words_max']} words or fewer.**",
           f"- **Loop endings: {'yes' if k['loop_end'] else 'not yet (no clear evidence)'}.** Transitions: {k['transitions']}.", ""]

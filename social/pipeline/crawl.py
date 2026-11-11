@@ -31,7 +31,9 @@ RULES
   environment's network secrets for www.googleapis.com (header X-Goog-Api-Key)
   and the proxy adds it to each request.
 - Quota: a search costs 100 units, a video or channel lookup 1 unit per 50.
-  The free daily quota is 10,000 units; a full crawl uses about 2,500."""
+  The free daily quota is 10,000 units; a full crawl (each search run twice,
+  most-viewed and newest, so the data includes flops as well as hits) uses
+  about 4,700."""
 
 import datetime as dt
 import json
@@ -194,17 +196,20 @@ def crawl_youtube(dry=False, weekly=False):
     queries = cfg.get("queries", QUERIES)
     since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=cfg.get("since_days", 120))).strftime("%Y-%m-%dT%H:%M:%SZ")
     if dry:
-        print(f"would search {len(queries)} queries (~{100 * len(queries) + 2 * len(queries)} quota units):")
+        print(f"would search {len(queries)} queries twice, most-viewed and newest (~{200 * len(queries) + 4 * len(queries)} quota units):")
         print("  " + "\n  ".join(queries))
         return
     found = {}
+    # Two passes per search: the most-viewed, and simply the newest. Sorting by views alone
+    # would show mostly hits, and you can't learn what works without the flops.
     for q in queries:
-        res = yt("search", {"part": "snippet", "type": "video", "videoDuration": "short", "q": q, "maxResults": 50,
-                            "order": "viewCount", "publishedAfter": since, "regionCode": "US", "relevanceLanguage": "en"})
-        for it in res.get("items", []):
-            vid = it.get("id", {}).get("videoId")
-            if vid and vid not in found:
-                found[vid] = q
+        for order in ("viewCount", "date"):
+            res = yt("search", {"part": "snippet", "type": "video", "videoDuration": "short", "q": q, "maxResults": 50,
+                                "order": order, "publishedAfter": since, "regionCode": "US", "relevanceLanguage": "en"})
+            for it in res.get("items", []):
+                vid = it.get("id", {}).get("videoId")
+                if vid and vid not in found:
+                    found[vid] = q
     videos, channels = [], {}
     for ids in chunks(list(found)):
         res = yt("videos", {"part": "snippet,contentDetails,statistics", "id": ",".join(ids)})

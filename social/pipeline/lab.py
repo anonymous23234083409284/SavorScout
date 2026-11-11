@@ -416,6 +416,12 @@ def tiktok_rows():
     pulled = dt.datetime.fromisoformat(stats.get("pulled", dt.datetime.now(dt.timezone.utc).isoformat()))
     vids = {r["id"]: r for r in past_videos()}
     snaps = load_snapshots()
+    lengths = {}
+    if os.path.exists(os.path.join(LAB, "videos.jsonl")):
+        for line in open(os.path.join(LAB, "videos.jsonl")):
+            if line.strip():
+                d = json.loads(line)
+                lengths[d["id"]] = d["duration_s"]
     rows = []
     for p in stats.get("posts", []):
         if p.get("service", "").lower() != "tiktok" or p.get("views") is None or not p.get("what"):
@@ -433,7 +439,8 @@ def tiktok_rows():
              else {**{n: 0.0 for n, _ in FEATS}, "fame_mean": 1.0})
         f["log_age"] = math.log2(max(age, 0.5))
         rows.append({"id": p["what"], "sent": p["sent"], "views": views, "watch": watch, "shares": shares,
-                     "f": f, "key": r["key"] if r else None, "format": r["format"] if r else "other"})
+                     "duration": lengths.get(p["what"]), "f": f, "key": r["key"] if r else None,
+                     "format": r["format"] if r else "other"})
     # School features only mean something for videos that show schools. For the
     # rest, fill in the average of those that do, so "how famous" is learned
     # among rankings instead of soaking up the difference between formats.
@@ -512,15 +519,19 @@ def design(rows):
     return raw, mean, std
 
 
-def fit_outcome(rows, y, mean, std):
+def fit_outcome(rows, y, mean, std, m0=None, sd_over=None):
+    """Bayesian linear model. m0 / sd_over: starting beliefs (from the niche) for some features."""
     raw = np.array([[r["f"][n] for n, _ in FEATS] for r in rows], dtype=float)
     X = np.hstack([np.ones((len(rows), 1)), (raw - mean) / std])
     sd = np.array([10.0] + [1.0 if k == "fmt" else 0.6 if k == "bin" else 0.3 for _, k in FEATS])
+    for j, v in (sd_over or {}).items():
+        sd[j] = v
+    m0 = np.zeros(X.shape[1]) if m0 is None else m0
     P = np.diag(1 / sd ** 2)
     s2 = float(np.var(y)) if len(y) > 1 else 1.0
     for _ in range(6):
         S = np.linalg.inv(X.T @ X / s2 + P)
-        mu = S @ X.T @ y / s2
+        mu = S @ (X.T @ y / s2 + P @ m0)
         resid = y - X @ mu
         dof = max(1.0, len(y) - float(np.trace(X @ S @ X.T)) / s2)
         s2 = max(0.05, float(resid @ resid) / dof)
@@ -534,10 +545,20 @@ def fit():
         sys.exit("not enough videos to learn from yet")
     _, mean, std = design(rows)
     views = np.log1p(np.array([r["views"] for r in rows], dtype=float))
-    m = {"rows": rows, "mean": mean, "std": std, "lo": design.lo, "hi": design.hi,
-         "views": fit_outcome(rows, views, mean, std)}
+    names = [n for n, _ in FEATS]
+    niche = jload(os.path.join(LAB, "niche.json"), {})
+    m0, sd_over = np.zeros(1 + len(FEATS)), {}
+    for k, v in niche.get("lab_priors", {}).items():
+        if k in names:
+            m0[1 + names.index(k)], sd_over[1 + names.index(k)] = v["mean"], v["sd"]
+    m = {"rows": rows, "mean": mean, "std": std, "lo": design.lo, "hi": design.hi, "niche": niche,
+         "views": fit_outcome(rows, views, mean, std, m0, sd_over)}
     wr = [r for r in rows if r["watch"] > 0]
     m["watch"] = fit_outcome(wr, np.array([r["watch"] for r in wr], dtype=float), mean, std)
+    cr = [r for r in wr if r.get("duration")]
+    m["completion_rows"] = cr
+    if len(cr) >= 8:
+        m["completion"] = fit_outcome(cr, np.array([r["watch"] / r["duration"] for r in cr], dtype=float), mean, std)
     m["share"] = fit_outcome(rows, np.log(np.array([(r["shares"] + 0.5) / (r["views"] + 1) * 1000 for r in rows])), mean, std)
     return m
 
@@ -1146,6 +1167,24 @@ def cmd_report():
                 continue
             val = f"{e['b']:+.1f} s" if unit == "s" else f"x{math.exp(e['b']):.2f}"
             lines.append(f"- {SAY[e['name']]}: **{val}** ({e['sure']})")
+    if "completion" in m:
+        cr = m["completion_rows"]
+        lines += ["", "## What drives completion (share of the video watched)", "",
+                  f"Median completion: **{np.median([r['watch'] / r['duration'] for r in cr]):.0%}** "
+                  f"of the video, across {len(cr)} videos with a known length.", ""]
+        for e in effects(m, "completion")[:6]:
+            if e["name"] == "log_age" or e["seen"] == 0:
+                continue
+            lines.append(f"- {SAY[e['name']]}: **{e['b'] * 100:+.1f} points** ({e['sure']})")
+    nic = m.get("niche") or {}
+    if nic.get("effects"):
+        lines += ["", f"## What works in the niche (YouTube Shorts: {nic['videos']:,} videos, {nic['channels']:,} channels, {nic['date']})", "",
+                  "Views compared with each channel's own average, so big channels don't drown out the signal.", ""]
+        for name, e in sorted(nic["effects"].items(), key=lambda kv: -abs(kv[1]["z"]))[:10]:
+            sure = "clear" if abs(e["z"]) >= 2 else "likely" if abs(e["z"]) >= 1 else "unclear"
+            lines.append(f"- {e['says']}: **x{e['mult']:.2f}** ({sure}, {e['seen']} videos)")
+        lines += ["", "The lab starts from these where its own features match (" +
+                  ", ".join(SAY[k] for k in nic.get("lab_priors", {}) if k in SAY) + "), then lets our own results overrule them."]
     untested = [SAY[n] for n, k in FEATS if k in ("fmt", "bin") and n not in ("tip",)
                 and sum(1 for r in rows if r["f"][n] not in (0, 0.0)) < 3]
     lines += ["", "## Not tested enough yet (the lab will try these)", ""] + [f"- {u}" for u in untested]

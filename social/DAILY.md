@@ -13,6 +13,8 @@ day. These are its steps. A person can run them the same way.
 ```bash
 python social/pipeline/make_day.py stats    # writes social/stats.json, best first
 python social/pipeline/lab.py snapshot      # adds today's numbers to social/lab/snapshots.jsonl
+python social/pipeline/crawl.py record      # exact video lengths, so the lab can learn completion rate
+python social/pipeline/crawl.py youtube --weekly --and-learn   # niche crawl + model, once a week
 python social/pipeline/lab.py score         # scores experiments 3+ days old (promote / retry / drop)
 python social/pipeline/lab.py report        # writes social/lab/report.md: read it
 ```
@@ -29,6 +31,19 @@ so untested ideas get tried and failures stop being picked. It penalizes
 groupings, teases, regions and formats used recently, so it varies itself
 instead of copying a template. `report.md` says what it believes and what it
 hasn't tested yet.
+
+**The crawler** (`social/pipeline/crawl.py`) feeds the lab better data. Once
+a week it pulls short-form videos in SavorScout's niche from the official
+YouTube Data API (college rankings, campus food, rivalries, guess-games, food
+rankings), judges each against its own channel's average, and learns which
+hooks and lengths over-perform. Those findings become the lab's starting
+beliefs for matching features (a named upset, a guessing game, X vs Y, a
+part 2, a short cut); our own results then overrule them. Raw API data stays
+in `social/lab/crawl/` (git-ignored, deleted after 30 days); only the learned
+findings (`social/lab/niche.json`) are kept. TikTok isn't crawled: its terms
+forbid scraping. The key lives in the environment's network secrets for
+www.googleapis.com; if it's missing, the crawl says so and the lab carries on
+with its own data.
 
 **Trends.** After the research step (1), write `social/lab/trends.json` when
 something in the news should lift an idea (a school in the headlines, a big
@@ -243,6 +258,7 @@ python reel.py repick ../batches/<date>/videos.json <video> '{"3": ["better quer
 python reel.py repick ../batches/<date>/videos.json <video> '{"3": 8448265}'   # a Pexels id picked by eye
 python reel.py refit ../batches/<date>/videos.json                            # after small word edits
 python make_day.py render <date>
+python crawl.py record <date>        # store each video's length for the lab
 python make_day.py cards <date>
 python make_day.py publish <date> /tmp/sounds
 python make_day.py verify <date>     # reads all 12 posts back from Buffer

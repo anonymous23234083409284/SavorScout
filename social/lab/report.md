@@ -34,6 +34,17 @@ Learned from **34 TikToks** posted 2026-10-31 to 2026-11-10. The model explains 
 - one more school in the ranking: **x1.08** (likely)
 - a bigger lead for #1 (x2): **x1.30** (likely)
 
+## What drives completion (share of the video watched)
+
+Median completion: **22%** of the video, across 30 videos with a known length.
+
+- a countdown of named schools (vs. the first week's videos): **+15.6 points** (unclear)
+- a 'how to tell' tip (vs. the first week's videos): **+7.1 points** (unclear)
+- grouping by university system (UC, Cal State): **+9.6 points** (unclear)
+- posting on a weekend: **-2.4 points** (unclear)
+- a bigger lead for #1 (x2): **-1.5 points** (unclear)
+- grouping by conference (vs. state): **+2.3 points** (unclear)
+
 ## Not tested enough yet (the lab will try these)
 
 - a two-school rivalry head-to-head

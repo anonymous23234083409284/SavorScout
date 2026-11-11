@@ -41,3 +41,6 @@ social/out/
 
 # Reporter pitches hold personal email addresses: they live in the private pitch tracker, not in git.
 outreach/reporters.json
+
+# Raw YouTube API data: kept 30 days at most, never committed (YouTube API policies).
+social/lab/crawl/

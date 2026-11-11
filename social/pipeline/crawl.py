@@ -423,7 +423,8 @@ def crawl_tiktok(weekly=False):
             r["lang"] = it.get("textLanguage")
             rows.append(r)
             urls = it.get("mediaUrls") or []
-            if urls and str(urls[0]).startswith("https://api.apify.com/"):
+            # Footage only for videos the analysis can use (Lab v2 looks at 6-180 s).
+            if urls and str(urls[0]).startswith("https://api.apify.com/") and 6 <= float(r["duration_s"] or 0) <= 180:
                 media[r["id"]] = urls[0]
     os.makedirs(CRAWL, exist_ok=True)
     out = os.path.join(CRAWL, f"tiktok-{dt.datetime.now().strftime('%Y-%m-%d-%H%M')}.jsonl")
@@ -460,6 +461,20 @@ def _analyze_one(args):
                                    headers={"Authorization": "Bearer placeholder"}), timeout=30).close()
         except Exception:
             pass
+
+
+def resume_footage():
+    """Measure the footage of the latest Apify run's videos that haven't been measured yet (recovery)."""
+    cfg = {**TIKTOK_DEFAULTS, **jload(os.path.join(LAB, "crawl-config.json"), {})}
+    run = apify_get(f"https://api.apify.com/v2/acts/{cfg['tiktok_actor']}/runs?desc=1&limit=1")["data"]["items"][0]
+    items = apify_get(f"https://api.apify.com/v2/datasets/{run['defaultDatasetId']}/items?clean=true&format=json")
+    media = {}
+    for it in items:
+        r = parse_tiktok(it, "search")
+        urls = it.get("mediaUrls") or []
+        if r and urls and str(urls[0]).startswith("https://api.apify.com/") and 6 <= float(r["duration_s"] or 0) <= 180:
+            media[r["id"]] = urls[0]
+    analyze_footage(media)
 
 
 def analyze_footage(media, workers=3):
@@ -642,6 +657,8 @@ if __name__ == "__main__":
                 niche()
         except NoAccess as e:
             sys.exit(str(e))
+    elif a[0] == "footage":
+        resume_footage()
     elif a[0] == "weekly":
         weekly()
     elif a[0] == "niche":

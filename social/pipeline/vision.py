@@ -59,7 +59,7 @@ def frames(path, fps):
     return np.frombuffer(raw[: n * SMALL_W * SMALL_H * 3], dtype=np.uint8).reshape(n, SMALL_H, SMALL_W, 3)
 
 
-def frame_at(path, t, width=720):
+def frame_at(path, t, width=540):
     """One full-detail frame (for OCR and faces)."""
     raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.2f}", "-i", path, "-frames:v", "1", "-vf",
                           f"scale={width}:-2", "-f", "image2pipe", "-vcodec", "png", "-"], capture_output=True).stdout
@@ -147,10 +147,13 @@ def ocr_words(img):
         return ""
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     words = []
-    for prep in (cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)[1], gray):
+    for i, prep in enumerate((cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)[1], gray)):
+        if i == 1 and len(words) >= 2:      # the overlay pass found text: skip the slower full pass
+            break
         ok, png = cv2.imencode(".png", prep)
+        # One thread per call: Tesseract's own threading swamps the CPU when several videos run at once.
         tsv = subprocess.run(["tesseract", "stdin", "stdout", "--psm", "11", "-l", "eng", "tsv"], input=png.tobytes(),
-                             capture_output=True).stdout.decode("utf-8", "replace")
+                             capture_output=True, env={**os.environ, "OMP_THREAD_LIMIT": "1"}).stdout.decode("utf-8", "replace")
         found = []
         for line in tsv.splitlines()[1:]:
             parts = line.split("\t")
@@ -218,7 +221,7 @@ def analyze(path, ocr=True):
     first = frame_at(path, 0.05)
     words0 = ocr_words(first) if ocr else ""
     nfaces, face_area = faces(first)
-    ocr_times = [t for t in np.arange(0.5, min(duration, 24.0), 3.0)] if ocr else []
+    ocr_times = [t for t in np.arange(0.5, min(duration, 20.5), 4.0)] if ocr else []
     texts = [ocr_words(frame_at(path, t)) for t in ocr_times]
     wcounts = [len(t.split()) for t in texts]
     face_hits = [faces(frame_at(path, t))[0] > 0 for t in ocr_times[::2]] if ocr else []

@@ -331,10 +331,23 @@ def knobs():
 
 # ---- report ------------------------------------------------------------------------------
 
+SHARES = {"gradual_share", "camera_moving_share", "zoom_in_share", "text_share", "face_share"}
+
+
+def num(name, x):
+    if name in SHARES:
+        return f"{x:.0%}"
+    if name in ("cuts_per_s", "loop_similarity", "motion", "motion_first_1s"):
+        return f"{x:.2f}"
+    if name in ("hook_words", "cuts_first_3s", "hook_brightness", "hook_colorfulness"):
+        return f"{x:.0f}"
+    return f"{x:.1f}{UNIT.get(name, '')}"
+
+
 def fmt(name, v):
     if isinstance(v, list):
-        return f"{v[1]:g}{UNIT.get(name, '')} (middle half {v[0]:g}-{v[2]:g})"
-    return f"{v:.0%} of videos" if name in BINARY else f"{v:g}{UNIT.get(name, '')}"
+        return f"{num(name, v[1])} (middle half {num(name, v[0])} to {num(name, v[2])})"
+    return f"{v:.0%} of videos" if name in BINARY else num(name, v)
 
 
 def write_report(pb):
@@ -356,7 +369,7 @@ def write_report(pb):
         for n in ("median_shot_s", "first_cut_s", "cuts_first_3s", "duration_s", "hook_words", "loop_similarity", "lufs"):
             p = pb["profiles"].get(n)
             if p and n in ours:
-                L.append(f"- {SAY[n].capitalize()}: ours **{ours[n]:g}{UNIT[n]}**, winners {fmt(n, p['winners'])}")
+                L.append(f"- {SAY[n].capitalize()}: ours **{num(n, ours[n])}**, winners {fmt(n, p['winners'])}")
         L.append("")
     L += ["## Winners vs. losers", ""]
     for n, p in sorted(pb["profiles"].items(), key=lambda kv: kv[1]["sure"] != "clear"):
@@ -364,11 +377,11 @@ def write_report(pb):
                  f"({p['sure']}, {p['n']} videos)")
     L += ["", "## All at once (effect of one standard deviation more, other features held equal)", ""]
     for n, e in sorted(pb["effects"].items(), key=lambda kv: -abs(kv[1]["z"]))[:10]:
-        L.append(f"- {SAY[n].capitalize()} (+{e['sd_units']:g}{UNIT[n]}): **x{e['per_sd']:.2f} views** ({e['sure']})")
+        L.append(f"- {SAY[n].capitalize()} (+{num(n, e['sd_units'])}): **x{e['per_sd']:.2f} views** ({e['sure']})")
     L += ["", "## Sweet spots", ""]
     for n, s in pb["sweet_spots"].items():
         if s:
-            L.append(f"- {SAY[n].capitalize()}: **{s['range'][0]:g}-{s['range'][1]:g}{UNIT[n]}** ({s['n']} videos in the best band)")
+            L.append(f"- {SAY[n].capitalize()}: **{num(n, s['range'][0])} to {num(n, s['range'][1])}** ({s['n']} videos in the best band)")
     if pb["hooks"]:
         L += ["", "## Caption hooks that over-index among winners", ""]
         L += [f"- {h['says']}: x{h['lift']:.2f} ({h['winners']} winners, {h['losers']} losers)" for h in pb["hooks"][:8]]

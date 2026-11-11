@@ -1177,14 +1177,20 @@ def cmd_report():
                 continue
             lines.append(f"- {SAY[e['name']]}: **{e['b'] * 100:+.1f} points** ({e['sure']})")
     nic = m.get("niche") or {}
-    if nic.get("effects"):
-        lines += ["", f"## What works in the niche (YouTube Shorts: {nic['videos']:,} videos, {nic['channels']:,} channels, {nic['date']})", "",
-                  "Views compared with each channel's own average, so big channels don't drown out the signal.", ""]
-        for name, e in sorted(nic["effects"].items(), key=lambda kv: -abs(kv[1]["z"]))[:10]:
+    platforms = nic.get("platforms") or ({"youtube": nic} if nic.get("effects") else {})
+    for pname, pdata in platforms.items():
+        label = {"tiktok": "TikTok", "youtube": "YouTube Shorts"}.get(pname, pname)
+        how = ("views compared after controlling for each creator's followers" if pname == "tiktok"
+               else "views compared with each channel's own average, so big channels don't drown out the signal")
+        lines += ["", f"## What works in the niche: {label} ({pdata['videos']:,} videos, {pdata['channels']:,} accounts, {nic.get('date', '')})",
+                  "", how[0].upper() + how[1:] + ".", ""]
+        for name, e in sorted(pdata["effects"].items(), key=lambda kv: -abs(kv[1]["z"]))[:10]:
             sure = "clear" if abs(e["z"]) >= 2 else "likely" if abs(e["z"]) >= 1 else "unclear"
             lines.append(f"- {e['says']}: **x{e['mult']:.2f}** ({sure}, {e['seen']} videos)")
-        lines += ["", "The lab starts from these where its own features match (" +
-                  ", ".join(SAY[k] for k in nic.get("lab_priors", {}) if k in SAY) + "), then lets our own results overrule them."]
+    if platforms:
+        lines += ["", "The lab starts from these (both platforms combined, the more certain one counting for more) where its own "
+                  "features match: " + ", ".join(SAY[k] for k in nic.get("lab_priors", {}) if k in SAY) +
+                  ". Our own results then overrule them."]
     untested = [SAY[n] for n, k in FEATS if k in ("fmt", "bin") and n not in ("tip",)
                 and sum(1 for r in rows if r["f"][n] not in (0, 0.0)) < 3]
     lines += ["", "## Not tested enough yet (the lab will try these)", ""] + [f"- {u}" for u in untested]

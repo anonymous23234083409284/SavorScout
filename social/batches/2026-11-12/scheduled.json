@@ -12,22 +12,16 @@
   "what": "houston-tx-countdown"
  },
  {
-  "service": "tiktok",
-  "at": "2026-11-12T23:20:00.000Z",
-  "post_id": "6af4bb69592a3bb919a789a2",
-  "what": "ma-countdown"
- },
- {
-  "service": "tiktok",
-  "at": "2026-11-13T02:19:00.000Z",
-  "post_id": "6af4bb6a0e1aab0352b0ee56",
-  "what": "20-countdown"
- },
- {
   "service": "twitter",
   "at": "2026-11-12T21:39:00.000Z",
   "post_id": "6af4bb6bf0d62ba60e2c06f4",
   "what": "x-dc-countdown"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-12T22:12:00.000Z",
+  "post_id": "6af4bb6c0113073f857024a5",
+  "what": "t-dc-countdown"
  },
  {
   "service": "twitter",
@@ -36,10 +30,28 @@
   "what": "x-houston-tx-countdown"
  },
  {
+  "service": "threads",
+  "at": "2026-11-12T23:09:00.000Z",
+  "post_id": "6af4bb6d0113073f857024ec",
+  "what": "t-houston-tx-countdown"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-12T23:20:00.000Z",
+  "post_id": "6af4bb69592a3bb919a789a2",
+  "what": "ma-countdown"
+ },
+ {
   "service": "twitter",
   "at": "2026-11-12T23:38:00.000Z",
   "post_id": "6af4bb6ba77244ffce8df74d",
   "what": "x-ma-countdown"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-13T00:09:00.000Z",
+  "post_id": "6af4bb6d592a3bb919a78b30",
+  "what": "t-ma-countdown"
  },
  {
   "service": "twitter",
@@ -49,26 +61,14 @@
  },
  {
   "service": "threads",
-  "at": "2026-11-12T22:12:00.000Z",
-  "post_id": "6af4bb6c0113073f857024a5",
-  "what": "t-dc-countdown"
- },
- {
-  "service": "threads",
-  "at": "2026-11-12T23:09:00.000Z",
-  "post_id": "6af4bb6d0113073f857024ec",
-  "what": "t-houston-tx-countdown"
- },
- {
-  "service": "threads",
-  "at": "2026-11-13T00:09:00.000Z",
-  "post_id": "6af4bb6d592a3bb919a78b30",
-  "what": "t-ma-countdown"
- },
- {
-  "service": "threads",
   "at": "2026-11-13T01:10:00.000Z",
   "post_id": "6af4bb6d0e1aab0352b0f1a9",
   "what": "t-20-countdown"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-13T02:19:00.000Z",
+  "post_id": "6af4bb6a0e1aab0352b0ee56",
+  "what": "20-countdown"
  }
 ]

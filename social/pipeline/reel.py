@@ -21,6 +21,7 @@ sys.path.insert(0, HERE)
 import audio, clips, music  # noqa: E402
 
 FPS = 30
+VOICE_LEAD, VOICE_TAIL = 0.12, 0.3   # seconds of air before and after each spoken line
 VIDEO = os.path.join(HERE, "..", "video")
 FONTS = os.path.join(VIDEO, "public", "fonts")
 BLACK = os.path.join(FONTS, "InterDisplay-Black.otf")
@@ -171,7 +172,32 @@ def decode(path, seconds):
     return np.frombuffer(raw, np.int16).reshape(-1, 2).astype(np.float64) / 32768
 
 
-def mix_audio(track_path, scenes, total_frames, out_path, rng):
+def voice_track(lines, n):
+    """The narration as one stereo track: each (wav, start second) placed where its scene begins."""
+    v = np.zeros((n, 2))
+    for path, at in lines:
+        x = decode(path, 60.0)
+        i = int(at * audio.SR)
+        a, b = max(0, i), min(n, i + len(x))
+        if b > a:
+            v[a:b] += x[a - i:b - i]
+    return v
+
+
+def duck(n, spans, depth=0.3, ramp_s=0.12):
+    """Music gain: 1 normally, `depth` while the voice speaks, with short ramps so it doesn't pump."""
+    g = np.ones(n)
+    r = int(ramp_s * audio.SR)
+    for a, b in spans:
+        i, j = max(0, int(a * audio.SR) - r), min(n, int(b * audio.SR) + r)
+        g[i:j] = np.minimum(g[i:j], depth)
+    k = np.ones(max(1, r)) / max(1, r)                  # smooth the edges
+    return np.convolve(g, k, mode="same")
+
+
+def mix_audio(track_path, scenes, total_frames, out_path, rng, voice=None):
+    """Music cut to length with scene sounds; with `voice` [(wav, start s, seconds)], the narration on top and
+    the music about 10 dB lower under it."""
     total_s = total_frames / FPS
     music_pcm = decode(track_path, total_s)
     n = int(total_s * audio.SR)
@@ -197,11 +223,23 @@ def mix_audio(track_path, scenes, total_frames, out_path, rng):
                 put(audio.pop() * 0.5, t + s["rowAt"][r] / FPS, 0.25)
         if s["style"] == "end":
             put(audio.ding(), t + 0.2, 0.8)
-    out = music_pcm * 0.92 + sfx * 0.6
+    if voice:
+        v = voice_track([(p, at) for p, at, _ in voice], n)
+        g = duck(n, [(at, at + sec) for _, at, sec in voice])
+        music = music_pcm * 0.92 * g[:, None] + sfx * 0.45
+        vpk = np.max(np.abs(v)) + 1e-9
+        out = music * 0.55 + v * (0.95 / vpk)           # the voice sits clearly on top
+    else:
+        out = music_pcm * 0.92 + sfx * 0.6
     out *= 10 ** (-1 / 20) / (np.max(np.abs(out)) + 1e-9)
     with wave.open(out_path, "w") as w:
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(audio.SR)
         w.writeframes((out * 32767).astype(np.int16).tobytes())
+    if voice:      # a voice mix sits quieter than a music bed: bring it to TikTok's usual level
+        tmp = out_path + ".norm.wav"
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", out_path, "-af", "loudnorm=I=-14:TP=-1.2:LRA=11",
+                        "-ar", str(audio.SR), "-ac", "2", tmp], check=True)
+        os.replace(tmp, out_path)
 
 
 def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=None):
@@ -216,8 +254,24 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
     os.makedirs(pub, exist_ok=True)
     scenes, beat = [], 0
     raw_by_scene = {}
+    # The voiceover: each scene's "say" line, spoken first so the scene can be as long as its line.
+    said = {}
+    lines = [(i, sc["say"]) for i, sc in enumerate(video["scenes"]) if sc.get("say")]
+    if lines:
+        import tts
+        res = tts.synth([t for _, t in lines], os.path.join(work, "voice"))
+        if res:
+            said = {i: r for (i, _), r in zip(lines, res)}
+        else:
+            print(f"{video['id']}: no voice installed here, so no voiceover (tts.py check)")
     for i, sc in enumerate(video["scenes"]):
-        beats = max(sc["beats"], reading_beats(sc, fpb) if sc["style"] not in ("word", "rank") else 0)
+        if i in said:
+            need = int(np.ceil((said[i][1] + VOICE_LEAD + VOICE_TAIL) * FPS / fpb))
+            # The voice reads the hook aloud, so it no longer waits for reading time; lists still need their rows read.
+            floor = reading_beats(sc, fpb) if sc["style"] == "list" else 0
+            beats = max(min(sc["beats"], 3) if sc["style"] == "hook" else sc["beats"], need, floor)
+        else:
+            beats = max(sc["beats"], reading_beats(sc, fpb) if sc["style"] not in ("word", "rank") else 0)
         start, end = round(beat * fpb), round((beat + beats) * fpb)
         beat += beats
         dur = end - start
@@ -257,9 +311,11 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
         scenes.append(out)
     total = scenes[-1]["from"] + scenes[-1]["dur"]
     shutil.copy(os.path.join(sounds_dir, track["file"]), os.path.join(work, track["file"]))
-    mix_audio(os.path.join(sounds_dir, track["file"]), scenes, total, os.path.join(pub, "audio.wav"), np.random.default_rng(seed))
+    voice = [(said[i][0], scenes[i]["from"] / FPS + VOICE_LEAD, said[i][1]) for i in sorted(said)]
+    mix_audio(os.path.join(sounds_dir, track["file"]), scenes, total, os.path.join(pub, "audio.wav"), np.random.default_rng(seed),
+              voice=voice or None)
     return {"id": video["id"], "props": {"scenes": scenes, "audio": f"{rel}/audio.wav", "total": total,
-                                         "bpm": track["bpm"], "site": "savorscout.net",
+                                         "bpm": track["bpm"], "site": "savorscout.net", "voice": bool(voice),
                                          "credits": "Footage: Pexels · Map data © OpenStreetMap contributors, Overture Maps"},
             "track": track["id"]}
 

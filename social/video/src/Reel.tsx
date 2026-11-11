@@ -24,7 +24,7 @@ export type ReelScene = {
 	map?: RankMap;
 	rank?: {num: string; name: Fitted; count: number; sub: Fitted; label?: string; suffix?: string; punch?: number[]};
 };
-export type ReelProps = {scenes: ReelScene[]; audio: string; total: number; bpm: number; site: string; credits: string};
+export type ReelProps = {scenes: ReelScene[]; audio: string; total: number; bpm: number; site: string; credits: string; voice?: boolean};
 
 const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
 const INK = '#0c0912';
@@ -38,6 +38,8 @@ const stroke = (size: number): React.CSSProperties => ({
 // True for the video's first scene. Viewers decide in the first second, so
 // everything in it is already on screen at frame 0 instead of popping in.
 const Instant = React.createContext(false);
+// True when a voiceover reads the video: counts land as the number is spoken.
+const Voiced = React.createContext(false);
 
 const usePop = (delay: number, damping = 13) => {
 	const f = useCurrentFrame();
@@ -231,7 +233,8 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 	// With a highlighted street, every place appears first, dimmed; then the street's places light up end to end.
 	const hl = m.hl ?? [];
 	const lit = hl.length > 0;
-	const grow = Easing.out(Easing.cubic)(interpolate(f, [8, 8 + s.dur * (lit ? 0.28 : 0.55)], [0, 1], clamp));
+	const voiced = React.useContext(Voiced);
+	const grow = Easing.out(Easing.cubic)(interpolate(f, voiced ? [6, 6 + s.dur * 0.3] : [8, 8 + s.dur * (lit ? 0.28 : 0.55)], [0, 1], clamp));
 	const glow = Easing.inOut(Easing.cubic)(interpolate(f, [s.dur * 0.3, s.dur * 0.72], [0, 1], clamp));
 	const shown = Math.round(m.dots.length * grow);
 	const shownHl = Math.round(hl.length * glow);
@@ -316,7 +319,8 @@ const MapHook: React.FC<{s: ReelScene}> = ({s}) => {
 	const f = useCurrentFrame();
 	const m = s.map!;
 	const base = Math.max(345 / m.radius, 1080 / m.width, 1920 / m.height);
-	const z = base * interpolate(f, [0, s.dur], [1.03, 1.12], clamp);
+	// Moving from the first frame: a clear push in on the campus while the question is read.
+	const z = base * interpolate(f, [0, s.dur], [1.0, 1.24], {...clamp, easing: Easing.out(Easing.quad)});
 	const tx = Math.min(0, Math.max(1080 - m.width * z, 540 - m.campus.x * z));
 	const ty = Math.min(0, Math.max(1920 - m.height * z, 985 - m.campus.y * z));
 	const px = (x: number) => tx + x * z;
@@ -347,7 +351,8 @@ const MapHook: React.FC<{s: ReelScene}> = ({s}) => {
 	);
 };
 
-export const Reel: React.FC<ReelProps> = ({scenes, audio, site, credits}) => (
+export const Reel: React.FC<ReelProps> = ({scenes, audio, site, credits, voice}) => (
+	<Voiced.Provider value={Boolean(voice)}>
 	<AbsoluteFill style={{background: C.base}}>
 		{scenes.map((s, i) => (
 			<Sequence key={i} from={s.from} durationInFrames={s.dur}>
@@ -368,4 +373,5 @@ export const Reel: React.FC<ReelProps> = ({scenes, audio, site, credits}) => (
 		))}
 		<Audio src={staticFile(audio)} />
 	</AbsoluteFill>
+	</Voiced.Provider>
 );

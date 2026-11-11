@@ -365,6 +365,7 @@ FEATS = [  # name, kind; "fmt" = untested formats, given a wider prior so they g
     ("fame_mean", "num"), ("tease_fame", "num"), ("named_tease", "bin"), ("log_margin", "num"),
     ("n_schools", "num"), ("metric_street", "fmt"), ("evening", "bin"), ("weekend", "bin"), ("log_age", "num"),
     ("punch", "fmt"), ("loop_end", "fmt"),     # style settings from Lab v2's playbook (lab2.py)
+    ("voice", "fmt"),                          # a spoken voiceover (tts.py), from Nov 12
 ]
 SAY = {
     "countdown": "a countdown of named schools (vs. the first week's videos)",
@@ -377,6 +378,7 @@ SAY = {
     "n_schools": "one more school in the ranking", "metric_street": "ranking by busiest food street (vs. walkable count)",
     "evening": "posting at 6 or 9 PM (vs. noon or 3 PM)", "weekend": "posting on a weekend", "log_age": "an older video (x2 age)",
     "punch": "punch-in cuts on the map scenes (faster pacing)", "loop_end": "a looping ending (no end card)",
+    "voice": "a spoken voiceover (vs. music only)",
 }
 
 
@@ -413,6 +415,7 @@ def features_of(v, at, fmt, key, metric):
     style = v.get("lab", {}).get("style", {})
     f["punch"] = 1.0 if style.get("punch") else 0.0
     f["loop_end"] = 1.0 if style.get("loop_end") else 0.0
+    f["voice"] = 1.0 if style.get("voice") else 0.0
     return f
 
 
@@ -950,11 +953,99 @@ def apply_style(spec, style):
         used_loop = True
     spec["lab"]["style"] = {"punch": used_punch, "loop_end": used_loop, "hook_beats": scenes[0]["beats"],
                             "shot_target_s": style["shot_target_s"]}
+    if narrate(spec):
+        spec["lab"]["style"]["voice"] = True
     return spec
 
 
 def video_spec(c, vid):
     return apply_style(_video_spec(c, vid), style_for(vid, c.get("date", "")))
+
+
+ORDINAL = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth",
+           10: "tenth", 11: "eleventh", 12: "twelfth", 13: "thirteenth", 14: "fourteenth", 15: "fifteenth", 16: "sixteenth",
+           17: "seventeenth", 18: "eighteenth", 19: "nineteenth", 20: "twentieth"}
+
+
+STREET_SAY = {"St": "Street", "Ave": "Avenue", "Blvd": "Boulevard", "Dr": "Drive", "Rd": "Road", "Ln": "Lane", "Pkwy": "Parkway",
+              "Pl": "Place", "Sq": "Square", "Hwy": "Highway", "Ct": "Court", "Ter": "Terrace", "Cir": "Circle"}
+
+
+def street_say(sub):
+    """'Busiest food street: 14th St NW' -> '14th Street' (spoken; compass suffixes dropped)."""
+    m = re.match(r"Busiest food street:\s*(.+)$", sub or "")
+    if not m:
+        return None
+    words = [w for w in m.group(1).split() if w not in ("NW", "NE", "SW", "SE", "N", "S", "E", "W")]
+    return " ".join(STREET_SAY.get(w, w) for w in words) or None
+
+
+def narrate(spec):
+    """A spoken line ("say") for each scene of a countdown, the way a creator would read it: the
+    question from the first frame, last place called out (people send that one to a friend), the
+    hinted school's surprise, each reveal as it lands, #1 with its margin. Only when the voice is
+    installed (tts.py); a line is read with acronyms spelled out. Returns True when lines were added."""
+    import tts
+    if not tts.engine() or spec.get("lab", {}).get("format") not in ("countdown", "part2"):
+        return False
+    scenes = spec["scenes"]
+    hook = next((sc for sc in scenes if sc["style"] == "hook"), None)
+    if not hook:
+        return False
+    tease = re.search(r"it's not (.+?)\.?$", hook.get("sub", ""))
+    tease = tease.group(1) if tease else None
+    hook["say"] = re.sub(r"\bbig\s+", "", re.sub(r"[*]", "", hook["text"]))
+    counts = [sc.get("count") for sc in scenes if sc["style"] == "rank"]
+    top, second = (counts[-1], counts[-2]) if len(counts) >= 2 else (None, None)
+    for sc in scenes:
+        if sc["style"] == "list" and sc.get("rows"):
+            rows = sc["rows"]
+            r0 = rows[0]
+            n0 = int(str(r0[2]).replace(",", "") or 0) if str(r0[2]).replace(",", "").isdigit() else None
+            line = f"Dead last: {r0[1]}, with {'just ' if n0 is not None and 0 < n0 < 10 else ''}{r0[2]}."
+            if n0 == 0:
+                line = f"Dead last: {r0[1]}. Zero."
+            if n0 is not None and n0 <= 5:
+                line += " Pack a lunch."
+            rest = rows[1:]
+            if len(rest) <= 4:
+                line += " " + " ".join(f"{r[1]}, {r[2]}." for r in rest)
+            else:
+                hinted = next((r for r in rest if tease and r[1] == tease), None)
+                if hinted:
+                    rank = int(hinted[0]) if str(hinted[0]).isdigit() else None
+                    line += f" {rest[0][1]}, {rest[0][2]}. And {tease}? Only {ORDINAL.get(rank, hinted[0])}." if rank else ""
+                else:
+                    line += f" {rest[0][1]}, {rest[0][2]}. {rest[1][1]}, {rest[1][2]}."
+            sc["say"] = line.strip()
+        elif sc["style"] == "rank":
+            num, name, n = str(sc.get("num", "")), sc.get("text", ""), sc.get("count")
+            last = not any(x["style"] == "list" for x in scenes) and sc is next(x for x in scenes if x["style"] == "rank")
+            street = street_say(sc.get("sub", ""))
+            if num == "1":
+                big = top is not None and second and top >= 2 * second
+                sc["say"] = f"And number one{', by a mile' if big else ''}: {name}. {n:,}." if isinstance(n, int) else f"And number one: {name}."
+                nxt = [c for c in counts[:-1] if isinstance(c, int)][-3:]
+                if isinstance(n, int) and len(nxt) == 3 and n > sum(nxt):
+                    sc["say"] += " More than the next three combined."
+            elif last and n == 0:
+                sc["say"] = f"Dead last: {name}. Zero restaurants. Pack a lunch."
+            elif last:
+                sc["say"] = f"Dead last: {name}, with {'just ' if isinstance(n, int) and n < 10 else ''}{n:,}." + (" Pack a lunch." if isinstance(n, int) and n <= 5 else "")
+                if street and not (isinstance(n, int) and n <= 5):
+                    sc["say"] += f" Busiest food street: {street}."
+            elif n == 0:
+                sc["say"] = f"Number {num}: {name}. Zero."
+            else:
+                sc["say"] = f"Number {num}: {name}. {'Just ' if isinstance(n, int) and n < 10 else ''}{n:,}." if isinstance(n, int) else f"Number {num}: {name}."
+                if street:
+                    sc["say"] += f" Busiest food street: {street}."
+        elif sc["style"] == "end":
+            key = spec.get("lab", {}).get("key") or ""
+            kind = "city" if key == "state:DC" else key.split(":")[0]
+            nxt = {"city": "city", "state": "state", "conf": "conference", "system": "system", "famous": "group of schools"}.get(kind)
+            sc["say"] = "Did we rank your school right? Tell us in the comments." + (f" And which {nxt} should we rank next?" if nxt else "")
+    return True
 
 
 def _video_spec(c, vid):

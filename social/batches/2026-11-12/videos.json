@@ -7,11 +7,12 @@
    "source": "https://www.savorscout.net/campus/dc",
    "scenes": [
     {
-     "beats": 4,
+     "beats": 3,
      "style": "hook",
      "map": "george-washington-university",
      "text": "Which big DC university has the most *restaurants within a 10-minute walk?*",
-     "sub": "Hint: it's not Georgetown."
+     "sub": "Hint: it's not Georgetown.",
+     "say": "Which DC university has the most restaurants within a 10-minute walk?"
     },
     {
      "beats": 8,
@@ -21,7 +22,8 @@
      "count": 13,
      "sub": "Busiest food street: Wisconsin Ave",
      "map": "american-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Dead last: American, with 13. Busiest food street: Wisconsin Avenue."
     },
     {
      "beats": 8,
@@ -31,7 +33,8 @@
      "count": 52,
      "sub": "Busiest food street: Wisconsin Ave NW",
      "map": "georgetown-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Georgetown. 52. Busiest food street: Wisconsin Avenue."
     },
     {
      "beats": 9,
@@ -41,20 +44,22 @@
      "count": 77,
      "sub": "Busiest food street: 14th St NW",
      "map": "howard-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Howard. 77. Busiest food street: 14th Street."
     },
     {
-     "beats": 11,
+     "beats": 13,
      "style": "rank",
      "num": "1",
      "text": "GW",
      "count": 280,
      "sub": "Busiest food street: K St NW",
      "map": "george-washington-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: GW. 280. More than the next three combined."
     },
     {
-     "beats": 9,
+     "beats": 11,
      "style": "end",
      "text": "Did we rank your school right? *Comment below.*",
      "sub": "Send this to your friend at another DC school.",
@@ -62,7 +67,9 @@
       "university campus autumn",
       "college students walking campus",
       "students on campus lawn"
-     ]
+     ],
+     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?",
+     "clip": 5957474
     }
    ],
    "lab": {
@@ -74,9 +81,11 @@
      "punch": false,
      "loop_end": false,
      "hook_beats": 4,
-     "shot_target_s": 3.71
+     "shot_target_s": 3.71,
+     "voice": true
     }
-   }
+   },
+   "track": "house-115"
   },
   {
    "id": "houston-tx-countdown",
@@ -84,11 +93,12 @@
    "source": "https://www.savorscout.net/campus/tx",
    "scenes": [
     {
-     "beats": 4,
+     "beats": 3,
      "style": "hook",
      "map": "university-of-houston-downtown",
      "text": "Which college in Houston has the most *restaurants within a 10-minute walk?*",
-     "sub": "Hint: it's not Rice."
+     "sub": "Hint: it's not Rice.",
+     "say": "Which college in Houston has the most restaurants within a 10-minute walk?"
     },
     {
      "beats": 7,
@@ -98,7 +108,8 @@
      "count": 0,
      "sub": "Busiest food street: Bay Area Blvd",
      "map": "university-of-houston-clear-lake",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Dead last: UH-Clear Lake. Zero restaurants. Pack a lunch."
     },
     {
      "beats": 7,
@@ -108,7 +119,8 @@
      "count": 4,
      "sub": "Busiest food street: Morningside Dr",
      "map": "rice-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Rice. Just 4. Busiest food street: Morningside Drive."
     },
     {
      "beats": 7,
@@ -118,7 +130,8 @@
      "count": 7,
      "sub": "Busiest food street: Blodgett St",
      "map": "texas-southern-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Texas Southern. Just 7. Busiest food street: Blodgett Street."
     },
     {
      "beats": 7,
@@ -128,7 +141,8 @@
      "count": 20,
      "sub": "Busiest food street: Scott St",
      "map": "university-of-houston",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: University of Houston. 20. Busiest food street: Scott Street."
     },
     {
      "beats": 10,
@@ -138,7 +152,8 @@
      "count": 114,
      "sub": "Busiest food street: Main St",
      "map": "university-of-houston-downtown",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: UH-Downtown. 114. More than the next three combined."
     },
     {
      "beats": 6,
@@ -149,7 +164,9 @@
       "university campus autumn",
       "college students walking campus",
       "students on campus lawn"
-     ]
+     ],
+     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?",
+     "clip": 5965063
     }
    ],
    "lab": {
@@ -161,9 +178,11 @@
      "punch": false,
      "loop_end": false,
      "hook_beats": 4,
-     "shot_target_s": 3.71
+     "shot_target_s": 3.71,
+     "voice": true
     }
-   }
+   },
+   "track": "house-118"
   },
   {
    "id": "ma-countdown",
@@ -171,11 +190,12 @@
    "source": "https://www.savorscout.net/campus/ma",
    "scenes": [
     {
-     "beats": 4,
+     "beats": 3,
      "style": "hook",
      "map": "harvard-university",
      "text": "Which big Massachusetts university has the most *restaurants within a 10-minute walk?*",
-     "sub": "Hint: it's not MIT."
+     "sub": "Hint: it's not MIT.",
+     "say": "Which Massachusetts university has the most restaurants within a 10-minute walk?"
     },
     {
      "beats": 6,
@@ -207,7 +227,9 @@
       "university campus autumn",
       "college students walking campus",
       "students on campus lawn"
-     ]
+     ],
+     "say": "Dead last: UMass Boston, with just 4. Pack a lunch. Boston College, 8. UMass Amherst, 15. Tufts, 19.",
+     "clip": 6145947
     },
     {
      "beats": 7,
@@ -217,7 +239,8 @@
      "count": 23,
      "sub": "Busiest food street: Merrimack St",
      "map": "university-of-massachusetts-lowell",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: UMass Lowell. 23. Busiest food street: Merrimack Street."
     },
     {
      "beats": 7,
@@ -227,7 +250,8 @@
      "count": 61,
      "sub": "Busiest food street: Commonwealth Ave",
      "map": "boston-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: BU. 61. Busiest food street: Commonwealth Avenue."
     },
     {
      "beats": 7,
@@ -237,7 +261,8 @@
      "count": 84,
      "sub": "Busiest food street: Massachusetts Ave",
      "map": "massachusetts-institute-of-technology",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: MIT. 84. Busiest food street: Massachusetts Avenue."
     },
     {
      "beats": 7,
@@ -247,7 +272,8 @@
      "count": 133,
      "sub": "Busiest food street: Boylston St",
      "map": "northeastern-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Northeastern. 133. Busiest food street: Boylston Street."
     },
     {
      "beats": 8,
@@ -257,14 +283,16 @@
      "count": 156,
      "sub": "Busiest food street: Massachusetts Ave",
      "map": "harvard-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Harvard. 156."
     },
     {
      "beats": 6,
      "style": "end",
      "text": "Did we rank your school right? *Comment below.*",
      "sub": "Send this to your friend at another Massachusetts school.",
-     "reuse": 1
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
     }
    ],
    "lab": {
@@ -276,9 +304,11 @@
      "punch": false,
      "loop_end": false,
      "hook_beats": 4,
-     "shot_target_s": 3.71
+     "shot_target_s": 3.71,
+     "voice": true
     }
-   }
+   },
+   "track": "house-121"
   },
   {
    "id": "20-countdown",
@@ -286,11 +316,12 @@
    "source": "https://www.savorscout.net/rankings/",
    "scenes": [
     {
-     "beats": 4,
+     "beats": 3,
      "style": "hook",
      "map": "new-york-university",
      "text": "Which famous university has the most *restaurants within a 10-minute walk?*",
-     "sub": "Hint: it's not Harvard."
+     "sub": "Hint: it's not Harvard.",
+     "say": "Which famous university has the most restaurants within a 10-minute walk?"
     },
     {
      "beats": 16,
@@ -377,7 +408,9 @@
       "university campus autumn",
       "college students walking campus",
       "students on campus lawn"
-     ]
+     ],
+     "say": "Dead last: Duke, with just 9. UCLA, 14. And Harvard? Only seventh.",
+     "clip": 6145666
     },
     {
      "beats": 7,
@@ -387,7 +420,8 @@
      "count": 214,
      "sub": "Busiest food street: Broadway",
      "map": "columbia-university-in-the-city-of-new-york",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Columbia. 214. Busiest food street: Broadway."
     },
     {
      "beats": 7,
@@ -397,7 +431,8 @@
      "count": 223,
      "sub": "Busiest food street: Chapel St",
      "map": "yale-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Yale. 223. Busiest food street: Chapel Street."
     },
     {
      "beats": 7,
@@ -407,7 +442,8 @@
      "count": 224,
      "sub": "Busiest food street: Main St",
      "map": "university-of-michigan-ann-arbor",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Michigan. 224. Busiest food street: Main Street."
     },
     {
      "beats": 7,
@@ -417,7 +453,8 @@
      "count": 277,
      "sub": "Busiest food street: Shattuck Ave",
      "map": "university-of-california-berkeley",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: UC Berkeley. 277. Busiest food street: Shattuck Avenue."
     },
     {
      "beats": 8,
@@ -427,14 +464,16 @@
      "count": 1462,
      "sub": "Busiest food street: 1st Ave",
      "map": "new-york-university",
-     "label": "places to eat within a 10-minute walk"
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: NYU. 1,462. More than the next three combined."
     },
     {
      "beats": 6,
      "style": "end",
      "text": "Did we rank your school right? *Comment below.*",
      "sub": "Send this to a friend at one of these schools.",
-     "reuse": 1
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which group of schools should we rank next?"
     }
    ],
    "lab": {
@@ -446,9 +485,11 @@
      "punch": false,
      "loop_end": false,
      "hook_beats": 4,
-     "shot_target_s": 3.71
+     "shot_target_s": 3.71,
+     "voice": true
     }
-   }
+   },
+   "track": "house-124"
   }
  ]
 }

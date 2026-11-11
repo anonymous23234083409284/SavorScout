@@ -67,6 +67,15 @@ setting so our own results can confirm it. After rendering, `lab2.py check
 <date>` scores every video against the playbook; fix anything it flags that
 you can before publishing.
 
+**Expert review (weekly, with the crawl).** Numbers alone can't say *why*. Once a week run
+`python social/pipeline/review.py`, read the pack in `social/out/review/` (every video's views,
+completion, shares per 1,000, hook and tease; frame strips of the best and worst countdowns at
+0-10 s) next to `lab2-report.md`, and rewrite `social/lab/expert-review.md`: what works, what
+doesn't, the mechanism, how sure (high / medium / low), and what to change in order of impact.
+Look at the frames, not just the table. Turn each conclusion into an action: a trends.json boost,
+an experiment, or a change to the scripts, and check last week's conclusions against the new
+numbers.
+
 **Trends.** After the research step (1), write `social/lab/trends.json` when
 something in the news should lift an idea (a school in the headlines, a big
 game, a viral campus moment):

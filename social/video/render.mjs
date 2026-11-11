@@ -18,6 +18,9 @@ const concurrency = Number(process.env.REMOTION_CONCURRENCY || 0) || null;
 
 const serveUrl = await bundle({entryPoint: path.join(here, 'src', 'index.ts'), publicDir: path.join(here, 'public')});
 
+// The bundle copies all of public/ into a temp folder; remove it when done (even on failure), or the
+// session's disk fills up after a few days of renders.
+try {
 for (const v of manifest.videos) {
 	if (only && v.id !== only) continue;
 	const t0 = Date.now();
@@ -43,4 +46,7 @@ for (const v of manifest.videos) {
 		});
 	}
 	console.log(`${v.id}: ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+}
+} finally {
+	fs.rmSync(serveUrl, {recursive: true, force: true});
 }

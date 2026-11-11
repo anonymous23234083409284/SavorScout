@@ -1,0 +1,454 @@
+{
+ "date": "2026-11-12",
+ "videos": [
+  {
+   "id": "dc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/dc",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "george-washington-university",
+     "text": "Which big DC university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Georgetown."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "4",
+     "text": "American",
+     "count": 13,
+     "sub": "Busiest food street: Wisconsin Ave",
+     "map": "american-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "3",
+     "text": "Georgetown",
+     "count": 52,
+     "sub": "Busiest food street: Wisconsin Ave NW",
+     "map": "georgetown-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 9,
+     "style": "rank",
+     "num": "2",
+     "text": "Howard",
+     "count": 77,
+     "sub": "Busiest food street: 14th St NW",
+     "map": "howard-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "1",
+     "text": "GW",
+     "count": 280,
+     "sub": "Busiest food street: K St NW",
+     "map": "george-washington-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 9,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another DC school.",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ]
+    }
+   ],
+   "lab": {
+    "key": "state:DC",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:DC|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71
+    }
+   }
+  },
+  {
+   "id": "houston-tx-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/tx",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-houston-downtown",
+     "text": "Which college in Houston has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Rice."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UH-Clear Lake",
+     "count": 0,
+     "sub": "Busiest food street: Bay Area Blvd",
+     "map": "university-of-houston-clear-lake",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Rice",
+     "count": 4,
+     "sub": "Busiest food street: Morningside Dr",
+     "map": "rice-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Texas Southern",
+     "count": 7,
+     "sub": "Busiest food street: Blodgett St",
+     "map": "texas-southern-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "University of Houston",
+     "count": 20,
+     "sub": "Busiest food street: Scott St",
+     "map": "university-of-houston",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "UH-Downtown",
+     "count": 114,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-houston-downtown",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Houston college.",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ]
+    }
+   ],
+   "lab": {
+    "key": "city:Houston-TX",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "city:Houston-TX|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71
+    }
+   }
+  },
+  {
+   "id": "ma-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ma",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "harvard-university",
+     "text": "Which big Massachusetts university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not MIT."
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Massachusetts universities with 10,000+ students",
+     "rows": [
+      [
+       "9",
+       "UMass Boston",
+       "4"
+      ],
+      [
+       "8",
+       "Boston College",
+       "8"
+      ],
+      [
+       "7",
+       "UMass Amherst",
+       "15"
+      ],
+      [
+       "6",
+       "Tufts",
+       "19"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UMass Lowell",
+     "count": 23,
+     "sub": "Busiest food street: Merrimack St",
+     "map": "university-of-massachusetts-lowell",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "BU",
+     "count": 61,
+     "sub": "Busiest food street: Commonwealth Ave",
+     "map": "boston-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "MIT",
+     "count": 84,
+     "sub": "Busiest food street: Massachusetts Ave",
+     "map": "massachusetts-institute-of-technology",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Northeastern",
+     "count": 133,
+     "sub": "Busiest food street: Boylston St",
+     "map": "northeastern-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Harvard",
+     "count": 156,
+     "sub": "Busiest food street: Massachusetts Ave",
+     "map": "harvard-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Massachusetts school.",
+     "reuse": 1
+    }
+   ],
+   "lab": {
+    "key": "state:MA",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:MA|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71
+    }
+   }
+  },
+  {
+   "id": "20-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "new-york-university",
+     "text": "Which famous university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Harvard."
+    },
+    {
+     "beats": 16,
+     "style": "list",
+     "title": "20 famous American universities",
+     "rows": [
+      [
+       "20",
+       "Duke",
+       "9"
+      ],
+      [
+       "19",
+       "UCLA",
+       "14"
+      ],
+      [
+       "18",
+       "UChicago",
+       "25"
+      ],
+      [
+       "17",
+       "Stanford",
+       "29"
+      ],
+      [
+       "16",
+       "Dartmouth",
+       "39"
+      ],
+      [
+       "15",
+       "Georgetown",
+       "52"
+      ],
+      [
+       "14",
+       "Cornell",
+       "69"
+      ],
+      [
+       "13",
+       "Johns Hopkins",
+       "76"
+      ],
+      [
+       "12",
+       "MIT",
+       "84"
+      ],
+      [
+       "11",
+       "USC",
+       "94"
+      ],
+      [
+       "10",
+       "Princeton",
+       "97"
+      ],
+      [
+       "9",
+       "Penn",
+       "125"
+      ],
+      [
+       "8",
+       "Brown",
+       "133"
+      ],
+      [
+       "7",
+       "Harvard",
+       "156"
+      ],
+      [
+       "6",
+       "Northwestern",
+       "162"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ]
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Columbia",
+     "count": 214,
+     "sub": "Busiest food street: Broadway",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Yale",
+     "count": 223,
+     "sub": "Busiest food street: Chapel St",
+     "map": "yale-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Michigan",
+     "count": 224,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-michigan-ann-arbor",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "NYU",
+     "count": 1462,
+     "sub": "Busiest food street: 1st Ave",
+     "map": "new-york-university",
+     "label": "places to eat within a 10-minute walk"
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to a friend at one of these schools.",
+     "reuse": 1
+    }
+   ],
+   "lab": {
+    "key": "famous:20",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "famous:20|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71
+    }
+   }
+  }
+ ]
+}

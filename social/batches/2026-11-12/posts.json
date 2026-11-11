@@ -1,0 +1,292 @@
+{
+ "tiktok": [
+  {
+   "video": "dc-countdown",
+   "at": "2026-11-12T12:18:00-05:00",
+   "text": "Georgetown is 3rd 👀 Which big DC university has the most restaurants within a 10-minute walk? Send this to your friend at another DC school.\n\n#gw #howard #georgetown #collegelife #collegefood"
+  },
+  {
+   "video": "houston-tx-countdown",
+   "at": "2026-11-12T15:17:00-05:00",
+   "text": "Rice is 4th 👀 Which college in Houston has the most restaurants within a 10-minute walk? Send this to your friend at another Houston college.\n\n#houston #uhdowntown #riceuniversity #universityofhouston #collegefood"
+  },
+  {
+   "video": "ma-countdown",
+   "at": "2026-11-12T18:20:00-05:00",
+   "text": "MIT is 3rd 👀 Which big Massachusetts university has the most restaurants within a 10-minute walk? Send this to your friend at another Massachusetts school.\n\n#harvard #northeastern #mit #collegelife #collegefood"
+  },
+  {
+   "video": "20-countdown",
+   "at": "2026-11-12T21:19:00-05:00",
+   "text": "Harvard is 7th 👀 Which famous university has the most restaurants within a 10-minute walk? Send this to a friend at one of these schools.\n\n#nyu #ucberkeley #michigan #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-dc-countdown",
+   "at": "2026-11-12T16:39:00-05:00",
+   "card": "dc-countdown",
+   "thread": [
+    "GW has more restaurants within a 10-minute walk of campus than Howard, Georgetown and American combined.\n\nEvery DC university with 10,000+ students:",
+    "1. GW: 280\n2. Howard: 77\n3. Georgetown: 52\n4. American: 13",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/dc"
+   ]
+  },
+  {
+   "id": "x-houston-tx-countdown",
+   "at": "2026-11-12T17:40:00-05:00",
+   "card": "houston-tx-countdown",
+   "thread": [
+    "UH-Downtown has more restaurants within a 10-minute walk of campus than the University of Houston, Texas Southern and Rice combined.\n\nEvery Houston college with 5,000+ students:",
+    "1. UH-Downtown: 114\n2. University of Houston: 20\n3. Texas Southern: 7\n4. Rice: 4\n5. UH-Clear Lake: 0",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/tx"
+   ]
+  },
+  {
+   "id": "x-ma-countdown",
+   "at": "2026-11-12T18:38:00-05:00",
+   "card": "ma-countdown",
+   "thread": [
+    "Harvard has the most restaurants within a 10-minute walk of campus of any big Massachusetts university. Northeastern is 23 behind.\n\nEvery Massachusetts university with 10,000+ students:",
+    "1. Harvard: 156\n2. Northeastern: 133\n3. MIT: 84\n4. BU: 61\n5. UMass Lowell: 23\n6. Tufts: 19\n7. UMass Amherst: 15\n8. Boston College: 8\n9. UMass Boston: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ma"
+   ]
+  },
+  {
+   "id": "x-20-countdown",
+   "at": "2026-11-12T19:38:00-05:00",
+   "card": "20-countdown",
+   "thread": [
+    "NYU has more restaurants within a 10-minute walk of campus than UC Berkeley, Michigan and Yale combined.\n\n20 famous American universities (top 14 of 20):",
+    "1. NYU: 1462\n2. UC Berkeley: 277\n3. Michigan: 224\n4. Yale: 223\n5. Columbia: 214\n6. Northwestern: 162\n7. Harvard: 156\n8. Brown: 133\n9. Penn: 125\n10. Princeton: 97\n11. USC: 94\n12. MIT: 84\n13. Johns Hopkins: 76\n14. Cornell: 69",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-dc-countdown",
+   "at": "2026-11-12T17:12:00-05:00",
+   "card": "dc-countdown",
+   "topic": "DC",
+   "thread": [
+    "GW has more restaurants within a 10-minute walk of campus than Howard, Georgetown and American combined. Every DC university with 10,000+ students:\n\nGW 280, Howard 77, Georgetown 52, American 13.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/dc"
+   ]
+  },
+  {
+   "id": "t-houston-tx-countdown",
+   "at": "2026-11-12T18:09:00-05:00",
+   "card": "houston-tx-countdown",
+   "topic": "Houston colleges",
+   "thread": [
+    "UH-Downtown has more restaurants within a 10-minute walk of campus than the University of Houston, Texas Southern and Rice combined. Every Houston college with 5,000+ students:\n\nUH-Downtown 114, University of Houston 20, Texas Southern 7, Rice 4, UH-Clear Lake 0.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/tx"
+   ]
+  },
+  {
+   "id": "t-ma-countdown",
+   "at": "2026-11-12T19:09:00-05:00",
+   "card": "ma-countdown",
+   "topic": "Massachusetts",
+   "thread": [
+    "Harvard has the most restaurants within a 10-minute walk of campus of any big Massachusetts university. Northeastern is 23 behind. Every Massachusetts university with 10,000+ students:\n\nHarvard 156, Northeastern 133, MIT 84, BU 61, UMass Lowell 23, Tufts 19, UMass Amherst 15, Boston College 8, UMass Boston 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ma"
+   ]
+  },
+  {
+   "id": "t-20-countdown",
+   "at": "2026-11-12T20:10:00-05:00",
+   "card": "20-countdown",
+   "topic": "Famous",
+   "thread": [
+    "NYU has more restaurants within a 10-minute walk of campus than UC Berkeley, Michigan and Yale combined. 20 famous American universities (top 14 of 20):\n\nNYU 1462, UC Berkeley 277, Michigan 224, Yale 223, Columbia 214, Northwestern 162, Harvard 156, Brown 133, Penn 125, Princeton 97, USC 94, MIT 84, Johns Hopkins 76, Cornell 69.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  }
+ ],
+ "cards": {
+  "dc-countdown": {
+   "type": "ranking",
+   "title": "Big DC universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every DC university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "GW",
+     280
+    ],
+    [
+     "2",
+     "Howard",
+     77
+    ],
+    [
+     "3",
+     "Georgetown",
+     52
+    ],
+    [
+     "4",
+     "American",
+     13
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "houston-tx-countdown": {
+   "type": "ranking",
+   "title": "Houston colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Houston college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UH-Downtown",
+     114
+    ],
+    [
+     "2",
+     "University of Houston",
+     20
+    ],
+    [
+     "3",
+     "Texas Southern",
+     7
+    ],
+    [
+     "4",
+     "Rice",
+     4
+    ],
+    [
+     "5",
+     "UH-Clear Lake",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "20-countdown": {
+   "type": "ranking",
+   "title": "Famous universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "20 famous American universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "NYU",
+     1462
+    ],
+    [
+     "2",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "3",
+     "Michigan",
+     224
+    ],
+    [
+     "4",
+     "Yale",
+     223
+    ],
+    [
+     "5",
+     "Columbia",
+     214
+    ],
+    [
+     "6",
+     "Northwestern",
+     162
+    ],
+    [
+     "7",
+     "Harvard",
+     156
+    ],
+    [
+     "8",
+     "Brown",
+     133
+    ],
+    [
+     "9",
+     "Penn",
+     125
+    ],
+    [
+     "10",
+     "Princeton",
+     97
+    ],
+    [
+     "11",
+     "USC",
+     94
+    ],
+    [
+     "12",
+     "MIT",
+     84
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ma-countdown": {
+   "type": "ranking",
+   "title": "Big Massachusetts universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Massachusetts university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Harvard",
+     156
+    ],
+    [
+     "2",
+     "Northeastern",
+     133
+    ],
+    [
+     "3",
+     "MIT",
+     84
+    ],
+    [
+     "4",
+     "BU",
+     61
+    ],
+    [
+     "5",
+     "UMass Lowell",
+     23
+    ],
+    [
+     "6",
+     "Tufts",
+     19
+    ],
+    [
+     "7",
+     "UMass Amherst",
+     15
+    ],
+    [
+     "8",
+     "Boston College",
+     8
+    ],
+    [
+     "9",
+     "UMass Boston",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

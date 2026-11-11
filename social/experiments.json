@@ -1,26 +1,114 @@
 {
-  "_why": "The video lab notebook (social/DAILY.md, 'The daily mix'). Each day runs two experiments, each changing ONE thing from the countdown format. 'backlog' is what to try, best bets first; 'results' records each run, scored 72 hours after posting: 1,000+ views and 9+ s watch = promote, under 500 = drop, between = retry once with one tweak.",
-  "baseline": {
-    "as_of": "2026-11-11",
-    "countdown_median_views": 2400,
-    "countdown_median_watch_s": 9.6,
-    "tip_median_views": 260,
-    "note": "Famous-name groupings did best: UC 17,933 (241 shares), Penn 5,169, Ivy 3,888. Plain state groupings in week 2 ran 600-2,500."
+ "_why": "The video lab notebook (social/DAILY.md, 'The daily mix'). Each day runs two experiments, each changing ONE thing from the countdown format. 'backlog' is what to try, best bets first; 'results' records each run, scored 72 hours after posting: 1,000+ views and 9+ s watch = promote, under 500 = drop, between = retry once with one tweak.",
+ "baseline": {
+  "as_of": "2026-11-11",
+  "countdown_median_views": 2400,
+  "countdown_median_watch_s": 9.6,
+  "tip_median_views": 260,
+  "note": "Famous-name groupings did best: UC 17,933 (241 shares), Penn 5,169, Ivy 3,888. Plain state groupings in week 2 ran 600-2,500."
+ },
+ "backlog": [
+  {
+   "id": "part-2",
+   "changes": "follow-up to the biggest hit",
+   "idea": "Part 2 of the UC video (17.9K views): the same 9 UC campuses ranked by a different number, e.g. Asian restaurants nearby or the busiest food street. Open with 'You asked for part 2.'",
+   "why": "TikTok pushes follow-ups to viewers of a hit."
   },
-  "backlog": [
-    {"id": "part-2", "changes": "follow-up to the biggest hit", "idea": "Part 2 of the UC video (17.9K views): the same 9 UC campuses ranked by a different number, e.g. Asian restaurants nearby or the busiest food street. Open with 'You asked for part 2.'", "why": "TikTok pushes follow-ups to viewers of a hit."},
-    {"id": "rivalry", "changes": "2 schools instead of a list", "idea": "Head-to-head: Alabama vs Auburn (27 vs 21, close), USC vs UCLA (94 vs 14), Michigan vs Ohio State (224 vs 86). Split-screen maps, counts climb together, winner at the end.", "why": "Rivalry comments and shares; tests whether a close race holds people longer than a list."},
-    {"id": "guess", "changes": "school name hidden until the end", "idea": "'Guess the campus': the map with no name while the count climbs, three multiple-choice options on screen, reveal at the end.", "why": "Withholding the answer should raise watch time and comments."},
-    {"id": "elite", "changes": "grouping chosen for fame, not geography", "idea": "Stanford vs Harvard vs MIT vs Princeton vs Yale and other household names, ranked by restaurants within a 10-minute walk.", "why": "Every famous-name video beat the plain state ones."},
-    {"id": "city", "changes": "a city's colleges instead of a state's", "idea": "Every college in one city: Boston, New York, Chicago, LA. Check each campus map first (Boston University's count looked low).", "why": "Huge student populations; city pride."},
-    {"id": "short", "changes": "length 15-20 s, top 3 only", "idea": "The same countdown cut to the top 3.", "why": "Tests whether completion rate beats total watch time. Caution (Nov 11): inside competitor accounts, videos shorter than usual got about half the views; only a single-fact reveal looks promising short."},
-    {"id": "national-stat", "changes": "one surprising national number, no schools", "idea": "e.g. 'Pizza places outnumber salad places 20 to 1 near US campuses' (from the campus data).", "why": "Tests a broad hook against a school hook."},
-    {"id": "comment-reply", "changes": "answers a real comment", "idea": "Reply to a comment on a hit ('Where's my school?'). Needs the owner to read the comments and pass one on.", "why": "Comment replies are a strong TikTok growth signal."},
-    {"id": "voice", "changes": "a spoken voiceover with one-word captions, the map moving from frame 0", "idea": "Open with a short spoken question (10 words or fewer) captioned one word at a time, the map already zooming in, and the first entry by ~3 s. A text-to-speech voice in the pipeline (owner's OK needed), or the owner records it.", "why": "Every video of both competitor map countdowns (4K-25K typical views on ~16K followers) talks and moves from the first frame; ours is silent and static for 4-6 s.", "evidence": "expert-review.md (Nov 11), compete-report.md"},
-    {"id": "loser-frame", "changes": "the list has a named loser and an open question", "idea": "Rank a state's or conference's campuses from food desert to food heaven (fewest to most restaurants within a 10-minute walk), name the food desert, end with 'Did your school make it? Is it fair?'. About food access, never about the students.", "why": "The competitor state college countdown gets 12-30 shares per 1,000 views with a provocative frame; our state lists get ~3.", "evidence": "expert-review.md (Nov 11)"},
-    {"id": "long", "changes": "55-60 s, 12-15 schools at ~4 s each", "idea": "A full countdown of 12-15 schools for a big state or conference, inside the 60 s cap.", "why": "In all 6 measured competitor accounts the hits ran longer than the flops (63 vs 56 s); their hits sit at 55-70 s; ours at 35 s.", "evidence": "compete-report.md (Nov 11)"},
-    {"id": "campus-photo", "changes": "a real photo of each campus next to its number", "idea": "Licensed campus photos (Wikimedia Commons, credited) beside the map at each entry.", "why": "Every entry in the competitor map countdowns shows a photo of the place.", "evidence": "expert-review.md (Nov 11)"},
-    {"id": "fact-slide", "changes": "15 s, one ranking fact, answer on screen within 1 s", "idea": "One striking result from the campus data, e.g. the campus with the most restaurants within a 10-minute walk in the country, shown instantly.", "why": "An admissions account's 6-8 s single-ranking posts got ~380K-390K views vs 500-5K for its other videos.", "evidence": "expert-review.md (Nov 11)"}
-  ],
-  "results": []
+  {
+   "id": "rivalry",
+   "changes": "2 schools instead of a list",
+   "idea": "Head-to-head: Alabama vs Auburn (27 vs 21, close), USC vs UCLA (94 vs 14), Michigan vs Ohio State (224 vs 86). Split-screen maps, counts climb together, winner at the end.",
+   "why": "Rivalry comments and shares; tests whether a close race holds people longer than a list."
+  },
+  {
+   "id": "guess",
+   "changes": "school name hidden until the end",
+   "idea": "'Guess the campus': the map with no name while the count climbs, three multiple-choice options on screen, reveal at the end.",
+   "why": "Withholding the answer should raise watch time and comments."
+  },
+  {
+   "id": "elite",
+   "changes": "grouping chosen for fame, not geography",
+   "idea": "Stanford vs Harvard vs MIT vs Princeton vs Yale and other household names, ranked by restaurants within a 10-minute walk.",
+   "why": "Every famous-name video beat the plain state ones."
+  },
+  {
+   "id": "city",
+   "changes": "a city's colleges instead of a state's",
+   "idea": "Every college in one city: Boston, New York, Chicago, LA. Check each campus map first (Boston University's count looked low).",
+   "why": "Huge student populations; city pride."
+  },
+  {
+   "id": "short",
+   "changes": "length 15-20 s, top 3 only",
+   "idea": "The same countdown cut to the top 3.",
+   "why": "Tests whether completion rate beats total watch time. Caution (Nov 11): inside competitor accounts, videos shorter than usual got about half the views; only a single-fact reveal looks promising short."
+  },
+  {
+   "id": "national-stat",
+   "changes": "one surprising national number, no schools",
+   "idea": "e.g. 'Pizza places outnumber salad places 20 to 1 near US campuses' (from the campus data).",
+   "why": "Tests a broad hook against a school hook."
+  },
+  {
+   "id": "comment-reply",
+   "changes": "answers a real comment",
+   "idea": "Reply to a comment on a hit ('Where's my school?'). Needs the owner to read the comments and pass one on.",
+   "why": "Comment replies are a strong TikTok growth signal."
+  },
+  {
+   "id": "voice",
+   "changes": "a spoken voiceover with one-word captions, the map moving from frame 0",
+   "idea": "Open with a short spoken question (10 words or fewer) captioned one word at a time, the map already zooming in, and the first entry by ~3 s. A text-to-speech voice in the pipeline (owner's OK needed), or the owner records it.",
+   "why": "Every video of both competitor map countdowns (4K-25K typical views on ~16K followers) talks and moves from the first frame; ours is silent and static for 4-6 s.",
+   "evidence": "expert-review.md (Nov 11), compete-report.md"
+  },
+  {
+   "id": "loser-frame",
+   "changes": "the list has a named loser and an open question",
+   "idea": "Rank a state's or conference's campuses from food desert to food heaven (fewest to most restaurants within a 10-minute walk), name the food desert, end with 'Did your school make it? Is it fair?'. About food access, never about the students.",
+   "why": "The competitor state college countdown gets 12-30 shares per 1,000 views with a provocative frame; our state lists get ~3.",
+   "evidence": "expert-review.md (Nov 11)"
+  },
+  {
+   "id": "long",
+   "changes": "55-60 s, 12-15 schools at ~4 s each",
+   "idea": "A full countdown of 12-15 schools for a big state or conference, inside the 60 s cap.",
+   "why": "In all 6 measured competitor accounts the hits ran longer than the flops (63 vs 56 s); their hits sit at 55-70 s; ours at 35 s.",
+   "evidence": "compete-report.md (Nov 11)"
+  },
+  {
+   "id": "campus-photo",
+   "changes": "a real photo of each campus next to its number",
+   "idea": "Licensed campus photos (Wikimedia Commons, credited) beside the map at each entry.",
+   "why": "Every entry in the competitor map countdowns shows a photo of the place.",
+   "evidence": "expert-review.md (Nov 11)"
+  },
+  {
+   "id": "fact-slide",
+   "changes": "15 s, one ranking fact, answer on screen within 1 s",
+   "idea": "One striking result from the campus data, e.g. the campus with the most restaurants within a 10-minute walk in the country, shown instantly.",
+   "why": "An admissions account's 6-8 s single-ranking posts got ~380K-390K views vs 500-5K for its other videos.",
+   "evidence": "expert-review.md (Nov 11)"
+  }
+ ],
+ "results": [
+  {
+   "date": "2026-11-12",
+   "video": "houston-tx-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Rice (4th))",
+   "status": "posted",
+   "predicted": 2787,
+   "note": "Tease changed by hand from UH (2nd) to Rice (4th): clearer to non-locals and better known; school names spelled out (University of Houston, UH-Downtown, UH-Clear Lake)."
+  },
+  {
+   "date": "2026-11-12",
+   "video": "20-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
+   "status": "posted",
+   "predicted": 4637
+  }
+ ]
 }

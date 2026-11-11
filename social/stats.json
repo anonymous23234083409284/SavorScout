@@ -1,5 +1,5 @@
 {
- "pulled": "2026-11-11T16:14+00:00",
+ "pulled": "2026-11-11T18:25+00:00",
  "posts": [
   {
    "service": "twitter",
@@ -2435,6 +2435,28 @@
     "Reach": 0,
     "Watch Time (min)": 39.5,
     "Avg. Watch Time (sec)": 5.88
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "pac12-walkable",
+   "sent": "2026-11-11T17:20:42.900Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7706964645008968973",
+   "text": "UCLA is 11th \ud83d\udc40 Which old Pac-12 school has the most restaurants within a 10-minute walk? S",
+   "views": 0,
+   "avg_watch_s": 0,
+   "shares": 0,
+   "likes": 0,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 0,
+    "Eng. Rate": 0,
+    "Video Views": 0,
+    "Shares": 0,
+    "Reach": 0,
+    "Watch Time (min)": 0,
+    "Avg. Watch Time (sec)": 0
    }
   }
  ]

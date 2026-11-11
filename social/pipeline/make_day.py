@@ -105,8 +105,25 @@ def qa(date):
         print(os.path.join(out, "qa", f"sheet-{v['id']}.png"))
 
 
+def prune(date, keep_days=3):
+    """Every render copies all of video/public/ into a temp bundle, so old days' render inputs and clip
+    caches only cost disk. Drop those more than keep_days before this date; the finished videos
+    (out/batches/<date>/*.mp4) stay, since the lab and the weekly review read them."""
+    import datetime as dt
+    import shutil
+    cutoff = (dt.date.fromisoformat(date[:10]) - dt.timedelta(days=keep_days)).isoformat()
+    for root in (os.path.join(SOCIAL, "video", "public", "reel"), os.path.join(SOCIAL, "out", "batches")):
+        if not os.path.isdir(root):
+            continue
+        for d in os.listdir(root):
+            if re.match(r"\d{4}-\d{2}-\d{2}", d) and d[:10] < cutoff:
+                target = os.path.join(root, d) if root.endswith("reel") else os.path.join(root, d, "pexels-cache")
+                shutil.rmtree(target, ignore_errors=True)
+
+
 def render(date):
     _, out, _ = paths(date)
+    prune(date)
     subprocess.run(["node", os.path.join(SOCIAL, "video", "render.mjs"), os.path.join(out, "manifest.json")],
                    cwd=os.path.join(SOCIAL, "video"), check=True)
 

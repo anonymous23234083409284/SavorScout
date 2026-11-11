@@ -1,0 +1,37 @@
+{
+ "date": "2026-11-12",
+ "videos": [
+  {
+   "id": "20-countdown",
+   "score": 70,
+   "issues": [
+    "43 s long; breakouts cluster at 6-24 s",
+    "11 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "dc-countdown",
+   "score": 70,
+   "issues": [
+    "31 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "houston-tx-countdown",
+   "score": 70,
+   "issues": [
+    "32 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "ma-countdown",
+   "score": 70,
+   "issues": [
+    "35 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  }
+ ]
+}

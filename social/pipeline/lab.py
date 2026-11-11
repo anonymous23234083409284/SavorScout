@@ -93,7 +93,8 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
           "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 # Short names already used on screen, where the generic rules would read badly.
-EXTRA_NAMES = {
+EXTRA_NAMES = {"university-of-massachusetts-lowell": "UMass Lowell", "university-of-massachusetts-boston": "UMass Boston", "university-of-massachusetts-dartmouth": "UMass Dartmouth", "university-of-massachusetts-amherst": "UMass Amherst",
+               
     "university-of-alabama-at-birmingham": "UAB", "the-university-of-alabama": "Alabama",
     "metropolitan-state-university-of-denver": "MSU Denver", "university-of-colorado-colorado-springs": "UCCS",
     "university-of-colorado-boulder": "CU Boulder", "colorado-state-university-fort-collins": "Colorado State",

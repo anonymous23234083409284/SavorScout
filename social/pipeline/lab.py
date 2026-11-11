@@ -363,6 +363,7 @@ FEATS = [  # name, kind; "fmt" = untested formats, given a wider prior so they g
     ("g_conference", "bin"), ("g_system", "bin"), ("g_city", "fmt"), ("g_famous", "fmt"),
     ("fame_mean", "num"), ("tease_fame", "num"), ("named_tease", "bin"), ("log_margin", "num"),
     ("n_schools", "num"), ("metric_street", "fmt"), ("evening", "bin"), ("weekend", "bin"), ("log_age", "num"),
+    ("punch", "fmt"), ("loop_end", "fmt"),     # style settings from Lab v2's playbook (lab2.py)
 ]
 SAY = {
     "countdown": "a countdown of named schools (vs. the first week's videos)",
@@ -374,6 +375,7 @@ SAY = {
     "named_tease": "naming the upset in the hook ('Hint: it's not X')", "log_margin": "a bigger lead for #1 (x2)",
     "n_schools": "one more school in the ranking", "metric_street": "ranking by busiest food street (vs. walkable count)",
     "evening": "posting at 6 or 9 PM (vs. noon or 3 PM)", "weekend": "posting on a weekend", "log_age": "an older video (x2 age)",
+    "punch": "punch-in cuts on the map scenes (faster pacing)", "loop_end": "a looping ending (no end card)",
 }
 
 
@@ -407,6 +409,9 @@ def features_of(v, at, fmt, key, metric):
         t = dt.datetime.fromisoformat(at).astimezone(NY)
         f["evening"] = 1.0 if t.hour >= 17 else 0.0
         f["weekend"] = 1.0 if t.weekday() >= 5 else 0.0
+    style = v.get("lab", {}).get("style", {})
+    f["punch"] = 1.0 if style.get("punch") else 0.0
+    f["loop_end"] = 1.0 if style.get("loop_end") else 0.0
     return f
 
 
@@ -903,7 +908,54 @@ def tease_name(slug, g):
     return n
 
 
+def style_for(vid, date):
+    """Lab v2's settings for one video. One video in four flips one setting, so our own results can
+    confirm or overrule what the niche suggests."""
+    import random
+    try:
+        import lab2
+        k = lab2.knobs()
+    except Exception:
+        k = {"shot_target_s": None, "hook_beats": 4, "loop_end": False}
+    rng = random.Random(f"{date}:{vid}")
+    punch, loop = bool(k.get("shot_target_s")), bool(k.get("loop_end"))
+    if rng.random() < 0.25:
+        if rng.random() < 0.5:
+            punch = not punch
+        else:
+            loop = not loop
+    return {"punch": punch, "loop_end": loop, "hook_beats": int(k.get("hook_beats") or 4),
+            "shot_target_s": float(k.get("shot_target_s") or 2.0)}
+
+
+def apply_style(spec, style):
+    """Punch-ins to reach the target shot length, the hook length, and an optional looping ending."""
+    scenes = spec["scenes"]
+    if scenes and scenes[0]["style"] == "hook" and spec["lab"]["format"] in ("countdown", "short", "part2"):
+        scenes[0]["beats"] = style["hook_beats"]
+    used_punch = False
+    if style["punch"]:
+        for sc in scenes:
+            if sc["style"] == "rank":
+                n = int((sc["beats"] * 0.75) // style["shot_target_s"]) - 1
+                if n > 0:
+                    sc["punch"] = [round((i + 1) / (n + 1), 3) for i in range(n)]
+                    used_punch = True
+    used_loop = False
+    if style["loop_end"] and spec["lab"]["format"] in ("countdown", "short", "part2") and scenes[-1]["style"] == "end":
+        scenes.pop()                       # end on #1's map, which is also the opening frame: a seamless loop
+        scenes[-1]["beats"] += 2
+        used_loop = True
+    spec["lab"]["style"] = {"punch": used_punch, "loop_end": used_loop, "hook_beats": scenes[0]["beats"],
+                            "shot_target_s": style["shot_target_s"]}
+    return spec
+
+
 def video_spec(c, vid):
+    return apply_style(_video_spec(c, vid), style_for(vid, c.get("date", "")))
+
+
+def _video_spec(c, vid):
     g, metric, rows = c.get("group"), c["metric"], c["rows"]
     phrase = METRICS[metric]["phrase"]
     if c["format"] in ("countdown", "short", "part2"):
@@ -1066,6 +1118,7 @@ def cmd_script(date, force=False, out_dir=None):
         base = re.sub(r"[^a-z0-9]+", "-", (c["group"]["key"].split(":")[1] if c.get("group") else c["key"].split(":")[0]
                                            + "-" + short(c["rows"][0][1])).lower()).strip("-")
         vid = f"{base}-{c['format']}"[:40]
+        c["date"] = date
         spec = video_spec(c, vid)
         p = posts_for(c, vid)
         videos.append(spec)

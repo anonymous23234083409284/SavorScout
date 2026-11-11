@@ -284,7 +284,7 @@ def captions(sc):
     if sc["style"] == "rank":
         # "text_style": "hook" fits a sentence over the map instead of a one-line name (a video's opening scene).
         out["rank"] = {"num": sc.get("num", ""), "name": fit(sc["text"], sc.get("text_style", "rank")), "count": sc["count"],
-                       "sub": fit(sc["sub"], "sub"), **{k: sc[k] for k in ("label", "suffix") if k in sc}}
+                       "sub": fit(sc["sub"], "sub"), **{k: sc[k] for k in ("label", "suffix", "punch") if k in sc}}
     elif sc["style"] == "list":
         out["list"] = {"title": sc["title"], "rows": sc["rows"], "size": list_size(sc["rows"])}
     else:

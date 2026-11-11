@@ -14,7 +14,8 @@ day. These are its steps. A person can run them the same way.
 python social/pipeline/make_day.py stats    # writes social/stats.json, best first
 python social/pipeline/lab.py snapshot      # adds today's numbers to social/lab/snapshots.jsonl
 python social/pipeline/crawl.py record      # exact video lengths, so the lab can learn completion rate
-python social/pipeline/crawl.py weekly      # niche crawls (YouTube + TikTok) + model, once a week
+python social/pipeline/crawl.py weekly      # niche crawls (YouTube + TikTok, with footage) + model, once a week
+python social/pipeline/lab2.py analyze      # after a crawl: Lab v2 rebuilds the playbook from the footage
 python social/pipeline/lab.py score         # scores experiments 3+ days old (promote / retry / drop)
 python social/pipeline/lab.py report        # writes social/lab/report.md: read it
 ```
@@ -48,6 +49,23 @@ count, and a budget cap that fits Apify's free plan (`lab/crawl-config.json`
 sets the actor, hashtags and cap). Keys live in the environment's network
 secrets (www.googleapis.com and api.apify.com); a missing one just skips that
 source, and the lab carries on with its own data.
+
+**Lab v2** (`social/pipeline/lab2.py`, with `vision.py`) learns from the
+footage itself. Each week ~100 recent, top-performing food TikToks (all food,
+not just college) are downloaded, measured and deleted: shot lengths and
+cuts, hard cuts vs. dissolves and fades, motion and zooms, the opening frame
+(words on screen, faces, brightness), how much of the video carries text,
+whether the end loops to the start, and loudness. Performance is a breakout:
+views after allowing for followers and age. Lab v2 compares winners with
+losers, fits one model of everything at once, finds the sweet spots for the
+settings we control, and writes `social/lab/playbook.json` and
+`social/lab/lab2-report.md`. The targets come from videos we could make (no
+on-camera person carrying the video). The scripter reads the settings: punch-in
+cuts on map scenes to reach the target shot length, the hook length, and
+looping endings when the evidence is clear. One video in four flips one
+setting so our own results can confirm it. After rendering, `lab2.py check
+<date>` scores every video against the playbook; fix anything it flags that
+you can before publishing.
 
 **Trends.** After the research step (1), write `social/lab/trends.json` when
 something in the news should lift an idea (a school in the headlines, a big
@@ -263,6 +281,7 @@ python reel.py repick ../batches/<date>/videos.json <video> '{"3": 8448265}'   #
 python reel.py refit ../batches/<date>/videos.json                            # after small word edits
 python make_day.py render <date>
 python crawl.py record <date>        # store each video's length for the lab
+python lab2.py check <date>          # score each video against the playbook; fix what it flags
 python make_day.py cards <date>
 python make_day.py publish <date> /tmp/sounds
 python make_day.py verify <date>     # reads all 12 posts back from Buffer

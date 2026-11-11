@@ -257,7 +257,7 @@ def purge():
         return
     cutoff = (dt.date.today() - dt.timedelta(days=KEEP_DAYS)).isoformat()
     for name in os.listdir(CRAWL):
-        m = re.match(r"(?:youtube|tiktok)-(\d{4}-\d{2}-\d{2})\.jsonl$", name)
+        m = re.match(r"(?:youtube|tiktok)-(\d{4}-\d{2}-\d{2})(?:-\d+)?\.jsonl$", name)   # vision.jsonl holds numbers only
         if m and m.group(1) < cutoff:
             os.remove(os.path.join(CRAWL, name))
 
@@ -278,13 +278,17 @@ def load_youtube(prefix="youtube"):
 # ---- TikTok, through Apify ----------------------------------------------------------
 
 TIKTOK_DEFAULTS = {
-    "tiktok_actor": "clockworks~free-tiktok-scraper",   # any actor that takes hashtags; prefer one priced per result
-    # College-specific on purpose: broad food tags (#foodtiktok) pull in viral ASMR and recipe videos
-    # from outside the niche and drown out what works for college content.
-    "tiktok_hashtags": ["collegefood", "collegelife", "campusfood", "dininghall", "collegetok",
-                        "collegerankings", "collegestudent", "universitylife"],
-    "tiktok_per_hashtag": 30,
-    "tiktok_max_results": 240,
+    "tiktok_actor": "clockworks~free-tiktok-scraper",   # priced per result: $0.003, +$0.0013 per add-on
+    # All food short-form, searched within the last 3 months and sorted by most liked: recent, proven
+    # videos rather than all-time hashtag hits. Six topics a week, rotating through the list.
+    "tiktok_queries": ["food ranking", "best food in", "restaurant review", "fast food review", "street food",
+                       "food tier list", "cheap eats", "must try food", "hidden gem restaurant", "best pizza",
+                       "best burger", "taco tour", "ramen review", "sushi review", "dessert ranking",
+                       "food facts", "food spots", "rating every", "college food", "dining hall",
+                       "late night food", "food map", "best restaurants in", "food challenge"],
+    "tiktok_queries_per_week": 6,
+    "tiktok_max_results": 100,          # ~$0.69 a week with the date filter, sorting and video download
+    "tiktok_download_videos": True,     # for footage analysis; each file is deleted right after it's measured
 }
 
 
@@ -361,35 +365,117 @@ def due(prefix, days=7):
     return not any(n.startswith(prefix + "-") and n[len(prefix) + 1:len(prefix) + 11] >= recent for n in os.listdir(CRAWL))
 
 
+def apify_async(actor, payload, max_wait=1500):
+    """Start a run, wait for it, return its items: long runs (video downloads) outlast one HTTP request."""
+    import time
+    url = f"https://api.apify.com/v2/acts/{urllib.parse.quote(actor, safe='~')}/runs"
+    req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST",
+                                 headers={"Content-Type": "application/json", "Authorization": "Bearer placeholder"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            run = json.load(r)["data"]
+    except urllib.error.HTTPError as e:
+        raise NoAccess(f"Apify refused the run ({e.code}): {e.read().decode('utf-8', 'replace')[:300]}")
+    except urllib.error.URLError as e:
+        raise NoAccess(f"can't reach api.apify.com ({e.reason})")
+    start = time.time()
+    while run["status"] in ("READY", "RUNNING") and time.time() - start < max_wait:
+        time.sleep(15)
+        run = apify_get(f"https://api.apify.com/v2/actor-runs/{run['id']}")["data"]
+    if run["status"] != "SUCCEEDED":
+        raise NoAccess(f"Apify run {run['id']} ended {run['status']}")
+    items = apify_get(f"https://api.apify.com/v2/datasets/{run['defaultDatasetId']}/items?clean=true&format=json")
+    print(f"apify run {run['id']}: {len(items)} items, ${run.get('usageTotalUsd') or 0:.2f}")
+    return items
+
+
+def apify_get(url, raw=False):
+    req = urllib.request.Request(url, headers={"Authorization": "Bearer placeholder"})
+    with urllib.request.urlopen(req, timeout=180) as r:
+        return r.read() if raw else json.load(r)
+
+
 def crawl_tiktok(weekly=False):
     if weekly and not due("tiktok"):
         print("tiktok: crawled within the last 7 days; skipping")
         return False
     cfg = {**TIKTOK_DEFAULTS, **jload(os.path.join(LAB, "crawl-config.json"), {})}
-    per = max(1, min(cfg["tiktok_per_hashtag"], cfg["tiktok_max_results"] // max(1, len(cfg["tiktok_hashtags"]))))
-    items = apify(cfg["tiktok_actor"], {"hashtags": cfg["tiktok_hashtags"], "resultsPerPage": per,
-                                         "shouldDownloadVideos": False, "shouldDownloadCovers": False,
-                                         "shouldDownloadSubtitles": False, "shouldDownloadSlideshowImages": False,
-                                         "shouldDownloadAvatars": False})
+    qs, k = cfg["tiktok_queries"], cfg["tiktok_queries_per_week"]
+    week = dt.date.today().isocalendar()[1]
+    queries = [qs[(week * k + i) % len(qs)] for i in range(k)]
+    per = max(1, cfg["tiktok_max_results"] // len(queries))
+    print("tiktok: searching", ", ".join(queries))
+    items = apify_async(cfg["tiktok_actor"], {
+        "searchQueries": queries, "searchSection": "/video", "videoSearchSorting": "MOST_LIKED",
+        "videoSearchDateFilter": "LAST_3_MONTHS", "resultsPerPage": per,
+        "shouldDownloadVideos": bool(cfg["tiktok_download_videos"]), "shouldDownloadCovers": False,
+        "shouldDownloadSlideshowImages": False, "shouldDownloadAvatars": False,
+        "downloadSubtitlesOptions": "NEVER_DOWNLOAD_SUBTITLES"})
     if not isinstance(items, list):
         raise NoAccess(f"unexpected Apify response: {str(items)[:200]}")
     if items:
         print("first item's fields (check the parser matches this actor):", ", ".join(sorted(items[0])[:40]))
-    rows, seen = [], set()
+    rows, seen, media = [], set(), {}
     for it in items[: cfg["tiktok_max_results"]]:
-        r = parse_tiktok(it, "hashtags")
+        r = parse_tiktok(it, "search")
         if r and r["id"] not in seen:
             seen.add(r["id"])
+            r["lang"] = it.get("textLanguage")
             rows.append(r)
+            urls = it.get("mediaUrls") or []
+            if urls and str(urls[0]).startswith("https://api.apify.com/"):
+                media[r["id"]] = urls[0]
     os.makedirs(CRAWL, exist_ok=True)
-    out = os.path.join(CRAWL, f"tiktok-{dt.date.today().isoformat()}.jsonl")
+    out = os.path.join(CRAWL, f"tiktok-{dt.datetime.now().strftime('%Y-%m-%d-%H%M')}.jsonl")
     with open(out, "w") as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
     purge()
     missing = sum(1 for r in rows if not r["duration_s"] or not r["created"])
     print(f"tiktok: {len(rows)} videos -> {out}" + (f" ({missing} missing length or date)" if missing else ""))
+    if media:
+        analyze_footage(media)
     return True
+
+
+def _analyze_one(args):
+    """Download one video, measure it, delete it. Only the numbers survive."""
+    vid, url = args
+    import tempfile
+    import vision
+    path = os.path.join(tempfile.gettempdir(), f"lab-{vid}.mp4")
+    try:
+        with open(path, "wb") as f:
+            f.write(apify_get(url, raw=True))
+        feats = vision.analyze(path)
+        feats.pop("hook_text", None)        # keep word counts, not other people's words
+        return vid, feats
+    except Exception as e:                   # one bad file shouldn't stop the batch
+        return vid, {"error": str(e)[:200]}
+    finally:
+        if os.path.exists(path):
+            os.remove(path)
+        try:                                 # and drop Apify's copy too
+            urllib.request.urlopen(urllib.request.Request(url, method="DELETE",
+                                   headers={"Authorization": "Bearer placeholder"}), timeout=30).close()
+        except Exception:
+            pass
+
+
+def analyze_footage(media, workers=3):
+    from concurrent.futures import ProcessPoolExecutor
+    path = os.path.join(CRAWL, "vision.jsonl")
+    done = set()
+    if os.path.exists(path):
+        done = {json.loads(l)["id"] for l in open(path) if l.strip()}
+    todo = [(v, u) for v, u in media.items() if v not in done]
+    print(f"footage: analysing {len(todo)} videos ({workers} at a time; each file deleted after)")
+    ok = 0
+    with ProcessPoolExecutor(workers) as ex, open(path, "a") as out:
+        for vid, feats in ex.map(_analyze_one, todo):
+            out.write(json.dumps({"id": vid, "analyzed": dt.date.today().isoformat(), **feats}) + "\n")
+            ok += "error" not in feats
+    print(f"footage: {ok} of {len(todo)} measured -> {path}")
 
 
 # ---- what works in the niche ------------------------------------------------------

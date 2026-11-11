@@ -22,7 +22,7 @@ export type ReelScene = {
 	list?: {title: string; rows: [string, string, string, string?][]; size?: number};
 	rowAt?: number[];
 	map?: RankMap;
-	rank?: {num: string; name: Fitted; count: number; sub: Fitted; label?: string; suffix?: string};
+	rank?: {num: string; name: Fitted; count: number; sub: Fitted; label?: string; suffix?: string; punch?: number[]};
 };
 export type ReelProps = {scenes: ReelScene[]; audio: string; total: number; bpm: number; site: string; credits: string};
 
@@ -217,7 +217,11 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 	const m = s.map!;
 	const r = s.rank!;
 	const base = Math.max(345 / m.radius, 1080 / m.width, 1920 / m.height);
-	const z = base * interpolate(f, [0, s.dur], [1.0, 1.06], clamp);
+	// Punch-ins: an instant zoom step at set points (fractions of the scene), read as a cut while
+	// the count and the name stay on screen. The lab sets them to match the pacing that works.
+	const punches = (r.punch ?? []).map((p) => Math.round(p * s.dur)).filter((p) => p > 0 && p < s.dur);
+	const stepped = punches.filter((p) => f >= p).length % 2 === 1 ? 1.13 : 1.0;
+	const z = base * interpolate(f, [0, s.dur], [1.0, 1.06], clamp) * stepped;
 	const cx = 540;
 	const cy = 985;
 	const tx = Math.min(0, Math.max(1080 - m.width * z, cx - m.campus.x * z));

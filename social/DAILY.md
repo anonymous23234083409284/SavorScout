@@ -15,6 +15,7 @@ python social/pipeline/make_day.py stats    # writes social/stats.json, best fir
 python social/pipeline/lab.py snapshot      # adds today's numbers to social/lab/snapshots.jsonl
 python social/pipeline/crawl.py record      # exact video lengths, so the lab can learn completion rate
 python social/pipeline/crawl.py weekly      # niche crawls (YouTube + TikTok, with footage) + model, once a week
+python social/pipeline/compete.py weekly    # competitors: their latest videos, hits vs. flops, once a week
 python social/pipeline/lab2.py analyze      # after a crawl: Lab v2 rebuilds the playbook from the footage
 python social/pipeline/lab.py score         # scores experiments 3+ days old (promote / retry / drop)
 python social/pipeline/lab.py report        # writes social/lab/report.md: read it
@@ -44,11 +45,35 @@ part 2, a short cut); our own results then overrule them. Raw API data stays
 in `social/lab/crawl/` (git-ignored, deleted after 30 days); only the learned
 findings (`social/lab/niche.json`) are kept. TikTok's terms forbid scraping, so
 the TikTok crawl is kept small and impersonal: public video numbers only, no
-comments or downloads, creators reduced to an anonymous code and a follower
-count, and a budget cap that fits Apify's free plan (`lab/crawl-config.json`
-sets the actor, hashtags and cap). Keys live in the environment's network
-secrets (www.googleapis.com and api.apify.com); a missing one just skips that
-source, and the lab carries on with its own data.
+comments, creators reduced to an anonymous code and a follower count, footage
+downloaded only to be measured and reduced to one small frame strip, then
+deleted (Apify's copy too). Before each run the crawler reads Apify's meter
+and splits what's left of the free $5 a month over the weeks left in the
+cycle: competitor tracking first, the niche search gets the rest, and the last
+$0.25 is never spent. Keys live in the environment's network secrets
+(www.googleapis.com and api.apify.com); a missing one just skips that source,
+and the lab carries on with its own data.
+
+**Private lab data survives restarts.** Everything git-ignored that the labs
+learn from (`social/lab/crawl/`, the review strips) is saved to a private,
+named key-value store in the owner's Apify account (`crawl.py sync up`) and
+brought back after a container restart (`crawl.py sync down`; the weekly
+steps do both). It never goes into git.
+
+**Competitors** (`social/pipeline/compete.py`, watchlist in
+`social/competitors.json`). The accounts closest to ours, each checked before
+joining (active, mostly in our niche): state-by-state college countdowns, a
+city school-ranking countdown, college-ranking slides, food spots near NYU and
+three college-food series. Each week it pulls their newest videos (enough to
+reach back ~9 days of their posting) and compares every video with **its own
+account's typical video**, so audience size drops out and what separates a
+hit from a flop is the content. It measures the footage of each account's top
+3, bottom 3 and typical videos, and writes `social/lab/compete-report.md`
+(hook types, topics, length and pacing that win inside accounts, how many
+accounts agree, and us vs. their hits). To add an account: `compete.py
+discover` (search) and `compete.py validate <handle>`, then add it to the
+watchlist. Their captions, opening lines and frame strips stay private and are
+deleted after 30 days; we learn patterns, never copy their content.
 
 **Lab v2** (`social/pipeline/lab2.py`, with `vision.py`) learns from the
 footage itself. Each week ~100 recent, top-performing food TikToks (all food,
@@ -67,14 +92,23 @@ setting so our own results can confirm it. After rendering, `lab2.py check
 <date>` scores every video against the playbook; fix anything it flags that
 you can before publishing.
 
-**Expert review (weekly, with the crawl).** Numbers alone can't say *why*. Once a week run
-`python social/pipeline/review.py`, read the pack in `social/out/review/` (every video's views,
-completion, shares per 1,000, hook and tease; frame strips of the best and worst countdowns at
-0-10 s) next to `lab2-report.md`, and rewrite `social/lab/expert-review.md`: what works, what
-doesn't, the mechanism, how sure (high / medium / low), and what to change in order of impact.
-Look at the frames, not just the table. Turn each conclusion into an action: a trends.json boost,
-an experiment, or a change to the scripts, and check last week's conclusions against the new
-numbers.
+**Expert review (weekly, with the crawl).** Numbers alone can't say *why*, and our own videos
+alone can't say what's possible. Once a week run `python social/pipeline/review.py` and read the
+whole pack in `social/out/review/` next to `lab2-report.md` and `compete-report.md`:
+- **Ours:** `table.md` (views, completion, shares per 1,000, hook, tease) and frame strips of our
+  best and worst countdowns at 0-10 s.
+- **Competitors:** `compete/sheet-<account>.jpg` (each account's best videos above its worst, the
+  same six moments, labelled against the account's typical video), `compete/hits.jpg` and
+  `compete/flops.jpg` across accounts, and `compete/index.md` (captions, opening lines, links).
+- **The food niche:** `niche-top.jpg` / `niche-bottom.jpg` (biggest and smallest breakouts).
+
+Then rewrite `social/lab/expert-review.md`: what works and what flops **for competitors and for
+us**, the mechanism, how sure (high / medium / low), and what to change in order of impact. Look at
+the frames, not just the tables: what happens in their first second, how fast the first reveal
+comes, how they frame the ranking, what makes people share. Turn each conclusion into an action
+(a trends.json boost, an experiment, or a script change) and check last week's conclusions against
+the new numbers. Describe their patterns in our own words; never reuse their footage, text or
+music.
 
 **Trends.** After the research step (1), write `social/lab/trends.json` when
 something in the news should lift an idea (a school in the headlines, a big

@@ -9,6 +9,8 @@
     python crawl.py niche               learn what works in the niche -> lab/niche.json
                                         (crawl.py youtube --weekly --and-learn does both)
     python crawl.py status              what has been collected so far
+    python crawl.py sync up|down        save / restore the private lab data (lab/crawl/, review strips) in
+                                        a named Apify store, so a container restart doesn't lose it
 
 SOURCES
 - Our own videos. The render manifests give each video's exact length, so the
@@ -27,17 +29,23 @@ SOURCES
   actor, hashtags and budget are set in lab/crawl-config.json.
 
 RULES
-- Public video numbers only. No comments, no viewer data, no downloads. A
-  TikTok creator's handle is stored only as a short one-way code (to group
-  their videos), with their follower count; nothing else about them.
-- Raw API responses live in lab/crawl/ (git-ignored) and are deleted after 30
-  days, as YouTube's API policies require. Only the learned, aggregate findings
-  (lab/niche.json) are kept.
+- Public video numbers only. No comments and no viewer data. A creator's
+  handle is stored only as a short one-way code (to group their videos),
+  with their follower count; nothing else about them. (Competitor accounts
+  the owner chooses to follow are the exception: compete.py names them.)
+- Footage is downloaded only to be measured (vision.py) and reduced to one
+  small frame strip for the weekly review; the file is deleted right after,
+  Apify's copy too. Nothing of anyone else's is reused in our videos.
+- Raw API responses and strips live in git-ignored folders (lab/crawl/,
+  out/review/strips/) and are deleted after 30 days, as YouTube's API
+  policies require. Only the learned, aggregate findings are committed.
 - Keys are never in this code or the repo: they sit in the cloud environment's
   network secrets (www.googleapis.com, header X-Goog-Api-Key; api.apify.com,
   Authorization: Bearer) and the proxy adds them to each request.
-- Apify's free plan is $5 of usage a month; tiktok_max_results (default 240 a
-  week) keeps a per-result actor inside it.
+- Apify's free plan is $5 of usage a month. Before each run the crawler reads
+  Apify's own meter and splits what's left over the weeks left in the cycle:
+  competitor tracking (compete.py, ~$0.20 a week) goes first, the niche search
+  gets the rest (up to tiktok_max_results), and the last $0.25 is never spent.
 - Quota: a search costs 100 units, a video or channel lookup 1 unit per 50.
   The free daily quota is 10,000 units; a full crawl (each search run twice,
   most-viewed and newest, so the data includes flops as well as hits) uses
@@ -60,6 +68,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SOCIAL = os.path.dirname(HERE)
 LAB = os.path.join(SOCIAL, "lab")
 CRAWL = os.path.join(LAB, "crawl")
+STRIPS = os.path.join(SOCIAL, "out", "review", "strips")   # frame strips for the weekly review (git-ignored)
 API = "https://www.googleapis.com/youtube/v3/"
 KEEP_DAYS = 30
 
@@ -257,9 +266,14 @@ def purge():
         return
     cutoff = (dt.date.today() - dt.timedelta(days=KEEP_DAYS)).isoformat()
     for name in os.listdir(CRAWL):
-        m = re.match(r"(?:youtube|tiktok)-(\d{4}-\d{2}-\d{2})(?:-\d+)?\.jsonl$", name)   # vision.jsonl holds numbers only
+        m = re.match(r"[a-z-]+-(\d{4}-\d{2}-\d{2})(?:-\d+)?\.jsonl$", name)   # vision.jsonl holds numbers only
         if m and m.group(1) < cutoff:
             os.remove(os.path.join(CRAWL, name))
+    if os.path.isdir(STRIPS):
+        old = dt.datetime.now().timestamp() - KEEP_DAYS * 86400
+        for name in os.listdir(STRIPS):
+            if os.path.getmtime(os.path.join(STRIPS, name)) < old:
+                os.remove(os.path.join(STRIPS, name))
 
 
 def load_youtube(prefix="youtube"):
@@ -365,10 +379,13 @@ def due(prefix, days=7):
     return not any(n.startswith(prefix + "-") and n[len(prefix) + 1:len(prefix) + 11] >= recent for n in os.listdir(CRAWL))
 
 
-def apify_async(actor, payload, max_wait=1500):
-    """Start a run, wait for it, return its items: long runs (video downloads) outlast one HTTP request."""
+def apify_async(actor, payload, max_wait=1500, max_usd=None):
+    """Start a run, wait for it, return its items: long runs (video downloads) outlast one HTTP request.
+    max_usd caps what Apify may charge for the run (it stops there), on top of the budget check."""
     import time
     url = f"https://api.apify.com/v2/acts/{urllib.parse.quote(actor, safe='~')}/runs"
+    if max_usd is not None:
+        url += f"?maxTotalChargeUsd={max(0.01, round(max_usd, 2))}"
     req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST",
                                  headers={"Content-Type": "application/json", "Authorization": "Bearer placeholder"})
     try:
@@ -389,6 +406,92 @@ def apify_async(actor, payload, max_wait=1500):
     return items
 
 
+RESERVE_USD = 0.25        # never spend the last 25 cents: a run that hits the cap stops halfway
+COMPETE_WEEKLY_USD = 0.20 # what competitor tracking (compete.py) needs a week; it goes first
+SEARCH_RESULT_USD = 0.008 # one niche search result: $0.003 + date filter, sorting, download ($0.0013 each) + transfer
+
+
+def apify_budget():
+    """(dollars left in this billing cycle, weeks left in it) from Apify's own meter, or (None, None)."""
+    try:
+        d = apify_get("https://api.apify.com/v2/users/me/limits")["data"]
+        left = float(d["limits"]["maxMonthlyUsageUsd"]) - float(d["current"]["monthlyUsageUsd"])
+        end = dt.datetime.fromisoformat(d["monthlyUsageCycle"]["endAt"].replace("Z", "+00:00"))
+        weeks = max(1, math.ceil((end - dt.datetime.now(dt.timezone.utc)).total_seconds() / (7 * 86400)))
+        return left, weeks
+    except Exception:
+        return None, None
+
+
+def spendable(kind):
+    """What a run of this kind may spend now: what's left, spread over the weeks left in the cycle.
+    Competitor tracking comes first; the niche search gets the rest of the week's share."""
+    left, weeks = apify_budget()
+    if left is None:
+        return None
+    week = (left - RESERVE_USD) / weeks
+    if kind == "compete":
+        return max(0.0, min(left - RESERVE_USD, week + 0.10))
+    return max(0.0, min(left - RESERVE_USD - COMPETE_WEEKLY_USD, week - COMPETE_WEEKLY_USD))
+
+
+STORE = "savorscout-lab"   # a private, named key-value store in the owner's Apify account
+
+
+def sync(direction):
+    """Keep the private lab data (lab/crawl/ and the review strips) in a named Apify key-value store, so
+    a container restart doesn't wipe the history the labs learn from. It never goes into git.
+    'down' restores what's missing (and merges .jsonl files line by line); 'up' saves everything."""
+    import io
+    import tarfile
+    req = urllib.request.Request(f"https://api.apify.com/v2/key-value-stores?name={STORE}", method="POST",
+                                 headers={"Authorization": "Bearer placeholder"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        url = f"https://api.apify.com/v2/key-value-stores/{json.load(r)['data']['id']}/records/lab-data.tgz"
+    if direction == "up":
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            for root in (CRAWL, STRIPS):
+                if os.path.isdir(root):
+                    tar.add(root, arcname=os.path.relpath(root, SOCIAL))
+        req = urllib.request.Request(url, data=buf.getvalue(), method="PUT",
+                                     headers={"Authorization": "Bearer placeholder", "Content-Type": "application/gzip"})
+        urllib.request.urlopen(req, timeout=300).close()
+        print(f"sync: saved {len(buf.getvalue()) / 1e6:.1f} MB of lab data to the private Apify store '{STORE}'")
+        return
+    try:
+        data = apify_get(url, raw=True)
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print("sync: nothing saved yet")
+            return
+        raise
+    restored = merged = 0
+    with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
+        for m in tar.getmembers():
+            name = m.name.replace("\\", "/")
+            if not m.isfile() or ".." in name.split("/") or name.startswith("/") or \
+                    not (name.startswith("lab/crawl/") or name.startswith("out/review/strips/")):
+                continue
+            dest = os.path.join(SOCIAL, name)
+            blob = tar.extractfile(m).read()
+            if not os.path.exists(dest):
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
+                with open(dest, "wb") as f:
+                    f.write(blob)
+                restored += 1
+            elif dest.endswith(".jsonl"):        # union of lines: saved first, then anything only local
+                saved = [l for l in blob.decode("utf-8").splitlines() if l.strip()]
+                local = [l for l in open(dest, encoding="utf-8").read().splitlines() if l.strip()]
+                seen = set(saved)
+                combined = saved + [l for l in local if l not in seen]
+                if combined != local:
+                    with open(dest, "w", encoding="utf-8") as f:
+                        f.write("\n".join(combined) + "\n")
+                    merged += 1
+    print(f"sync: restored {restored} files, merged {merged} from the private Apify store '{STORE}'")
+
+
 def apify_get(url, raw=False):
     req = urllib.request.Request(url, headers={"Authorization": "Bearer placeholder"})
     with urllib.request.urlopen(req, timeout=180) as r:
@@ -403,20 +506,26 @@ def crawl_tiktok(weekly=False):
     qs, k = cfg["tiktok_queries"], cfg["tiktok_queries_per_week"]
     week = dt.date.today().isocalendar()[1]
     queries = [qs[(week * k + i) % len(qs)] for i in range(k)]
-    per = max(1, cfg["tiktok_max_results"] // len(queries))
-    print("tiktok: searching", ", ".join(queries))
+    cap, budget = cfg["tiktok_max_results"], spendable("search")
+    if budget is not None:
+        cap = min(cap, int(budget / SEARCH_RESULT_USD))
+        if cap < 30:
+            print(f"tiktok: skipped this week to stay inside Apify's monthly budget (${budget:.2f} spendable)")
+            return False
+    per = max(1, cap // len(queries))
+    print(f"tiktok: searching {', '.join(queries)} ({per} each" + (f", ${budget:.2f} spendable)" if budget is not None else ")"))
     items = apify_async(cfg["tiktok_actor"], {
         "searchQueries": queries, "searchSection": "/video", "videoSearchSorting": "MOST_LIKED",
         "videoSearchDateFilter": "LAST_3_MONTHS", "resultsPerPage": per,
         "shouldDownloadVideos": bool(cfg["tiktok_download_videos"]), "shouldDownloadCovers": False,
         "shouldDownloadSlideshowImages": False, "shouldDownloadAvatars": False,
-        "downloadSubtitlesOptions": "NEVER_DOWNLOAD_SUBTITLES"})
+        "downloadSubtitlesOptions": "NEVER_DOWNLOAD_SUBTITLES"}, max_usd=budget)
     if not isinstance(items, list):
         raise NoAccess(f"unexpected Apify response: {str(items)[:200]}")
     if items:
         print("first item's fields (check the parser matches this actor):", ", ".join(sorted(items[0])[:40]))
     rows, seen, media = [], set(), {}
-    for it in items[: cfg["tiktok_max_results"]]:
+    for it in items[:cap]:
         r = parse_tiktok(it, "search")
         if r and r["id"] not in seen:
             seen.add(r["id"])
@@ -435,21 +544,28 @@ def crawl_tiktok(weekly=False):
     missing = sum(1 for r in rows if not r["duration_s"] or not r["created"])
     print(f"tiktok: {len(rows)} videos -> {out}" + (f" ({missing} missing length or date)" if missing else ""))
     if media:
-        analyze_footage(media)
+        analyze_footage(media, strips=True)
     return True
 
 
 def _analyze_one(args):
-    """Download one video, measure it, delete it. Only the numbers survive."""
-    vid, url = args
+    """Download one video, measure it, keep a frame strip for the review, delete the file.
+    Only the numbers (and the small strip, for 30 days) survive."""
+    vid, url, strip_path, measure = args
     import tempfile
     import vision
     path = os.path.join(tempfile.gettempdir(), f"lab-{vid}.mp4")
     try:
         with open(path, "wb") as f:
             f.write(apify_get(url, raw=True))
-        feats = vision.analyze(path)
+        feats = vision.analyze(path) if measure else {}
         feats.pop("hook_text", None)        # keep word counts, not other people's words
+        if strip_path:
+            try:
+                vision.strip(path, strip_path)
+                feats["strip"] = os.path.relpath(strip_path, SOCIAL)
+            except Exception as e:
+                feats["strip_error"] = str(e)[:120]
         return vid, feats
     except Exception as e:                   # one bad file shouldn't stop the batch
         return vid, {"error": str(e)[:200]}
@@ -463,6 +579,24 @@ def _analyze_one(args):
             pass
 
 
+def recent_urls(ids, runs=15):
+    """Public URLs of videos in Apify's retained datasets (kept 7 days), to re-fetch their footage.
+    The crawl files don't store URLs (they'd name the creator)."""
+    want, out = {str(i) for i in ids}, {}
+    actor = {**TIKTOK_DEFAULTS, **jload(os.path.join(LAB, "crawl-config.json"), {})}["tiktok_actor"]
+    for run in apify_get(f"https://api.apify.com/v2/acts/{actor}/runs?desc=1&limit={runs}")["data"]["items"]:
+        if run["status"] != "SUCCEEDED" or not want - set(out):
+            continue
+        try:
+            items = apify_get(f"https://api.apify.com/v2/datasets/{run['defaultDatasetId']}/items?clean=true&format=json&fields=id,webVideoUrl")
+        except Exception:
+            continue
+        for it in items:
+            if str(it.get("id")) in want and it.get("webVideoUrl"):
+                out[str(it["id"])] = it["webVideoUrl"]
+    return out
+
+
 def resume_footage():
     """Measure the footage of the latest Apify run's videos that haven't been measured yet (recovery)."""
     cfg = {**TIKTOK_DEFAULTS, **jload(os.path.join(LAB, "crawl-config.json"), {})}
@@ -474,23 +608,47 @@ def resume_footage():
         urls = it.get("mediaUrls") or []
         if r and urls and str(urls[0]).startswith("https://api.apify.com/") and 6 <= float(r["duration_s"] or 0) <= 180:
             media[r["id"]] = urls[0]
-    analyze_footage(media)
+    analyze_footage(media, strips=True)
 
 
-def analyze_footage(media, workers=3):
+def vision_rows():
+    """Everything known about each fetched video. Later rows add to earlier ones (a strip, spoken-caption
+    numbers, a re-measurement); a failed attempt never hides a good measurement. A row counts as
+    measured only if it has duration_s."""
+    out, path = {}, os.path.join(CRAWL, "vision.jsonl")
+    if os.path.exists(path):
+        for line in open(path):
+            if line.strip():
+                d = json.loads(line)
+                prev = out.get(d["id"], {})
+                if "error" in d:
+                    out[d["id"]] = prev or d
+                else:
+                    out[d["id"]] = {**{k: v for k, v in prev.items() if k != "error"}, **d}
+    return out
+
+
+def analyze_footage(media, workers=3, strips=False):
+    """Measure each video once; with strips=True also keep a frame strip (re-fetched videos that were
+    measured before only get the strip)."""
     from concurrent.futures import ProcessPoolExecutor
     path = os.path.join(CRAWL, "vision.jsonl")
-    done = set()
-    if os.path.exists(path):
-        done = {json.loads(l)["id"] for l in open(path) if l.strip()}
-    todo = [(v, u) for v, u in media.items() if v not in done]
-    print(f"footage: analysing {len(todo)} videos ({workers} at a time; each file deleted after)")
+    have = {k: v for k, v in vision_rows().items() if v.get("duration_s")}
+    todo = []
+    for v, u in media.items():
+        sp = os.path.join(STRIPS, f"{v}.jpg") if strips else None
+        need_measure = v not in have
+        need_strip = bool(sp) and not os.path.exists(sp)
+        if need_measure or need_strip:
+            todo.append((v, u, sp if need_strip else None, need_measure))
+    print(f"footage: {len(todo)} videos to fetch ({workers} at a time; each file deleted after)")
     ok = 0
+    os.makedirs(CRAWL, exist_ok=True)
     with ProcessPoolExecutor(workers) as ex, open(path, "a") as out:
         for vid, feats in ex.map(_analyze_one, todo):
             out.write(json.dumps({"id": vid, "analyzed": dt.date.today().isoformat(), **feats}) + "\n")
             ok += "error" not in feats
-    print(f"footage: {ok} of {len(todo)} measured -> {path}")
+    print(f"footage: {ok} of {len(todo)} done -> {path}" + (f" (strips in {STRIPS})" if strips else ""))
 
 
 # ---- what works in the niche ------------------------------------------------------
@@ -629,6 +787,10 @@ def status():
 
 def weekly():
     """Both crawls if they're due; a missing key or token just skips that source. Then learn."""
+    try:
+        sync("down")                         # after a container restart, bring the history back first
+    except Exception as e:
+        print(f"sync: skipped ({e})")
     fresh = False
     for name, run in (("youtube", lambda: crawl_youtube(weekly=True)), ("tiktok", lambda: crawl_tiktok(weekly=True))):
         try:
@@ -637,6 +799,10 @@ def weekly():
             print(f"{name}: skipped ({e})")
     if fresh:
         niche()
+        try:
+            sync("up")
+        except Exception as e:
+            print(f"sync: skipped ({e})")
 
 
 if __name__ == "__main__":
@@ -665,5 +831,7 @@ if __name__ == "__main__":
         niche()
     elif a[0] == "status":
         status()
+    elif a[0] == "sync" and len(a) > 1 and a[1] in ("up", "down"):
+        sync(a[1])
     else:
         sys.exit(__doc__)

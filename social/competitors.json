@@ -1,0 +1,48 @@
+{
+ "_why": "The TikTok accounts closest to SavorScout's videos, each checked before joining: active in the last 45 days and mostly posting in our niche (one matching search result proves nothing). compete.py compares each account's hits with its own flops, so the audience is held fixed and the difference is the content. Public creator accounts with 5,000+ followers only. Edit freely: add {\"handle\", \"label\", \"kind\"} after `compete.py validate <handle>`, or set \"paused\": true to stop following one.",
+ "accounts": [
+  {
+   "handle": "stateuncovered99",
+   "label": "colleges in a state, ranked (countdown)",
+   "kind": "format twin",
+   "added": "2026-11-11"
+  },
+  {
+   "handle": "theusafiles55",
+   "label": "a city's high schools ranked by strictness (countdown)",
+   "kind": "format twin",
+   "added": "2026-11-11"
+  },
+  {
+   "handle": "unlocking.college",
+   "label": "college rankings and admissions slides",
+   "kind": "college rankings",
+   "added": "2026-11-11"
+  },
+  {
+   "handle": "zoeapplee",
+   "label": "food spots near NYU",
+   "kind": "restaurants near campus",
+   "added": "2026-11-11"
+  },
+  {
+   "handle": "nirbassa",
+   "label": "daily college dining-hall lunch, first-person",
+   "kind": "college food",
+   "added": "2026-11-11"
+  },
+  {
+   "handle": "mensa.uni",
+   "label": "daily college dining-hall lunch, first-person (second account)",
+   "kind": "college food",
+   "added": "2026-11-11"
+  },
+  {
+   "handle": "liascookingchannel",
+   "label": "Princeton dining-hall food creations",
+   "kind": "college food",
+   "added": "2026-11-11"
+  }
+ ],
+ "checked_and_left_out": "2026-11-11: emmezhou, lifewithgill, raeshapiro, muzieaden, livia.onthego (mostly off-niche lately); egracelynbrown, curiousbrennan, patty_g7, journeywith.lex, mapreels, datacomparison88, collegecounselortriplets, edu.us1 (inactive 45+ days); zac.calamita, hashishoooo, violettlivorno, nichesocial, siryacht, tineocollegeprep, prixdata (off-niche); allie_voss (mixed, posts several times a day)"
+}

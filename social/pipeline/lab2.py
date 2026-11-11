@@ -100,14 +100,8 @@ def q(v):
 def niche_rows():
     import crawl
     meta = {r["id"]: r for r in crawl.load_youtube("tiktok")}
-    vis = {}
-    path = os.path.join(CRAWL, "vision.jsonl")
-    if os.path.exists(path):
-        for line in open(path):
-            if line.strip():
-                d = json.loads(line)
-                if "error" not in d:
-                    vis[d["id"]] = d
+    # Rows for one video merge (a later strip or spoken-caption row adds to its measurement).
+    vis = {k: v for k, v in crawl.vision_rows().items() if "error" not in v and v.get("duration_s")}
     now = dt.datetime.now(dt.timezone.utc)
     out = []
     for vid, v in vis.items():

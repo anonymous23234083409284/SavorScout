@@ -68,6 +68,33 @@ def frame_at(path, t, width=540):
     return cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR)
 
 
+STRIP_TIMES = (0.0, 1.0, 2.5, 4.0, 6.0, 10.0)
+
+
+def strip(path, out_path, times=STRIP_TIMES, w=180):
+    """A row of frames at fixed moments (JPEG), so a reviewer can compare openings by eye."""
+    duration = probe(path)[0]
+    h = int(round(w * 16 / 9))
+    tiles = []
+    for t in times:
+        tile = np.full((h, w, 3), 245, np.uint8)
+        img = frame_at(path, min(t + 0.05, max(0.0, duration - 0.15)), width=w) if t < duration else None
+        if img is not None:
+            img = cv2.resize(img, (w, max(1, int(round(img.shape[0] * w / img.shape[1])))))
+            ih = img.shape[0]
+            if ih >= h:
+                tile = img[(ih - h) // 2:(ih - h) // 2 + h].copy()
+            else:
+                tile[(h - ih) // 2:(h - ih) // 2 + ih] = img
+        label = f"{t:g}s" if t < duration else f"{t:g}s (ended)"
+        cv2.putText(tile, label, (5, 17), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 3, cv2.LINE_AA)
+        cv2.putText(tile, label, (5, 17), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1, cv2.LINE_AA)
+        tiles.append(tile)
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+    cv2.imwrite(out_path, np.hstack(tiles), [cv2.IMWRITE_JPEG_QUALITY, 82])
+    return out_path
+
+
 def hist(f):
     h = np.histogramdd(f.reshape(-1, 3) // 32, bins=(8, 8, 8), range=((0, 8), (0, 8), (0, 8)))[0].ravel()
     return h / max(1.0, h.sum())

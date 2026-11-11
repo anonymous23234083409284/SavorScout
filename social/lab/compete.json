@@ -1,0 +1,463 @@
+{
+ "date": "2026-11-11",
+ "accounts": [
+  {
+   "handle": "nirbassa",
+   "label": "daily college dining-hall lunch, first-person",
+   "kind": "college food",
+   "followers": 161000,
+   "settled_videos": 10,
+   "typical_views": 281804,
+   "hit_share": 0.2,
+   "flop_share": 0.4,
+   "best_x": 44.4,
+   "posts_per_week": 3.5,
+   "median_length_s": 70.0,
+   "style": "text over footage",
+   "measured": 8
+  },
+  {
+   "handle": "liascookingchannel",
+   "label": "Princeton dining-hall food creations",
+   "kind": "college food",
+   "followers": 43500,
+   "settled_videos": 8,
+   "typical_views": 107831,
+   "hit_share": 0.38,
+   "flop_share": 0.38,
+   "best_x": 19.5,
+   "posts_per_week": 5.0,
+   "median_length_s": 61.0,
+   "style": "text over footage",
+   "measured": 8
+  },
+  {
+   "handle": "stateuncovered99",
+   "label": "colleges in a state, ranked (countdown)",
+   "kind": "format twin",
+   "followers": 16600,
+   "settled_videos": 9,
+   "typical_views": 24600,
+   "hit_share": 0.11,
+   "flop_share": 0.44,
+   "best_x": 4.4,
+   "posts_per_week": 7.6,
+   "median_length_s": 70.0,
+   "style": "text over footage",
+   "measured": 8
+  },
+  {
+   "handle": "mensa.uni",
+   "label": "daily college dining-hall lunch, first-person (second account)",
+   "kind": "college food",
+   "followers": 83500,
+   "settled_videos": 11,
+   "typical_views": 20901,
+   "hit_share": 0.27,
+   "flop_share": 0.09,
+   "best_x": 3.0,
+   "posts_per_week": 4.9,
+   "median_length_s": 49.0,
+   "style": "footage / voiceover",
+   "measured": 8
+  },
+  {
+   "handle": "zoeapplee",
+   "label": "food spots near NYU",
+   "kind": "restaurants near campus",
+   "followers": 9142,
+   "settled_videos": 10,
+   "typical_views": 5300,
+   "hit_share": 0.2,
+   "flop_share": 0.2,
+   "best_x": 2.3,
+   "posts_per_week": 1.2,
+   "median_length_s": 42.0,
+   "style": "on-camera person",
+   "measured": 8
+  },
+  {
+   "handle": "theusafiles55",
+   "label": "a city's high schools ranked by strictness (countdown)",
+   "kind": "format twin",
+   "followers": 16300,
+   "settled_videos": 10,
+   "typical_views": 3847,
+   "hit_share": 0.4,
+   "flop_share": 0.4,
+   "best_x": 15.4,
+   "posts_per_week": 7.6,
+   "median_length_s": 65.5,
+   "style": "footage / voiceover",
+   "measured": 8
+  }
+ ],
+ "age_slope": 0.0,
+ "videos": 58,
+ "captions": {
+  "ranking": {
+   "x": 1.16,
+   "ci90": [
+    0.25,
+    4.41
+   ],
+   "accounts": 2,
+   "agree": 1,
+   "videos_with": 11,
+   "sure": "unclear"
+  },
+  "number": {
+   "x": 0.31,
+   "ci90": [
+    0.14,
+    0.6
+   ],
+   "accounts": 4,
+   "agree": 4,
+   "videos_with": 16,
+   "sure": "clear"
+  },
+  "you": {
+   "x": 0.81,
+   "ci90": [
+    0.31,
+    2.48
+   ],
+   "accounts": 2,
+   "agree": 2,
+   "videos_with": 6,
+   "sure": "unclear"
+  },
+  "place": {
+   "x": 0.69,
+   "ci90": [
+    0.3,
+    1.7
+   ],
+   "accounts": 2,
+   "agree": 2,
+   "videos_with": 9,
+   "sure": "unclear"
+  },
+  "college": {
+   "x": 3.22,
+   "ci90": [
+    0.74,
+    18.17
+   ],
+   "accounts": 2,
+   "agree": 1,
+   "videos_with": 12,
+   "sure": "unclear"
+  },
+  "shorter_than_usual": {
+   "x": 0.5,
+   "ci90": [
+    0.23,
+    0.95
+   ],
+   "accounts": 3,
+   "agree": 3,
+   "videos_with": 7,
+   "sure": "likely"
+  },
+  "weekend": {
+   "x": 0.98,
+   "ci90": [
+    0.32,
+    3.61
+   ],
+   "accounts": 5,
+   "agree": 2,
+   "videos_with": 14,
+   "sure": "unclear"
+  }
+ },
+ "footage": {
+  "first_cut_s": {
+   "hits": 2.965,
+   "flops": 2.55,
+   "diff": 0.8,
+   "ci90": [
+    -0.635,
+    5.555
+   ],
+   "accounts": 6,
+   "agree": 5,
+   "sure": "likely"
+  },
+  "cuts_first_3s": {
+   "hits": 0.5,
+   "flops": 0.5,
+   "diff": 0.0,
+   "ci90": [
+    -1.0,
+    1.0
+   ],
+   "accounts": 6,
+   "agree": 0,
+   "sure": "unclear"
+  },
+  "median_shot_s": {
+   "hits": 3.88,
+   "flops": 3.26,
+   "diff": 0.24,
+   "ci90": [
+    -0.12,
+    16.244
+   ],
+   "accounts": 6,
+   "agree": 5,
+   "sure": "likely"
+  },
+  "cuts_per_s": {
+   "hits": 0.204,
+   "flops": 0.258,
+   "diff": -0.034,
+   "ci90": [
+    -0.135,
+    -0.01
+   ],
+   "accounts": 6,
+   "agree": 5,
+   "sure": "likely"
+  },
+  "motion_first_1s": {
+   "hits": 0.048,
+   "flops": 0.03,
+   "diff": 0.015,
+   "ci90": [
+    -0.001,
+    0.024
+   ],
+   "accounts": 6,
+   "agree": 4,
+   "sure": "unclear"
+  },
+  "hook_words": {
+   "hits": 3.5,
+   "flops": 2.5,
+   "diff": 0.0,
+   "ci90": [
+    -0.5,
+    1.0
+   ],
+   "accounts": 6,
+   "agree": 0,
+   "sure": "unclear"
+  },
+  "hook_brightness": {
+   "hits": 120.65,
+   "flops": 106.9,
+   "diff": 6.7,
+   "ci90": [
+    -12.6,
+    23.8
+   ],
+   "accounts": 6,
+   "agree": 4,
+   "sure": "unclear"
+  },
+  "hook_colorfulness": {
+   "hits": 33.35,
+   "flops": 33.55,
+   "diff": 0.4,
+   "ci90": [
+    -6.3,
+    4.2
+   ],
+   "accounts": 6,
+   "agree": 3,
+   "sure": "unclear"
+  },
+  "hook_face_area": {
+   "hits": 0.0,
+   "flops": 0.0,
+   "diff": 0.0,
+   "ci90": [
+    0.0,
+    0.005
+   ],
+   "accounts": 6,
+   "agree": 0,
+   "sure": "unclear"
+  },
+  "text_share": {
+   "hits": 0.5,
+   "flops": 0.7,
+   "diff": 0.1,
+   "ci90": [
+    -0.3,
+    0.2
+   ],
+   "accounts": 6,
+   "agree": 3,
+   "sure": "unclear"
+  },
+  "face_share": {
+   "hits": 0.167,
+   "flops": 0.0,
+   "diff": 0.0,
+   "ci90": [
+    -0.166,
+    0.167
+   ],
+   "accounts": 6,
+   "agree": 0,
+   "sure": "unclear"
+  },
+  "zoom_in_share": {
+   "hits": 0.3,
+   "flops": 0.382,
+   "diff": -0.03,
+   "ci90": [
+    -0.085,
+    -0.007
+   ],
+   "accounts": 6,
+   "agree": 5,
+   "sure": "likely"
+  },
+  "camera_moving_share": {
+   "hits": 0.974,
+   "flops": 0.98,
+   "diff": -0.003,
+   "ci90": [
+    -0.083,
+    0.004
+   ],
+   "accounts": 6,
+   "agree": 4,
+   "sure": "unclear"
+  },
+  "loop_similarity": {
+   "hits": 0.386,
+   "flops": 0.355,
+   "diff": 0.014,
+   "ci90": [
+    -0.024,
+    0.065
+   ],
+   "accounts": 6,
+   "agree": 3,
+   "sure": "unclear"
+  },
+  "duration_s": {
+   "hits": 63.51,
+   "flops": 56.23,
+   "diff": 4.045,
+   "ci90": [
+    0.76,
+    9.0
+   ],
+   "accounts": 6,
+   "agree": 6,
+   "sure": "clear"
+  },
+  "spoken_words_3s": {
+   "hits": 10.0,
+   "flops": 10.0,
+   "diff": 0.25,
+   "ci90": [
+    -0.762,
+    1.0
+   ],
+   "accounts": 4,
+   "agree": 2,
+   "sure": "unclear"
+  },
+  "speech_wps": {
+   "hits": 2.415,
+   "flops": 2.515,
+   "diff": -0.075,
+   "ci90": [
+    -0.29,
+    0.055
+   ],
+   "accounts": 4,
+   "agree": 2,
+   "sure": "unclear"
+  }
+ },
+ "vs_ours": {
+  "first_cut_s": {
+   "ours": 5.7,
+   "their_hits": [
+    1.6,
+    3.65,
+    8.942
+   ]
+  },
+  "cuts_first_3s": {
+   "ours": 0.0,
+   "their_hits": [
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "median_shot_s": {
+   "ours": 3.755,
+   "their_hits": [
+    2.895,
+    3.85,
+    4.22
+   ]
+  },
+  "hook_words": {
+   "ours": 12.0,
+   "their_hits": [
+    2.0,
+    3.5,
+    4.0
+   ]
+  },
+  "zoom_in_share": {
+   "ours": 0.142,
+   "their_hits": [
+    0.286,
+    0.319,
+    0.412
+   ]
+  },
+  "loop_similarity": {
+   "ours": 0.169,
+   "their_hits": [
+    0.355,
+    0.414,
+    0.551
+   ]
+  },
+  "duration_s": {
+   "ours": 34.935,
+   "their_hits": [
+    54.523,
+    62.46,
+    69.648
+   ]
+  }
+ },
+ "engagement": {
+  "their_hits": {
+   "shares": 3.8,
+   "saves": 3.2,
+   "likes": 53.9,
+   "comments": 0.5,
+   "n": 15
+  },
+  "their_others": {
+   "shares": 1.5,
+   "saves": 2.6,
+   "likes": 42.0,
+   "comments": 0.4,
+   "n": 43
+  },
+  "ours": {
+   "shares": 2.7,
+   "likes": 33.8,
+   "comments": 0.2,
+   "n": 26
+  }
+ },
+ "ours_from": "2026-11-11"
+}

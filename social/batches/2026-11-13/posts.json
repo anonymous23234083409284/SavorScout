@@ -1,0 +1,261 @@
+{
+ "tiktok": [
+  {
+   "video": "tn-countdown",
+   "at": "2026-11-13T12:22:00-05:00",
+   "text": "Tennessee is 4th 👀 Which big Tennessee university has the most restaurants within a 10-minute walk? Send this to your friend at another Tennessee school.\n\n#vanderbilt #utchattanooga #memphis #collegelife #collegefood"
+  },
+  {
+   "video": "uc-part2",
+   "at": "2026-11-13T15:22:00-05:00",
+   "text": "UCLA jumps from 5th to 2nd 👀 Which UC campus has the most restaurants within a mile? Send this to your friend at another UC.\n\n#ucberkeley #ucla #ucdavis #collegelife #collegefood"
+  },
+  {
+   "video": "ky-countdown",
+   "at": "2026-11-13T18:20:00-05:00",
+   "text": "Louisville is 2nd 👀 Which big Kentucky university has the most restaurants within a 10-minute walk? Send this to your friend at another Kentucky school.\n\n#kentucky #louisville #westernkentucky #collegelife #collegefood"
+  },
+  {
+   "video": "unc-duke-rivalry",
+   "at": "2026-11-13T21:18:00-05:00",
+   "text": "UNC Chapel Hill vs Duke 👀 Which campus has more restaurants within a 10-minute walk? Comment your guess before it shows.\n\n#uncchapelhill #duke #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-tn-countdown",
+   "at": "2026-11-13T16:39:00-05:00",
+   "card": "tn-countdown",
+   "thread": [
+    "Vanderbilt has more restaurants within a 10-minute walk of campus than UT Chattanooga, Memphis and Tennessee combined.\n\nEvery Tennessee university with 10,000+ students:",
+    "1. Vanderbilt: 129\n2. UT Chattanooga: 28\n3. Memphis: 26\n4. Tennessee: 21\n5. East Tennessee State: 18\n6. Middle Tennessee State: 9",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/tn"
+   ]
+  },
+  {
+   "id": "x-uc-part2",
+   "at": "2026-11-13T17:42:00-05:00",
+   "card": "uc-part2",
+   "thread": [
+    "UC Berkeley has more restaurants within a mile of campus than UCLA, UC Davis and UC Riverside combined.\n\nAll 9 UC campuses:",
+    "1. UC Berkeley: 428\n2. UCLA: 164\n3. UC Davis: 149\n4. UC Riverside: 100\n5. UC San Diego: 84\n6. UC Irvine: 55\n7. UC Merced: 42\n8. UC Santa Barbara: 38\n9. UC Santa Cruz: 21",
+    "Places to eat within a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/university-of-california/"
+   ]
+  },
+  {
+   "id": "x-ky-countdown",
+   "at": "2026-11-13T18:37:00-05:00",
+   "card": "ky-countdown",
+   "thread": [
+    "Kentucky has more restaurants within a 10-minute walk of campus than Louisville, Western Kentucky and Campbellsville combined.\n\nEvery Kentucky university with 10,000+ students:",
+    "1. Kentucky: 69\n2. Louisville: 27\n3. Western Kentucky: 19\n4. Campbellsville: 15\n4. Eastern Kentucky: 15\n6. Cumberlands: 9\n7. Northern Kentucky: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ky"
+   ]
+  },
+  {
+   "id": "x-unc-duke-rivalry",
+   "at": "2026-11-13T19:41:00-05:00",
+   "card": "unc-duke-rivalry",
+   "thread": [
+    "UNC Chapel Hill has 87 restaurants within a 10-minute walk of campus. Duke has 9.",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus: https://www.savorscout.net/campus/university-of-north-carolina-at-chapel-hill/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-tn-countdown",
+   "at": "2026-11-13T17:12:00-05:00",
+   "card": "tn-countdown",
+   "topic": "Tennessee",
+   "thread": [
+    "Vanderbilt has more restaurants within a 10-minute walk of campus than UT Chattanooga, Memphis and Tennessee combined. Every Tennessee university with 10,000+ students:\n\nVanderbilt 129, UT Chattanooga 28, Memphis 26, Tennessee 21, East Tennessee State 18, Middle Tennessee State 9.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/tn"
+   ]
+  },
+  {
+   "id": "t-uc-part2",
+   "at": "2026-11-13T18:11:00-05:00",
+   "card": "uc-part2",
+   "topic": "UC",
+   "thread": [
+    "UC Berkeley has more restaurants within a mile of campus than UCLA, UC Davis and UC Riverside combined. All 9 UC campuses:\n\nUC Berkeley 428, UCLA 164, UC Davis 149, UC Riverside 100, UC San Diego 84, UC Irvine 55, UC Merced 42, UC Santa Barbara 38, UC Santa Cruz 21.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/university-of-california/"
+   ]
+  },
+  {
+   "id": "t-ky-countdown",
+   "at": "2026-11-13T19:10:00-05:00",
+   "card": "ky-countdown",
+   "topic": "Kentucky",
+   "thread": [
+    "Kentucky has more restaurants within a 10-minute walk of campus than Louisville, Western Kentucky and Campbellsville combined. Every Kentucky university with 10,000+ students:\n\nKentucky 69, Louisville 27, Western Kentucky 19, Campbellsville 15, Eastern Kentucky 15, Cumberlands 9, Northern Kentucky 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ky"
+   ]
+  },
+  {
+   "id": "t-unc-duke-rivalry",
+   "at": "2026-11-13T20:09:00-05:00",
+   "card": "unc-duke-rivalry",
+   "topic": "College Football",
+   "thread": [
+    "UNC Chapel Hill has 87 restaurants within a 10-minute walk of campus. Duke has 9.\n\nWhich rivalry should we settle next?",
+    "Look up any campus: https://www.savorscout.net/campus/university-of-north-carolina-at-chapel-hill/"
+   ]
+  }
+ ],
+ "cards": {
+  "tn-countdown": {
+   "type": "ranking",
+   "title": "Big Tennessee universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Tennessee university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Vanderbilt",
+     129
+    ],
+    [
+     "2",
+     "UT Chattanooga",
+     28
+    ],
+    [
+     "3",
+     "Memphis",
+     26
+    ],
+    [
+     "4",
+     "Tennessee",
+     21
+    ],
+    [
+     "5",
+     "East Tennessee State",
+     18
+    ],
+    [
+     "6",
+     "Middle Tennessee State",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "uc-part2": {
+   "type": "ranking",
+   "title": "UC campuses ranked by *restaurants within a mile*",
+   "subtitle": "All 9 UC campuses. Places to eat within a mile.",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     428
+    ],
+    [
+     "2",
+     "UCLA",
+     164
+    ],
+    [
+     "3",
+     "UC Davis",
+     149
+    ],
+    [
+     "4",
+     "UC Riverside",
+     100
+    ],
+    [
+     "5",
+     "UC San Diego",
+     84
+    ],
+    [
+     "6",
+     "UC Irvine",
+     55
+    ],
+    [
+     "7",
+     "UC Merced",
+     42
+    ],
+    [
+     "8",
+     "UC Santa Barbara",
+     38
+    ],
+    [
+     "9",
+     "UC Santa Cruz",
+     21
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ky-countdown": {
+   "type": "ranking",
+   "title": "Big Kentucky universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Kentucky university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Kentucky",
+     69
+    ],
+    [
+     "2",
+     "Louisville",
+     27
+    ],
+    [
+     "3",
+     "Western Kentucky",
+     19
+    ],
+    [
+     "4",
+     "Campbellsville",
+     15
+    ],
+    [
+     "4",
+     "Eastern Kentucky",
+     15
+    ],
+    [
+     "6",
+     "Cumberlands",
+     9
+    ],
+    [
+     "7",
+     "Northern Kentucky",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "unc-duke-rivalry": {
+   "type": "ranking",
+   "title": "UNC Chapel Hill vs Duke: *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus.",
+   "rows": [
+    [
+     "1",
+     "UNC Chapel Hill",
+     87
+    ],
+    [
+     "2",
+     "Duke",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

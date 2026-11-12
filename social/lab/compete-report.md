@@ -46,16 +46,16 @@
 |---|---:|---:|---:|---:|---:|
 | their hits | 15 | 3.8 | 53.9 | 0.5 | 3.2 |
 | their other videos | 43 | 1.5 | 42.0 | 0.4 | 2.6 |
-| ours (200+ views) | 26 | 2.7 | 33.8 | 0.2 | - |
+| ours (200+ views) | 29 | 2.8 | 32.5 | 0.6 | - |
 
-## Us vs. their hits (our 2026-11-11 videos)
+## Us vs. their hits (our 2026-11-12 videos)
 
 - Time to the first cut: ours **5.7s**, their hits 3.6s (middle half 1.6s to 8.9s)
 - Cuts in the first 3 seconds: ours **0**, their hits 0 (middle half 0 to 1)
-- Median shot length: ours **3.8s**, their hits 3.9s (middle half 2.9s to 4.2s)
+- Median shot length: ours **3.9s**, their hits 3.9s (middle half 2.9s to 4.2s)
 - Words on the first frame: ours **12**, their hits 4 (middle half 2 to 4)
-- Time zooming in: ours **14%**, their hits 32% (middle half 29% to 41%)
-- How closely the end matches the start: ours **0.17**, their hits 0.41 (middle half 0.35 to 0.55)
-- Length: ours **34.9s**, their hits 62.5s (middle half 54.5s to 69.6s)
+- Time zooming in: ours **6%**, their hits 32% (middle half 29% to 41%)
+- How closely the end matches the start: ours **0.16**, their hits 0.41 (middle half 0.35 to 0.55)
+- Length: ours **33.1s**, their hits 62.5s (middle half 54.5s to 69.6s)
 
 _Written by social/pipeline/compete.py. Their footage is measured and deleted; frame strips and captions stay private (social/out/review/compete/) for 30 days._

@@ -118,6 +118,22 @@
    "what": "every video read aloud from frame 0 (Kokoro voice), the hook map pushing in, first entry at ~4.5 s instead of 5.7 s, last place called out, #1's margin spoken",
    "status": "posted",
    "baseline": "silent countdowns, last 7 days: median 1,183 views, 14 of 24 at 1,000+"
+  },
+  {
+   "date": "2026-11-13",
+   "video": "uc-part2",
+   "experiment": "part2",
+   "what": "part2: All 9 UC campuses by mile (#1 UC Berkeley 428, tease UCLA (2nd))",
+   "status": "posted",
+   "predicted": 4342
+  },
+  {
+   "date": "2026-11-13",
+   "video": "unc-duke-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: UNC vs Duke, restaurants within a 10-minute walk (87 vs 9)",
+   "status": "posted",
+   "note": "Swapped by hand for the lab's New York short (odd #1, and shorts looked weak in competitor data)."
   }
  ]
 }

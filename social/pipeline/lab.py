@@ -93,7 +93,8 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
           "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 # Short names already used on screen, where the generic rules would read badly.
-EXTRA_NAMES = {"university-of-massachusetts-lowell": "UMass Lowell", "university-of-massachusetts-boston": "UMass Boston", "university-of-massachusetts-dartmouth": "UMass Dartmouth", "university-of-massachusetts-amherst": "UMass Amherst",
+EXTRA_NAMES = {"the-university-of-tennessee-chattanooga": "UT Chattanooga", "university-of-the-cumberlands": "Cumberlands",
+               "university-of-massachusetts-lowell": "UMass Lowell", "university-of-massachusetts-boston": "UMass Boston", "university-of-massachusetts-dartmouth": "UMass Dartmouth", "university-of-massachusetts-amherst": "UMass Amherst",
                
     "university-of-alabama-at-birmingham": "UAB", "the-university-of-alabama": "Alabama",
     "metropolitan-state-university-of-denver": "MSU Denver", "university-of-colorado-colorado-springs": "UCCS",
@@ -926,7 +927,7 @@ def rank_scene(c, i, num, label=None):
     return sc
 
 
-ACRONYMS = {"washington-state-university": "WSU", "university-of-kansas": "KU", "kansas-state-university": "K-State",
+ACRONYMS = {"the-university-of-tennessee-knoxville": "Tennessee", "washington-state-university": "WSU", "university-of-kansas": "KU", "kansas-state-university": "K-State",
             "university-of-houston": "UH", "university-of-houston-downtown": "UH-Downtown",
             "university-of-houston-clear-lake": "UH-Clear Lake", "oklahoma-state-university-main-campus": "Oklahoma State"}
 
@@ -1017,9 +1018,19 @@ def narrate(spec):
     hinted school's surprise, each reveal as it lands, #1 with its margin. Only when the voice is
     installed (tts.py); a line is read with acronyms spelled out. Returns True when lines were added."""
     import tts
-    if not tts.engine() or spec.get("lab", {}).get("format") not in ("countdown", "part2"):
+    if not tts.engine() or spec.get("lab", {}).get("format") not in ("countdown", "part2", "rivalry"):
         return False
     scenes = spec["scenes"]
+    if spec["lab"]["format"] == "rivalry":      # read what's on screen: the question, each count, the verdict
+        for sc in scenes:
+            text = re.sub(r"[*]", "", sc.get("text", ""))
+            if sc["style"] == "rank":
+                sc["say"] = f"{text}: {sc['count']:,}."
+            elif sc["style"] == "hook":
+                sc["say"] = text + " Guess before it shows."
+            elif text:
+                sc["say"] = text
+        return True
     hook = next((sc for sc in scenes if sc["style"] == "hook"), None)
     if not hook:
         return False
@@ -1403,7 +1414,7 @@ def cmd_report():
         lines += ["", "## Experiments", ""]
         for r in exps[-12:]:
             res = f"{r.get('views', '?'):,} views, {r.get('watch_s', '?')}s" if r.get("views") is not None else "waiting for 3 days of numbers"
-            lines.append(f"- {r['date']} {r['experiment']}: {r['what']} -> **{r['status']}** ({res}; predicted {r.get('predicted', '?'):,})")
+            lines.append(f"- {r['date']} {r['experiment']}: {r['what']} -> **{r['status']}** ({res}; predicted {format(r['predicted'], ',') if isinstance(r.get('predicted'), (int, float)) else '?'})")
     lines += ["", "_Written by social/pipeline/lab.py. Regenerated every daily run._"]
     jsave_text(os.path.join(LAB, "report.md"), "\n".join(lines) + "\n")
     print("\n".join(lines))

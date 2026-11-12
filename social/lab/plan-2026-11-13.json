@@ -1,0 +1,284 @@
+{
+ "date": "2026-11-13",
+ "videos_learned_from": 39,
+ "r2_views": 0.85,
+ "chosen": [
+  {
+   "id": "state:TN|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Tennessee universities with 10,000+ students by w (#1 Vanderbilt 129, tease Tennessee (4th))",
+   "views_mid": 1370,
+   "views_lo": 775,
+   "views_hi": 2424,
+   "win_rate": 0.923,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + naming the upset in the hook ('Hint: it's not X'); - more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "system:uc|mile|part2",
+   "format": "part2",
+   "slot": "experiment",
+   "new": [
+    "part2"
+   ],
+   "what": "part2: All 9 UC campuses by mile (#1 UC Berkeley 428, tease UCLA (2nd))",
+   "views_mid": 4342,
+   "views_lo": 1114,
+   "views_hi": 16906,
+   "win_rate": 0.57,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + grouping by university system (UC, Cal State); + naming the upset in the hook ('Hint: it's not X'); in the news: part 2 of our biggest hit (UC campuses, 17.9K views): within a mile, UCLA jumps from 5th to 2nd (+0.3)"
+  },
+  {
+   "id": "state:KY|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Kentucky universities with 10,000+ students by w (#1 Kentucky 69, tease Louisville (2nd))",
+   "views_mid": 1148,
+   "views_lo": 744,
+   "views_hi": 1772,
+   "win_rate": 0.917,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X')"
+  },
+  {
+   "id": "state:NY|w|short",
+   "format": "short",
+   "slot": "experiment",
+   "new": [
+    "short"
+   ],
+   "what": "short: New York universities with 10,000+ students by w (#1 Touro 1478, tease Columbia (9th))",
+   "views_mid": 2542,
+   "views_lo": 720,
+   "views_hi": 8961,
+   "win_rate": 0.313,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X')"
+  }
+ ],
+ "top": [
+  {
+   "id": "famous:20|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 20 famous American universities by street (#1 NYU 190, tease Harvard (4th))",
+   "views_mid": 8089,
+   "views_lo": 816,
+   "views_hi": 80093,
+   "win_rate": 0.467,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + a 15-20 second top-3 cut; same grouping 1d ago (-0.25); teased Harvard 1d ago (-0.3)"
+  },
+  {
+   "id": "conf:ivy-league|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 8 Ivy League schools by street (#1 Columbia 144, tease Harvard (2nd))",
+   "views_mid": 7700,
+   "views_lo": 1182,
+   "views_hi": 50120,
+   "win_rate": 0.47,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + a 15-20 second top-3 cut; same grouping 9d ago (-0.25); teased Harvard 1d ago (-0.3)"
+  },
+  {
+   "id": "conf:acc|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 18 ACC schools by street (#1 Georgia Tech 139, tease Stanford (10th))",
+   "views_mid": 5604,
+   "views_lo": 883,
+   "views_hi": 35520,
+   "win_rate": 0.487,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 8d ago (-0.25); college basketball season (+0.05)"
+  },
+  {
+   "id": "conf:sec|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 16 SEC schools by street (#1 UT Austin 84, tease Alabama (13th))",
+   "views_mid": 5593,
+   "views_lo": 881,
+   "views_hi": 35476,
+   "win_rate": 0.39,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 9d ago (-0.25); teased Alabama 3d ago (-0.3); college basketball season (+0.05)"
+  },
+  {
+   "id": "state:CA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th))",
+   "views_mid": 5545,
+   "views_lo": 1562,
+   "views_hi": 19669,
+   "win_rate": 0.63,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X')"
+  },
+  {
+   "id": "state:FL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Florida universities by street (#1 Florida 70, tease Florida State (2nd))",
+   "views_mid": 5342,
+   "views_lo": 875,
+   "views_hi": 32569,
+   "win_rate": 0.453,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 7d ago (-0.25)"
+  },
+  {
+   "id": "state:PA|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Pennsylvania universities by street (#1 Drexel 70, tease Penn (2nd))",
+   "views_mid": 5318,
+   "views_lo": 870,
+   "views_hi": 32473,
+   "win_rate": 0.337,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 7d ago (-0.25); teased Penn 7d ago (-0.3)"
+  },
+  {
+   "id": "state:AL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Alabama universities with 10,000+ students by street (#1 UAB 44, tease Alabama (3rd))",
+   "views_mid": 5300,
+   "views_lo": 866,
+   "views_hi": 32407,
+   "win_rate": 0.297,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 3d ago (-0.25); same state in the last 3 days (-0.15); teased Alabama 3d ago (-0.3)"
+  },
+  {
+   "id": "system:uc|mile|part2",
+   "format": "part2",
+   "slot": "experiment",
+   "new": [
+    "part2"
+   ],
+   "what": "part2: All 9 UC campuses by mile (#1 UC Berkeley 428, tease UCLA (2nd))",
+   "views_mid": 4342,
+   "views_lo": 1114,
+   "views_hi": 16906,
+   "win_rate": 0.57,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + grouping by university system (UC, Cal State); + naming the upset in the hook ('Hint: it's not X'); in the news: part 2 of our biggest hit (UC campuses, 17.9K views): within a mile, UCLA jumps from 5th to 2nd (+0.3)"
+  },
+  {
+   "id": "conf:pac12-old|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: The 12 schools of the old Pac-12 by street (#1 UC Berkeley 122, tease Stanford (7th))",
+   "views_mid": 4337,
+   "views_lo": 695,
+   "views_hi": 27037,
+   "win_rate": 0.387,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 2d ago (-0.25)"
+  },
+  {
+   "id": "conf:big-ten|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 18 Big Ten schools by street (#1 Ohio State 107, tease Northwestern (11th))",
+   "views_mid": 4296,
+   "views_lo": 687,
+   "views_hi": 26821,
+   "win_rate": 0.393,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 11d ago (-0.25); college basketball season (+0.05)"
+  },
+  {
+   "id": "conf:ivy-league|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "metric_street"
+   ],
+   "what": "countdown: All 8 Ivy League schools by street (#1 Columbia 144, tease Harvard (2nd))",
+   "views_mid": 3881,
+   "views_lo": 936,
+   "views_hi": 16072,
+   "win_rate": 0.223,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); same grouping 9d ago (-0.25); teased Harvard 1d ago (-0.3)"
+  },
+  {
+   "id": "state:MI|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Michigan universities with 10,000+ students by street (#1 Michigan State 70, tease Michigan (2nd))",
+   "views_mid": 3504,
+   "views_lo": 594,
+   "views_hi": 20621,
+   "win_rate": 0.29,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 4d ago (-0.25)"
+  },
+  {
+   "id": "state:NC|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: North Carolina universities with 10,000+ students by street (#1 UNC Chapel Hill 105, tease Duke (6th))",
+   "views_mid": 3483,
+   "views_lo": 590,
+   "views_hi": 20530,
+   "win_rate": 0.29,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 6d ago (-0.25)"
+  },
+  {
+   "id": "state:TX|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Texas universities by street (#1 UT Austin 84, tease Texas A&M (4th))",
+   "views_mid": 3444,
+   "views_lo": 581,
+   "views_hi": 20384,
+   "win_rate": 0.293,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 8d ago (-0.25)"
+  }
+ ]
+}

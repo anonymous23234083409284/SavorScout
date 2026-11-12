@@ -1,0 +1,442 @@
+{
+ "date": "2026-11-13",
+ "videos": [
+  {
+   "id": "tn-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/tn",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "vanderbilt-university",
+     "text": "Which big Tennessee university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Tennessee.",
+     "say": "Which Tennessee university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Tennessee universities with 10,000+ students",
+     "rows": [
+      [
+       "6",
+       "Middle Tennessee State",
+       "9"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Middle Tennessee State, with just 9."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "East Tennessee State",
+     "count": 18,
+     "sub": "Busiest food street: State of Franklin Rd",
+     "map": "east-tennessee-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: East Tennessee State. 18. Busiest food street: State of Franklin Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Tennessee",
+     "count": 21,
+     "sub": "Busiest food street: Cumberland Ave",
+     "map": "the-university-of-tennessee-knoxville",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Tennessee. 21. Busiest food street: Cumberland Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Memphis",
+     "count": 26,
+     "sub": "Busiest food street: S Highland St",
+     "map": "university-of-memphis",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Memphis. 26. Busiest food street: Highland Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UT Chattanooga",
+     "count": 28,
+     "sub": "Busiest food street: Market St",
+     "map": "the-university-of-tennessee-chattanooga",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: UT Chattanooga. 28. Busiest food street: Market Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Vanderbilt",
+     "count": 129,
+     "sub": "Busiest food street: W End Ave",
+     "map": "vanderbilt-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Vanderbilt. 129. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Tennessee school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:TN",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:TN|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-127"
+  },
+  {
+   "id": "uc-part2",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/university-of-california/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley@mile",
+     "text": "Part 2: which UC campus has the most *restaurants within a mile?*",
+     "sub": "Hint: UCLA moves up.",
+     "say": "You asked for part two. Which UC campus has the most restaurants within a mile?"
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "All 9 UC campuses",
+     "rows": [
+      [
+       "9",
+       "UC Santa Cruz",
+       "21"
+      ],
+      [
+       "8",
+       "UC Santa Barbara",
+       "38"
+      ],
+      [
+       "7",
+       "UC Merced",
+       "42"
+      ],
+      [
+       "6",
+       "UC Irvine",
+       "55"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UC Santa Cruz, with 21. UC Santa Barbara, 38. UC Merced, 42. UC Irvine, 55."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UC San Diego",
+     "count": 84,
+     "sub": "Within a mile of campus · 29 within a 10-minute walk",
+     "map": "university-of-california-san-diego@mile",
+     "label": "places to eat within a mile",
+     "say": "Number 5: UC San Diego. 84."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UC Riverside",
+     "count": 100,
+     "sub": "Within a mile of campus · 12 within a 10-minute walk",
+     "map": "university-of-california-riverside@mile",
+     "label": "places to eat within a mile",
+     "say": "Number 4: UC Riverside. 100. Up from sixth last time."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UC Davis",
+     "count": 149,
+     "sub": "Within a mile of campus · 43 within a 10-minute walk",
+     "map": "university-of-california-davis@mile",
+     "label": "places to eat within a mile",
+     "say": "Number 3: UC Davis. 149."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UCLA",
+     "count": 164,
+     "sub": "Within a mile of campus · 14 within a 10-minute walk",
+     "map": "university-of-california-los-angeles@mile",
+     "label": "places to eat within a mile",
+     "say": "Number 2: UCLA. 164. Up from fifth last time."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 428,
+     "sub": "Within a mile of campus · 277 within a 10-minute walk",
+     "map": "university-of-california-berkeley@mile",
+     "label": "places to eat within a mile",
+     "say": "And number one, by a mile: UC Berkeley. 428. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another UC.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which system should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "system:uc",
+    "metric": "mile",
+    "format": "part2",
+    "candidate": "system:uc|mile|part2",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-130"
+  },
+  {
+   "id": "ky-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ky",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-kentucky",
+     "text": "Which big Kentucky university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Louisville.",
+     "say": "Which Kentucky university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Kentucky universities with 10,000+ students",
+     "rows": [
+      [
+       "7",
+       "Northern Kentucky",
+       "4"
+      ],
+      [
+       "6",
+       "Cumberlands",
+       "9"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Northern Kentucky, with just 4. Pack a lunch. Cumberlands, 9."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Eastern Kentucky",
+     "count": 15,
+     "sub": "Tied with Campbellsville for 4th. Busiest food street: Eastern Bypass",
+     "map": "eastern-kentucky-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Eastern Kentucky. 15."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Campbellsville",
+     "count": 15,
+     "sub": "Tied with Eastern Kentucky for 4th. Busiest food street: E Broadway St",
+     "map": "campbellsville-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Campbellsville. 15."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Western Kentucky",
+     "count": 19,
+     "sub": "Busiest food street: Russellville Rd",
+     "map": "western-kentucky-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Western Kentucky. 19. Busiest food street: Russellville Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Louisville",
+     "count": 27,
+     "sub": "Busiest food street: 2nd St",
+     "map": "university-of-louisville",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Louisville. 27. Busiest food street: 2nd Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Kentucky",
+     "count": 69,
+     "sub": "Busiest food street: Broadway",
+     "map": "university-of-kentucky",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Kentucky. 69. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Kentucky school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:KY",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:KY|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-133"
+  },
+  {
+   "id": "unc-duke-rivalry",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/university-of-north-carolina-at-chapel-hill/",
+   "scenes": [
+    {
+     "beats": 7,
+     "style": "hook",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "text": "UNC Chapel Hill vs Duke: which campus has more *restaurants within a 10-minute walk?*",
+     "sub": "Comment your guess before it shows.",
+     "say": "UNC Chapel Hill vs Duke: which campus has more restaurants within a 10-minute walk? Guess before it shows."
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "",
+     "text": "Duke",
+     "count": 9,
+     "sub": "Busiest food street: Erwin Rd",
+     "map": "duke-university",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Duke: just 9."
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "UNC Chapel Hill",
+     "count": 87,
+     "sub": "Busiest food street: Franklin St",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "UNC Chapel Hill: 87."
+    },
+    {
+     "beats": 8,
+     "style": "cap",
+     "text": "UNC Chapel Hill has more than *9 times as many.*",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "UNC Chapel Hill has more than 9 times as many."
+    },
+    {
+     "beats": 7,
+     "style": "cap",
+     "text": "Busiest food streets: *Franklin St* (105 places) vs. *Erwin Rd* (31)",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "The busiest food streets: Franklin Street, with 105 places, against Erwin Road, with 31."
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Which rivalry should we settle next? *Comment below.*",
+     "sub": "Send this to a Duke fan.",
+     "reuse": 3,
+     "say": "Which rivalry should we settle next? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "rivalry:university-of-north-carolina-at-chapel-hill|duke-university",
+    "metric": "w",
+    "format": "rivalry",
+    "candidate": "rivalry:university-of-north-carolina-at-chapel-hill|duke-university",
+    "style": {
+     "punch": true,
+     "loop_end": false,
+     "hook_beats": 7,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-136"
+  }
+ ]
+}

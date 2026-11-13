@@ -30,7 +30,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Montclair State, with just 8."
+     "say": "Dead last: Montclair State, with just 8.",
+     "clip": 5957469
     },
     {
      "beats": 7,
@@ -150,7 +151,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Dartmouth, with 19. Cornell, 30. Brown, 34."
+     "say": "Dead last: Dartmouth, with 19. Cornell, 30. Brown, 34.",
+     "clip": 6145427
     },
     {
      "beats": 7,
@@ -285,7 +287,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Yeshiva, with 158. City College, 213. And Columbia? Only ninth."
+     "say": "Dead last: Yeshiva, with 158. City College, 213. And Columbia? Only ninth.",
+     "clip": 7683398
     },
     {
      "beats": 7,
@@ -413,7 +416,7 @@
      "say": "Number 3: Penn State. College Avenue, with 50 places."
     },
     {
-     "beats": 7,
+     "beats": 9,
      "style": "rank",
      "num": "2",
      "text": "Penn",
@@ -424,7 +427,7 @@
      "say": "Number 2: Penn. Walnut Street, with 51 places."
     },
     {
-     "beats": 8,
+     "beats": 10,
      "style": "rank",
      "num": "1",
      "text": "Drexel",
@@ -435,7 +438,7 @@
      "say": "And number one: Drexel. Chestnut Street, with 70 places."
     },
     {
-     "beats": 6,
+     "beats": 7,
      "style": "end",
      "text": "Did we rank your school right? *Comment below.*",
      "sub": "Send this to your friend at another Pennsylvania school.",
@@ -444,7 +447,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?",
+     "clip": 5957474
     }
    ],
    "lab": {

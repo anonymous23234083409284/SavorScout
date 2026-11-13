@@ -1328,7 +1328,8 @@ def cmd_maps(date):
         for s in v["scenes"]:
             slug = s.get("map")
             base = (slug or "").split("@")[0]
-            if slug and slug not in seen and base in CAMP:
+            wants_street = street_metric and s.get("style") == "rank"     # a street video's hook shares #1's map
+            if slug and (slug not in seen or (wants_street and '"' not in seen[slug])) and base in CAMP:
                 street = (SCENE.get(base, {}).get("st") or [[None]])[0][0] if street_metric and s.get("style") == "rank" else None
                 seen[slug] = f"{slug} {CAMP[base]['lat']} {CAMP[base]['lng']}" + (f' "{street}"' if street else " --mile" if slug.endswith("@mile") else "")
     print("\n".join(seen.values()))

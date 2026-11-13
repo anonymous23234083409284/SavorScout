@@ -1,48 +1,49 @@
 # What the lab has learned
 
-Learned from **39 TikToks** posted 2026-10-31 to 2026-11-11. The model explains about 85% of the differences in views (in-sample, so treat it as a guide). Multipliers below are on views; "clear" means the data shows it repeatedly, "likely" means it leans that way, "unclear" means not enough evidence yet.
+Learned from **41 TikToks** posted 2026-10-31 to 2026-11-12. The model explains about 85% of the differences in views (in-sample, so treat it as a guide). Multipliers below are on views; "clear" means the data shows it repeatedly, "likely" means it leans that way, "unclear" means not enough evidence yet.
 
-**Last 7 days:** 24 videos, median 1,199 views, 14 of 24 at 1,000+.
+**Last 7 days:** 24 videos, median 1,266 views, 14 of 24 at 1,000+.
 
 ## What drives views
 
-- **Countdown vs. 'how to tell' tip: x6.6 views** (clear)
-- a countdown of named schools (vs. the first week's videos): **x11.75** views (clear, seen in 19 videos)
-- a 'how to tell' tip (vs. the first week's videos): **x1.78** views (likely, seen in 6 videos)
-- more famous schools on screen (+1 tier): **x2.33** views (likely, seen in 19 videos)
-- grouping by university system (UC, Cal State): **x2.02** views (likely, seen in 2 videos)
-- naming the upset in the hook ('Hint: it's not X'): **x1.63** views (unclear, seen in 15 videos)
-- posting on a weekend: **x1.21** views (unclear, seen in 6 videos)
-- one more school in the ranking: **x0.98** views (unclear, seen in 19 videos)
-- a bigger lead for #1 (x2): **x1.08** views (unclear, seen in 19 videos)
-- grouping by conference (vs. state): **x0.93** views (unclear, seen in 6 videos)
-- posting at 6 or 9 PM (vs. noon or 3 PM): **x0.98** views (unclear, seen in 19 videos)
-- a more famous school named in the tease (+1 tier): **x1.01** views (unclear, seen in 19 videos)
+- **Countdown vs. 'how to tell' tip: x6.8 views** (clear)
+- a countdown of named schools (vs. the first week's videos): **x11.15** views (clear, seen in 20 videos)
+- more famous schools on screen (+1 tier): **x3.19** views (likely, seen in 20 videos)
+- grouping by university system (UC, Cal State): **x2.15** views (likely, seen in 2 videos)
+- a 'how to tell' tip (vs. the first week's videos): **x1.64** views (likely, seen in 7 videos)
+- a spoken voiceover (vs. music only): **x2.35** views (likely, seen in 1 videos)
+- naming the upset in the hook ('Hint: it's not X'): **x1.66** views (unclear, seen in 17 videos)
+- posting on a weekend: **x1.27** views (unclear, seen in 6 videos)
+- posting at 6 or 9 PM (vs. noon or 3 PM): **x0.88** views (unclear, seen in 20 videos)
+- grouping by conference (vs. state): **x0.80** views (unclear, seen in 4 videos)
+- a bigger lead for #1 (x2): **x0.95** views (unclear, seen in 20 videos)
+- one more school in the ranking: **x0.99** views (unclear, seen in 20 videos)
+- a more famous school named in the tease (+1 tier): **x1.01** views (unclear, seen in 20 videos)
 
 ## What drives watch time
 
-- a countdown of named schools (vs. the first week's videos): **+1.6 s** (clear)
-- grouping by conference (vs. state): **+0.7 s** (likely)
+- a countdown of named schools (vs. the first week's videos): **+1.7 s** (clear)
 - one more school in the ranking: **+0.1 s** (likely)
-- grouping by university system (UC, Cal State): **+0.4 s** (unclear)
+- grouping by conference (vs. state): **+0.5 s** (unclear)
+- grouping by university system (UC, Cal State): **+0.5 s** (unclear)
 
 ## What drives shares
 
-- a 'how to tell' tip (vs. the first week's videos): **x0.51** (clear)
-- grouping by university system (UC, Cal State): **x2.27** (clear)
-- grouping by conference (vs. state): **x2.03** (likely)
-- one more school in the ranking: **x1.07** (likely)
-- a bigger lead for #1 (x2): **x1.31** (likely)
+- a 'how to tell' tip (vs. the first week's videos): **x0.53** (clear)
+- a spoken voiceover (vs. music only): **x3.31** (clear)
+- one more school in the ranking: **x1.10** (clear)
+- grouping by university system (UC, Cal State): **x2.24** (likely)
+- grouping by conference (vs. state): **x1.64** (likely)
 
 ## What drives completion (share of the video watched)
 
-Median completion: **22%** of the video, across 35 videos with a known length.
+Median completion: **22%** of the video, across 37 videos with a known length.
 
-- a countdown of named schools (vs. the first week's videos): **+18.4 points** (likely)
-- a 'how to tell' tip (vs. the first week's videos): **+7.4 points** (unclear)
-- grouping by university system (UC, Cal State): **+6.9 points** (unclear)
-- posting on a weekend: **-2.2 points** (unclear)
-- naming the upset in the hook ('Hint: it's not X'): **+1.3 points** (unclear)
+- a countdown of named schools (vs. the first week's videos): **+18.5 points** (likely)
+- a 'how to tell' tip (vs. the first week's videos): **+7.1 points** (unclear)
+- grouping by university system (UC, Cal State): **+6.8 points** (unclear)
+- posting on a weekend: **-2.0 points** (unclear)
+- a spoken voiceover (vs. music only): **+2.5 points** (unclear)
 
 ## What works in the niche: TikTok (180 videos, 161 accounts, 2026-11-11)
 
@@ -80,5 +81,7 @@ The lab starts from these (both platforms combined, the more certain one countin
 - 2026-11-12 g_city: countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Rice (4th)) -> **posted** (waiting for 3 days of numbers; predicted 2,787)
 - 2026-11-12 g_famous: countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th)) -> **posted** (waiting for 3 days of numbers; predicted 4,637)
 - 2026-11-12 voice: every video read aloud from frame 0 (Kokoro voice), the hook map pushing in, first entry at ~4.5 s instead of 5.7 s, last place called out, #1's margin spoken -> **posted** (waiting for 3 days of numbers; predicted ?)
+- 2026-11-13 part2: part2: All 9 UC campuses by mile (#1 UC Berkeley 428, tease UCLA (2nd)) -> **posted** (waiting for 3 days of numbers; predicted 4,342)
+- 2026-11-13 rivalry: rivalry: UNC vs Duke, restaurants within a 10-minute walk (87 vs 9) -> **posted** (waiting for 3 days of numbers; predicted ?)
 
 _Written by social/pipeline/lab.py. Regenerated every daily run._

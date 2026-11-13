@@ -1,0 +1,466 @@
+{
+ "date": "2026-11-14",
+ "videos": [
+  {
+   "id": "nj-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/nj",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "rutgers-university-new-brunswick",
+     "text": "Which big New Jersey university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which New Jersey university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "New Jersey universities with 10,000+ students",
+     "rows": [
+      [
+       "6",
+       "Montclair State",
+       "8"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Montclair State, with just 8."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Kean",
+     "count": 18,
+     "sub": "Busiest food street: Morris Ave",
+     "map": "kean-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Kean. 18. Busiest food street: Morris Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Rowan",
+     "count": 32,
+     "sub": "Busiest food street: Delsea Dr",
+     "map": "rowan-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Rowan. 32. Busiest food street: Delsea Drive."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "NJIT",
+     "count": 104,
+     "sub": "Busiest food street: Market St",
+     "map": "new-jersey-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: NJIT. 104. Busiest food street: Market Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Rutgers-Newark",
+     "count": 152,
+     "sub": "Busiest food street: Market St",
+     "map": "rutgers-university-newark",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Rutgers-Newark. 152. Busiest food street: Market Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Rutgers",
+     "count": 182,
+     "sub": "Busiest food street: Easton Ave",
+     "map": "rutgers-university-new-brunswick",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Rutgers. 182."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another New Jersey school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:NJ",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:NJ|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-103"
+  },
+  {
+   "id": "ivy-league-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/ivy-league/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "text": "Which Ivy League school has the busiest *food street?*",
+     "sub": "Hint: it's not Harvard.",
+     "say": "Which Ivy League school has the busiest food street?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "All 8 Ivy League schools",
+     "rows": [
+      [
+       "8",
+       "Dartmouth",
+       "19"
+      ],
+      [
+       "7",
+       "Cornell",
+       "30"
+      ],
+      [
+       "6",
+       "Brown",
+       "34"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Dartmouth, with 19. Cornell, 30. Brown, 34."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Yale",
+     "count": 41,
+     "sub": "Within a mile of campus",
+     "map": "yale-university",
+     "label": "places to eat on Chapel St",
+     "say": "Number 5: Yale. Chapel Street, with 41 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Penn",
+     "count": 51,
+     "sub": "Within a mile of campus",
+     "map": "university-of-pennsylvania",
+     "label": "places to eat on Walnut St",
+     "say": "Number 4: Penn. Walnut Street, with 51 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Princeton",
+     "count": 56,
+     "sub": "Within a mile of campus",
+     "map": "princeton-university",
+     "label": "places to eat on Nassau St",
+     "say": "Number 3: Princeton. Nassau Street, with 56 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Harvard",
+     "count": 93,
+     "sub": "Within a mile of campus",
+     "map": "harvard-university",
+     "label": "places to eat on Massachusetts Ave",
+     "say": "Number 2: Harvard. Massachusetts Avenue, with 93 places."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Columbia",
+     "count": 144,
+     "sub": "Within a mile of campus",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "label": "places to eat on Broadway",
+     "say": "And number one: Columbia. Broadway, with 144 places."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Ivy League school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which conference should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "conf:ivy-league",
+    "metric": "street",
+    "format": "countdown",
+    "candidate": "conf:ivy-league|street|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-106"
+  },
+  {
+   "id": "nyc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ny",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "touro-university",
+     "text": "Which college in New York has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Columbia.",
+     "say": "Which college in New York has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "New York colleges with 5,000+ students",
+     "rows": [
+      [
+       "11",
+       "Yeshiva",
+       "158"
+      ],
+      [
+       "10",
+       "City College",
+       "213"
+      ],
+      [
+       "9",
+       "Columbia",
+       "214"
+      ],
+      [
+       "8",
+       "Hunter College",
+       "388"
+      ],
+      [
+       "7",
+       "John Jay",
+       "467"
+      ],
+      [
+       "6",
+       "Pace",
+       "803"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Yeshiva, with 158. City College, 213. And Columbia? Only ninth."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Baruch",
+     "count": 1108,
+     "sub": "Busiest food street: 3rd Ave",
+     "map": "cuny-bernard-m-baruch-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Baruch. 1,108. Busiest food street: 3rd Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "FIT",
+     "count": 1146,
+     "sub": "Busiest food street: 8th Ave",
+     "map": "fashion-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: FIT. 1,146. Busiest food street: 8th Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "The New School",
+     "count": 1377,
+     "sub": "Busiest food street: 1st Ave",
+     "map": "the-new-school",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: The New School. 1,377. Busiest food street: 1st Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "NYU",
+     "count": 1462,
+     "sub": "Busiest food street: 1st Ave",
+     "map": "new-york-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: NYU. 1,462. Busiest food street: 1st Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Touro",
+     "count": 1478,
+     "sub": "Busiest food street: 9th Ave",
+     "map": "touro-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Touro. 1,478."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another New York college.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "city:New York-NY",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "city:New York-NY|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-109"
+  },
+  {
+   "id": "pa-part2",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/pennsylvania/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "drexel-university",
+     "text": "Part 2: which big Pennsylvania university has the busiest *food street?*",
+     "sub": "Hint: Penn moves up.",
+     "say": "You asked for part two. Which Pennsylvania university has the busiest food street?"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Pitt",
+     "count": 44,
+     "sub": "Within a mile of campus",
+     "map": "university-of-pittsburgh-pittsburgh-campus",
+     "label": "places to eat on Forbes Ave",
+     "say": "Dead last: Pitt. Forbes Avenue, with 44 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Temple",
+     "count": 47,
+     "sub": "Within a mile of campus",
+     "map": "temple-university",
+     "label": "places to eat on N Broad St",
+     "say": "Number 4: Temple. Broad Street, with 47 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Penn State",
+     "count": 50,
+     "sub": "Within a mile of campus",
+     "map": "pennsylvania-state-university-main-campus",
+     "label": "places to eat on College Ave",
+     "say": "Number 3: Penn State. College Avenue, with 50 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Penn",
+     "count": 51,
+     "sub": "Within a mile of campus",
+     "map": "university-of-pennsylvania",
+     "label": "places to eat on Walnut St",
+     "say": "Number 2: Penn. Walnut Street, with 51 places."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Drexel",
+     "count": 70,
+     "sub": "Within a mile of campus",
+     "map": "drexel-university",
+     "label": "places to eat on Chestnut St",
+     "say": "And number one: Drexel. Chestnut Street, with 70 places."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Pennsylvania school.",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:PA",
+    "metric": "street",
+    "format": "part2",
+    "candidate": "state:PA|street|part2",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   },
+   "track": "house-112"
+  }
+ ]
+}

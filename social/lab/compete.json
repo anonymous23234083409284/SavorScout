@@ -1,5 +1,5 @@
 {
- "date": "2026-11-12",
+ "date": "2026-11-13",
  "accounts": [
   {
    "handle": "nirbassa",
@@ -381,7 +381,7 @@
  },
  "vs_ours": {
   "first_cut_s": {
-   "ours": 5.7,
+   "ours": 4.75,
    "their_hits": [
     1.6,
     3.65,
@@ -397,7 +397,7 @@
    ]
   },
   "median_shot_s": {
-   "ours": 3.88,
+   "ours": 5.0,
    "their_hits": [
     2.895,
     3.85,
@@ -413,7 +413,7 @@
    ]
   },
   "zoom_in_share": {
-   "ours": 0.061,
+   "ours": 0.046,
    "their_hits": [
     0.286,
     0.319,
@@ -421,7 +421,7 @@
    ]
   },
   "loop_similarity": {
-   "ours": 0.163,
+   "ours": 0.182,
    "their_hits": [
     0.355,
     0.414,
@@ -429,7 +429,7 @@
    ]
   },
   "duration_s": {
-   "ours": 33.12,
+   "ours": 37.26,
    "their_hits": [
     54.523,
     62.46,
@@ -453,11 +453,11 @@
    "n": 43
   },
   "ours": {
-   "shares": 2.8,
-   "likes": 32.5,
-   "comments": 0.6,
-   "n": 29
+   "shares": 2.1,
+   "likes": 29.5,
+   "comments": 0.4,
+   "n": 32
   }
  },
- "ours_from": "2026-11-12"
+ "ours_from": "2026-11-13"
 }

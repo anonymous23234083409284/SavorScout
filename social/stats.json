@@ -1,5 +1,5 @@
 {
- "pulled": "2026-11-12T18:25+00:00",
+ "pulled": "2026-11-13T18:28+00:00",
  "posts": [
   {
    "service": "twitter",
@@ -47,7 +47,7 @@
    "sent": "2026-10-31T17:33:44.391Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7702886000984411405?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "5 pizza spots you can walk to from UT Austin \ud83c\udf55 The closest is a 4-minute walk from campus.",
-   "views": 131,
+   "views": 133,
    "avg_watch_s": 1.38,
    "shares": 0,
    "likes": 1,
@@ -55,11 +55,11 @@
    "metrics": {
     "Reactions": 1,
     "Comments": 0,
-    "Eng. Rate": 0.76,
-    "Video Views": 131,
+    "Eng. Rate": 0.75,
+    "Video Views": 133,
     "Shares": 0,
-    "Reach": 115,
-    "Watch Time (min)": 3.02,
+    "Reach": 116,
+    "Watch Time (min)": 3.03,
     "Avg. Watch Time (sec)": 1.38
    }
   },
@@ -151,8 +151,8 @@
    "sent": "2026-10-31T23:04:42.018Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7702971557542513933?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "5 Mexican spots you can walk to from USC \ud83c\udf2e All within a 16-minute walk of campus. Save thi",
-   "views": 137,
-   "avg_watch_s": 2.63,
+   "views": 138,
+   "avg_watch_s": 2.61,
    "shares": 0,
    "likes": 0,
    "comments": 0,
@@ -160,11 +160,11 @@
     "Reactions": 0,
     "Comments": 0,
     "Eng. Rate": 0,
-    "Video Views": 137,
+    "Video Views": 138,
     "Shares": 0,
-    "Reach": 119,
-    "Watch Time (min)": 5.92,
-    "Avg. Watch Time (sec)": 2.63
+    "Reach": 121,
+    "Watch Time (min)": 5.95,
+    "Avg. Watch Time (sec)": 2.61
    }
   },
   {
@@ -417,20 +417,20 @@
    "sent": "2026-11-02T01:56:43.061Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7703386709668547854?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Big Ten schools ranked by how much food you can walk to \ud83c\udf55 We counted every place to eat wi",
-   "views": 1632,
-   "avg_watch_s": 12.33,
-   "shares": 42,
-   "likes": 44,
+   "views": 1782,
+   "avg_watch_s": 12.35,
+   "shares": 43,
+   "likes": 49,
    "comments": 2,
    "metrics": {
-    "Reactions": 44,
+    "Reactions": 49,
     "Comments": 2,
-    "Eng. Rate": 5.39,
-    "Video Views": 1632,
-    "Shares": 42,
-    "Reach": 1112,
-    "Watch Time (min)": 279.17,
-    "Avg. Watch Time (sec)": 12.33
+    "Eng. Rate": 5.27,
+    "Video Views": 1782,
+    "Shares": 43,
+    "Reach": 1292,
+    "Watch Time (min)": 325.27,
+    "Avg. Watch Time (sec)": 12.35
    }
   },
   {
@@ -708,7 +708,7 @@
    "link": "https://www.tiktok.com/@wfoodfinds/video/7703995341460344077?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Happy National Sandwich Day \ud83e\udd6a How many of these does your go-to sandwich shop have? Save t",
    "views": 137,
-   "avg_watch_s": 3.2,
+   "avg_watch_s": 3.13,
    "shares": 0,
    "likes": 0,
    "comments": 0,
@@ -719,8 +719,8 @@
     "Video Views": 137,
     "Shares": 0,
     "Reach": 124,
-    "Watch Time (min)": 7.35,
-    "Avg. Watch Time (sec)": 3.2
+    "Watch Time (min)": 7.2,
+    "Avg. Watch Time (sec)": 3.13
    }
   },
   {
@@ -730,7 +730,7 @@
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704043550580690190?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Tonkotsu, shoyu, miso or shio? \ud83c\udf5c Here's what each ramen broth actually is. Save this for y",
    "views": 162,
-   "avg_watch_s": 2.97,
+   "avg_watch_s": 3.01,
    "shares": 0,
    "likes": 4,
    "comments": 0,
@@ -740,9 +740,9 @@
     "Eng. Rate": 2.47,
     "Video Views": 162,
     "Shares": 0,
-    "Reach": 147,
-    "Watch Time (min)": 8.17,
-    "Avg. Watch Time (sec)": 2.97
+    "Reach": 148,
+    "Watch Time (min)": 8.33,
+    "Avg. Watch Time (sec)": 3.01
    }
   },
   {
@@ -832,7 +832,7 @@
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704087892842286349?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Why does picking a restaurant for a big group take forever? Four fixes, plus the one-veto ",
    "views": 110,
-   "avg_watch_s": 2.16,
+   "avg_watch_s": 2.05,
    "shares": 0,
    "likes": 1,
    "comments": 0,
@@ -843,8 +843,8 @@
     "Video Views": 110,
     "Shares": 0,
     "Reach": 101,
-    "Watch Time (min)": 4.07,
-    "Avg. Watch Time (sec)": 2.16
+    "Watch Time (min)": 3.87,
+    "Avg. Watch Time (sec)": 2.05
    }
   },
   {
@@ -934,7 +934,7 @@
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704136080890629389?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "How many places to eat are within a 10-minute walk of your campus? \ud83c\udfd9\ufe0f The top six are all ",
    "views": 488,
-   "avg_watch_s": 7.54,
+   "avg_watch_s": 7.43,
    "shares": 1,
    "likes": 29,
    "comments": 1,
@@ -944,31 +944,9 @@
     "Eng. Rate": 6.35,
     "Video Views": 488,
     "Shares": 1,
-    "Reach": 417,
-    "Watch Time (min)": 62.2,
-    "Avg. Watch Time (sec)": 7.54
-   }
-  },
-  {
-   "service": "tiktok",
-   "what": "ivy-walkable",
-   "sent": "2026-11-04T17:34:29.765Z",
-   "link": "https://www.tiktok.com/@wfoodfinds/video/7704368057279466766?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "text": "Columbia is in New York City and it's still not No. 1 \ud83d\uddfd Which Ivy has the most restaurants",
-   "views": 3998,
-   "avg_watch_s": 9.69,
-   "shares": 27,
-   "likes": 130,
-   "comments": 3,
-   "metrics": {
-    "Reactions": 130,
-    "Comments": 3,
-    "Eng. Rate": 4,
-    "Video Views": 3998,
-    "Shares": 27,
-    "Reach": 3241,
-    "Watch Time (min)": 642.88,
-    "Avg. Watch Time (sec)": 9.69
+    "Reach": 418,
+    "Watch Time (min)": 61.27,
+    "Avg. Watch Time (sec)": 7.43
    }
   },
   {
@@ -991,46 +969,6 @@
     "Reach": 88,
     "Watch Time (min)": 6.1,
     "Avg. Watch Time (sec)": 3.82
-   }
-  },
-  {
-   "service": "twitter",
-   "what": "x-ivy",
-   "sent": "2026-11-04T21:44:02.482Z",
-   "link": "https://x.com/2088807133093548033/status/2118096957650461060",
-   "text": "Columbia is in New York City, and it's still not #1.",
-   "views": 3,
-   "avg_watch_s": null,
-   "shares": 0,
-   "likes": 0,
-   "comments": 1,
-   "metrics": {
-    "Reactions": 0,
-    "Comments": 1,
-    "Eng. Rate": 33.33,
-    "Reposts": 0,
-    "Impressions": 3,
-    "Clicks": 0
-   }
-  },
-  {
-   "service": "threads",
-   "what": "t-ivy",
-   "sent": "2026-11-04T22:13:18.831Z",
-   "link": "https://www.threads.com/@campuseatshq/post/DfVgKlaoKZa",
-   "text": "Columbia is in New York City, and it's still not the Ivy with the most restaurants within ",
-   "views": 431,
-   "avg_watch_s": null,
-   "shares": 0,
-   "likes": 2,
-   "comments": 1,
-   "metrics": {
-    "Reactions": 2,
-    "Comments": 1,
-    "Eng. Rate": 0.7,
-    "Views": 431,
-    "Quotes": 0,
-    "Reposts": 0
    }
   },
   {
@@ -1074,74 +1012,12 @@
    }
   },
   {
-   "service": "tiktok",
-   "what": "sec-walkable",
-   "sent": "2026-11-04T23:24:42.825Z",
-   "link": "https://www.tiktok.com/@wfoodfinds/video/7704461066117336333?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
-   "text": "Which SEC school can walk to the most restaurants? \ud83c\udfc8 We counted every place to eat within ",
-   "views": 1386,
-   "avg_watch_s": 10.4,
-   "shares": 17,
-   "likes": 47,
-   "comments": 1,
-   "metrics": {
-    "Reactions": 47,
-    "Comments": 1,
-    "Eng. Rate": 4.69,
-    "Video Views": 1386,
-    "Shares": 17,
-    "Reach": 1001,
-    "Watch Time (min)": 234.3,
-    "Avg. Watch Time (sec)": 10.4
-   }
-  },
-  {
-   "service": "twitter",
-   "what": "x-sec",
-   "sent": "2026-11-04T23:43:02.477Z",
-   "link": "https://x.com/2088807133093548033/status/2118126904196698444",
-   "text": "Which SEC school has the most restaurants within a 10-minute walk of campus?",
-   "views": 2,
-   "avg_watch_s": null,
-   "shares": 0,
-   "likes": 0,
-   "comments": 1,
-   "metrics": {
-    "Reactions": 0,
-    "Comments": 1,
-    "Eng. Rate": 50,
-    "Reposts": 0,
-    "Impressions": 2,
-    "Clicks": 0
-   }
-  },
-  {
-   "service": "threads",
-   "what": "t-sec",
-   "sent": "2026-11-05T00:12:18.919Z",
-   "link": "https://www.threads.com/@campuseatshq/post/DfVtyNyjTMF",
-   "text": "Which SEC school can walk to the most food? We counted every place to eat within a 10-minu",
-   "views": 12,
-   "avg_watch_s": null,
-   "shares": 0,
-   "likes": 0,
-   "comments": 1,
-   "metrics": {
-    "Reactions": 0,
-    "Comments": 1,
-    "Eng. Rate": 8.33,
-    "Views": 12,
-    "Quotes": 0,
-    "Reposts": 0
-   }
-  },
-  {
    "service": "twitter",
    "what": "x-dumplings",
    "sent": "2026-11-05T00:36:03.499Z",
    "link": "https://x.com/2088807133093548033/status/2118140245338210533",
    "text": "How to tell whether a dumpling place makes its own dumplings, before you order:",
-   "views": 2,
+   "views": 3,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -1149,9 +1025,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 50,
+    "Eng. Rate": 33.33,
     "Reposts": 0,
-    "Impressions": 2,
+    "Impressions": 3,
     "Clicks": 0
    }
   },
@@ -1225,20 +1101,20 @@
    "sent": "2026-11-05T20:23:45.041Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704785538594753806?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Which Big 12 school can walk to the most restaurants? \ud83c\udfc8 We counted every place to eat with",
-   "views": 2875,
-   "avg_watch_s": 12.68,
-   "shares": 74,
-   "likes": 233,
+   "views": 2960,
+   "avg_watch_s": 12.66,
+   "shares": 78,
+   "likes": 242,
    "comments": 5,
    "metrics": {
-    "Reactions": 233,
+    "Reactions": 242,
     "Comments": 5,
-    "Eng. Rate": 10.85,
-    "Video Views": 2875,
-    "Shares": 74,
-    "Reach": 2296,
-    "Watch Time (min)": 617.38,
-    "Avg. Watch Time (sec)": 12.68
+    "Eng. Rate": 10.98,
+    "Video Views": 2960,
+    "Shares": 78,
+    "Reach": 2397,
+    "Watch Time (min)": 623.05,
+    "Avg. Watch Time (sec)": 12.66
    }
   },
   {
@@ -1327,20 +1203,20 @@
    "sent": "2026-11-05T23:17:42.442Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704830378435005709?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Which ACC school can walk to the most food? It's not UNC \ud83d\udc40 We counted every place to eat w",
-   "views": 2635,
-   "avg_watch_s": 10.68,
-   "shares": 38,
-   "likes": 157,
+   "views": 2731,
+   "avg_watch_s": 10.67,
+   "shares": 40,
+   "likes": 163,
    "comments": 5,
    "metrics": {
-    "Reactions": 157,
+    "Reactions": 163,
     "Comments": 5,
-    "Eng. Rate": 7.59,
-    "Video Views": 2635,
-    "Shares": 38,
-    "Reach": 1973,
-    "Watch Time (min)": 471.75,
-    "Avg. Watch Time (sec)": 10.68
+    "Eng. Rate": 7.62,
+    "Video Views": 2731,
+    "Shares": 40,
+    "Reach": 2068,
+    "Watch Time (min)": 478.5,
+    "Avg. Watch Time (sec)": 10.67
    }
   },
   {
@@ -1429,20 +1305,20 @@
    "sent": "2026-11-06T02:22:42.371Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7704878059622567182?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Texas A&M didn't make the top 5 \ud83d\udc40 Which big Texas university has the most restaurants with",
-   "views": 1113,
-   "avg_watch_s": 10.26,
+   "views": 1120,
+   "avg_watch_s": 10.3,
    "shares": 2,
    "likes": 44,
    "comments": 0,
    "metrics": {
     "Reactions": 44,
     "Comments": 0,
-    "Eng. Rate": 4.13,
-    "Video Views": 1113,
+    "Eng. Rate": 4.11,
+    "Video Views": 1120,
     "Shares": 2,
-    "Reach": 895,
-    "Watch Time (min)": 190.03,
-    "Avg. Watch Time (sec)": 10.26
+    "Reach": 919,
+    "Watch Time (min)": 191.7,
+    "Avg. Watch Time (sec)": 10.3
    }
   },
   {
@@ -1451,20 +1327,20 @@
    "sent": "2026-11-06T17:22:45.942Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705109835968236813?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "UCLA is 5th \ud83d\udc40 Which UC campus has the most restaurants within a 10-minute walk? Send this ",
-   "views": 19229,
-   "avg_watch_s": 11.29,
-   "shares": 264,
-   "likes": 1009,
+   "views": 20045,
+   "avg_watch_s": 11.32,
+   "shares": 273,
+   "likes": 1057,
    "comments": 11,
    "metrics": {
-    "Reactions": 1009,
+    "Reactions": 1057,
     "Comments": 11,
-    "Eng. Rate": 6.68,
-    "Video Views": 19229,
-    "Shares": 264,
-    "Reach": 14411,
-    "Watch Time (min)": 3656.23,
-    "Avg. Watch Time (sec)": 11.29
+    "Eng. Rate": 6.69,
+    "Video Views": 20045,
+    "Shares": 273,
+    "Reach": 15573,
+    "Watch Time (min)": 3822.05,
+    "Avg. Watch Time (sec)": 11.32
    }
   },
   {
@@ -1473,20 +1349,20 @@
    "sent": "2026-11-06T20:18:43.999Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705155260116929805?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Can you tell good pho from bad before you order? \ud83c\udf5c Start with the broth. Save this for you",
-   "views": 358,
-   "avg_watch_s": 8.01,
+   "views": 359,
+   "avg_watch_s": 7.99,
    "shares": 0,
    "likes": 13,
    "comments": 0,
    "metrics": {
     "Reactions": 13,
     "Comments": 0,
-    "Eng. Rate": 3.63,
-    "Video Views": 358,
+    "Eng. Rate": 3.62,
+    "Video Views": 359,
     "Shares": 0,
     "Reach": 339,
-    "Watch Time (min)": 48.3,
-    "Avg. Watch Time (sec)": 8.01
+    "Watch Time (min)": 48.32,
+    "Avg. Watch Time (sec)": 7.99
    }
   },
   {
@@ -1495,7 +1371,7 @@
    "sent": "2026-11-06T21:44:03.082Z",
    "link": "https://x.com/2088807133093548033/status/2118821735776584191",
    "text": "UCLA is 5th.",
-   "views": 11,
+   "views": 12,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 1,
@@ -1503,9 +1379,9 @@
    "metrics": {
     "Reactions": 1,
     "Comments": 1,
-    "Eng. Rate": 27.27,
+    "Eng. Rate": 25,
     "Reposts": 0,
-    "Impressions": 11,
+    "Impressions": 12,
     "Clicks": 0
    }
   },
@@ -1535,7 +1411,7 @@
    "sent": "2026-11-06T22:38:02.556Z",
    "link": "https://x.com/2088807133093548033/status/2118835323253768619",
    "text": "Florida State has more restaurants within a 10-minute walk of campus than UF. By two.",
-   "views": 8,
+   "views": 10,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -1543,9 +1419,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 12.5,
+    "Eng. Rate": 10,
     "Reposts": 0,
-    "Impressions": 8,
+    "Impressions": 10,
     "Clicks": 0
    }
   },
@@ -1575,20 +1451,20 @@
    "sent": "2026-11-06T23:24:42.721Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705202935436725518?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "It's not UF \ud83d\udc40 Which big Florida university has the most restaurants within a 10-minute wal",
-   "views": 2542,
-   "avg_watch_s": 8.27,
+   "views": 2635,
+   "avg_watch_s": 8.26,
    "shares": 9,
-   "likes": 87,
+   "likes": 91,
    "comments": 2,
    "metrics": {
-    "Reactions": 87,
+    "Reactions": 91,
     "Comments": 2,
-    "Eng. Rate": 3.86,
-    "Video Views": 2542,
+    "Eng. Rate": 3.87,
+    "Video Views": 2635,
     "Shares": 9,
-    "Reach": 2038,
-    "Watch Time (min)": 353.43,
-    "Avg. Watch Time (sec)": 8.27
+    "Reach": 2126,
+    "Watch Time (min)": 365.63,
+    "Avg. Watch Time (sec)": 8.26
    }
   },
   {
@@ -1677,20 +1553,20 @@
    "sent": "2026-11-07T02:17:42.488Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705247872924536078?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Pitt and Drexel are tied \ud83d\udc40 Which big Pennsylvania university has the most restaurants with",
-   "views": 5307,
-   "avg_watch_s": 8.59,
-   "shares": 15,
-   "likes": 129,
+   "views": 5444,
+   "avg_watch_s": 8.66,
+   "shares": 16,
+   "likes": 133,
    "comments": 0,
    "metrics": {
-    "Reactions": 129,
+    "Reactions": 133,
     "Comments": 0,
-    "Eng. Rate": 2.71,
-    "Video Views": 5307,
-    "Shares": 15,
-    "Reach": 4354,
-    "Watch Time (min)": 769.93,
-    "Avg. Watch Time (sec)": 8.59
+    "Eng. Rate": 2.74,
+    "Video Views": 5444,
+    "Shares": 16,
+    "Reach": 4492,
+    "Watch Time (min)": 795.7,
+    "Avg. Watch Time (sec)": 8.66
    }
   },
   {
@@ -1699,20 +1575,20 @@
    "sent": "2026-11-07T17:21:44.907Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705480775705087245?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "San Diego State is 4th \ud83d\udc40 Which big Cal State campus has the most restaurants within a 10-m",
-   "views": 2155,
-   "avg_watch_s": 11.79,
-   "shares": 42,
-   "likes": 102,
-   "comments": 3,
+   "views": 2382,
+   "avg_watch_s": 11.77,
+   "shares": 47,
+   "likes": 115,
+   "comments": 4,
    "metrics": {
-    "Reactions": 102,
-    "Comments": 3,
-    "Eng. Rate": 6.82,
-    "Video Views": 2155,
-    "Shares": 42,
-    "Reach": 1603,
-    "Watch Time (min)": 429.73,
-    "Avg. Watch Time (sec)": 11.79
+    "Reactions": 115,
+    "Comments": 4,
+    "Eng. Rate": 6.97,
+    "Video Views": 2382,
+    "Shares": 47,
+    "Reach": 1719,
+    "Watch Time (min)": 474.77,
+    "Avg. Watch Time (sec)": 11.77
    }
   },
   {
@@ -1743,7 +1619,7 @@
    "sent": "2026-11-07T21:43:02.326Z",
    "link": "https://x.com/2088807133093548033/status/2119183868863377538",
    "text": "San Jose State has more restaurants within a 10-minute walk of campus than any other big C",
-   "views": 22,
+   "views": 23,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -1751,9 +1627,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 4.55,
+    "Eng. Rate": 4.35,
     "Reposts": 0,
-    "Impressions": 22,
+    "Impressions": 23,
     "Clicks": 0
    }
   },
@@ -1783,7 +1659,7 @@
    "sent": "2026-11-07T22:41:02.520Z",
    "link": "https://x.com/2088807133093548033/status/2119198465729143283",
    "text": "How to tell a good taqueria before you order:",
-   "views": 3,
+   "views": 5,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -1791,9 +1667,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 33.33,
+    "Eng. Rate": 20,
     "Reposts": 0,
-    "Impressions": 3,
+    "Impressions": 5,
     "Clicks": 0
    }
   },
@@ -1823,20 +1699,20 @@
    "sent": "2026-11-07T23:22:42.093Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705573792252185869?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "UVA is 3rd \ud83d\udc40 Which big Virginia university has the most restaurants within a 10-minute wal",
-   "views": 3605,
-   "avg_watch_s": 7.22,
+   "views": 3691,
+   "avg_watch_s": 7.23,
    "shares": 8,
-   "likes": 58,
+   "likes": 61,
    "comments": 0,
    "metrics": {
-    "Reactions": 58,
+    "Reactions": 61,
     "Comments": 0,
-    "Eng. Rate": 1.83,
-    "Video Views": 3605,
+    "Eng. Rate": 1.87,
+    "Video Views": 3691,
     "Shares": 8,
-    "Reach": 2963,
-    "Watch Time (min)": 437.78,
-    "Avg. Watch Time (sec)": 7.22
+    "Reach": 3052,
+    "Watch Time (min)": 449.12,
+    "Avg. Watch Time (sec)": 7.23
    }
   },
   {
@@ -1845,7 +1721,7 @@
    "sent": "2026-11-07T23:44:02.214Z",
    "link": "https://x.com/2088807133093548033/status/2119214318159905085",
    "text": "VCU has more restaurants within a 10-minute walk of campus than Virginia Tech and UVA comb",
-   "views": 2,
+   "views": 3,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -1853,9 +1729,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 50,
+    "Eng. Rate": 33.33,
     "Reposts": 0,
-    "Impressions": 2,
+    "Impressions": 3,
     "Clicks": 0
    }
   },
@@ -1925,20 +1801,20 @@
    "sent": "2026-11-08T02:19:43.153Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7705619137065798926?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "NC State is 2nd \ud83d\udc40 Which big North Carolina university has the most restaurants within a 10",
-   "views": 3538,
-   "avg_watch_s": 7.17,
-   "shares": 5,
-   "likes": 67,
+   "views": 3703,
+   "avg_watch_s": 7.18,
+   "shares": 6,
+   "likes": 73,
    "comments": 1,
    "metrics": {
-    "Reactions": 67,
+    "Reactions": 73,
     "Comments": 1,
-    "Eng. Rate": 2.06,
-    "Video Views": 3538,
-    "Shares": 5,
-    "Reach": 2983,
-    "Watch Time (min)": 427.48,
-    "Avg. Watch Time (sec)": 7.17
+    "Eng. Rate": 2.16,
+    "Video Views": 3703,
+    "Shares": 6,
+    "Reach": 3064,
+    "Watch Time (min)": 448.33,
+    "Avg. Watch Time (sec)": 7.18
    }
   },
   {
@@ -1947,20 +1823,20 @@
    "sent": "2026-11-09T17:22:48.474Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7706223155643157773?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Ohio State is 2nd \ud83d\udc40 Which big Ohio university has the most restaurants within a 10-minute ",
-   "views": 1224,
-   "avg_watch_s": 10.26,
+   "views": 1356,
+   "avg_watch_s": 10.37,
    "shares": 2,
-   "likes": 23,
+   "likes": 26,
    "comments": 1,
    "metrics": {
-    "Reactions": 23,
+    "Reactions": 26,
     "Comments": 1,
-    "Eng. Rate": 2.12,
-    "Video Views": 1224,
+    "Eng. Rate": 2.14,
+    "Video Views": 1356,
     "Shares": 2,
-    "Reach": 821,
-    "Watch Time (min)": 211.48,
-    "Avg. Watch Time (sec)": 10.26
+    "Reach": 1016,
+    "Watch Time (min)": 236.67,
+    "Avg. Watch Time (sec)": 10.37
    }
   },
   {
@@ -1980,7 +1856,7 @@
     "Eng. Rate": 4.23,
     "Video Views": 260,
     "Shares": 0,
-    "Reach": 224,
+    "Reach": 232,
     "Watch Time (min)": 23.68,
     "Avg. Watch Time (sec)": 5.32
    }
@@ -1991,7 +1867,7 @@
    "sent": "2026-11-09T21:42:02.249Z",
    "link": "https://x.com/2088807133093548033/status/2119908392726655396",
    "text": "Cincinnati has more restaurants within a 10-minute walk of campus than any other big Ohio ",
-   "views": 23,
+   "views": 26,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -1999,9 +1875,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 4.35,
+    "Eng. Rate": 3.85,
     "Reposts": 0,
-    "Impressions": 23,
+    "Impressions": 26,
     "Clicks": 0
    }
   },
@@ -2071,20 +1947,20 @@
    "sent": "2026-11-09T23:21:42.927Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7706315700964560141?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "UGA is 2nd \ud83d\udc40 Which big Georgia university has the most restaurants within a 10-minute walk",
-   "views": 1302,
-   "avg_watch_s": 8.55,
+   "views": 1356,
+   "avg_watch_s": 8.64,
    "shares": 9,
-   "likes": 22,
+   "likes": 23,
    "comments": 1,
    "metrics": {
-    "Reactions": 22,
+    "Reactions": 23,
     "Comments": 1,
-    "Eng. Rate": 2.46,
-    "Video Views": 1302,
+    "Eng. Rate": 2.43,
+    "Video Views": 1356,
     "Shares": 9,
-    "Reach": 945,
-    "Watch Time (min)": 187.85,
-    "Avg. Watch Time (sec)": 8.55
+    "Reach": 1091,
+    "Watch Time (min)": 197.65,
+    "Avg. Watch Time (sec)": 8.64
    }
   },
   {
@@ -2093,7 +1969,7 @@
    "sent": "2026-11-09T23:43:04.285Z",
    "link": "https://x.com/2088807133093548033/status/2119938851925844443",
    "text": "Georgia State has nearly twice as many restaurants within a 10-minute walk of campus as UG",
-   "views": 5,
+   "views": 8,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2101,9 +1977,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 40,
+    "Eng. Rate": 25,
     "Reposts": 0,
-    "Impressions": 5,
+    "Impressions": 8,
     "Clicks": 0
    }
   },
@@ -2173,20 +2049,20 @@
    "sent": "2026-11-10T02:19:44.038Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7706361562814057742?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "Michigan State is 2nd \ud83d\udc40 Which big Michigan university has the most restaurants within a 10",
-   "views": 908,
-   "avg_watch_s": 8.17,
+   "views": 973,
+   "avg_watch_s": 8.03,
    "shares": 5,
    "likes": 25,
    "comments": 1,
    "metrics": {
     "Reactions": 25,
     "Comments": 1,
-    "Eng. Rate": 3.41,
-    "Video Views": 908,
+    "Eng. Rate": 3.19,
+    "Video Views": 973,
     "Shares": 5,
-    "Reach": 576,
-    "Watch Time (min)": 125.82,
-    "Avg. Watch Time (sec)": 8.17
+    "Reach": 772,
+    "Watch Time (min)": 132.63,
+    "Avg. Watch Time (sec)": 8.03
    }
   },
   {
@@ -2195,20 +2071,20 @@
    "sent": "2026-11-10T17:21:46.175Z",
    "link": "https://www.tiktok.com/@wfoodfinds/video/7706593880040328462?utm_campaign=tt4d_open_api&utm_source=7103819247981182978",
    "text": "UIUC is 3rd \ud83d\udc40 Which big Illinois university has the most restaurants within a 10-minute wa",
-   "views": 3290,
-   "avg_watch_s": 9.18,
-   "shares": 14,
-   "likes": 80,
+   "views": 3576,
+   "avg_watch_s": 9.15,
+   "shares": 15,
+   "likes": 91,
    "comments": 1,
    "metrics": {
-    "Reactions": 80,
+    "Reactions": 91,
     "Comments": 1,
-    "Eng. Rate": 2.89,
-    "Video Views": 3290,
-    "Shares": 14,
-    "Reach": 979,
-    "Watch Time (min)": 507.83,
-    "Avg. Watch Time (sec)": 9.18
+    "Eng. Rate": 2.99,
+    "Video Views": 3576,
+    "Shares": 15,
+    "Reach": 2573,
+    "Watch Time (min)": 550.47,
+    "Avg. Watch Time (sec)": 9.15
    }
   },
   {
@@ -2228,7 +2104,7 @@
     "Eng. Rate": 2.78,
     "Video Views": 252,
     "Shares": 0,
-    "Reach": 169,
+    "Reach": 226,
     "Watch Time (min)": 18.23,
     "Avg. Watch Time (sec)": 4.21
    }
@@ -2279,7 +2155,7 @@
    "sent": "2026-11-10T22:42:02.925Z",
    "link": "https://x.com/2088807133093548033/status/2120285882691318229",
    "text": "How to tell a good burger before you order:",
-   "views": 1,
+   "views": 2,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2287,9 +2163,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 100,
+    "Eng. Rate": 50,
     "Reposts": 0,
-    "Impressions": 1,
+    "Impressions": 2,
     "Clicks": 0
    }
   },
@@ -2319,20 +2195,20 @@
    "sent": "2026-11-10T23:22:42.915Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7706687074778238221",
    "text": "Alabama is 2nd, Auburn is 3rd \ud83d\udc40 Which big Alabama university has the most restaurants with",
-   "views": 1179,
-   "avg_watch_s": 8.12,
-   "shares": 5,
-   "likes": 37,
-   "comments": 2,
+   "views": 1387,
+   "avg_watch_s": 8.35,
+   "shares": 8,
+   "likes": 47,
+   "comments": 3,
    "metrics": {
-    "Reactions": 37,
-    "Comments": 2,
-    "Eng. Rate": 3.73,
-    "Video Views": 1179,
-    "Shares": 5,
-    "Reach": 107,
-    "Watch Time (min)": 161.15,
-    "Avg. Watch Time (sec)": 8.12
+    "Reactions": 47,
+    "Comments": 3,
+    "Eng. Rate": 4.18,
+    "Video Views": 1387,
+    "Shares": 8,
+    "Reach": 847,
+    "Watch Time (min)": 195.45,
+    "Avg. Watch Time (sec)": 8.35
    }
   },
   {
@@ -2341,7 +2217,7 @@
    "sent": "2026-11-10T23:40:03.038Z",
    "link": "https://x.com/2088807133093548033/status/2120300479066288155",
    "text": "UAB has more restaurants within a 10-minute walk of campus than Alabama and Auburn combine",
-   "views": 9,
+   "views": 10,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2349,9 +2225,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 11.11,
+    "Eng. Rate": 10,
     "Reposts": 0,
-    "Impressions": 9,
+    "Impressions": 10,
     "Clicks": 0
    }
   },
@@ -2381,7 +2257,7 @@
    "sent": "2026-11-11T00:43:03.429Z",
    "link": "https://x.com/2088807133093548033/status/2120316335011799451",
    "text": "MSU Denver has more restaurants within a 10-minute walk of campus than any other big Color",
-   "views": 8,
+   "views": 10,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2389,9 +2265,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 25,
+    "Eng. Rate": 20,
     "Reposts": 0,
-    "Impressions": 8,
+    "Impressions": 10,
     "Clicks": 0
    }
   },
@@ -2421,20 +2297,20 @@
    "sent": "2026-11-11T02:18:42.335Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7706732449644023054",
    "text": "CU Boulder is 2nd \ud83d\udc40 Which big Colorado university has the most restaurants within a 10-min",
-   "views": 658,
-   "avg_watch_s": 6.65,
+   "views": 776,
+   "avg_watch_s": 6.9,
    "shares": 1,
-   "likes": 10,
+   "likes": 12,
    "comments": 1,
    "metrics": {
-    "Reactions": 10,
+    "Reactions": 12,
     "Comments": 1,
-    "Eng. Rate": 1.82,
-    "Video Views": 658,
+    "Eng. Rate": 1.8,
+    "Video Views": 776,
     "Shares": 1,
-    "Reach": 0,
-    "Watch Time (min)": 73.27,
-    "Avg. Watch Time (sec)": 6.65
+    "Reach": 471,
+    "Watch Time (min)": 90.08,
+    "Avg. Watch Time (sec)": 6.9
    }
   },
   {
@@ -2443,20 +2319,20 @@
    "sent": "2026-11-11T17:20:42.900Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7706964645008968973",
    "text": "UCLA is 11th \ud83d\udc40 Which old Pac-12 school has the most restaurants within a 10-minute walk? S",
-   "views": 570,
-   "avg_watch_s": 8.63,
-   "shares": 2,
-   "likes": 20,
+   "views": 808,
+   "avg_watch_s": 8.98,
+   "shares": 3,
+   "likes": 24,
    "comments": 1,
    "metrics": {
-    "Reactions": 20,
+    "Reactions": 24,
     "Comments": 1,
-    "Eng. Rate": 4.04,
-    "Video Views": 570,
-    "Shares": 2,
-    "Reach": 0,
-    "Watch Time (min)": 83,
-    "Avg. Watch Time (sec)": 8.63
+    "Eng. Rate": 3.47,
+    "Video Views": 808,
+    "Shares": 3,
+    "Reach": 316,
+    "Watch Time (min)": 122.47,
+    "Avg. Watch Time (sec)": 8.98
    }
   },
   {
@@ -2465,20 +2341,20 @@
    "sent": "2026-11-11T20:21:42.507Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7707011474194959630",
    "text": "Can you tell good fried chicken from bad before you order? \ud83c\udf57 Listen to the crust first. Sa",
-   "views": 182,
-   "avg_watch_s": 4.79,
+   "views": 204,
+   "avg_watch_s": 4.6,
    "shares": 0,
    "likes": 4,
    "comments": 0,
    "metrics": {
     "Reactions": 4,
     "Comments": 0,
-    "Eng. Rate": 2.2,
-    "Video Views": 182,
+    "Eng. Rate": 1.96,
+    "Video Views": 204,
     "Shares": 0,
-    "Reach": 0,
-    "Watch Time (min)": 14.6,
-    "Avg. Watch Time (sec)": 4.79
+    "Reach": 129,
+    "Watch Time (min)": 15.53,
+    "Avg. Watch Time (sec)": 4.6
    }
   },
   {
@@ -2487,7 +2363,7 @@
    "sent": "2026-11-11T21:40:06.746Z",
    "link": "https://x.com/2088807133093548033/status/2120632683365630025",
    "text": "Cal has almost three times as many restaurants within a 10-minute walk of campus as any ot",
-   "views": 4,
+   "views": 48,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2495,9 +2371,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 25,
+    "Eng. Rate": 2.08,
     "Reposts": 0,
-    "Impressions": 4,
+    "Impressions": 48,
     "Clicks": 0
    }
   },
@@ -2507,7 +2383,7 @@
    "sent": "2026-11-11T22:12:15.415Z",
    "link": "https://www.threads.com/@campuseatshq/post/DfnhnaRoNBD",
    "text": "Cal has almost three times as many restaurants within a 10-minute walk of campus as any ot",
-   "views": 100,
+   "views": 145,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2515,8 +2391,8 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 1,
-    "Views": 100,
+    "Eng. Rate": 0.69,
+    "Views": 145,
     "Quotes": 0,
     "Reposts": 0
    }
@@ -2567,20 +2443,20 @@
    "sent": "2026-11-11T23:18:43.232Z",
    "link": "https://tiktok.com/@wfoodfinds/video/7707057079567076622",
    "text": "Clemson and South Carolina didn't win this one \ud83d\udc40 Which big South Carolina university has t",
-   "views": 364,
-   "avg_watch_s": 6.84,
+   "views": 592,
+   "avg_watch_s": 7.52,
    "shares": 0,
-   "likes": 10,
+   "likes": 18,
    "comments": 0,
    "metrics": {
-    "Reactions": 10,
+    "Reactions": 18,
     "Comments": 0,
-    "Eng. Rate": 2.75,
-    "Video Views": 364,
+    "Eng. Rate": 3.04,
+    "Video Views": 592,
     "Shares": 0,
-    "Reach": 0,
-    "Watch Time (min)": 42.05,
-    "Avg. Watch Time (sec)": 6.84
+    "Reach": 102,
+    "Watch Time (min)": 74.6,
+    "Avg. Watch Time (sec)": 7.52
    }
   },
   {
@@ -2589,7 +2465,7 @@
    "sent": "2026-11-11T23:42:04.730Z",
    "link": "https://x.com/2088807133093548033/status/2120663376606962105",
    "text": "College of Charleston has more restaurants within a 10-minute walk of campus than South Ca",
-   "views": 4,
+   "views": 8,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2597,9 +2473,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 25,
+    "Eng. Rate": 12.5,
     "Reposts": 0,
-    "Impressions": 4,
+    "Impressions": 8,
     "Clicks": 0
    }
   },
@@ -2629,7 +2505,7 @@
    "sent": "2026-11-12T00:39:03.451Z",
    "link": "https://x.com/2088807133093548033/status/2120677716701720771",
    "text": "Indiana has more restaurants within a 10-minute walk of campus than Purdue, IU Indianapoli",
-   "views": 6,
+   "views": 9,
    "avg_watch_s": null,
    "shares": 0,
    "likes": 0,
@@ -2637,9 +2513,9 @@
    "metrics": {
     "Reactions": 0,
     "Comments": 1,
-    "Eng. Rate": 16.67,
+    "Eng. Rate": 11.11,
     "Reposts": 0,
-    "Impressions": 6,
+    "Impressions": 9,
     "Clicks": 0
    }
   },
@@ -2649,6 +2525,152 @@
    "sent": "2026-11-12T01:09:18.953Z",
    "link": "https://www.threads.com/@campuseatshq/post/Dfn13uFjiOO",
    "text": "Indiana has more restaurants within a 10-minute walk of campus than Purdue, IU Indianapoli",
+   "views": 8,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 12.5,
+    "Views": 8,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "indiana-walkable",
+   "sent": "2026-11-12T02:23:43.033Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7707104552654212365",
+   "text": "Purdue is 2nd and Notre Dame is 5th \ud83d\udc40 Which big Indiana university has the most restaurant",
+   "views": 946,
+   "avg_watch_s": 7.56,
+   "shares": 1,
+   "likes": 20,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 20,
+    "Comments": 1,
+    "Eng. Rate": 2.33,
+    "Video Views": 946,
+    "Shares": 1,
+    "Reach": 0,
+    "Watch Time (min)": 120.18,
+    "Avg. Watch Time (sec)": 7.56
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "dc-countdown",
+   "sent": "2026-11-12T17:18:42.878Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7707335436917607694",
+   "text": "Georgetown is 3rd \ud83d\udc40 Which big DC university has the most restaurants within a 10-minute wa",
+   "views": 4336,
+   "avg_watch_s": 7.87,
+   "shares": 39,
+   "likes": 232,
+   "comments": 5,
+   "metrics": {
+    "Reactions": 232,
+    "Comments": 5,
+    "Eng. Rate": 6.37,
+    "Video Views": 4336,
+    "Shares": 39,
+    "Reach": 0,
+    "Watch Time (min)": 572.4,
+    "Avg. Watch Time (sec)": 7.87
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "houston-tx-countdown",
+   "sent": "2026-11-12T20:17:44.071Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7707381586454449422",
+   "text": "Rice is 4th \ud83d\udc40 Which college in Houston has the most restaurants within a 10-minute walk? S",
+   "views": 539,
+   "avg_watch_s": 8.47,
+   "shares": 0,
+   "likes": 8,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 8,
+    "Comments": 0,
+    "Eng. Rate": 1.48,
+    "Video Views": 539,
+    "Shares": 0,
+    "Reach": 0,
+    "Watch Time (min)": 75.68,
+    "Avg. Watch Time (sec)": 8.47
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-dc-countdown",
+   "sent": "2026-11-12T21:39:02.631Z",
+   "link": "https://x.com/2088807133093548033/status/2120994803106054199",
+   "text": "GW has more restaurants within a 10-minute walk of campus than Howard, Georgetown and Amer",
+   "views": 3,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 66.67,
+    "Reposts": 0,
+    "Impressions": 3,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-dc-countdown",
+   "sent": "2026-11-12T22:12:16.646Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfqGaN5iQcN",
+   "text": "GW has more restaurants within a 10-minute walk of campus than Howard, Georgetown and Amer",
+   "views": 1,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 100,
+    "Views": 1,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-houston-tx-countdown",
+   "sent": "2026-11-12T22:40:03.256Z",
+   "link": "https://x.com/2088807133093548033/status/2121010155856752879",
+   "text": "UH-Downtown has more restaurants within a 10-minute walk of campus than the University of ",
+   "views": 0,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 0,
+    "Reposts": 0,
+    "Impressions": 0,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-houston-tx-countdown",
+   "sent": "2026-11-12T23:09:20.002Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfqM74fHdUI",
+   "text": "UH-Downtown has more restaurants within a 10-minute walk of campus than the University of ",
    "views": 4,
    "avg_watch_s": null,
    "shares": 0,
@@ -2665,32 +2687,134 @@
   },
   {
    "service": "tiktok",
-   "what": "indiana-walkable",
-   "sent": "2026-11-12T02:23:43.033Z",
-   "link": "https://tiktok.com/@wfoodfinds/video/7707104552654212365",
-   "text": "Purdue is 2nd and Notre Dame is 5th \ud83d\udc40 Which big Indiana university has the most restaurant",
-   "views": 357,
-   "avg_watch_s": 6.59,
-   "shares": 1,
-   "likes": 16,
+   "what": "ma-countdown",
+   "sent": "2026-11-12T23:20:43.164Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7707428687309851918",
+   "text": "MIT is 3rd \ud83d\udc40 Which big Massachusetts university has the most restaurants within a 10-minut",
+   "views": 631,
+   "avg_watch_s": 10.79,
+   "shares": 4,
+   "likes": 25,
+   "comments": 2,
+   "metrics": {
+    "Reactions": 25,
+    "Comments": 2,
+    "Eng. Rate": 4.91,
+    "Video Views": 631,
+    "Shares": 4,
+    "Reach": 0,
+    "Watch Time (min)": 113.6,
+    "Avg. Watch Time (sec)": 10.79
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-ma-countdown",
+   "sent": "2026-11-12T23:38:02.298Z",
+   "link": "https://x.com/2088807133093548033/status/2121024748800872721",
+   "text": "Harvard has the most restaurants within a 10-minute walk of campus of any big Massachusett",
+   "views": 1,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 100,
+    "Reposts": 0,
+    "Impressions": 1,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-ma-countdown",
+   "sent": "2026-11-13T00:09:19.466Z",
+   "link": "https://www.threads.com/@campuseatshq/post/DfqTzOhGZlb",
+   "text": "Harvard has the most restaurants within a 10-minute walk of campus of any big Massachusett",
+   "views": 5,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 20,
+    "Views": 5,
+    "Quotes": 0,
+    "Reposts": 0
+   }
+  },
+  {
+   "service": "twitter",
+   "what": "x-20-countdown",
+   "sent": "2026-11-13T00:38:01.863Z",
+   "link": "https://x.com/2088807133093548033/status/2121039846760230999",
+   "text": "NYU has more restaurants within a 10-minute walk of campus than UC Berkeley, Michigan and ",
+   "views": 0,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
+   "comments": 1,
+   "metrics": {
+    "Reactions": 0,
+    "Comments": 1,
+    "Eng. Rate": 0,
+    "Reposts": 0,
+    "Impressions": 0,
+    "Clicks": 0
+   }
+  },
+  {
+   "service": "threads",
+   "what": "t-20-countdown",
+   "sent": "2026-11-13T01:10:15.287Z",
+   "link": "https://www.threads.com/@campuseatshq/post/Dfqax-fFbvz",
+   "text": "NYU has more restaurants within a 10-minute walk of campus than UC Berkeley, Michigan and ",
+   "views": 0,
+   "avg_watch_s": null,
+   "shares": 0,
+   "likes": 0,
    "comments": 0,
    "metrics": {
-    "Reactions": 16,
+    "Reactions": 0,
     "Comments": 0,
-    "Eng. Rate": 4.76,
-    "Video Views": 357,
-    "Shares": 1,
-    "Reach": 0,
-    "Watch Time (min)": 39.28,
-    "Avg. Watch Time (sec)": 6.59
+    "Eng. Rate": 0,
+    "Views": 0,
+    "Quotes": 0,
+    "Reposts": 0
    }
   },
   {
    "service": "tiktok",
-   "what": "dc-countdown",
-   "sent": "2026-11-12T17:18:42.878Z",
-   "link": "https://tiktok.com/@wfoodfinds/video/7707335436917607694",
-   "text": "Georgetown is 3rd \ud83d\udc40 Which big DC university has the most restaurants within a 10-minute wa",
+   "what": "20-countdown",
+   "sent": "2026-11-13T02:20:42.579Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7707474870518418701",
+   "text": "Harvard is 7th \ud83d\udc40 Which famous university has the most restaurants within a 10-minute walk?",
+   "views": 1027,
+   "avg_watch_s": 9.6,
+   "shares": 7,
+   "likes": 30,
+   "comments": 0,
+   "metrics": {
+    "Reactions": 30,
+    "Comments": 0,
+    "Eng. Rate": 3.6,
+    "Video Views": 1027,
+    "Shares": 7,
+    "Reach": 0,
+    "Watch Time (min)": 155.33,
+    "Avg. Watch Time (sec)": 9.6
+   }
+  },
+  {
+   "service": "tiktok",
+   "what": "tn-countdown",
+   "sent": "2026-11-13T17:22:43.731Z",
+   "link": "https://tiktok.com/@wfoodfinds/video/7707707488921046286",
+   "text": "Tennessee is 4th \ud83d\udc40 Which big Tennessee university has the most restaurants within a 10-min",
    "views": 0,
    "avg_watch_s": 0,
    "shares": 0,

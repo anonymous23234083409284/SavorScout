@@ -93,7 +93,9 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
           "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 # Short names already used on screen, where the generic rules would read badly.
-EXTRA_NAMES = {"the-university-of-tennessee-chattanooga": "UT Chattanooga", "university-of-the-cumberlands": "Cumberlands",
+EXTRA_NAMES = {"fashion-institute-of-technology": "FIT", "cuny-bernard-m-baruch-college": "Baruch", "cuny-john-jay-college-of-criminal-justice": "John Jay", "cuny-city-college": "City College", "the-new-school": "The New School",
+               "rutgers-university-newark": "Rutgers-Newark", "new-jersey-institute-of-technology": "NJIT",
+               "the-university-of-tennessee-chattanooga": "UT Chattanooga", "university-of-the-cumberlands": "Cumberlands",
                "university-of-massachusetts-lowell": "UMass Lowell", "university-of-massachusetts-boston": "UMass Boston", "university-of-massachusetts-dartmouth": "UMass Dartmouth", "university-of-massachusetts-amherst": "UMass Amherst",
                
     "university-of-alabama-at-birmingham": "UAB", "the-university-of-alabama": "Alabama",
@@ -1094,6 +1096,12 @@ def narrate(spec):
                     sc["say"] += f" Busiest food street: {street}."
         elif sc["style"] == "end":
             key = spec.get("lab", {}).get("key") or ""
+            if spec["lab"].get("metric") == "street":      # a street ranking names each street aloud
+                for r in scenes:
+                    m_ = re.match(r"places to eat on (.+)$", r.get("label") or "")
+                    if r["style"] == "rank" and m_ and isinstance(r.get("count"), int):
+                        lead = r["say"].split(":")[0]
+                        r["say"] = f"{lead}: {r['text']}. {street_say('Busiest food street: ' + m_.group(1))}, with {r['count']} places."
             kind = "city" if key == "state:DC" else key.split(":")[0]
             nxt = {"city": "city", "state": "state", "conf": "conference", "system": "system", "famous": "group of schools"}.get(kind)
             sc["say"] = "Did we rank your school right? Tell us in the comments." + (f" And which {nxt} should we rank next?" if nxt else "")

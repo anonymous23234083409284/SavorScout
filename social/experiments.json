@@ -134,6 +134,28 @@
    "what": "rivalry: UNC vs Duke, restaurants within a 10-minute walk (87 vs 9)",
    "status": "posted",
    "note": "Swapped by hand for the lab's New York short (odd #1, and shorts looked weak in competitor data)."
+  },
+  {
+   "date": "2026-11-14",
+   "video": "nyc-countdown",
+   "experiment": "g_city",
+   "what": "countdown: 11 New York City colleges by w (#1 Touro 1,478, tease Columbia 9th)",
+   "status": "posted",
+   "note": "Swapped by hand for California (31-row list, duplicate names)."
+  },
+  {
+   "date": "2026-11-14",
+   "video": "ivy-league-countdown",
+   "experiment": "metric_street",
+   "what": "countdown: Ivy League by busiest food street (#1 Columbia 144)",
+   "status": "posted"
+  },
+  {
+   "date": "2026-11-14",
+   "video": "pa-part2",
+   "experiment": "part2",
+   "what": "part 2: big Pennsylvania universities by busiest food street (#1 Drexel 70; Penn 4th to 2nd)",
+   "status": "posted"
   }
  ]
 }

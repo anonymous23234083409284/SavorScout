@@ -1,0 +1,21 @@
+{
+ "_why": "The show's cast: who they are and how they sound. show.py reads the voices; BIBLE.md says how to write for them. Voices are from the open-source Kokoro model (tts.py). speed is the speaking rate; pitch above 1 raises the voice slightly (Milo sounds younger and more frantic).",
+ "milo": {
+  "name": "Milo",
+  "role": "the student",
+  "voice": "am_puck",
+  "speed": 1.12,
+  "pitch": 1.05,
+  "gain": 1.0,
+  "persona": "Broke, dramatic, always one meal from disaster. Treats small food problems like the end of the world, then commits to a terrible plan with total confidence. Never learns. Never says thank you properly."
+ },
+ "scout": {
+  "name": "Scout",
+  "role": "SavorScout's flame: the one who knows",
+  "voice": "af_heart",
+  "speed": 1.0,
+  "pitch": 1.0,
+  "gain": 1.0,
+  "persona": "Calm, dry, unbothered. Knows every place to eat near every campus and answers panic with one exact number. Never raises its voice, never explains a joke. Sets bad plans on fire, because it is a flame."
+ }
+}

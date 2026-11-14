@@ -1,0 +1,30 @@
+{
+ "id": "four-dollars-berkeley",
+ "format": "rescue",
+ "campus": "university-of-california-berkeley",
+ "music": "cozy",
+ "situation": "broke until Friday",
+ "games": ["catastrophe", "wrong name", "silent verdict", "callback", "fourth wall"],
+ "plan": {"title": "MEAL PLAN", "lines": ["BREAKFAST\none free sample", "LUNCH\nsmell someone's fries", "DINNER\nsleep"]},
+ "beats": [
+  {"who": "milo", "say": "Four dollars. Until *Friday.*", "face": "shock", "pose": "phone", "look": "down", "title": "broke until Friday", "fx": ["cold"]},
+  {"insert": "balance", "amount": "$4.12", "rows": [["Energy drink", "-$3.49"], ["Vending machine", "-$1.75"], ["Late fee", "-$35.00"], ["Gym I don't go to", "-$24.99"]], "dur": 1.5, "sfx": "sad"},
+  {"who": "milo", "say": "It's *Tuesday.*", "face": "panic", "pose": "headgrab", "look": "cam", "fx": ["shake"], "hold": 0.2},
+  {"who": "milo", "say": "Okay. New meal plan. Breakfast: one free sample.", "face": "determined", "pose": "paper", "look": "right"},
+  {"insert": "plan", "who": "milo", "say": "Lunch: smelling someone else's *fries.*"},
+  {"who": "milo", "say": "Dinner: *sleep.*", "face": "smug", "pose": "paper", "look": "cam", "punch": "sleep", "hold": 0.35},
+  {"who": "scout", "two": true, "enter": true, "say": "Hey. You good?", "face": "deadpan", "pose": "idle", "look": "left", "other": {"face": "shock", "pose": "idle", "look": "right"}},
+  {"who": "milo", "say": "Oh my god. You're the food map thing! *Flavor Scout!*", "face": "happy", "pose": "point", "look": "right"},
+  {"who": "scout", "say": "It's Savor", "cap": "It's *Savor—*", "face": "squint", "pose": "idle", "look": "left"},
+  {"who": "milo", "say": "*Sailor* Scout! You gotta help me.", "face": "happy", "pose": "armsup", "look": "right"},
+  {"who": "scout", "say": "Your plan can't be that bad.", "face": "deadpan", "pose": "idle", "look": "left"},
+  {"who": "scout", "read": "plan", "dur": 3.5, "burn": 2.0},
+  {"map": "w", "who": "scout", "say": "There are {w} places to eat within a 10-minute walk of you."},
+  {"who": "scout", "say": "You've been to *two.* One was a vending machine.", "face": "smug", "pose": "point", "look": "left", "hold": 0.2},
+  {"who": "milo", "say": "Wow. Thanks. Dinner sleep is still plan B, though.", "cap": "Wow. Thanks. *Dinner: sleep* is still plan B, though.", "face": "smug", "pose": "shrug", "look": "right"},
+  {"who": "milo", "say": "What? You're broke too?", "face": "squint", "pose": "idle", "look": "cam", "hold": 0.15},
+  {"who": "milo", "say": "Fine. Savor Scout dot net.", "cap": "Fine. *SavorScout.net.*", "face": "neutral", "pose": "present", "look": "cam", "chip": true},
+  {"who": "milo", "say": "It's free. Which is also my *budget.*", "face": "deadpan", "pose": "shrug", "look": "cam", "chip": true, "hold": 0.3},
+  {"end": true}
+ ]
+}

@@ -3,11 +3,14 @@ import {Composition} from 'remotion';
 import {Reel, type ReelProps} from './Reel';
 import sample from './sample-props.json';
 import {Short} from './Short';
+import {CastSheet} from './skit/Sheet';
+import {Skit, type SkitProps} from './Skit';
 import {fontsLoaded} from './theme';
 import type {ShortProps} from './types';
 
 // Props come from social/pipeline at render time: props.py for "Short" (the
-// walkable-five format), reel.py for "Reel" (scripted, creator-style videos).
+// walkable-five format), reel.py for "Reel" (scripted, creator-style videos),
+// show.py for "Skit" (the show: comedy scenes with SavorScout's own cast).
 // sample-props.json only seeds `npm run studio`, and needs a batch rendered
 // first so its files exist.
 export const Root: React.FC = () => (
@@ -39,5 +42,19 @@ export const Root: React.FC = () => (
 				return {durationInFrames: Math.max(1, props.total)};
 			}}
 		/>
+		<Composition
+			id="Skit"
+			component={Skit}
+			width={1080}
+			height={1920}
+			fps={30}
+			durationInFrames={900}
+			defaultProps={{shots: [], audio: '', total: 900, site: 'savorscout.net', credits: ''} as SkitProps}
+			calculateMetadata={async ({props}) => {
+				await fontsLoaded;
+				return {durationInFrames: Math.max(1, props.total)};
+			}}
+		/>
+		<Composition id="CastSheet" component={CastSheet} width={3000} height={2000} fps={30} durationInFrames={120} defaultProps={{}} calculateMetadata={async () => { await fontsLoaded; return {}; }} />
 	</>
 );

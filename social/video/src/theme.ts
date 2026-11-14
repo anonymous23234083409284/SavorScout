@@ -24,7 +24,15 @@ export const ACCENT_GRADIENT = `linear-gradient(100deg, ${C.ember} 0%, ${C.coral
 export const DISPLAY = 'SS Display';
 export const TEXT = 'SS Text';
 
+// The show's fonts (social/show): Lilita One for spoken captions, Fredoka for labels and props.
+// Both are open fonts (SIL OFL; licenses beside the files).
+export const CAPTION = 'SS Caption';
+export const ROUND = 'SS Round';
+
 export const fontsLoaded = Promise.all([
+	loadFont({family: CAPTION, url: staticFile('fonts/LilitaOne-Regular.woff2'), weight: '400'}),
+	loadFont({family: ROUND, url: staticFile('fonts/Fredoka-SemiBold.woff2'), weight: '600'}),
+	loadFont({family: ROUND, url: staticFile('fonts/Fredoka-Bold.woff2'), weight: '700'}),
 	loadFont({family: DISPLAY, url: staticFile('fonts/InterDisplay-Black.otf'), weight: '900'}),
 	loadFont({family: DISPLAY, url: staticFile('fonts/InterDisplay-ExtraBold.otf'), weight: '800'}),
 	loadFont({family: TEXT, url: staticFile('fonts/Inter-SemiBold.otf'), weight: '600'}),

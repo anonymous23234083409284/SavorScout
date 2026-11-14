@@ -10,7 +10,7 @@ the first frame, while ours were silent and static for 5-6 seconds (social/lab/e
 The engine runs in its own Python environment (kokoro-onnx + onnxruntime) beside two model files
 (kokoro-v1.0.onnx, voices-v1.0.bin), so it can't disturb the pipeline's own packages. Point
 SAVORSCOUT_TTS_PYTHON at that environment's python and SAVORSCOUT_TTS_DIR at the model folder;
-otherwise ~/.cache/savorscout-tts/{venv,} is used. When neither is there, videos are built exactly
+otherwise ~/.local/share/savorscout-tts/ (then ~/.cache/savorscout-tts/) is used. When neither is there, videos are built exactly
 as before, without a voice, and the build says so: a missing voice never breaks a batch."""
 
 import hashlib
@@ -46,11 +46,13 @@ def speakable(text):
 
 def engine():
     """(python, model dir) for the voice, or None when it isn't installed here."""
-    base = os.path.expanduser("~/.cache/savorscout-tts")
-    py = os.environ.get("SAVORSCOUT_TTS_PYTHON") or os.path.join(base, "venv", "bin", "python")
-    d = os.environ.get("SAVORSCOUT_TTS_DIR") or base
-    if os.path.exists(py) and all(os.path.exists(os.path.join(d, f)) for f in ("kokoro-v1.0.onnx", "voices-v1.0.bin")):
-        return py, d
+    bases = [os.path.expanduser("~/.local/share/savorscout-tts"), os.path.expanduser("~/.cache/savorscout-tts")]
+    if os.environ.get("SAVORSCOUT_TTS_DIR"):
+        bases.insert(0, os.environ["SAVORSCOUT_TTS_DIR"])
+    for d in bases:
+        py = os.environ.get("SAVORSCOUT_TTS_PYTHON") or os.path.join(d, "venv", "bin", "python")
+        if os.path.exists(py) and all(os.path.exists(os.path.join(d, f)) for f in ("kokoro-v1.0.onnx", "voices-v1.0.bin")):
+            return py, d
     return None
 
 

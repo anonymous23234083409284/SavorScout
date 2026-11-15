@@ -1,0 +1,20 @@
+{
+ "date": "2026-11-16",
+ "videos": [],
+ "show": [
+  {
+   "id": "four-dollars-berkeley",
+   "script": "show/gold/four-dollars.json",
+   "format": "rescue",
+   "seconds": 47.0,
+   "voice": "elevenlabs"
+  },
+  {
+   "id": "no-way-nyu",
+   "script": "show/gold/no-way.json",
+   "format": "withheld",
+   "seconds": 31.2,
+   "voice": "elevenlabs"
+  }
+ ]
+}

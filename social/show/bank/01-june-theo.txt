@@ -1,0 +1,437 @@
+# THE SCRIPT BANK, file 1: June and Theo, roommates, outside on the quad.
+#
+# June says unhinged things in a normal voice. Theo has a system for everything and none work.
+# The game of every scene: Theo is proud, June is done, nobody learns.
+#
+# HOW A SCRIPT IS WRITTEN (python social/pipeline/show.py bank list | lint | make <id> [campus]):
+#   == id | format | cast (left,right) | set | title on the first shot | TikTok caption
+#   J deadpan > A line.            who (M Milo, S Scout, J June, T Theo, N narrator), then optional
+#                                  face (neutral panic shock deadpan smug happy sad squint plead determined),
+#                                  pose (idle headgrab armsup point shrug phone paper chin facepalm present),
+#                                  2 (both in frame), shake, cam (looks at us), hold=0.6 (pause after)
+#   *stars* colour a caption word. A word in CAPITALS is shouted (ElevenLabs) and coloured.
+#   [deadpan] at the end of a line is the ElevenLabs acting tag. Use it only where the delivery
+#   is the joke: every tag costs characters.
+#   ! J deadpan 1.2                a silent stare (every script needs one pause: this or hold=0.5+)
+#   MAP w S > There are {w} ...    the real map and number for whatever campus the episode is made for
+#   MEME cat falling | TEXT ABOVE | N > line     a meme with the narrator over it (file 3)
+# The last spoken line gets the site's name on screen automatically; it must say "Savor Scout".
+# Rules: first line 9 words or fewer, no line over 16, 35-70 words is the sweet spot (cheap to voice).
+
+== two-step-plan | premise | theo,june | quad | when your roommate has a system | when your roommate has a "system" for eating free all semester
+T happy > I figured out how to eat free all semester.
+J deadpan > Oh no.
+T smug > Step one. Befriend someone with unlimited meal swipes.
+J > That's me. I'm the someone.
+T happy point > Step two is you.
+! J deadpan 1.3
+J squint > What's step three?
+T happy shrug > There is no step three. You're a two-step plan.
+J deadpan > Savor Scout dot net. Feed him so I don't have to. [deadpan]
+
+== it-said-june | premise | june,theo | quad | the leftovers had my name on them | POV: you labeled your leftovers and it did not matter
+J squint > My leftovers are gone.
+T happy > The pad thai? Incredible. Ten out of ten.
+J > It had my name on it. It said June.
+T shrug > I thought that was the month.
+! J deadpan 1.4
+J > It's November, Theo. [deadpan]
+T happy > Then it was *expired.* You're welcome.
+J deadpan > Savor Scout dot net. Buy your own pad thai.
+
+== beekeeping | premise | june,theo | quad | he joined 14 clubs for the pizza | that one friend who joins clubs only for the free pizza
+J > Why are you wearing a beekeeper hat?
+T happy > I joined fourteen clubs for the free pizza.
+J deadpan > And?
+T panic headgrab > I'm treasurer of the Beekeeping Society now. I have *responsibilities.*
+J > Do you like bees?
+T sad > I'm terrified of bees. But they serve pepperoni. hold=0.6
+J deadpan > Savor Scout dot net. Pizza with no bees.
+
+== anything-is-fine | spiral | theo,june | quad | "anything is fine" | when they say "anything is fine" and reject everything
+T happy > Where do you want to eat?
+J > Anything's fine. I'm not picky.
+T > Tacos.
+J > Not tacos.
+T > Pizza.
+J squint > We had pizza in March.
+T panic > Sushi. Burgers. Soup. A single grape.
+J deadpan > Hmm. No. [deadpan]
+! T shock 1.2
+T plead > What do you WANT?
+J > Tacos sound good, actually.
+T deadpan > Savor Scout dot net. I need a list and a lawyer.
+
+== vibes-budget | premise | june,theo | quad | his budget has one line | when your friend "made a budget"
+T happy paper > I made a budget. Like an adult.
+J > Let me see.
+J squint > Rent. Phone. And one line that says *vibes.* Four hundred dollars.
+T smug > Vibes are not cheap, June.
+J > What did you spend on food?
+T sad > Food is under vibes. Everything is under vibes. hold=0.6
+J deadpan > Savor Scout dot net. It's free. It fits under vibes.
+
+== nine-oh-one | premise | theo,june | quad | the dining hall closes at 9 | when the dining hall closes at 9 and you got there at 9:01
+T sad > I got to dinner at nine oh one.
+J > It closes at nine.
+T plead > I *saw* the pasta, June. Through the glass. It saw me.
+J deadpan > Did you knock?
+T panic headgrab > I knocked. A man mouthed the word *no.*
+! J deadpan 1.2
+J > What did you eat?
+T sad > A mint. From my jacket. From a previous jacket owner.
+J deadpan > Savor Scout dot net. Places that are not behind glass.
+
+== gerald | premise | june,theo | quad | something lives in our fridge | POV: there is something in the fridge and it has a name now
+J > We need to talk about the fridge.
+T happy > Gerald's fine.
+J squint > You *named* it?
+T > He's been here since orientation. He's basically a roommate.
+J deadpan > Gerald is a burrito, Theo. He has *fur.*
+T sad > He's going through something. hold=0.6
+J deadpan > Savor Scout dot net. Get a new burrito. Let Gerald go.
+
+== forty-minutes | spiral | june,theo | quad | 40 minutes in the group chat | the group chat deciding where to eat for 40 minutes
+J phone > The group chat has been deciding for forty minutes.
+T happy > What have we got?
+J > Sixty messages. Three polls. Kyle left the chat.
+T > And the winner?
+! J deadpan 1.3
+J > The same place. The place we always go. [deadpan]
+T smug > A classic. Democracy works.
+MAP w J > There are {w} places to eat within a 10-minute walk of us.
+T shock > And we picked the *one?*
+J deadpan > Savor Scout dot net. Send it to Kyle. He might come back.
+
+== eleven-dollars | premise | theo,june | quad | a date and eleven dollars | when you have a date tonight and exactly $11
+T happy > I have a date tonight.
+J > Great. How much money do you have?
+T smug > Eleven dollars.
+J deadpan > So what's the plan?
+T > We share one appetizer. I say I'm *fasting.*
+J squint > For what?
+T happy shrug > For financial reasons.
+! J deadpan 1.2
+J deadpan > Savor Scout dot net. Find her a place. Find yourself a job.
+
+== vegetable-drawer | premise | june,theo | quad | parents are visiting | when your parents visit and you have to look like you eat vegetables
+J panic > My parents are coming. Hide the evidence.
+T > What evidence?
+J > The fourteen empty noodle cups. The pizza box we use as a *table.*
+T happy > I bought a vegetable. For the fridge.
+J squint > One?
+T smug present > A decorative zucchini. We do not eat him. He's for *show.* hold=0.6
+J deadpan > Savor Scout dot net. Take them out instead.
+
+== sample-laps | premise | theo,june | quad | lunch was free samples | that one friend whose lunch is free samples
+T happy > Lunch was free today.
+J deadpan > You did laps at the sample table again.
+T smug > Nine laps. I wore a different hat each time.
+J > You own *nine* hats?
+T > I own two. I got creative.
+J squint > Did they notice?
+T sad > The cheese lady called me by name. She said, slow down, Theo. hold=0.6
+J deadpan > Savor Scout dot net. A real lunch. One hat.
+
+== cereal-soup | premise | theo,june | quad | cereal for dinner again | when dinner is cereal for the third night in a row
+T > Is that cereal? For dinner? Again?
+J deadpan > It's soup.
+T squint > It's cereal, June.
+J > Cold grain soup. In a milk broth. Very European.
+T > That's the third night in a row.
+J sad > It's a three-course meal if you count the regret. hold=0.6
+T deadpan > Savor Scout dot net. Please. For her.
+
+== thirty-eight-cents | premise | june,theo | quad | he requested 38 cents | that one friend who sends a payment request for one fry
+J phone squint > You sent me a request for thirty-eight cents.
+T happy > For the fry.
+J > Which fry?
+T > Tuesday. You took one. I did the math. Plus tax.
+! J deadpan 1.3
+J deadpan > I bought your dinner last week.
+T shrug > That was a *gift.* This is business.
+J deadpan > Savor Scout dot net. It's free. Don't invoice me.
+
+== wont-show-me | withheld | theo,june | quad | the friend who won't show you | that one friend who reacts to their phone and will not show you
+T shock phone > No. No way.
+J > What?
+T panic shake > June. JUNE.
+J > What is it?
+T happy > You are not ready for this.
+J squint > Theo. Give me the phone. [annoyed]
+MAP w T > There are {w} places to eat within a 10-minute walk of us.
+! J deadpan 1.2
+J deadpan > You screamed about a *map.*
+T happy > Savor Scout dot net. Scream with me.
+
+== fourth-coffee | premise | theo,june | quad | her fourth coffee | when your friend is on coffee number four and it's 11 a.m.
+T > Is that your fourth coffee?
+J deadpan > It's a personality now.
+T > Have you eaten anything today?
+J > Coffee is a bean. Beans are a vegetable. I had a salad.
+T squint > June, your eye is twitching.
+J panic > That's just the salad kicking in. hold=0.6
+T deadpan > Savor Scout dot net. Actual food. Near here. Please.
+
+== ten-minute-walk | premise | june,theo | quad | he won't walk ten minutes | when a 10-minute walk is "too far" but avoiding someone is cardio
+J > It's a ten-minute walk.
+T sad > Too far. My legs are decorative.
+J squint > You walked twenty-five minutes yesterday to avoid your lab partner.
+T panic > That was *survival.*
+J > This is tacos.
+! T shock 1.1
+T determined > I'll get my shoes.
+MAP w J > There are {w} places to eat within a 10-minute walk of us.
+J deadpan > Savor Scout dot net. Decorative legs welcome.
+
+== microwave-fish | premise | theo,june | quad | someone microwaved fish | whoever microwaved fish in the dorm kitchen: we know
+T panic > Someone microwaved fish. In the dorm kitchen.
+J deadpan > I know. I can taste it from here.
+T > Four floors, June. It went through *four floors.*
+J > Who was it?
+T squint > Nobody knows. But room 208 looked *satisfied.*
+! J deadpan 1.2
+J > We can't eat here anymore.
+T sad > We can't *live* here anymore.
+J deadpan > Savor Scout dot net. Anywhere that isn't the kitchen.
+
+== parking-lot-snacks | premise | june,theo | quad | snacks for the whole week | when you buy snacks for the week and they survive 9 minutes
+J > Where are the snacks? For the week?
+T sad > About that.
+J squint > Theo.
+T > I opened one bag in the parking lot. Just to check.
+J deadpan > And?
+T panic > I checked all of them. They were all *good.* hold=0.6
+J > That was forty dollars.
+T shrug > It was a great nine minutes.
+J deadpan > Savor Scout dot net. Before he "checks" dinner.
+
+== fourteen-dollar-fee | premise | theo,june | quad | a $9 burrito, $14 in fees | when the delivery fees cost more than the food
+T shock phone > My burrito is nine dollars.
+J > That's fine.
+T panic > The fees are *fourteen.*
+J deadpan > Fees for what?
+T > Service. Delivery. Small order. And one called *other.*
+J squint > What's other?
+T sad > I think I'm paying a man to be disappointed in me. hold=0.5
+MAP w J > There are {w} places to eat within a 10-minute walk of you.
+J deadpan > Savor Scout dot net. Walk. It's free.
+
+== three-places | reveal | june,theo | quad | two years, three restaurants | when you've lived here two years and eaten at the same three places
+J > How long have we lived here?
+T happy > Two years.
+J > And how many places have we eaten at?
+T chin > The noodle place. The other noodle place. And the gas station.
+J deadpan > Three.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+! T shock 1.2
+T plead > Why did nobody TELL us?
+S deadpan > I've been telling people. Savor Scout dot net. [deadpan]
+
+== healthy-era | premise | theo,june | quad | his healthy era | when your friend's healthy era lasts 40 minutes
+T determined > I'm in my healthy era.
+J deadpan > When did it start?
+T > Nine o'clock this morning.
+J > And what time is it now?
+T sad > Nine forty.
+J squint > Is that a donut?
+T panic > It has *fruit* in it. It's jelly. Jelly is fruit. hold=0.6
+J deadpan > Savor Scout dot net. The era is over.
+
+== one-grape | premise | june,theo | quad | exam week nutrition | what you eat during exam week (it's a crime)
+T > What have you eaten since Monday?
+J deadpan > An energy drink. And one grape.
+T shock > One grape?
+J > I found it. I don't know whose it was.
+T > June, that's not a meal.
+J squint > It was a *big* grape, Theo. hold=0.6
+T deadpan > Savor Scout dot net. Somebody feed this woman.
+
+== concept-of-cold | premise | june,theo | quad | he brought ice to the potluck | that one friend who brings ice to the potluck
+J > It's a potluck. What did you bring?
+T happy present > Ice.
+J deadpan > Ice.
+T smug > Everyone brings food. Nobody brings the *concept of cold.*
+J squint > Did you make it?
+T > I bought it. Two dollars. I'm basically a caterer.
+! J deadpan 1.2
+J deadpan > Savor Scout dot net. Bring something with calories.
+
+== bomb-disposal | premise | theo,june | quad | she's hangry | how to approach a hangry roommate (carefully)
+T > June hasn't eaten since noon. Nobody move.
+J squint > I can hear you.
+T panic > She's *aware.* Stay calm.
+J > Theo, I'm fine.
+T plead > That's exactly what she said before the *incident.*
+J deadpan > There was no incident.
+T sad > The printer is still in the pond, June. hold=0.6
+J deadpan > Savor Scout dot net. Quickly. For the printer's family.
+
+== tip-screen | premise | june,theo | quad | the tip screen | when the tip screen turns around and everyone is watching
+J > He turned the tip screen around on me.
+T > What were the options?
+J deadpan > Twenty-five percent. Thirty percent. Or *my firstborn.*
+T shock > For a muffin?
+J > He watched me choose, Theo. He did not blink.
+T > What did you pick?
+J sad > I have a child now that I owe someone. hold=0.6
+T deadpan > Savor Scout dot net. Bring exact change.
+
+== passive-notes | premise | theo,june | quad | the fridge note war | when the fridge notes get passive-aggressive
+T paper > Someone left a note on my yogurt.
+J > What does it say?
+T > Please stop eating my food. Smiley face.
+J deadpan > That's my note. That's *my* yogurt.
+T squint > Then why is my name on it?
+J > Because you wrote your name on my yogurt, Theo.
+! T shock 1.2
+T happy shrug > Then it's legally mine.
+J deadpan > Savor Scout dot net. Before I involve a lawyer.
+
+== gas-station-sushi | premise | theo,june | quad | it's 2 a.m. | 2 a.m. and the only thing open is a decision you'll regret
+T happy > It's two in the morning. I found food.
+J squint > Where?
+T smug present > The gas station. They have *sushi.*
+J deadpan > Theo, no.
+T > It's fine. The sticker says *manager's special.*
+J > That's not a good special.
+T sad > It's been spinning in there since the *Olympics.* hold=0.6
+J deadpan > Savor Scout dot net. Tomorrow. If he lives.
+
+== how-old-is-this | premise | june,theo | quad | how old is this pizza | "how old is this pizza" is not a question you want answered
+J squint > How old is this pizza?
+T happy > It was here when I moved in.
+J deadpan > You moved in in August.
+T > And it's been loyal ever since.
+J > It's *grey,* Theo.
+T smug > It's aged. Like a fine cheese. Which is on it.
+! J deadpan 1.3
+J deadpan > Savor Scout dot net. Fresh pizza. From this *year.*
+
+== monday-rice | series | theo,june | quad | he meal prepped | when your friend "meal prepped" for the week
+T happy > I meal prepped. For the whole week.
+J > Okay. What is it?
+T smug present > Monday: rice. Tuesday: rice. Wednesday: *also* rice.
+J deadpan > And Thursday?
+T > Thursday I get creative. Rice, but *sad.*
+J squint > Is there a sauce?
+T shock > You can put things *on* it? hold=0.6
+J deadpan > Savor Scout dot net. He needs help. And a sauce.
+
+== i-had-water | premise | june,theo | quad | let's split it evenly | when you had water and they want to split the bill evenly
+T happy > Let's just split it evenly.
+J deadpan > I had water.
+T > Right.
+J > You had the steak. And the other steak.
+T shrug > Splitting is easier.
+J squint > It's a hundred and four dollars, Theo.
+T smug > And you were *great* company.
+! J deadpan 1.2
+J deadpan > Savor Scout dot net. Next time I pick the place.
+
+== mild-salsa | premise | theo,june | quad | he can handle spice | "I can handle spice" (he could not)
+T smug > I can handle spice. I'm built different.
+J deadpan > That's the mild salsa.
+T > I know what it is.
+! T panic 1.2
+T panic shake > Why is it ANGRY?
+J > It's tomatoes, Theo.
+T plead > Tell my mother I was brave. hold=0.5
+J deadpan > Savor Scout dot net. He'll need somewhere gentle.
+
+== the-usual | premise | theo,june | quad | she knows his order | when the worker says "the usual?" and you feel seen in a bad way
+T sad > She said, the usual, Theo?
+J > So?
+T panic > I never told her my name.
+J deadpan > How often do you go there?
+T > Daily. Sometimes twice. Once I went back to say goodnight.
+J squint > Theo.
+T sad > She's in my emergency contacts, June. hold=0.6
+J deadpan > Savor Scout dot net. See other restaurants. Be free.
+
+== one-bite | premise | june,theo | quad | "can I have a bite" | that one friend whose "one bite" is half the sandwich
+T happy > Can I have a bite?
+J deadpan > One bite.
+! J shock 1.2
+J squint > That was half the sandwich.
+T > It was one bite.
+J > You *unhinged your jaw,* Theo. Like a snake.
+T smug shrug > You said one. You didn't say what *size.*
+J deadpan > Savor Scout dot net. Get your own. I'm begging.
+
+== free-pizza-radar | premise | theo,june | quad | she can smell free pizza | that one friend who can sense free pizza anywhere on campus
+T > Why did you stop walking?
+J determined > Shh. Free pizza.
+T > I don't smell anything.
+J > Third floor. Engineering building. Some kind of *info session.*
+T shock > How could you possibly know that?
+J deadpan > Pepperoni. Two boxes left. We sit through four slides. hold=0.5
+T happy > You're a genius.
+J deadpan > Savor Scout dot net. For when there's no info session.
+
+== sauce-retirement | premise | june,theo | quad | the sauce packet drawer | that one friend with a drawer full of sauce packets
+J squint > Why is this drawer full of sauce packets?
+T smug > That's my retirement.
+J deadpan > It's ketchup.
+T > Three hundred ketchups. Forty soy sauces. And one *mystery.*
+J > You can't retire on ketchup.
+T happy > Not with that attitude. hold=0.6
+J deadpan > Savor Scout dot net. Food to put the ketchup *on.*
+
+== smoke-alarm-timer | premise | theo,june | quad | she "cooks" now | when the smoke alarm is your kitchen timer
+T > Is something burning?
+J deadpan > I'm cooking.
+T panic > The smoke alarm is going off.
+J > That's the timer. It means it's done.
+T shock > What is it?
+J sad > It *was* toast. Now it's a warning. hold=0.6
+T deadpan > Savor Scout dot net. Let professionals do it.
+
+== forty-person-line | reveal | june,theo | quad | the line is 40 people long | when everyone on campus is in line at the same one place
+J > The line is forty people long.
+T sad > It's the only place. We wait.
+J squint > Is it the only place?
+T > Everyone's here. It must be.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+! T shock 1.2
+T plead > Then why are we all HERE?
+S deadpan > Nobody looks. Savor Scout dot net. [deadpan]
+
+== best-of-nine | premise | theo,june | quad | flipping a coin for dinner | flipping a coin to decide dinner and ignoring the coin
+T happy > Heads, burgers. Tails, noodles.
+J > Okay.
+T sad > Tails. Best of three.
+J deadpan > You wanted burgers.
+T > Tails again. Best of *nine.*
+J squint > Theo, just get burgers.
+T shock > I can't. The coin has *spoken.* hold=0.5
+J deadpan > Savor Scout dot net. It doesn't use coins.
+
+== dorm-sushi | series | theo,june | quad | he made dorm sushi | when your roommate invents "dorm sushi"
+T happy present > I made sushi. In the dorm.
+J squint > With what?
+T smug > Microwave rice. A cheese stick. Wrapped in a *fruit roll-up.*
+! J deadpan 1.4
+J deadpan > That's a crime in several countries.
+T > Try it.
+J sad > It tastes like a birthday party gone wrong. hold=0.5
+T deadpan > Savor Scout dot net. Fine. Real sushi.
+
+== went-for-milk | premise | june,theo | quad | he went for milk | when you go to the store for one thing
+J > You went for milk.
+T happy > I did.
+J squint > This is sixty dollars of groceries. Where's the milk?
+! T shock 1.2
+T sad > I got a pineapple. And a candle. And a *third* thing of hummus.
+J deadpan > So no milk.
+T smug > But the candle smells like milk.
+J deadpan > Savor Scout dot net. Just eat out. It's cheaper.
+
+== dinner-memory | premise | theo,june | quad | breakfast is a memory | when breakfast is just remembering last night's dinner
+T > Did you eat breakfast?
+J deadpan > I thought about dinner. From last night.
+T squint > That's not breakfast.
+J > I thought about it very *hard,* Theo.
+T > June.
+J sad > I could almost taste it. Then my class started. hold=0.6
+T deadpan > Savor Scout dot net. Breakfast you can chew.

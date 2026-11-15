@@ -12,9 +12,8 @@ secret is sent as a header, which KLIPY ignores: that's why it has to be an envi
 The media host also has to be allowed by the environment's network settings; the first failed
 download prints the host to allow.
 
-NOT YET RUN AGAINST THE LIVE API from this repo (no usable key at the time of writing): the
-response is read defensively (any item list, any mp4/gif/webp/jpg/png url inside an item), so a
-changed field name should not break it; `search` prints what came back so you can check.
+Checked against the live API on Nov 15, 2026 (reply: data.data[] with file.hd/md/sm/xs.{mp4,gif,webp,jpg}.url;
+media on static.klipy.com). The response is still read defensively, so a renamed field should not break it.
 
 TASTE AND RIGHTS. A meme is a reaction, held 1-2 seconds, never the whole joke. Prefer animals,
 cartoons-in-the-wild and anonymous reaction clips over film/TV scenes and celebrities, whose owners
@@ -35,6 +34,7 @@ BASE = "https://api.klipy.com/api/v1"
 KINDS = ("gifs", "clips", "stickers", "static-memes")
 PREFER = ("mp4", "gif", "webp", "jpg", "jpeg", "png")            # what Remotion plays best first
 SIZES = ("hd", "md", "sm", "xs")
+ANIMALS = ("cat", "cats", "dog", "dogs", "puppy", "kitten", "raccoon", "possum", "hamster", "chipmunk", "seal", "goat", "bird", "monkey")
 
 
 class NoKlipy(Exception):
@@ -110,7 +110,16 @@ def get(q, dest=MEMES, kind="gifs", pick=0):
     hit = next((f for f in os.listdir(dest) if f.startswith(stem + ".") and not f.endswith(".json")), None)
     if hit:
         return os.path.join(dest, hit), "via KLIPY"
-    found = search(q, kind, pick + 6)
+    found = search(q, kind, 12)
+    # Results are ranked by popularity, not by fit: "confident dog" can return a runway model. Put
+    # the ones whose title or tags actually contain the search's words first (pick counts from there).
+    words = [w for w in re.findall(r"[a-z]+", q.lower()) if len(w) > 2]
+    def fit(m):
+        hay = (m["title"] + " " + " ".join(str(t) for t in m["tags"])).lower()
+        hay_words = set(re.findall(r"[a-z]+", hay))
+        animal = [w for w in words if w in ANIMALS]             # if the search names an animal, the meme must show it
+        return sum(w in hay for w in words) + (10 if animal and any(w in hay_words or w + "s" in hay_words for w in animal) else 0)
+    found = sorted(found, key=lambda m: -fit(m))
     if len(found) <= pick:
         return None, ""
     m = found[pick]

@@ -25,7 +25,9 @@ export type Shot = {
 	kind: 'solo' | 'two' | 'insert' | 'map' | 'end' | 'meme';
 	meme?: {src: string; video: boolean; w: number; h: number; top?: string; credit?: string; bg?: string};
 	set?: SetName;
-	who?: 'milo' | 'scout';
+	who?: string;
+	left?: string;
+	right?: string;
 	face?: Face;
 	pose?: Pose;
 	look?: Look;
@@ -113,13 +115,15 @@ const BrandChip: React.FC<{site: string}> = ({site}) => {
 	);
 };
 
-const acting = (face: Face, pose: Pose, look: Look, mouth: number, f: number, uid: string) => ({face, pose, look, mouth, f, uid});
+const acting = (face: Face, pose: Pose, look: Look, mouth: number, f: number, uid: string, who?: string) => ({face, pose, look, mouth, f, uid, who});
+// Scout is the flame; everyone else is a person (Cast.tsx PEOPLE).
+const Char: React.FC<{name: string; a: ReturnType<typeof acting>}> = ({name, a}) => (name === 'scout' ? <Scout a={a} /> : <Milo a={{...a, who: name}} />);
 
 // Where a character stands, by shot. Milo sits a little left and looks right; Scout floats a little
 // right and looks left, so cutting between them reads as two people facing each other.
 const PLACE = {
 	solo: {milo: 'translate(-56 250) scale(1.72)', scout: 'translate(170 130) scale(1.4)'},
-	two: {milo: 'translate(-70 520) scale(1.12)', scout: 'translate(500 330) scale(0.98)'},
+	two: {milo: 'translate(-70 520) scale(1.12)', scout: 'translate(500 330) scale(0.98)', person2: 'translate(470 520) scale(1.12)'},
 };
 
 const Stage: React.FC<{s: Shot; uid: string}> = ({s, uid}) => {
@@ -142,7 +146,7 @@ const Stage: React.FC<{s: Shot; uid: string}> = ({s, uid}) => {
 	const face = s.face ?? 'neutral';
 	const pose = s.pose ?? 'idle';
 	// Reading: the eyes move left and right across the page.
-	const look: Look = s.scan ? (Math.floor(f / 9) % 2 ? 'left' : 'down') : (s.look ?? (who === 'milo' ? 'right' : 'left'));
+	const look: Look = s.scan ? (Math.floor(f / 9) % 2 ? 'left' : 'down') : (s.look ?? (who === (s.right ?? 'scout') ? 'left' : 'right'));
 	const enter = s.enterAt !== undefined ? spring({frame: f - s.enterAt, fps, config: {damping: 12, stiffness: 150, mass: 0.7}}) : 1;
 	const other = s.other ?? {face: 'neutral' as Face, pose: 'idle' as Pose, look: 'cam' as Look};
 	const burn = s.prop && s.prop.kind === 'plan' && s.prop.burnAt !== undefined ? Math.max(0, (f - s.prop.burnAt) / (s.prop.burnFor ?? 26)) : 0;
@@ -157,9 +161,9 @@ const Stage: React.FC<{s: Shot; uid: string}> = ({s, uid}) => {
 				</defs>
 				<g transform={`translate(${540 + sx} ${820 + sy}) scale(${z * cut}) translate(-540 -820)`}>
 					<SetBack set={s.kind === 'insert' ? 'spot' : set} f={f} uid={uid} />
-					{s.kind === 'solo' && who === 'milo' ? (
+					{s.kind === 'solo' && who !== 'scout' ? (
 						<g transform={PLACE.solo.milo} filter={cutF}>
-							<Milo a={acting(face, pose, look, m, f, `${uid}a`)} />
+							<Char name={who} a={acting(face, pose, look, m, f, `${uid}a`)} />
 						</g>
 					) : null}
 					{s.kind === 'solo' && who === 'scout' ? (
@@ -170,11 +174,11 @@ const Stage: React.FC<{s: Shot; uid: string}> = ({s, uid}) => {
 					{s.kind === 'two' ? (
 						<g>
 							<g transform={PLACE.two.milo} filter={cutF}>
-								<Milo a={who === 'milo' ? acting(face, pose, look, m, f, `${uid}a`) : acting(other.face, other.pose, other.look, 0, f, `${uid}a`)} />
+								<Char name={s.left ?? 'milo'} a={who === (s.left ?? 'milo') ? acting(face, pose, look, m, f, `${uid}a`) : acting(other.face, other.pose, other.look, 0, f, `${uid}a`)} />
 							</g>
 							<g transform={`translate(${(1 - enter) * 700} ${(1 - enter) * -120})`}>
-								<g transform={PLACE.two.scout} filter={cutF}>
-									<Scout a={who === 'scout' ? acting(face, pose, look, m, f, `${uid}b`) : acting(other.face, other.pose, other.look, 0, f, `${uid}b`)} />
+								<g transform={(s.right ?? 'scout') === 'scout' ? PLACE.two.scout : PLACE.two.person2} filter={cutF}>
+									<Char name={s.right ?? 'scout'} a={who === (s.right ?? 'scout') ? acting(face, pose, look, m, f, `${uid}b`) : acting(other.face, other.pose, other.look, 0, f, `${uid}b`)} />
 								</g>
 							</g>
 							{s.enterAt !== undefined && f >= s.enterAt && f < s.enterAt + 16

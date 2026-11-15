@@ -8,8 +8,9 @@ import {OUT} from './Cast';
 //   door - Scout's side: the door and a corkboard, warmer because Scout is a flame
 //   wide - both of them in the room
 //   spot - a spotlight for close-ups of props (the visual gags)
+//   quad - outside on campus in daylight: June and Theo's bench
 
-export type SetName = 'dorm' | 'door' | 'wide' | 'spot';
+export type SetName = 'dorm' | 'door' | 'wide' | 'spot' | 'quad';
 
 const WALL_A = '#6552d6';
 const WALL_B = '#4636a6';
@@ -128,6 +129,32 @@ export const SetBack: React.FC<{set: SetName; f: number; uid: string}> = ({set, 
 			</g>
 		);
 	}
+	if (set === 'quad') {
+		const drift = (f * 0.6) % 1400;
+		return (
+			<g>
+				<rect x={0} y={0} width={1080} height={1920} fill="#8fd3ff" />
+				<circle cx={880} cy={300} r={110} fill="#ffe27a" stroke={OUT} strokeWidth={8} />
+				{[0, 520].map((o, i) => (
+					<g key={i} transform={`translate(${((drift + o * 1.3) % 1400) - 300} ${380 + i * 150})`}>
+						<ellipse cx={0} cy={0} rx={150} ry={54} fill="#fff" stroke={OUT} strokeWidth={7} />
+						<ellipse cx={90} cy={-36} rx={90} ry={50} fill="#fff" stroke={OUT} strokeWidth={7} />
+						<ellipse cx={40} cy={10} rx={150} ry={40} fill="#fff" />
+					</g>
+				))}
+				<rect x={40} y={760} width={560} height={900} fill="#c9573f" stroke={OUT} strokeWidth={9} />
+				<path d="M 10 770 L 320 600 L 630 770 Z" fill="#f4e3c1" stroke={OUT} strokeWidth={9} strokeLinejoin="round" />
+				{[110, 270, 430].map((x) => (
+					<rect key={x} x={x} y={860} width={100} height={170} rx={50} fill="#2b3a67" stroke={OUT} strokeWidth={8} />
+				))}
+				<rect x={860} y={980} width={56} height={640} fill="#7a4a2a" stroke={OUT} strokeWidth={8} />
+				<circle cx={888} cy={900} r={190} fill="#3fae5a" stroke={OUT} strokeWidth={9} />
+				<circle cx={770} cy={1010} r={120} fill="#3fae5a" stroke={OUT} strokeWidth={9} />
+				<circle cx={1000} cy={1020} r={120} fill="#3fae5a" stroke={OUT} strokeWidth={9} />
+				<circle cx={888} cy={960} r={150} fill="#3fae5a" />
+			</g>
+		);
+	}
 	return (
 		<g>
 			<defs>
@@ -168,6 +195,14 @@ export const SetBack: React.FC<{set: SetName; f: number; uid: string}> = ({set, 
 export const SetFront: React.FC<{set: SetName}> = ({set}) => {
 	if (set === 'spot') {
 		return null;
+	}
+	if (set === 'quad') {
+		return (
+			<g>
+				<rect x={-10} y={1590} width={1100} height={340} fill="#4cbf68" stroke={OUT} strokeWidth={9} />
+				<rect x={-10} y={1590} width={1100} height={26} fill="#7ddc8f" />
+			</g>
+		);
 	}
 	return (
 		<g>

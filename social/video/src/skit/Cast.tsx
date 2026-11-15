@@ -10,7 +10,20 @@ import React from 'react';
 export type Face = 'neutral' | 'panic' | 'shock' | 'deadpan' | 'smug' | 'happy' | 'sad' | 'squint' | 'plead' | 'determined';
 export type Pose = 'idle' | 'headgrab' | 'armsup' | 'point' | 'shrug' | 'phone' | 'paper' | 'chin' | 'facepalm' | 'present';
 export type Look = 'cam' | 'left' | 'right' | 'down' | 'up';
-export type Acting = {face: Face; pose: Pose; look: Look; mouth: number; f: number; uid: string};
+export type Acting = {face: Face; pose: Pose; look: Look; mouth: number; f: number; uid: string; who?: string};
+
+// Everyone human is the same paper puppet with their own colours and hair.
+type Palette = {skin: string; skinSh: string; hair: string; hairHi: string; top: string; topSh: string; hairdo: 'curls' | 'bun' | 'flat'};
+export const PEOPLE: Record<string, Palette> = {
+	milo: {skin: '#f2b88f', skinSh: '#dd9b72', hair: '#2b1a45', hairHi: '#4a3270', top: '#20c7b5', topSh: '#17a394', hairdo: 'curls'},
+	june: {skin: '#c98a5e', skinSh: '#a96f47', hair: '#1c1016', hairHi: '#4a2a36', top: '#ff7aa8', topSh: '#e05585', hairdo: 'bun'},
+	theo: {skin: '#ffd9b8', skinSh: '#e8b48c', hair: '#d9722e', hairHi: '#f09a55', top: '#f4c531', topSh: '#d3a312', hairdo: 'flat'},
+};
+const HAIRDO: Record<Palette['hairdo'], [number, number, number][]> = {
+	curls: [[150, 236, 52], [178, 162, 70], [250, 112, 80], [334, 100, 84], [414, 138, 76], [456, 214, 54], [300, 150, 90]],
+	bun: [[300, 20, 74], [170, 190, 60], [230, 130, 76], [300, 112, 86], [370, 130, 76], [430, 190, 60], [140, 300, 40], [460, 300, 40], [128, 400, 36], [472, 400, 36]],
+	flat: [[190, 150, 60], [250, 118, 62], [310, 108, 64], [370, 118, 62], [420, 150, 58], [300, 140, 70]],
+};
 
 export const OUT = '#1d1230';
 // The show is animated like paper cutouts: a pose holds for three frames, then snaps.
@@ -177,6 +190,7 @@ const MILO_ARMS: Record<Pose, {l: Pt[]; r: Pt[]; front: boolean}> = {
 };
 
 export const Milo: React.FC<{a: Acting}> = ({a}) => {
+	const P = PEOPLE[a.who ?? 'milo'] ?? PEOPLE.milo;
 	const spec = FACES[a.face];
 	const look = LOOKS[a.look];
 	const f = step(a.f);
@@ -194,19 +208,11 @@ export const Milo: React.FC<{a: Acting}> = ({a}) => {
 	const L = [arms.l[0], arms.l[1], wob(arms.l[2], 0)] as Pt[];
 	const R = [arms.r[0], arms.r[1], wob(arms.r[2], 2)] as Pt[];
 	const closed = spec.eye > 1.1 ? 0 : blink(f, 11);
-	const curls: [number, number, number][] = [
-		[150, 236, 52],
-		[178, 162, 70],
-		[250, 112, 80],
-		[334, 100, 84],
-		[414, 138, 76],
-		[456, 214, 54],
-		[300, 150, 90],
-	];
+	const curls = HAIRDO[P.hairdo];
 	const armsEl = (
 		<g>
-			<Limb pts={L} color={HOODIE} />
-			<Limb pts={R} color={HOODIE} />
+			<Limb pts={L} color={P.top} />
+			<Limb pts={R} color={P.top} />
 			{a.pose === 'phone' ? (
 				<g transform={`rotate(-12 ${R[2][0]} ${R[2][1]})`}>
 					<rect x={R[2][0] - 52} y={R[2][1] - 150} width={104} height={190} rx={18} fill="#16102a" stroke={OUT} strokeWidth={8} />
@@ -220,36 +226,36 @@ export const Milo: React.FC<{a: Acting}> = ({a}) => {
 					<path d={`M ${R[2][0] - 70} ${R[2][1] - 164} l 144 0 M ${R[2][0] - 70} ${R[2][1] - 124} l 120 0 M ${R[2][0] - 70} ${R[2][1] - 84} l 136 0`} stroke="#b8a9d9" strokeWidth={9} strokeLinecap="round" />
 				</g>
 			) : null}
-			<Hand at={L[2]} />
-			<Hand at={R[2]} finger={a.pose === 'point' ? [R[2][0] + 54, R[2][1] - 34] : undefined} />
+			<Hand at={L[2]} color={P.skin} />
+			<Hand at={R[2]} color={P.skin} finger={a.pose === 'point' ? [R[2][0] + 54, R[2][1] - 34] : undefined} />
 		</g>
 	);
 	return (
 		<g transform={`translate(${jx} ${jy})`}>
 			{/* body */}
 			<g transform={`translate(0 ${breathe + shrug})`}>
-				<ellipse cx={300} cy={560} rx={168} ry={66} fill={HOODIE_SH} stroke={OUT} strokeWidth={9} />
-				<path d="M 96 1010 L 122 660 Q 134 574 236 556 L 364 556 Q 466 574 478 660 L 504 1010 Z" fill={HOODIE} stroke={OUT} strokeWidth={9} strokeLinejoin="round" />
-				<path d="M 236 556 Q 300 640 364 556" fill={HOODIE_SH} stroke={OUT} strokeWidth={8} />
+				<ellipse cx={300} cy={560} rx={168} ry={66} fill={P.topSh} stroke={OUT} strokeWidth={9} />
+				<path d="M 96 1010 L 122 660 Q 134 574 236 556 L 364 556 Q 466 574 478 660 L 504 1010 Z" fill={P.top} stroke={OUT} strokeWidth={9} strokeLinejoin="round" />
+				<path d="M 236 556 Q 300 640 364 556" fill={P.topSh} stroke={OUT} strokeWidth={8} />
 				<path d="M 268 600 L 262 700 M 332 600 L 338 700" stroke="#fff" strokeWidth={10} strokeLinecap="round" />
-				<path d="M 214 842 L 386 842 L 372 930 L 228 930 Z" fill={HOODIE_SH} opacity={0.55} />
+				<path d="M 214 842 L 386 842 L 372 930 L 228 930 Z" fill={P.topSh} opacity={0.55} />
 			</g>
 			{!arms.front ? armsEl : null}
 			{/* head */}
 			<g transform={`translate(0 ${bob + shrug * 0.5}) rotate(${tilt} 300 470)`}>
-				<rect x={262} y={440} width={76} height={120} fill={SKIN_SH} stroke={OUT} strokeWidth={8} />
-				<ellipse cx={126} cy={318} rx={28} ry={40} fill={SKIN} stroke={OUT} strokeWidth={8} />
-				<ellipse cx={474} cy={318} rx={28} ry={40} fill={SKIN} stroke={OUT} strokeWidth={8} />
-				<ellipse cx={300} cy={300} rx={172} ry={182} fill={SKIN} stroke={OUT} strokeWidth={9} />
+				<rect x={262} y={440} width={76} height={120} fill={P.skinSh} stroke={OUT} strokeWidth={8} />
+				<ellipse cx={126} cy={318} rx={28} ry={40} fill={P.skin} stroke={OUT} strokeWidth={8} />
+				<ellipse cx={474} cy={318} rx={28} ry={40} fill={P.skin} stroke={OUT} strokeWidth={8} />
+				<ellipse cx={300} cy={300} rx={172} ry={182} fill={P.skin} stroke={OUT} strokeWidth={9} />
 				{curls.map(([x, y, r], i) => (
 					<circle key={`o${i}`} cx={x} cy={y} r={r} fill={OUT} stroke={OUT} strokeWidth={18} />
 				))}
 				{curls.map(([x, y, r], i) => (
-					<circle key={`h${i}`} cx={x} cy={y} r={r} fill={HAIR} />
+					<circle key={`h${i}`} cx={x} cy={y} r={r} fill={P.hair} />
 				))}
-				<path d="M 232 96 Q 262 70 292 96 M 330 88 Q 364 70 388 104 M 190 176 Q 214 150 240 172" stroke="#4a3270" strokeWidth={8} strokeLinecap="round" fill="none" />
-				<Eye cx={236} cy={300} spec={spec} look={look} lidColor={SKIN} uid={`${a.uid}el`} closed={closed} rx={60} ry={68} />
-				<Eye cx={364} cy={300} spec={spec} look={look} lidColor={SKIN} uid={`${a.uid}er`} closed={closed} rx={60} ry={68} />
+				{P.hairdo === 'curls' ? <path d="M 232 96 Q 262 70 292 96 M 330 88 Q 364 70 388 104 M 190 176 Q 214 150 240 172" stroke={P.hairHi} strokeWidth={8} strokeLinecap="round" fill="none" /> : null}
+				<Eye cx={236} cy={300} spec={spec} look={look} lidColor={P.skin} uid={`${a.uid}el`} closed={closed} rx={60} ry={68} />
+				<Eye cx={364} cy={300} spec={spec} look={look} lidColor={P.skin} uid={`${a.uid}er`} closed={closed} rx={60} ry={68} />
 				<g transform={`translate(0 ${spec.by})`}>
 					<rect x={186} y={196} width={92} height={20} rx={10} fill={OUT} transform={`rotate(${-spec.bl} 232 206)`} />
 					<rect x={322} y={196} width={92} height={20} rx={10} fill={OUT} transform={`rotate(${spec.br} 368 206)`} />
@@ -318,10 +324,6 @@ export const Scout: React.FC<{a: Acting; glow?: boolean}> = ({a, glow = true}) =
 			<g transform={`translate(300 800) scale(${2 - talk} ${talk}) translate(-300 -800)`}>
 				<path d={outer} fill={EMBER} stroke={F_OUT} strokeWidth={10} strokeLinejoin="round" />
 				<path d={inner} fill={SAFFRON} />
-				{/* the scout neckerchief */}
-				<path d="M 108 668 Q 300 770 492 668 L 484 716 Q 300 818 116 716 Z" fill="#6c5ce7" stroke={OUT} strokeWidth={8} strokeLinejoin="round" />
-				<path d="M 286 772 L 256 850 L 300 826 L 344 850 L 314 772 Z" fill="#5a4bd4" stroke={OUT} strokeWidth={8} strokeLinejoin="round" />
-				<circle cx={300} cy={772} r={22} fill="#8f83ff" stroke={OUT} strokeWidth={8} />
 				{/* face */}
 				<Eye cx={250} cy={560} spec={spec} look={look} lidColor={SAFFRON} uid={`${a.uid}el`} closed={closed} rx={48} ry={54} pupil={F_INK} />
 				<Eye cx={350} cy={560} spec={spec} look={look} lidColor={SAFFRON} uid={`${a.uid}er`} closed={closed} rx={48} ry={54} pupil={F_INK} />

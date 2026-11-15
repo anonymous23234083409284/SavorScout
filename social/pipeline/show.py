@@ -6,6 +6,8 @@
     python show.py cast                             the cast and their voices
     python show.py lines <episode.json>             each character's lines as one ElevenLabs prompt
     python show.py takes <episode.json> <who> <audio file>   cut that recording into the lines
+    python show.py bank [list|lint]                 the script bank (social/show/bank/*.txt): list it, or check every script
+    python show.py bank make <script id> [campus slug] [date]   turn a bank script into an episode file
     python show.py batch <batch id> <episode.json>... [--day YYYY-MM-DD]
                                                     put built episodes in a batch that make_day.py
                                                     publish/verify can post (e.g. batch id 2026-11-16s)
@@ -161,10 +163,13 @@ def print_lines(ep):
     for who in dict.fromkeys(w for w, _, _ in spoken_lines(ep)):
         mine = [(t, v) for w, t, v in spoken_lines(ep) if w == who]
         todo = [v for t, v in mine if not take_for(ep["id"], who, t)]
-        e = C[who].get("eleven", {})
+        e = C[who].get("eleven") or {}
+        if not e:
+            print(f"\n=== {C[who]['name']}: {len(mine)} lines, read by the local voice (free): nothing to generate ===")
+            continue
         print(f"\n=== {C[who]['name']}: {len(mine)} lines, {len(todo)} without a take. ElevenLabs voice {e.get('name')} ({e.get('voice_id')}), model eleven_v4, one take ===")
         if todo:
-            prompt = "\n\n[long pause]\n\n".join(v for _, v in mine)
+            prompt = "\n[long pause]\n".join(v for _, v in mine)        # single newlines: every character is paid for
             print(prompt)
             print(f"--- {len(prompt)} characters. Then: python show.py takes <episode.json> {who} <downloaded audio>")
 
@@ -245,7 +250,7 @@ def meme_file(spec, pub):
     if not src or not os.path.exists(src):
         return None
     video = not src.lower().endswith((".jpg", ".jpeg", ".png"))
-    name = "meme-" + hashlib.sha1(src.encode()).hexdigest()[:8] + (".mp4" if video else os.path.splitext(src)[1].lower())
+    name = "meme-" + hashlib.sha1(open(src, "rb").read()).hexdigest()[:8] + (".mp4" if video else os.path.splitext(src)[1].lower())
     dst = os.path.join(pub, name)
     if not os.path.exists(dst):
         if video:                                      # gif, webp or mp4 -> an even-sized h264 clip
@@ -481,7 +486,9 @@ def compile_episode(ep, work):
         elif b.get("react"):
             dur = int(round(float(b.get("dur", 1.0)) * FPS))
             shot.update(kind="two" if b.get("two") else "solo", dur=dur, who=b["who"], face=b.get("face", "neutral"), pose=b.get("pose", "idle"),
-                        set=b.get("set", "wide" if b.get("two") else "dorm" if b["who"] == "milo" else "door"))
+                        set=b.get("set") or ep.get("set") or ("wide" if b.get("two") else "door" if b["who"] == "scout" else "dorm"))
+            if b.get("two"):
+                shot["left"], shot["right"] = (ep.get("cast") or ["milo", "scout"])[:2]
             if b.get("quiet", True):
                 silent.append((t / FPS, (t + dur) / FPS))
         elif "map" in b:
@@ -500,11 +507,13 @@ def compile_episode(ep, work):
             who = b["who"]
             two = bool(b.get("two"))
             shot.update(kind="two" if two else "solo", dur=dur, who=who, face=b.get("face", "neutral"), pose=b.get("pose", "idle"),
-                        set=b.get("set", "wide" if two else "dorm" if who == "milo" else "door"))
+                        set=b.get("set") or ep.get("set") or ("wide" if two else "door" if who == "scout" else "dorm"))
+            if two:
+                shot["left"], shot["right"] = (ep.get("cast") or ["milo", "scout"])[:2]
             if b.get("look"):
                 shot["look"] = b["look"]
             if two:
-                shot["other"] = b.get("other", {"face": "neutral", "pose": "idle", "look": "right" if who == "scout" else "left"})
+                shot["other"] = b.get("other", {"face": "neutral", "pose": "idle", "look": "right" if who == shot["right"] else "left"})
             if b.get("enter"):
                 shot["enterAt"] = 3
                 events.append(("sparkle", t / FPS + 0.05, 1.0))
@@ -578,14 +587,14 @@ def lint(ep, built=None):
     if not any(b.get("chip") for b in beats):
         P.append("the site's name is never shown on screen with a line (chip)")
     words = sum(len(b["say"].split()) for b in lines)
-    if not 55 <= words <= 125:
-        P.append(f"{words} spoken words; an episode runs 55-125 (about 28-45 seconds)")
+    if not 35 <= words <= 125:
+        P.append(f"{words} spoken words; an episode runs 35-125 (about 18-45 seconds)")
     if any("read" in b or b.get("insert") == "plan" for b in beats) and not ep.get("plan"):
         P.append("a beat uses the plan but the episode has no \"plan\"")
     if built:
         sec = built["total"] / FPS
-        if not 26 <= sec <= 50:
-            P.append(f"runs {sec:.1f} s; the show runs 26-50 s")
+        if not 15 <= sec <= 50:
+            P.append(f"runs {sec:.1f} s; the show runs 15-50 s")
         if built["shots"][0]["dur"] > 4.0 * FPS:
             P.append("the opening shot is over 4 seconds; get to the first cut faster")
         longest = max([s["dur"] for s in built["shots"] if s["kind"] in ("solo", "two", "meme")] or [0]) / FPS
@@ -632,6 +641,149 @@ def build(path, render=False):
         subprocess.run(["node", os.path.join(VIDEO, "render.mjs"), manifest], cwd=VIDEO, check=True, env=env)
         print("video:", out_mp4)
     return manifest, problems
+
+
+# ---- the script bank ------------------------------------------------------------------------
+# social/show/bank/*.txt holds ready scripts in a short form (the header of each file explains it).
+# A bank script names no campus: `bank make` turns one into an episode for any campus.
+
+BANK = os.path.join(SHOW, "bank")
+WHO = {"M": "milo", "S": "scout", "J": "june", "T": "theo", "N": "narrator"}
+FACES = {"neutral", "panic", "shock", "deadpan", "smug", "happy", "sad", "squint", "plead", "determined"}
+POSES = {"idle", "headgrab", "armsup", "point", "shrug", "phone", "paper", "chin", "facepalm", "present"}
+ACT_FACE = {"panick": "panic", "shock": "shock", "shout": "shock", "deadpan": "deadpan", "flat": "deadpan", "calm": "neutral", "sarcas": "smug", "smug": "smug",
+            "excit": "happy", "happy": "happy", "proud": "smug", "sad": "sad", "tired": "sad", "annoy": "squint", "suspic": "squint", "plead": "plead",
+            "whisper": "squint", "determin": "determined", "gasp": "shock", "trembl": "panic", "cheer": "happy", "serious": "determined", "nervous": "panic"}
+
+
+def bank_scripts():
+    out = {}
+    for name in sorted(os.listdir(BANK)) if os.path.isdir(BANK) else []:
+        if not name.endswith(".txt"):
+            continue
+        cur = None
+        for raw in open(os.path.join(BANK, name)):
+            line = raw.rstrip("\n")
+            if line.startswith("=="):
+                f = [x.strip() for x in line[2:].split("|")]
+                cur = {"id": f[0], "format": f[1], "cast": [c.strip() for c in f[2].split(",")], "set": f[3] or None, "title": f[4], "caption": f[5], "lines": [], "file": name}
+                out[cur["id"]] = cur
+            elif cur is not None and line.strip() and not line.startswith("#"):
+                cur["lines"].append(line.strip())
+    return out
+
+
+def bank_episode(sc, campus=None):
+    """A bank script as an episode (the same thing a hand-written gold script is)."""
+    beats = []
+    for line in sc["lines"]:
+        head, _, text = line.partition(">")
+        tok, text = head.split(), text.strip()
+        holds = re.findall(r"\bhold=[\d.]+", line)          # hold=0.6 may sit anywhere on the line
+        text = re.sub(r"\s*\bhold=[\d.]+", "", text)
+        act = " ".join(re.findall(r"\[[^\]]+\]", text))
+        text = re.sub(r"\s*\[[^\]]+\]", "", text).strip()
+        if tok[0] == "!":                                   # ! S deadpan 1.2   a silent reaction
+            beats.append({"who": WHO[tok[1]], "react": True, "face": next((t for t in tok if t in FACES), "deadpan"), "dur": float(next((t for t in tok if re.fullmatch(r"[\d.]+", t)), 1.2))})
+            continue
+        b = {}
+        if tok[0] == "MAP":                                 # MAP w S > line
+            b["map"], tok = tok[1], tok[2:]
+        elif tok[0] == "MEME":                              # MEME search words | text above | N > line
+            parts = [x.strip() for x in head[4:].split("|")]
+            b["meme"] = {"q": parts[0]}
+            if len(parts) > 2 and parts[1]:
+                b["top"] = parts[1]
+            tok = parts[-1].split()
+        b["who"] = WHO[tok[0]]
+        caps = re.findall(r"\b[A-Z]{3,}\b", re.sub(r"\{\w+\}", "", text))
+        say = text
+        for w in caps:                                      # a shouted word: capitals for ElevenLabs and the caption only
+            say = say.replace(w, w.lower())
+        b["say"] = re.sub(r"[*]", "", say)
+        if caps:
+            b["voice"] = re.sub(r"[*]", "", text)
+        if "*" in text or caps:
+            cap = text
+            for w in caps:
+                cap = cap if f"*{w}" in cap else cap.replace(w, f"*{w}*", 1)
+            b["cap"] = cap
+        if act:
+            b["act"] = act
+        if "map" not in b and "meme" not in b:
+            b["face"] = next((t for t in tok if t in FACES), None) or next((v for k, v in ACT_FACE.items() if k in act.lower()), "neutral")
+            b["pose"] = next((t for t in tok if t in POSES), "idle")
+            if "2" in tok:
+                b["two"] = True
+            if "shake" in tok:
+                b["fx"] = ["shake"]
+            if "cam" in tok:
+                b["look"] = "cam"
+        if holds:
+            b["hold"] = float(holds[-1][5:])
+        beats.append(b)
+    spoken = [b for b in beats if b.get("say")]
+    if spoken:
+        spoken[0]["title"] = sc["title"]
+        spoken[0].setdefault("fx", []).append("cold")
+        spoken[-1]["chip"] = True
+        if spoken[-1].get("who") != "narrator":
+            spoken[-1]["look"] = "cam"
+    seen = set()
+    for b in beats:                                         # the first time the second character speaks, show them together
+        w = b.get("who")
+        if w and w != "narrator" and "map" not in b and "meme" not in b and not b.get("react") and w not in seen:
+            seen.add(w)
+            if len(seen) == 2 and w in sc["cast"][:2]:
+                b["two"] = True
+    beats.append({"end": True})
+    ep = {"id": sc["id"], "format": sc["format"], "bank": sc["id"], "cast": sc["cast"], "music": "cozy",
+          "caption": sc["caption"] + "\n\n#collegelife #collegefood #relatable " + ("#skit" if "narrator" not in sc["cast"] else "#fyp"), "beats": beats}
+    if sc["set"]:
+        ep["set"] = sc["set"]
+    if campus:
+        import lab
+        ep["campus"] = campus
+        ep["id"] = f"{sc['id']}-{re.sub(r'[^a-z0-9]+', '-', lab.short(campus).lower()).strip('-')}"
+    return ep
+
+
+def bank_cmd(a):
+    scripts = bank_scripts()
+    if not a or a[0] == "list":
+        used = {}
+        for f in os.listdir(os.path.join(SHOW, "episodes")) if os.path.isdir(os.path.join(SHOW, "episodes")) else []:
+            e = jload(os.path.join(SHOW, "episodes", f)) or {}
+            if e.get("bank"):
+                used[e["bank"]] = used.get(e["bank"], 0) + 1
+        for sc in scripts.values():
+            words = sum(len(re.sub(r"\[[^\]]+\]", "", l.partition(">")[2]).split()) for l in sc["lines"])
+            needs = "campus" if any("{" in l for l in sc["lines"]) else "-"
+            print(f"{sc['id']:<26} {sc['format']:<10} {','.join(sc['cast']):<12} {words:>3}w  {needs:<6} made {used.get(sc['id'], 0)}x  {sc['title']}")
+        print(len(scripts), "scripts")
+    elif a[0] == "lint":
+        bad = 0
+        for sc in scripts.values():
+            needs = any("{" in l for l in sc["lines"])
+            probs = lint(bank_episode(sc, "new-york-university" if needs else None))
+            if probs:
+                bad += 1
+                print(sc["id"], "->", "; ".join(probs))
+        print(f"{len(scripts) - bad} of {len(scripts)} scripts pass")
+        sys.exit(1 if bad else 0)
+    elif a[0] == "make" and len(a) > 1:
+        import datetime as dt
+        sc = scripts.get(a[1]) or sys.exit(f"no script {a[1]} in the bank (python show.py bank list)")
+        campus = next((x for x in a[2:] if not re.fullmatch(r"\d{4}-\d\d-\d\d", x)), None)
+        if any("{" in l for l in sc["lines"]) and not campus:
+            sys.exit("this script states a number: give a campus slug")
+        ep = bank_episode(sc, campus)
+        date = next((x for x in a[2:] if re.fullmatch(r"\d{4}-\d\d-\d\d", x)), dt.date.today().isoformat())
+        out = os.path.join(SHOW, "episodes", f"{date}-{ep['id']}.json")
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        json.dump(ep, open(out, "w"), indent=1, ensure_ascii=False)
+        probs = lint(ep)
+        print(out, "|", "; ".join(probs) if probs else "passes the show's rules")
 
 
 def batch(batch_id, paths, day=None):
@@ -688,6 +840,8 @@ if __name__ == "__main__":
         print_lines(jload(a[1]))
     elif a[0] == "takes" and len(a) > 3:
         store_takes(jload(a[1]), a[2], a[3])
+    elif a[0] == "bank":
+        bank_cmd(a[1:])
     elif a[0] == "batch" and len(a) > 2:
         day = a[a.index("--day") + 1] if "--day" in a else None
         batch(a[1], [x for i, x in enumerate(a[2:]) if x != "--day" and a[2:][i - 1] != "--day"], day)

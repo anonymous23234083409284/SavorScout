@@ -1,0 +1,423 @@
+# THE SCRIPT BANK, file 3: one-voice series (the cheapest to voice), Scout with the roommates,
+# the Hunger Hotline, and a few more Milo and Scout.
+#
+# BROKE FOOD (Theo, alone, to camera): total sincerity about something very small. He is a
+# cooking-show host and the dish is one ingredient. No jokes in his tone: he is proud.
+# CONFESSIONS (June, alone, to camera): she admits something unhinged as if reading the weather.
+# One voice means one ElevenLabs prompt of about 250 characters: make these when characters are low.
+# SCOUT knows every place to eat near every campus. Calm, flat, one true number, and at most one
+# blow-up per episode ("What the HELL is this?!"). Scout never states a number that isn't a slot.
+
+== broke-food-1 | series | theo,june | quad | broke food, part 1: the potato | broke food part 1. my budget was zero dollars
+T happy cam > Broke food, part one. Today's budget: zero dollars.
+T present cam > I got one potato. From the free table. I poked holes in it. With a *pen.*
+T cam > Microwave. Five minutes. Flip it once. Respect the line behind you.
+T smug cam > For toppings: one salt packet. And a ketchup I've been *saving.*
+! T happy 1.2
+T happy cam > It was delicious. I cried a little. Thank you for joining me.
+T cam > Savor Scout dot net. For when you have more than a potato.
+
+== broke-food-2 | series | theo,june | quad | broke food, part 2: the sandwich | broke food part 2. the bread is from a meeting
+T happy cam > Broke food, part two. Today: a sandwich.
+T present cam > The bread is from a club meeting. I'm not in the club.
+T cam > The filling is one slice of cheese. I split it. For *both halves.*
+T smug cam > I toasted it on a radiator. Twenty minutes each side.
+! T happy 1.2
+T happy cam > It's warm in the middle. That's called *technique.*
+T cam > Savor Scout dot net. Sandwiches with two slices of cheese.
+
+== broke-food-3 | series | theo,june | quad | broke food, part 3: soup | broke food part 3. it's soup if you believe
+T happy cam > Broke food, part three. Today we make soup.
+T present cam > Hot water. From the tea station. It's free if you walk *confidently.*
+T cam > Four ketchup packets. One pepper. Stir with a coffee stick.
+T smug cam > Some people call this tomato soup. Those people are *me.*
+! T sad 1.2
+T happy cam > It tastes like a hug from someone who's leaving. Thank you for joining me.
+T cam > Savor Scout dot net. Soup that began as soup.
+
+== broke-food-4 | series | theo,june | quad | broke food, part 4: date night | broke food part 4. date night edition
+T happy cam > Broke food, part four. Date night edition.
+T present cam > Two cups of noodles. But I lit a candle. So it's *Italian.*
+T cam > For the appetizer: crackers. Arranged in a *circle.*
+T smug cam > For dessert, we share one mint. I cut it with a library card.
+! T happy 1.2
+T sad cam > She said it was the most memorable date of her life. She has not texted.
+T cam > Savor Scout dot net. Take her somewhere with chairs.
+
+== broke-food-5 | series | theo,june | quad | broke food, part 5: breakfast | broke food part 5. breakfast of champions (unranked)
+T happy cam > Broke food, part five. Breakfast.
+T present cam > Cereal. But I'm out of milk. So today the milk is *water.*
+T cam > Don't knock it. It's what milk is mostly made of.
+T smug cam > For protein: a peanut I found in my coat. It's *aged.*
+! T sad 1.3
+T happy cam > I feel alive. Or dizzy. Thank you for joining me.
+T cam > Savor Scout dot net. Breakfast with actual milk.
+
+== broke-food-6 | series | theo,june | quad | broke food, part 6: pizza | broke food part 6. I lost my wallet so it gets worse
+T sad cam > Broke food, part six. I lost my wallet.
+T present cam > So tonight: pizza. A tortilla. Ketchup. And *hope.*
+T cam > The cheese is a string cheese. I peeled it. Strand by strand.
+T smug cam > Microwave for one minute. It comes out looking *ashamed.*
+! T happy 1.2
+T happy cam > It's the best pizza I've had today. Thank you for joining me.
+T cam > Savor Scout dot net. Pizza that looks you in the eye.
+
+== broke-food-7 | series | theo,june | quad | broke food, part 7: the feast | broke food part 7. I got paid
+T happy cam > Broke food, part seven. I got *paid.*
+T present cam > So today I'm going all out. Noodles. With an *egg.*
+T cam > I boiled the egg in the kettle. The kettle will never be the same.
+T smug cam > I also bought a lime. I don't know why. It felt *rich.*
+! T happy 1.2
+T sad cam > The money is gone now. It was the lime. Thank you for joining me.
+T cam > Savor Scout dot net. Spend it better than I did.
+
+== confession-forks | confession | june,theo | quad | I have never bought a fork | confession: I have not bought a fork in three years
+J deadpan cam > I have never bought a fork. Not once.
+J cam > Every fork I own came from a restaurant. I have forty.
+J squint cam > Some people collect stamps. I collect *evidence.*
+J cam > Last week a waiter counted the forks. He looked at my bag. I looked at him.
+! J deadpan 1.3
+J cam > I left with forty-one.
+J deadpan cam > Savor Scout dot net. New places. New forks.
+
+== confession-birthday | confession | june,theo | quad | I lie about my birthday | confession: it has been my birthday 9 times this year
+J deadpan cam > It has been my birthday nine times this year.
+J cam > Restaurants give you free dessert. They don't check.
+J squint cam > In March I was twenty. In April I was twenty again. They sang.
+J cam > One place knows me now. They call me *birthday girl.* It's a threat.
+! J deadpan 1.2
+J sad cam > I can't go back until I age.
+J deadpan cam > Savor Scout dot net. I need new restaurants. Urgently.
+
+== confession-samples | confession | june,theo | quad | I'm banned from the sample table | confession: I am no longer welcome near the samples
+J deadpan cam > I'm banned from the sample table.
+J cam > They said the samples are for *tasting.* Not for *lunch.*
+J squint cam > I said, define lunch. They defined it. I had done it.
+J cam > Fourteen cubes of cheese. I brought my own toothpick. For speed.
+! J deadpan 1.2
+J sad cam > There's a photo of me at the register now.
+J deadpan cam > Savor Scout dot net. Places where food comes on a plate.
+
+== confession-leftovers | confession | june,theo | quad | I ate my roommate's food | confession: it was me. I ate the pad thai.
+J deadpan cam > Theo thinks a ghost eats his leftovers.
+J cam > It's me. It has always been me.
+J squint cam > He left a note for the ghost. It said, please stop. I wrote back, *no.*
+J cam > Now he leaves the ghost little offerings. A cookie. Half a burrito.
+! J smug 1.3
+J cam > I've never eaten better.
+J deadpan cam > Savor Scout dot net. He must never see this.
+
+== confession-order | confession | june,theo | quad | I panic-order the same thing | confession: I have ordered the same thing for 2 years out of fear
+J deadpan cam > I've ordered the same thing for two years.
+J cam > I don't even like it. I said it once, in a panic. Now it's my *identity.*
+J squint cam > The cashier starts making it when I walk in. I can't hurt her.
+J cam > Yesterday I wanted soup. I looked her in the eyes. I said, the usual.
+! J sad 1.3
+J cam > I'm trapped in a chicken wrap.
+J deadpan cam > Savor Scout dot net. A place where nobody knows me.
+
+== confession-dining-hall | confession | june,theo | quad | I live off dining hall fruit | confession: I steal one banana a day and I'm not sorry
+J deadpan cam > I steal one dining hall banana every day.
+J cam > The sign says, one piece of fruit. I respect the sign. For *one* hand.
+J squint cam > The other hand is not bound by the sign.
+J cam > My backpack is nine bananas and a laptop. The laptop smells like banana.
+! J deadpan 1.2
+J cam > I've started trading them. I run an *economy.*
+J deadpan cam > Savor Scout dot net. Food that isn't bananas.
+
+== confession-cooking | confession | june,theo | quad | I told everyone I can cook | confession: I said I could cook and now there's a dinner party
+J panic cam > I told people I can cook. I cannot.
+J cam > They said, amazing, host a dinner. I said *sure.* Why did I say sure.
+J squint cam > Six people. Saturday. I own one pot and a fork from a restaurant.
+J cam > My plan is to order takeout. And put it on plates. And *lie.*
+! J deadpan 1.2
+J cam > If they ask for the recipe, I'll cry.
+J deadpan cam > Savor Scout dot net. Helping me commit fraud since today.
+
+== the-read-grocery | read | june,scout | quad | Scout reads her grocery list | when someone who knows food reads your grocery list
+J happy paper > I made a grocery list. Like an adult.
+S 2 > Let me see it. It can't be that bad.
+! S deadpan 1.6
+S shock shake > What the HELL is this?! [shocked] [shouting]
+J > It's a list.
+S squint > It says chips. Other chips. And, quote, *a vegetable, maybe.*
+J deadpan > I'm keeping my options open.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+S deadpan > Savor Scout dot net. Put the list down.
+
+== the-read-fridge | read | theo,scout | quad | Scout opens his fridge | when someone who knows food opens your fridge
+T happy > Welcome to my fridge. I just restocked.
+S 2 > Good. Let's see.
+! S deadpan 1.6
+S shock shake > What the HELL is this?! [shocked] [shouting]
+T smug > Mustard. An older mustard. And a burrito named Gerald.
+S squint > Why does it have a name?
+T sad > He's been through a lot.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+S deadpan > Savor Scout dot net. Leave Gerald. Go.
+
+== the-read-order-history | read | theo,scout | quad | Scout reads his order history | when someone reads your delivery order history out loud
+T happy phone > My food spending is totally under control.
+S 2 > Show me the order history.
+! S deadpan 1.6
+S shock shake > What the HELL is this?! [shocked] [shouting]
+T shrug > What?
+S squint > The same burrito. Thirty-one times. You paid fees on a *cookie.*
+T sad > It was a hard night.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+S deadpan > Savor Scout dot net. Walk to the cookie.
+
+== the-read-dinner-plan | read | june,scout | quad | Scout reads her dinner party menu | when your dinner party menu gets reviewed by a professional
+J happy paper > I'm hosting dinner. Here's my menu.
+S 2 > Read it to me.
+J smug > Appetizer: crackers. Main: bigger crackers. Dessert: the *idea* of cake.
+! S deadpan 1.5
+S shock shake > What the HELL is this?! [shocked] [shouting]
+J deadpan > It's minimalist.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+S deadpan > Savor Scout dot net. Take them out. Save the friendships.
+
+== scout-seven-years | reveal | june,scout | quad | she's never left the dining hall | when you've eaten at the dining hall every day for 3 years
+J deadpan > Three years. Every meal. The dining hall.
+S 2 > By choice?
+J > I didn't know there was a choice.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+! J shock 1.3
+J plead > Since WHEN?
+S deadpan > Since before you got here. [deadpan]
+J sad > I've had the same chicken four hundred times.
+S deadpan > Savor Scout dot net. Go. Be free.
+
+== scout-pizza-count | reveal | theo,scout | quad | he thinks there's one pizza place | when you think your campus has one pizza place
+T sad > There's only one pizza place near campus. It's fine.
+S 2 > One?
+T > Just the one. We've all accepted it.
+MAP pizza S > There are {pizza} pizza places within a mile of you.
+! T shock 1.3
+T panic headgrab > I've been loyal to a *mediocre* pizza. For years.
+S deadpan > It didn't deserve you. [deadpan]
+T determined > Savor Scout dot net. I have a lot of pizza to catch up on.
+
+== scout-coffee-count | reveal | june,scout | quad | the coffee line is 30 people | when everyone waits 30 minutes at the same coffee shop
+J squint > The coffee line is thirty people long.
+S 2 > Why are you in it?
+J > It's the coffee shop. Where else would I go?
+MAP coffee S > There are {coffee} coffee shops within a mile of you.
+! J deadpan 1.3
+J deadpan > I've spent four days of my life in this line.
+S deadpan > I know. I watched. [deadpan]
+J > Savor Scout dot net. I'm leaving the line. Hold my spot. Don't.
+
+== scout-busiest-street | reveal | theo,scout | quad | he's never walked down that street | when the best food street is right there and you've never turned left
+T happy > I know every place to eat around here.
+S 2 > Have you been to {street}?
+T squint > I always turn right. Left looks *far.*
+MAP street_n S > There are {street_n} places to eat on {street}.
+! T shock 1.3
+T plead > It was LEFT? This whole time?
+S deadpan > It was left. [deadpan]
+T determined > Savor Scout dot net. I'm turning left. Tell my family.
+
+== hotline-cereal | hotline | theo,scout | quad | hunger emergency line | calling the hunger emergency line at midnight
+S deadpan phone 2 > Hunger emergency line. What's your situation?
+T panic phone > I've eaten cereal for dinner four nights in a row.
+S > Is there milk?
+T sad > Not since Tuesday.
+! S deadpan 1.3
+S > Sir, I need you to step away from the cereal. [calm]
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+T plead > Stay on the line with me.
+S deadpan > Savor Scout dot net. I can't. There's another call. It's also cereal.
+
+== hotline-anything | hotline | theo,scout | quad | she said "anything is fine" | calling for backup because she said "anything is fine"
+S deadpan phone 2 > Hunger emergency line. What's your situation?
+T panic phone > She said anything is fine. I've suggested nine places.
+S > And?
+T > She said no to all nine.
+! S deadpan 1.3
+S > Sir, you are in a *negotiation.* Do not suggest a tenth. [calm]
+T plead > What do I do?
+MAP w S > There are {w} places within a 10-minute walk. Read her the list. Slowly.
+S deadpan > Savor Scout dot net. Good luck. We've lost people this way.
+
+== hotline-two-am | hotline | june,scout | quad | it's 2 a.m. and she's "not hungry" | calling the hunger line at 2 a.m. about a tortilla
+S deadpan phone 2 > Hunger emergency line. What's your situation?
+J deadpan phone > It's two a.m. I'm eating a plain tortilla. In the dark.
+S > Is it warm?
+J > No.
+! S deadpan 1.3
+S > Ma'am, that's a *napkin.* You're eating a napkin. [calm]
+J sad > It's all I have.
+S deadpan > Savor Scout dot net. Tomorrow. Eat dinner at dinner.
+
+== hotline-meal-prep | hotline | theo,scout | quad | he meal prepped rice | calling the hunger line about day 4 of meal prep
+S deadpan phone 2 > Hunger emergency line. What's your situation?
+T sad phone > I meal prepped. It's day four of plain rice.
+S > Is there a sauce?
+T shock > Everyone keeps asking that.
+! S deadpan 1.3
+S > Sir, put the rice down. You've done enough. [calm]
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+T plead > Do they have sauce?
+S deadpan > Savor Scout dot net. They have sauce.
+
+== hotline-group | hotline | june,scout | quad | six people can't pick a place | calling the hunger line because six people can't decide
+S deadpan phone 2 > Hunger emergency line. What's your situation?
+J deadpan phone > Six of us. Forty minutes. Nobody will pick a restaurant.
+S > Has anyone said, I don't mind?
+J > All six.
+! S deadpan 1.3
+S shock shake > What the HELL is wrong with you people?! [shouting]
+MAP w S > There are {w} places to eat within a 10-minute walk of you. Pick one.
+J > Which one?
+S deadpan > Savor Scout dot net. I'm hanging up.
+
+== milo-rent-due | rescue | milo,scout | | rent is due and he bought a blender | when rent is due and you bought a blender
+M panic headgrab > Rent is due Friday. I have nine dollars.
+S 2 > Where did your money go?
+M smug present > I bought a blender. To save money. On *smoothies.*
+S > What's in the smoothie?
+M sad > Water. I can't afford fruit. Because of the blender.
+! S deadpan 1.5
+S shock shake > What the HELL is this plan?! [shocked] [shouting]
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+M shrug > Savor Scout dot net. I'm keeping the blender, though.
+
+== milo-fasting | rescue | milo,scout | | he says he's "fasting" | when you're broke so you tell everyone you're fasting
+M smug > I'm not broke. I'm *fasting.*
+S 2 > For how long?
+M > Until Friday. When I get paid. Coincidence.
+S squint > What do you eat when you're fasting?
+M sad > I lick the seasoning packet. Just the packet. hold=0.7
+S shock shake > What the HELL is wrong with you?! [shocked] [shouting]
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+M shrug > Savor Scout dot net. It's free. Like my fast.
+
+== milo-interview | premise | milo,scout | | he went to an interview for the snacks | when you go to a job interview only for the snacks
+M happy > I had a job interview today.
+S 2 > How did it go?
+M smug > Great. They had muffins. I ate four.
+S > And the job?
+M shrug > I don't know what the job is. I left after the muffins.
+! S deadpan 1.4
+S squint > You applied to a bank, Milo. [deadpan]
+M shock > They called me back. They're *impressed.*
+S deadpan > Savor Scout dot net. Until the first paycheck.
+
+== milo-coupon | rescue | milo,scout | | he has a coupon from 2019 | when your whole dinner plan is an expired coupon
+M happy paper > Dinner's handled. I have a coupon.
+S 2 > Let me see it.
+! S deadpan 1.6
+S shock shake > What the HELL is this?! [shocked] [shouting]
+M smug > Buy one, get one free.
+S squint > It expired in twenty nineteen. The restaurant is a *bank* now.
+M sad > Then I'll take one free bank.
+MAP w S > There are {w} places to eat within a 10-minute walk of you.
+M shrug > Savor Scout dot net. Still keeping the coupon.
+
+== milo-wont-show | withheld | milo,scout | | he won't say what he ate | when your friend won't tell you what they had for dinner
+S 2 > What did you have for dinner?
+M smug > You don't want to know.
+S > I do.
+M happy > You really, really don't.
+S squint > Milo. What did you eat. [annoyed]
+! M sad 1.2
+M sad > A hot dog bun. With a smaller hot dog bun inside it.
+S shock shake > What the HELL?! [shouting]
+M shrug > Savor Scout dot net. I call it the *double bun.*
+
+== theo-system-rating | premise | june,theo | quad | he rates restaurants by napkins | that one friend with a restaurant rating system nobody asked for
+T happy > I rate every restaurant. I have a system.
+J deadpan > Out of five stars?
+T smug > Out of napkins. How many can I take before someone *looks* at me.
+J squint > What's the record?
+T happy > Sixty. A burger place. The manager shook my hand.
+! J deadpan 1.3
+J > That's not a rating, Theo. That's a *crime.*
+T shrug > Savor Scout dot net. It lists the places. I supply the napkins.
+
+== june-water-cup | premise | theo,june | quad | the water cup | that one friend who asks for a water cup and fills it with soda
+T squint > Is that a water cup?
+J deadpan > It's a water cup.
+T > That's orange soda.
+J > It's *orange water.*
+T panic > The cashier is looking right at you.
+J deadpan > Then she can watch me hydrate. hold=0.6
+T sad > We can never come back here.
+J deadpan > Savor Scout dot net. Plenty of other places to never go back to.
+
+== group-order | premise | june,theo | quad | he took the group order | when you send your friend to pick up the group order
+J > You took the group order. Where is everything?
+T happy > Mostly here.
+J squint > There were six burgers.
+T > There are four burgers. And two *burger memories.*
+J deadpan > You ate two on the way.
+T sad > It was a long walk. I was scared. I ate for courage. hold=0.6
+J deadpan > Savor Scout dot net. Next time we all go.
+
+== fancy-water | premise | theo,june | quad | still or sparkling | when the waiter asks "still or sparkling" and you panic
+T panic > He asked, still or sparkling. I panicked.
+J > What did you say?
+T sad > I said *yes.*
+J deadpan > And now?
+T > Now there's a nine-dollar bottle on the table. It has a *cork.*
+J squint > Send it back.
+T plead > I can't. I nodded at it. We have a bond. hold=0.6
+J deadpan > Savor Scout dot net. Somewhere with a tap.
+
+== dessert-stomach | premise | june,theo | quad | the dessert stomach | "I'm so full" and then the dessert menu arrives
+J sad > I'm so full. I can't eat another bite.
+T > Dessert menu?
+J determined > Yes.
+T squint > You said you were full.
+J deadpan > Dinner stomach is full. Dessert stomach is a *separate organ.*
+T > That's not real.
+J > Science is scared to study it, Theo. hold=0.6
+T deadpan > Savor Scout dot net. Places with two menus.
+
+== birthday-song | premise | theo,june | quad | he told them it's her birthday | when your friend tells the restaurant it's your birthday
+J squint > Why are the waiters coming? With a *sparkler?*
+T happy > I told them it's your birthday.
+J panic > It's not my birthday.
+T smug > Free cake, June.
+J plead > They're going to SING.
+! J shock 1.2
+T happy > Smile. Make a wish.
+J deadpan > Savor Scout dot net. I wish for a different friend.
+
+== two-forks | premise | theo,june | quad | "we'll share" | when they say "let's just share" and mean "I will eat yours"
+T happy > Let's share. One pasta, two forks.
+J deadpan > Fine.
+! J squint 1.2
+J > You're eating from *my* side.
+T shrug > There are no sides. It's a circle.
+J deadpan > It's a plate, Theo. I drew a line. With a breadstick.
+T smug > I ate the breadstick.
+J deadpan > Savor Scout dot net. Two pastas. Two tables.
+
+== study-group-snacks | premise | june,theo | quad | he brought "snacks" to study group | that one friend who brings one snack for the whole study group
+J > You said you'd bring snacks for the study group.
+T happy present > I did. A clementine.
+J deadpan > For eight people.
+T smug > It has segments. It's nature's *group project.*
+J squint > There are nine segments, Theo.
+T sad > Then one of us gets two. I think we both know who. hold=0.6
+J deadpan > Savor Scout dot net. Order for the group. I beg.
+
+== broke-food-8 | series | theo,june | quad | broke food, part 8: tacos | broke food part 8. taco tuesday on a wednesday budget
+T happy cam > Broke food, part eight. Taco night.
+T present cam > The shell is a slice of bread. Folded. With *confidence.*
+T cam > The filling is the rest of the bread. Torn. For texture.
+T smug cam > Hot sauce from a packet I've carried since freshman year.
+! T happy 1.2
+T sad cam > It's a bread taco. I'm not well. Thank you for joining me.
+T cam > Savor Scout dot net. Tacos that contain a second ingredient.
+
+== confession-menu | confession | june,theo | quad | I pretend to read the menu | confession: I already know what I'm ordering and I read the menu anyway
+J deadpan cam > I pretend to read the menu. Every time.
+J cam > I decided in the car. I decided *yesterday.*
+J squint cam > But I hold it. I say, hmm. I say, so many options.
+J cam > Once I flipped it over. It was blank. I kept reading.
+! J deadpan 1.3
+J cam > The waiter knew. We both let it happen.
+J deadpan cam > Savor Scout dot net. Read the menu before. Perform it after.

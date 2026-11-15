@@ -38,11 +38,37 @@
   "pitch": 1.0,
   "gain": 1.0,
   "persona": "The fast, punchy social-media voice: hooks in the first second, talks like a friend telling you something outrageous, never like an announcer.",
+  "eleven": null,
+  "_note": "No-face videos are read by the free local voice so they cost no ElevenLabs characters. To perform one with ElevenLabs instead, give this an \"eleven\" block like the others (voice Ian uC1r2TVqMMkHyjSAteKk, or Liam)."
+ },
+ "june": {
+  "name": "June",
+  "role": "the roommate who has given up pretending",
+  "voice": "af_bella",
+  "speed": 1.08,
+  "pitch": 1.0,
+  "gain": 1.0,
+  "persona": "Dry, tired, brutally honest about her own bad decisions. Says the unhinged thing in a completely normal voice. Never raises it.",
   "eleven": {
-   "voice_id": "uC1r2TVqMMkHyjSAteKk",
-   "name": "Ian - Deep, Punchy Social Hook Voice",
+   "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+   "name": "Laura - Enthusiast, Quirky Attitude",
    "model": "eleven_v4",
-   "direction": "quick and upbeat; [excited] on the hook, [sarcastic] or [deadpan] on the punchline; fallback voice Liam (TX3LPaxmHKxFdv7VOQHJ) if Ian isn't available on the plan"
+   "direction": "flat and matter-of-fact ([deadpan], [tired], [calm]); the joke is that she isn't joking"
+  }
+ },
+ "theo": {
+  "name": "Theo",
+  "role": "the roommate who believes everything will work out",
+  "voice": "am_fenrir",
+  "speed": 1.1,
+  "pitch": 1.04,
+  "gain": 1.0,
+  "persona": "Sunny, confident, wrong. Has a system for everything; none of them work. Takes every disaster as proof the system works.",
+  "eleven": {
+   "voice_id": "bIHbv24MWmeRgasZH58o",
+   "name": "Will - Relaxed Optimist",
+   "model": "eleven_v4",
+   "direction": "cheerful and sure of himself ([cheerfully], [proud], [excited]); panics at most once ([panicking])"
   }
  }
 }

@@ -1,0 +1,83 @@
+{
+ "id": "five-stages-hungry-nyu",
+ "format": "stages",
+ "bank": "five-stages-hungry",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "the 5 stages of deciding where to eat. stage 2 has ended friendships\n\n#collegelife #collegefood #relatable #fyp",
+ "beats": [
+  {
+   "meme": {
+    "q": "dramatic chipmunk"
+   },
+   "who": "narrator",
+   "say": "The five stages of deciding where to eat.",
+   "title": "the 5 stages of deciding where to eat",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "meme": {
+    "q": "confident dog walking"
+   },
+   "top": "STAGE 1: CONFIDENCE",
+   "who": "narrator",
+   "say": "Stage one. Confidence. I'm not picky."
+  },
+  {
+   "meme": {
+    "q": "cat side eye"
+   },
+   "top": "STAGE 2: \"ANYTHING IS FINE\"",
+   "who": "narrator",
+   "say": "Stage two. Someone says anything is fine. It is not fine.",
+   "cap": "Stage two. Someone says anything is fine. It is *not* fine."
+  },
+  {
+   "meme": {
+    "q": "dog staring at laptop"
+   },
+   "top": "STAGE 3: RESEARCH",
+   "who": "narrator",
+   "say": "Stage three. Forty minutes on your phone. Nothing looks good."
+  },
+  {
+   "meme": {
+    "q": "sad cat"
+   },
+   "top": "STAGE 4: GRIEF",
+   "who": "narrator",
+   "say": "Stage four. Grief. You eat cereal. For dinner. Again.",
+   "cap": "Stage four. Grief. You eat *cereal.* For dinner. Again."
+  },
+  {
+   "map": "w",
+   "who": "narrator",
+   "say": "Stage five. Finding out there are {w} places to eat within a 10-minute walk of you."
+  },
+  {
+   "meme": {
+    "q": "shocked cat"
+   },
+   "who": "narrator",
+   "say": "This whole time.",
+   "cap": "This *whole* time.",
+   "hold": 0.7
+  },
+  {
+   "meme": {
+    "q": "cat nodding"
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Stages one through four are optional.",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "campus": "new-york-university"
+}

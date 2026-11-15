@@ -1,0 +1,336 @@
+# THE SCRIPT BANK, file 2: no-face videos. The narrator over memes (klipy.py finds each one).
+#
+# These cost NO ElevenLabs characters: the narrator is the free local voice (cast.json). Make
+# these on any day the month's ElevenLabs characters are low.
+# The narrator talks to "you", fast and sure, like a friend telling you something outrageous.
+#   MEME search words | TEXT ABOVE THE MEME | N > the spoken line
+# Search words: animals and anonymous reactions ("shocked cat", "dog side eye"), never film, TV
+# or celebrities. If the first result is wrong, add "pick" in the episode file after `bank make`
+# ("meme": {"q": "...", "pick": 2}); `python social/pipeline/klipy.py search "..."` lists them.
+# The format is in the header after the id: stages, spiral, ranking, pov, types, signs.
+
+== five-stages-hungry | stages | narrator | | the 5 stages of deciding where to eat | the 5 stages of deciding where to eat. stage 2 has ended friendships
+MEME dramatic chipmunk | | N > The five stages of deciding where to eat.
+MEME confident dog walking | STAGE 1: CONFIDENCE | N > Stage one. Confidence. I'm not picky.
+MEME cat side eye | STAGE 2: "ANYTHING IS FINE" | N > Stage two. Someone says anything is fine. It is *not* fine.
+MEME dog staring at laptop | STAGE 3: RESEARCH | N > Stage three. Forty minutes on your phone. Nothing looks good.
+MEME sad cat | STAGE 4: GRIEF | N > Stage four. Grief. You eat *cereal.* For dinner. Again.
+MAP w N > Stage five. Finding out there are {w} places to eat within a 10-minute walk of you.
+MEME shocked cat | | N > This *whole* time. hold=0.7
+MEME cat nodding | | N > Savor Scout dot net. Stages one through four are optional.
+
+== hostage-dinner | spiral | narrator | | "where do you want to eat" | "where do you want to eat" is a hostage negotiation and you are losing
+MEME nervous dog | | N > Where do you want to eat? It's a trap.
+MEME dog shaking head | "NOT TACOS" | N > You say tacos. They had tacos once. In April.
+MEME cat shaking head no | "TOO HEAVY" | N > You say pizza. Too heavy. You say salad. Too *sad.*
+MEME negotiating cat | | N > This is now a hostage negotiation. The hostage is your dinner.
+MEME tired cat lying down | | N > Twenty minutes pass. You offer to just make toast.
+MEME excited dog jumping | "WAIT. TACOS." | N > They gasp. You know what sounds good? *Tacos.* hold=0.7
+MEME cat staring blankly | | N > Savor Scout dot net. Bring a list next time.
+
+== cry-for-help | signs | narrator | | things students say that are cries for help | things college students say that are actually cries for help
+MEME smiling dog fire | | N > Things students say that are cries for help.
+MEME cat eating cereal | "IT'S A SOUP" | N > Cereal is basically a soup.
+MEME hamster drinking | "IT'S A BEAN" | N > Coffee counts as breakfast. It's a bean.
+MEME raccoon eating trash | "IT'S FINE" | N > It's only *a little* expired.
+MEME dog sleeping | "DINNER" | N > I'll just sleep through dinner. hold=0.6
+MAP w N > Meanwhile there are {w} places to eat within a 10-minute walk of you.
+MEME cat pointing | | N > Savor Scout dot net. You're allowed to eat a meal.
+
+== pov-vending-machine | pov | narrator | | POV: you're the vending machine | POV: you are the dorm vending machine at 2 a.m.
+MEME cat staring from dark | | N > You're the dorm vending machine. It's two a.m.
+MEME raccoon walking at night | "HIM AGAIN" | N > Here he comes. Third night in a row.
+MEME cat counting money | | N > He has a wrinkled dollar. You reject it. For *fun.*
+MEME dog begging | | N > He smooths it on his leg. He whispers please.
+MEME cat pushing things off table | | N > You take it. You give him the pretzels he didn't pick.
+MEME sad dog walking away | | N > He says thank you anyway. hold=0.7
+MEME guilty dog | | N > Savor Scout dot net. Free him from you.
+
+== ranking-regret | ranking | narrator | | dinner options ranked by regret | ranking late-night dinner options by how much you'll regret them
+MEME cat with clipboard | | N > Late night dinner options, ranked by regret.
+MEME cat eating cereal | 5. CEREAL | N > Five. Cereal. Low regret. Low dignity.
+MEME dog eating fast | 4. LEFTOVERS OF UNKNOWN AGE | N > Four. The leftovers. You don't know whose. Or when.
+MEME raccoon eating | 3. GAS STATION | N > Three. Gas station hot dog. It's been spinning since *March.*
+MEME possum screaming | 2. "I'LL COOK" | N > Two. Cooking. At midnight. With a smoke alarm.
+MEME sleeping cat | 1. NOTHING | N > One. Going to bed hungry and *angry.* hold=0.6
+MAP w N > Or one of the {w} places to eat within a 10-minute walk of you.
+MEME dog nodding | | N > Savor Scout dot net. Regret-free.
+
+== types-of-eaters | types | narrator | | the 4 friends at every dinner | the 4 friends at every group dinner. tag yours
+MEME group of cats | | N > Four friends at every group dinner.
+MEME cat not caring | THE "I'M NOT HUNGRY" | N > One. Not hungry. Eats half of *your* fries.
+MEME dog with calculator | THE ACCOUNTANT | N > Two. The accountant. You owe her forty cents.
+MEME dog looking at menu | THE RESEARCHER | N > Three. Read every review. Still orders chicken tenders.
+MEME late dog running | THE LATE ONE | N > Four. On the way. Has not left the house. hold=0.6
+MEME cat pointing at you | | N > Savor Scout dot net. Send this to number four.
+
+== pov-dining-hall-door | pov | narrator | | POV: you're the dining hall door at 9:01 | POV: you are the dining hall door and it is 9:01
+MEME cat guarding door | | N > You're the dining hall door. It's nine oh one.
+MEME dog running fast | | N > A student is sprinting. Backpack open. Hope in his eyes.
+MEME cat closing door | "WE'RE CLOSED" | N > You are locked. You have been locked for one minute.
+MEME dog looking through window | | N > He presses his face on your glass. He can see the pasta.
+MEME cat not moving | | N > You feel nothing. You are a *door.* hold=0.7
+MAP w N > There are {w} other places to eat within a 10-minute walk of him.
+MEME cat waving goodbye | | N > Savor Scout dot net. Doors that open.
+
+== lies-we-tell | signs | narrator | | lies you tell yourself about food | lies every student tells themselves about food
+MEME cat lying | | N > Lies you tell yourself about food.
+MEME dog with groceries | "I'LL COOK THIS WEEK" | N > I'll cook this week. The spinach will not survive.
+MEME cat eating one chip | "JUST ONE" | N > I'll just have one. The bag is now *empty.*
+MEME dog checking wallet | "IT'S ONLY $12" | N > It's only twelve dollars. Four times a week.
+MEME cat on treadmill | "I'LL WALK IT OFF" | N > I'll walk it off. You will *not.* hold=0.6
+MEME dog smiling | | N > Savor Scout dot net. At least the lies can be delicious.
+
+== delivery-math | spiral | narrator | | delivery app math | delivery app math is a crime against you specifically
+MEME cat doing math | | N > Delivery app math. Stay with me.
+MEME happy dog | $9 | N > The burrito is nine dollars. You can afford nine dollars.
+MEME confused dog tilting head | +$4 SERVICE | N > Service fee. Four dollars. For the *service* of fees.
+MEME cat shocked | +$5 DELIVERY, +$3 "OTHER" | N > Delivery. Five. And three dollars for something called *other.*
+MEME crying cat | $24 | N > Tip. It's now twenty-four dollars. For a burrito. That's cold. hold=0.7
+MAP w N > There are {w} places to eat within a 10-minute walk of you.
+MEME dog walking happily | | N > Savor Scout dot net. Legs are free.
+
+== roommate-species | types | narrator | | roommates as kitchen crimes | every roommate is one of these kitchen criminals
+MEME suspicious cat | | N > Every roommate is one of these kitchen criminals.
+MEME cat stealing food | THE THIEF | N > The thief. Your leftovers had a name on them. Didn't matter.
+MEME dirty raccoon | THE SOAKER | N > The soaker. That pan has been soaking since *September.*
+MEME cat in microwave | THE FISH MICROWAVER | N > The fish microwaver. No further comment.
+MEME innocent dog | THE "WASN'T ME" | N > And the one who says, wasn't me. It was. hold=0.6
+MEME cat pointing | | N > Savor Scout dot net. Eat out. Trust no one.
+
+== pov-last-slice | pov | narrator | | POV: you're the last slice | POV: you are the last slice of pizza and nobody will take you
+MEME lonely cat | | N > You are the last slice of pizza.
+MEME cats staring at each other | | N > Six people want you. Nobody will reach.
+MEME polite dog | "NO, YOU HAVE IT" | N > They say, no, you have it. For eleven minutes.
+MEME cat waiting impatiently | | N > You are getting cold. You are getting *hard.*
+MEME cat grabbing food fast | | N > Then someone's roommate walks in and just *takes* you. hold=0.7
+MEME shocked dogs | | N > Savor Scout dot net. Order two pizzas, cowards.
+
+== budget-timeline | stages | narrator | | your money, day by day | a student's bank account from payday to payday
+MEME rich cat with money | DAY 1 | N > Payday. You are a *king.* Sushi for everyone.
+MEME cat ordering food | DAY 3 | N > Day three. Still thriving. A small coffee. Large, actually.
+MEME worried dog | DAY 6 | N > Day six. You check the app. You close the app.
+MEME cat eating instant noodles | DAY 9 | N > Day nine. Noodles. The forty-cent kind.
+MEME raccoon looking in trash | DAY 13 | N > Day thirteen. You attend a seminar for the free bagels. hold=0.6
+MEME dog praying | | N > Savor Scout dot net. Free on every day of the month.
+
+== group-chat-roles | types | narrator | | the group chat when it's time to eat | the group chat the second someone says "food?"
+MEME cat typing fast | | N > Someone types, food? The group chat wakes up.
+MEME dog excited | "YES" | N > One says yes. Instantly. Has been waiting all day.
+MEME cat ignoring | SEEN 6:02 | N > One reads it. Says *nothing.* Shows up anyway.
+MEME dog sending voice message | 4-MINUTE VOICE NOTE | N > One sends a four-minute voice note. Nobody listens.
+MEME cat walking away | "I ALREADY ATE" | N > And one already ate. Without you. A *traitor.* hold=0.6
+MEME dog pointing | | N > Savor Scout dot net. Pick a place before the voice note ends.
+
+== how-to-adult-dinner | stages | narrator | | making dinner like an adult | "I'm going to cook dinner like an adult" in 5 acts
+MEME determined cat | | N > Tonight you cook dinner. Like an *adult.*
+MEME dog watching cooking video | ACT 1 | N > Act one. You watch a nine-minute recipe video.
+MEME cat looking in empty fridge | ACT 2 | N > Act two. You own one egg and some mustard.
+MEME cat cooking | ACT 3 | N > Act three. You improvise. It's going well.
+MEME kitchen fire cat | ACT 4 | N > Act four. It is not going well. hold=0.6
+MAP w N > Act five. There are {w} places to eat within a 10-minute walk of you.
+MEME dog leaving house | | N > Savor Scout dot net. Adults also order out.
+
+== pov-leftovers | pov | narrator | | POV: you're the leftovers | POV: you are the leftovers in the back of the fridge
+MEME cat hiding in box | | N > You are leftovers. You were put here on *Monday.*
+MEME hopeful dog | "TOMORROW'S LUNCH" | N > She said you'd be tomorrow's lunch. You believed her.
+MEME cat waiting by window | DAY 4 | N > It's day four. A newer container sits in front of you.
+MEME sad cat rain | DAY 9 | N > Day nine. The door opens. She looks. She looks *away.*
+MEME fuzzy animal | DAY 16 | N > Day sixteen. You have grown a coat. You are warm now. hold=0.7
+MEME cat saluting | | N > Savor Scout dot net. Eat it fresh. Remember me.
+
+== study-snack-lies | spiral | narrator | | a quick snack break | "a quick snack break" while studying, a tragedy
+MEME cat studying | | N > You've studied for nine minutes. Snack break.
+MEME dog walking to kitchen | | N > You walk to the kitchen. There's nothing. You knew that.
+MEME cat opening fridge | | N > You open the fridge again. In case food *appeared.*
+MEME dog staring at fridge | | N > It did not. You check a third time. For luck.
+MEME cat eating shredded cheese | | N > You eat shredded cheese. From the bag. Standing up. hold=0.6
+MEME guilty cat | | N > Savor Scout dot net. A snack with a chair.
+
+== things-that-arent-meals | signs | narrator | | things that are not a meal | things you have called "dinner" that are not dinner
+MEME judge cat | | N > Things you have called dinner. That were not.
+MEME cat with bread | | N > A slice of bread. Folded. You called it a *taco.*
+MEME dog drinking | | N > An iced coffee. Large. At six p.m.
+MEME hamster eating | | N > Seven crackers and a spoon of peanut butter.
+MEME sleeping dog | | N > A nap. A long one. hold=0.6
+MAP w N > There are {w} real dinners within a 10-minute walk of you.
+MEME cat nodding | | N > Savor Scout dot net. Dinner has a plate.
+
+== the-walk-home | spiral | narrator | | walking home with takeout | the walk home with takeout is the longest walk of your life
+MEME dog carrying bag | | N > You got takeout. Home is ten minutes away.
+MEME dog sniffing | MINUTE 1 | N > Minute one. You can smell it. You stay strong.
+MEME cat looking in bag | MINUTE 3 | N > Minute three. You just *look* in the bag. To check.
+MEME cat eating secretly | MINUTE 4 | N > Minute four. One fry. For the road.
+MEME dog eating fast | MINUTE 6 | N > Minute six. You're eating on a stranger's wall. hold=0.6
+MEME cat with empty bowl | | N > Savor Scout dot net. Next time eat there. Like a person.
+
+== menu-panic | spiral | narrator | | when the waiter comes back | you had ten minutes with the menu and you used none of them
+MEME cat reading | | N > You've had the menu for ten minutes.
+MEME cats talking | | N > You spent all ten talking. You read *nothing.*
+MEME dog approaching | "ARE WE READY?" | N > The waiter comes back. Everyone else is ready.
+MEME panicking cat | | N > It's your turn. Your eyes stop working. The words are *soup.*
+MEME dog pointing randomly | "THAT ONE" | N > You point at something. You have ordered the liver. hold=0.7
+MEME dog eating sadly | | N > Savor Scout dot net. Read the menu before you get there.
+
+== im-not-hungry | spiral | narrator | | "I'm not hungry" | "I'm not hungry, I'll just have some of yours"
+MEME cat refusing | "I'M NOT HUNGRY" | N > They said they weren't hungry. You ordered for *one.*
+MEME dog watching food | | N > The food arrives. They are looking at it.
+MEME cat reaching paw | "JUST ONE" | N > Can I try one? You say sure. You are a fool.
+MEME dog eating fast | | N > One becomes four. Four becomes *your dinner.*
+MEME sad empty plate cat | | N > You are now the one who isn't eating. hold=0.6
+MEME cat glaring | | N > Savor Scout dot net. Order them a plate. Protect yours.
+
+== freshman-senior | types | narrator | | freshman vs senior at the dining hall | freshman you vs senior you at the dining hall
+MEME excited puppy | FRESHMAN | N > Freshman year. Unlimited dining hall. You are *free.*
+MEME dog with huge plate | FRESHMAN | N > Three plates. A waffle with ice cream. At noon.
+MEME tired old dog | SENIOR | N > Senior year. You walk in. You look at the same chicken.
+MEME cat staring into distance | SENIOR | N > The chicken looks back. You have known each other for *years.* hold=0.7
+MAP w N > There are {w} places to eat within a 10-minute walk that are not that chicken.
+MEME old dog walking away | | N > Savor Scout dot net. Leave the chicken.
+
+== microwave-line | pov | narrator | | the communal microwave | the dorm microwave line is a society and you are failing in it
+MEME cats in line | | N > The dorm microwave. There's a line. There are *rules.*
+MEME cat waiting impatiently | 4:30 REMAINING | N > Someone ahead of you entered four minutes thirty. For soup.
+MEME dog tapping foot | | N > You stand there. Holding a frozen burrito. Aging.
+MEME cat exploding microwave | | N > The soup explodes. Nobody cleans it. That's *law* here.
+MEME dog burned tongue | | N > Your turn. The outside is lava. The inside is ice. hold=0.6
+MEME crying dog | | N > Savor Scout dot net. Food that's one temperature.
+
+== free-food-detective | stages | narrator | | finding free food on campus | the 4 stages of a student hearing "free food"
+MEME cat ears perking up | | N > Somebody on campus just said *free food.*
+MEME dog sprinting | STAGE 1: SPEED | N > Stage one. You have never run this fast. Not for class.
+MEME cat pretending | STAGE 2: THE ACT | N > Stage two. You pretend to care about the *investment club.*
+MEME dog eating pizza | STAGE 3: THE GRAB | N > Stage three. Two slices. A third in a napkin. For later.
+MEME cat sneaking away | STAGE 4: THE EXIT | N > Stage four. You leave before the slideshow. hold=0.6
+MEME dog nodding proudly | | N > Savor Scout dot net. For days with no slideshow.
+
+== the-receipt | pov | narrator | | POV: you're his bank account | POV: you are a college student's bank account
+MEME tired cat | | N > You are a college student's bank account.
+MEME cat counting coins | $41.12 | N > You have forty-one dollars. You are trying your best.
+MEME dog ordering on phone | -$18 | N > He orders delivery. At eleven p.m. You *felt* that.
+MEME cat getting hit by pillow | -$7 | N > An iced coffee. Seven dollars. He doesn't even look at you.
+MEME exhausted cat lying flat | $3.07 | N > Three dollars left. He opens the app. To check. hold=0.6
+MEME shocked dog | | N > He is surprised. Every time.
+MEME cat sighing | | N > Savor Scout dot net. It's free. Please. I'm so tired.
+
+== date-order | spiral | narrator | | ordering on a first date | ordering food on a first date is a hostage situation with yourself
+MEME nervous cat | | N > First date. Time to order. Be normal.
+MEME dog looking at burger | | N > You want the burger. The burger is *messy.*
+MEME cat thinking hard | | N > You consider the salad. You have never wanted a salad.
+MEME dog sweating | | N > They order the burger. You've already said *salad.* hold=0.6
+MEME sad cat with lettuce | | N > You eat leaves. You watch them be happy.
+MEME cat staring | | N > Savor Scout dot net. Pick a place with good burgers. Commit.
+
+== sunday-scaries-prep | stages | narrator | | meal prep sunday | meal prep sunday, as it actually goes
+MEME motivated dog | SUNDAY 2 PM | N > Sunday. Meal prep. Five lunches. A new you.
+MEME cat pushing shopping cart | SUNDAY 3 PM | N > You buy chicken. Rice. A vegetable you can't name.
+MEME dog cooking chaos | SUNDAY 5 PM | N > You cook all of it. It takes three hours. And every pan.
+MEME cat looking at containers | MONDAY | N > Monday. You eat one. It tastes like *homework.*
+MEME dog ordering food | TUESDAY | N > Tuesday. You order out. The containers watch you. hold=0.7
+MEME guilty dog | | N > Savor Scout dot net. Skip to Tuesday.
+
+== three-am-kitchen | pov | narrator | | you at 3 a.m. in the kitchen | you at 3 a.m. in the kitchen with the lights off
+MEME cat sneaking at night | | N > Three a.m. You're in the kitchen. Lights off.
+MEME raccoon stealing | | N > You are not hungry. You are just *looking.*
+MEME cat eating from fridge | | N > You eat a cold tortilla. Plain. Like a napkin.
+MEME dog caught | | N > A roommate walks in. You make eye contact. Mid-tortilla.
+MEME two cats staring | | N > Nobody speaks. Nobody will *ever* speak of this. hold=0.7
+MEME cat backing away slowly | | N > Savor Scout dot net. Eat dinner at dinner time.
+
+== restaurant-indecision | spiral | narrator | | "you pick" | "you pick" "no you pick" has been going for an hour
+MEME two dogs looking at each other | | N > You pick. No, you pick. It's been an hour.
+MEME cat shrugging | "I DON'T CARE" | N > Neither of you cares. Both of you care *deeply.*
+MEME dog suggesting | | N > You finally pick. They make a face.
+MEME cat disgusted face | "I MEAN... SURE" | N > They say, I mean, sure. That is not a yes.
+MEME dog collapsing | | N > You are back at the beginning. You will die here. hold=0.6
+MAP w N > There are {w} places to eat within a 10-minute walk of you.
+MEME cat spinning wheel | | N > Savor Scout dot net. Close your eyes and point.
+
+== fridge-archaeology | stages | narrator | | cleaning the fridge | cleaning the dorm fridge is archaeology
+MEME cat with hard hat | | N > Today you clean the fridge. It is *archaeology.*
+MEME dog sniffing carefully | LAYER 1 | N > Layer one. A yogurt. From this month. Recent history.
+MEME cat recoiling | LAYER 2 | N > Layer two. A container. The lid is *domed.* Do not open it.
+MEME scared dog | LAYER 3 | N > Layer three. Something that was once a cucumber. It's liquid now.
+MEME cat running away | LAYER 4 | N > Layer four. You close the fridge. It's the fridge's now. hold=0.6
+MEME dog leaving | | N > Savor Scout dot net. Eat somewhere with health inspections.
+
+== walking-past | spiral | narrator | | walking past the same place | you have walked past that restaurant 200 times
+MEME dog walking | | N > There's a place you walk past every single day.
+MEME cat looking through window | | N > It smells incredible. People inside look *happy.*
+MEME dog hesitating | "NEXT TIME" | N > Every day you say, next time. For two years.
+MEME cat eating same food | | N > Then you go eat the same sandwich. Again. hold=0.6
+MAP w N > There are {w} places to eat within a 10-minute walk of you. You know four.
+MEME dog going inside | | N > Savor Scout dot net. Today is next time.
+
+== the-condiment-meal | signs | narrator | | signs you need groceries | signs it's time to buy groceries (you won't)
+MEME cat looking in empty cupboard | | N > Signs you need groceries. Immediately.
+MEME dog licking | | N > You ate mustard on a cracker and called it a *board.*
+MEME cat with ice cube | | N > Your freezer has ice. And one older, different ice.
+MEME hamster eating crumbs | | N > You shook the cereal box to see if crumbs count.
+MEME raccoon washing food | | N > You considered the ketchup packets as a *soup base.* hold=0.6
+MEME concerned dog | | N > Savor Scout dot net. Or groceries. Either. Please.
+
+== lunch-meeting-with-self | spiral | narrator | | lunch break with 12 minutes | you have a 12-minute gap between classes. eat.
+MEME dog checking watch | | N > You have twelve minutes between classes. Eat.
+MEME cat running | 11:00 | N > You run to the closest place. There's a *line.*
+MEME dog waiting in line | 7:00 | N > Seven minutes. The person ahead is paying in coins.
+MEME cat screaming | 3:00 | N > Three minutes. You get the food. It is *molten.*
+MEME dog eating while running | 0:30 | N > You eat while running. You burn everything. hold=0.6
+MAP w N > There are {w} places within a 10-minute walk. Some have no line.
+MEME cat out of breath | | N > Savor Scout dot net. Plan your twelve minutes.
+
+== grocery-store-hungry | spiral | narrator | | shopping while hungry | never go to the grocery store hungry. a warning
+MEME hungry dog drooling | | N > You went to the grocery store hungry. *Mistake.*
+MEME cat grabbing everything | | N > You need eggs. You now have four kinds of chips.
+MEME dog in shopping cart | | N > A rotisserie chicken. A cake. For no occasion.
+MEME cat at checkout shocked | $87 | N > Eighty-seven dollars. You forgot the eggs. hold=0.6
+MEME dog eating in car | | N > You eat the chicken in the parking lot. With your *hands.*
+MEME cat ashamed | | N > Savor Scout dot net. Eat first. Shop second.
+
+== sharing-fries | spiral | narrator | | "do you want fries?" "no" | they said they didn't want fries. they wanted fries.
+MEME dog asking | "WANT FRIES?" | N > You asked if they wanted fries. They said *no.*
+MEME cat confident | | N > So you got a small. For you. Just you.
+MEME cat reaching slowly | | N > A hand appears. It takes one. Then it takes six.
+MEME dog protecting food | | N > You move the fries closer. The hand *follows.*
+MEME cat eating all fries | | N > You are now sharing a small fry. Against your will. hold=0.6
+MEME dog glaring | | N > Savor Scout dot net. Order a large. Always order a large.
+
+== pov-instant-noodles | pov | narrator | | POV: you're the instant noodles | POV: you are the instant noodles. he's back.
+MEME cat in a cup | | N > You are a cup of instant noodles. Forty cents.
+MEME dog walking in tired | | N > He's home. He looks at the fridge. Then at *you.*
+MEME cat hiding | "NOT AGAIN" | N > Five nights in a row. You're running out of siblings.
+MEME impatient dog | "3 MINUTES" | N > It says three minutes. He waits *ninety seconds.*
+MEME cat crunching | | N > You are crunchy. He eats you anyway. He says, perfect. hold=0.6
+MEME sad noodle cat | | N > Savor Scout dot net. Give me one night off.
+
+== allergy-to-walking | spiral | narrator | | it's too far (it's 6 minutes) | "it's too far" (it is a 6-minute walk)
+MEME lazy cat on couch | | N > The food is six minutes away. On *foot.*
+MEME dog refusing to walk | "TOO FAR" | N > Too far. You open the delivery app instead.
+MEME cat waiting by door | 45-55 MIN | N > Estimated time. Fifty minutes. And nine dollars in fees.
+MEME dog staring at phone | | N > You watch a tiny car on a map. For *fifty minutes.* hold=0.6
+MAP w N > There are {w} places to eat within a 10-minute walk of you.
+MEME cat finally walking | | N > Savor Scout dot net. You could have been back by now.
+
+== compliment-the-chef | spiral | narrator | | when your friend cooks for you | when your friend cooks for you and asks "how is it?"
+MEME proud dog chef | | N > Your friend cooked for you. They're so *proud.*
+MEME cat tasting cautiously | | N > You take a bite. Something is wrong. Everything is wrong.
+MEME dog watching closely | "HOW IS IT?" | N > They're watching. They ask, how is it?
+MEME cat fake smiling | "SO GOOD" | N > You say, so good. Your eyes are *watering.*
+MEME dog serving more | "HAVE SECONDS!" | N > They give you seconds. This is your life now. hold=0.6
+MEME cat crying while eating | | N > Savor Scout dot net. Next time, you pick the place.
+
+== buffet-strategy | stages | narrator | | the all-you-can-eat plan | your all-you-can-eat buffet strategy, as it fails
+MEME determined dog | | N > All you can eat. You have a *strategy.*
+MEME cat with huge plate | PLATE 1 | N > Plate one. Everything. A mountain. You are winning.
+MEME slow dog | PLATE 2 | N > Plate two. Slower. The rice was a mistake.
+MEME cat lying on back | PLATE 3 | N > Plate three. You take one bite. You see your ancestors.
+MEME dog asleep at table | | N > You paid nineteen dollars to feel like *this.* hold=0.6
+MEME cat being carried | | N > Savor Scout dot net. A normal portion. A normal life.
+
+== coffee-order-anxiety | spiral | narrator | | ordering coffee in a long line | rehearsing your coffee order in line like it's a speech
+MEME nervous cat in line | | N > In line. Rehearsing your order like a *speech.*
+MEME dog muttering | | N > Medium iced latte. Medium iced latte. Medium iced latte.
+MEME cat at counter frozen | "WHAT CAN I GET YOU?" | N > Your turn. They ask what you want.
+MEME panicked dog | | N > You say, large hot tea. You don't drink tea.
+MEME cat holding cup confused | | N > You say thank you. You tip. You leave with tea. hold=0.6
+MEME sad dog sipping | | N > Savor Scout dot net. Know the menu before the line.

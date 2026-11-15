@@ -19,6 +19,35 @@ The owner's direction (Nov 15): forget polish, be funny. Paper-cutout animation,
 specific and slightly unhinged lines ("Breakfast: one three-week-old stale peanut"), and the
 site gets one or two lines at the end.
 
+## 0. The fast path: the script bank
+
+`social/show/bank/` holds 122 finished scripts that pass the rules. On a normal day nobody
+writes anything: pick from the bank, make, voice, build.
+
+```
+python social/pipeline/show.py bank list                      every script, its cast, length, and how often it's been made
+python social/pipeline/show.py bank make <id> <campus> <date> writes social/show/episodes/<date>-<id>-<campus>.json
+python social/pipeline/show.py lines <episode>                the ElevenLabs prompts (skip for no-face scripts)
+python social/pipeline/show.py build <episode> --render
+```
+
+- **Three files, three costs.** `01-june-theo` (two voices, about 350-450 ElevenLabs characters
+  each), `03-series-and-scout` (the one-voice series are about 250), `02-no-face` (the free
+  local voice over Klipy memes: 0 characters). A month of 10,000 characters is about 25 skits;
+  no-face videos are unlimited. Plan the week so the characters last: for example one skit and
+  one no-face video a day.
+- **Repeatable.** A script that states a number takes any campus, so the same script makes a
+  new video for every school (`bank list` shows "campus"). Don't reuse a script for the same
+  campus, and leave two weeks before reusing a script at all (`made Nx` in the list).
+- **Pick by variety.** In one day never use two scripts with the same format or the same
+  opening shape. Rotate the casts: June and Theo are the main duo now; Milo appears rarely.
+- **Memes.** After `bank make` for a no-face script, build it and look at every meme frame. A
+  wrong meme (a person, a film or TV scene, or just not funny) is fixed in the episode file:
+  `"meme": {"q": "...", "pick": 1}` takes the next result; `klipy.py search "..."` lists them.
+- **Adding to the bank.** New scripts go in the same short form (the header of
+  `bank/01-june-theo.txt` explains it), in the shape of a hunted format (FORMATS.md), and must
+  pass `show.py bank lint`. Everything below is how to write one that's funny.
+
 ## 1. Where the format comes from
 
 The owner's reference (a two-person skit about college essays, about 40 seconds) beat by beat:
@@ -62,6 +91,11 @@ says thank you properly.
 - Loses its composure exactly once an episode, when it sees how bad things are: "What the HELL
   is this?!" The flame flares, the plan catches fire, and one line later it is calm again as if
   nothing happened. The blow-up is the biggest laugh; don't spend it twice.
+
+**June and Theo, roommates** (the main duo; outside on the quad). June says unhinged things in
+a completely normal voice and is never surprised. Theo has a system for everything, none of them
+work, and every disaster proves to him the system works. Theo is proud, June is done, nobody
+learns. Scout visits them with the number and, once an episode, loses it.
 
 **The narrator** (no-face videos only). The fast, punchy voice of a friend telling you
 something outrageous. Never an announcer. Talks to "you".
@@ -179,7 +213,8 @@ Score each from 0 to 2 and ship at 8 or more of 10. Below that, rewrite the weak
 Paper cutouts: flat shapes with a paper grain and a drop shadow, big round eyes with dot
 pupils, poses that hold for three frames and snap, three mouth shapes, heads that hop when they
 talk. It's meant to look handmade and a bit cheap; don't smooth it. When Scout is shocked the
-flame flares (`face: "shock"`). New props go in `Stage.tsx` in the same style.
+flame flares (`face: "shock"`). People share one puppet with their own colours and hair
+(`PEOPLE` in `Cast.tsx`): a new character is a new palette. Sets: `dorm`, `door`, `wide`, `quad`. New props go in `Stage.tsx` in the same style.
 
 A meme beat (`{"meme": {"q": "shocked cat"}, "who": ..., "say": ..., "top": "text above"}`)
 cuts a reaction clip in full-frame, like a photo taped to the page. `klipy.py search "..."`
@@ -201,8 +236,8 @@ the joke. Prefer animals and anonymous reactions to film, TV and celebrities.
 4. The lines are kept in `social/show/takes/<id>/`, so a rebuild costs nothing. Change a line's
    words and it needs a new take; until then the local voice reads it.
 
-Cost: an episode is 500-950 characters. The free plan gives 10,000 a month (about 12
-episodes) and does not license commercial use; the Starter plan does. With no ElevenLabs at
+Cost: a bank skit is 250-450 characters (the first long pilots were 900). The free plan gives
+10,000 a month (about 25 skits) and does not license commercial use; the Starter plan does. With no ElevenLabs at
 all, episodes still build with the local voice (flatter, but free and unlimited).
 
 ## 11. How the show learns

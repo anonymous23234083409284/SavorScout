@@ -1,0 +1,84 @@
+{
+ "id": "the-read-fridge-nyu",
+ "format": "read",
+ "bank": "the-read-fridge",
+ "cast": [
+  "theo",
+  "scout"
+ ],
+ "music": "cozy",
+ "caption": "when someone who knows food opens your fridge\n\n#collegelife #collegefood #relatable #skit",
+ "beats": [
+  {
+   "who": "theo",
+   "say": "Welcome to my fridge. I just restocked.",
+   "face": "happy",
+   "pose": "idle",
+   "title": "Scout opens his fridge",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "who": "scout",
+   "say": "Good. Let's see.",
+   "face": "neutral",
+   "pose": "idle",
+   "two": true
+  },
+  {
+   "who": "scout",
+   "react": true,
+   "face": "deadpan",
+   "dur": 1.6
+  },
+  {
+   "who": "scout",
+   "say": "What the hell is this?!",
+   "voice": "What the HELL is this?!",
+   "cap": "What the *HELL* is this?!",
+   "act": "[shocked] [shouting]",
+   "face": "shock",
+   "pose": "idle",
+   "fx": [
+    "shake"
+   ]
+  },
+  {
+   "who": "theo",
+   "say": "Mustard. An older mustard. And a burrito named Gerald.",
+   "face": "smug",
+   "pose": "idle"
+  },
+  {
+   "who": "scout",
+   "say": "Why does it have a name?",
+   "face": "squint",
+   "pose": "idle"
+  },
+  {
+   "who": "theo",
+   "say": "He's been through a lot.",
+   "face": "sad",
+   "pose": "idle"
+  },
+  {
+   "map": "w",
+   "who": "scout",
+   "say": "There are {w} places to eat within a 10-minute walk of you."
+  },
+  {
+   "who": "scout",
+   "say": "Savor Scout dot net. Leave Gerald. Go.",
+   "face": "deadpan",
+   "pose": "idle",
+   "chip": true,
+   "look": "cam"
+  },
+  {
+   "end": true
+  }
+ ],
+ "set": "quad",
+ "campus": "new-york-university"
+}

@@ -21,10 +21,12 @@ Everything needed is written down:
   trojan-horse rules, the Cluely case study, and the weekly routine.
 - `social/show/gold/`: finished scripts to match (`four-dollars`, `no-way`, `five-stages`).
 
-Each day, for as many of the day's videos as the voice budget allows (at least one):
-1. Pick a shape from FORMATS.md section 3 and a situation; write the episode as
-   `social/show/episodes/<date>-<name>.json` (BIBLE.md section 7). Every line is ours: never copy
-   a hunted script. Give it a `"caption"` (the viewer's own situation, no pitch).
+Each day, for as many of the day's videos as the voice budget allows (at least two: one skit
+and one no-face video):
+1. Take scripts from the bank (BIBLE.md section 0): `show.py bank list`, pick ones not made
+   recently and of different formats, choose a campus for each (big, well-known schools; rotate
+   them), and `show.py bank make <id> <campus> <date>`. Only write a new script (BIBLE.md
+   section 7) when the bank has nothing fresh for the day or a trend deserves one.
 2. `python social/pipeline/show.py lint <file>`; fix until it passes; score it with the rubric in
    BIBLE.md section 8 and rewrite the weakest beat until it's 8 of 10.
 3. Voice it with the ElevenLabs connector (BIBLE.md section 10: `show.py lines`, generate one

@@ -1,0 +1,205 @@
+{
+ "triggers": [
+  "everything you know about",
+  "nobody talks about",
+  "the dark side of",
+  "pov you're broke in college",
+  "things nobody tells you about college",
+  "the real reason",
+  "i tested every",
+  "stop doing this",
+  "how to eat for free in college",
+  "college students be like",
+  "me trying to decide where to eat",
+  "when the dining hall closes",
+  "this is your sign to",
+  "here's why you're always broke",
+  "the worst part about being a student",
+  "if you live in a dorm",
+  "where do you want to eat",
+  "i'm not picky",
+  "free college food",
+  "broke college student",
+  "pov your roommate",
+  "that one friend who"
+ ],
+ "scores": {
+  "the dark side of": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "nobody talks about": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "pov you're broke in college": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "how to eat for free in college": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "here's why you're always broke": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "college students be like": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 1,
+   "score": 2.03,
+   "best_ratio": 107.1,
+   "last_run": "2026-11-15"
+  },
+  "if you live in a dorm": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 1,
+   "score": 1.52,
+   "best_ratio": 33.1,
+   "last_run": "2026-11-15"
+  },
+  "the worst part about being a student": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "this is your sign to": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 1,
+   "score": 0.79,
+   "best_ratio": 6.2,
+   "last_run": "2026-11-15"
+  },
+  "me trying to decide where to eat": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "things nobody tells you about college": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "everything you know about": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 1,
+   "score": 1.6,
+   "best_ratio": 39.6,
+   "last_run": "2026-11-15"
+  },
+  "when the dining hall closes": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "i tested every": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 0,
+   "score": 0.0,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "stop doing this": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 1,
+   "score": 1.25,
+   "best_ratio": 17.6,
+   "last_run": "2026-11-15"
+  },
+  "the real reason": {
+   "runs": 1,
+   "results": 10,
+   "survivors": 1,
+   "score": 1.47,
+   "best_ratio": 29.4,
+   "last_run": "2026-11-15"
+  },
+  "where do you want to eat": {
+   "runs": 1,
+   "results": 12,
+   "survivors": 0,
+   "score": 1.5,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "i'm not picky": {
+   "runs": 1,
+   "results": 12,
+   "survivors": 0,
+   "score": 1.5,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "free college food": {
+   "runs": 1,
+   "results": 12,
+   "survivors": 3,
+   "score": 4.27,
+   "best_ratio": 9.1,
+   "last_run": "2026-11-15"
+  },
+  "broke college student": {
+   "runs": 1,
+   "results": 12,
+   "survivors": 0,
+   "score": 1.5,
+   "best_ratio": 0,
+   "last_run": "2026-11-15"
+  },
+  "pov your roommate": {
+   "runs": 1,
+   "results": 12,
+   "survivors": 1,
+   "score": 2.8,
+   "best_ratio": 19.8,
+   "last_run": "2026-11-15"
+  },
+  "that one friend who": {
+   "runs": 1,
+   "results": 12,
+   "survivors": 1,
+   "score": 2.71,
+   "best_ratio": 16.3,
+   "last_run": "2026-11-15"
+  }
+ },
+ "generated": []
+}

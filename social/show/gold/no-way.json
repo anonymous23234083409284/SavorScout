@@ -1,0 +1,173 @@
+{
+ "id": "no-way-nyu",
+ "format": "withheld",
+ "campus": "new-york-university",
+ "music": "cozy",
+ "situation": "the friend who reacts to their phone and won't show you",
+ "games": [
+  "withheld reveal",
+  "escalation by repetition",
+  "the stat as the reveal",
+  "wrong name",
+  "fourth wall"
+ ],
+ "_how": "Format found by hook_hunter (a 24-second two-hander with 5.7M views and a 3% share rate): one person loses it over their phone, the other only ever asks to see. Ours pays it off: the thing on the phone is the real number, and Scout made it.",
+ "beats": [
+  {
+   "who": "milo",
+   "say": "No way.",
+   "cap": "*No way.*",
+   "act": "[shocked]",
+   "face": "shock",
+   "pose": "phone",
+   "look": "down",
+   "title": "that one friend who won't show you",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "who": "scout",
+   "two": true,
+   "say": "What?",
+   "act": "[calm]",
+   "face": "deadpan",
+   "look": "left",
+   "other": {
+    "face": "shock",
+    "pose": "phone",
+    "look": "down"
+   },
+   "hold": 0.3
+  },
+  {
+   "who": "milo",
+   "say": "No. Way.",
+   "voice": "No. WAY.",
+   "cap": "No. *WAY.*",
+   "act": "[shouting]",
+   "face": "panic",
+   "pose": "headgrab",
+   "look": "down",
+   "fx": [
+    "shake"
+   ]
+  },
+  {
+   "who": "scout",
+   "two": true,
+   "say": "What is it?",
+   "act": "[curious]",
+   "face": "neutral",
+   "look": "left",
+   "other": {
+    "face": "shock",
+    "pose": "phone",
+    "look": "down"
+   },
+   "hold": 0.3
+  },
+  {
+   "who": "milo",
+   "say": "This is the craziest thing I have ever seen.",
+   "cap": "This is the *craziest* thing I have ever seen.",
+   "act": "[excited]",
+   "face": "happy",
+   "pose": "phone",
+   "look": "down"
+  },
+  {
+   "who": "scout",
+   "two": true,
+   "say": "Can I see?",
+   "act": "[calm]",
+   "face": "neutral",
+   "look": "left",
+   "other": {
+    "face": "smug",
+    "pose": "phone",
+    "look": "down"
+   },
+   "hold": 0.3
+  },
+  {
+   "who": "milo",
+   "say": "You would not even believe it.",
+   "cap": "You would not even *believe* it.",
+   "act": "[mischievously]",
+   "face": "smug",
+   "pose": "phone",
+   "look": "right"
+  },
+  {
+   "who": "scout",
+   "say": "Milo. Show me the phone.",
+   "cap": "Milo. *Show me the phone.*",
+   "act": "[annoyed]",
+   "face": "squint",
+   "look": "left",
+   "punch": "show"
+  },
+  {
+   "who": "milo",
+   "say": "Okay, okay. Look.",
+   "act": "[excited]",
+   "face": "happy",
+   "pose": "present",
+   "look": "right"
+  },
+  {
+   "map": "w",
+   "who": "milo",
+   "say": "There are {w} places to eat within a 10-minute walk of us.",
+   "act": "[amazed]"
+  },
+  {
+   "who": "scout",
+   "react": true,
+   "face": "deadpan",
+   "dur": 1.3
+  },
+  {
+   "who": "scout",
+   "say": "I made that.",
+   "cap": "I *made* that.",
+   "act": "[deadpan]",
+   "face": "deadpan",
+   "look": "left",
+   "hold": 0.3
+  },
+  {
+   "who": "milo",
+   "say": "You made Flavor Scout?",
+   "cap": "You made *Flavor Scout?*",
+   "act": "[gasps] [surprised]",
+   "face": "shock",
+   "pose": "point",
+   "look": "right"
+  },
+  {
+   "who": "scout",
+   "say": "Savor Scout.",
+   "cap": "*Savor* Scout.",
+   "act": "[flatly]",
+   "face": "squint",
+   "look": "left"
+  },
+  {
+   "who": "milo",
+   "say": "Savor Scout dot net. You would not even believe it.",
+   "cap": "*SavorScout.net.* You would not even believe it.",
+   "act": "[excited]",
+   "face": "happy",
+   "pose": "present",
+   "look": "cam",
+   "chip": true,
+   "hold": 0.25
+  },
+  {
+   "end": true
+  }
+ ],
+ "caption": "that one friend who reacts to their phone and will NOT show you 💀 tag them\n\n#thatonefriend #collegelife #nyu #collegefood #skit"
+}

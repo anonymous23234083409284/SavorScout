@@ -189,7 +189,7 @@ export const SetFront: React.FC<{set: SetName}> = ({set}) => {
 // ---- props --------------------------------------------------------------------------------
 
 // A phone showing a bank balance: the numbers are the joke, so they're big and readable.
-export const BalanceProp: React.FC<{amount: string; rows: [string, string][]; f: number}> = ({amount, rows, f}) => {
+export const BalanceProp: React.FC<{amount: string; rows: [string, string][]; f: number; account?: string; label?: string}> = ({amount, rows, f, account = 'Checking ••42', label = 'available balance'}) => {
 	const mx = 720 + Math.sin(f / 5) * 90;
 	const my = 440 + Math.cos(f / 3.6) * 46;
 	const flap = Math.sin(f * 1.6) * 26;
@@ -199,13 +199,13 @@ export const BalanceProp: React.FC<{amount: string; rows: [string, string][]; f:
 			<rect x={226} y={346} width={628} height={1148} rx={40} fill="#f7f4ff" />
 			<rect x={440} y={362} width={200} height={34} rx={17} fill="#16102a" />
 			<text x={540} y={500} textAnchor="middle" fontFamily={ROUND} fontWeight={600} fontSize={44} fill="#7a6fa3">
-				Checking ••42
+				{account}
 			</text>
 			<text x={540} y={690} textAnchor="middle" fontFamily={CAPTION} fontSize={190} fill="#1d1230">
 				{amount}
 			</text>
 			<text x={540} y={770} textAnchor="middle" fontFamily={ROUND} fontWeight={600} fontSize={42} fill="#7a6fa3">
-				available balance
+				{label}
 			</text>
 			<line x1={270} y1={840} x2={810} y2={840} stroke="#ddd6f3" strokeWidth={5} />
 			{rows.map(([what, cost], i) => (
@@ -293,3 +293,50 @@ export const PlanProp: React.FC<{title: string; lines: string[]; burn: number; f
 		</g>
 	);
 };
+
+// A phone's lock screen: the time, and notifications that arrive one at a time. Each is
+// [app, sender, message]; the messages carry the joke (the dining hall, the roommate, the stomach).
+export const PhoneProp: React.FC<{time: string; day?: string; notes: [string, string, string][]; f: number; uid: string}> = ({time, day = '', notes, f, uid}) => (
+	<g>
+		<defs>
+			<linearGradient id={`${uid}wp`} x1="0" y1="0" x2="1" y2="1">
+				<stop offset="0%" stopColor="#3a2a8a" />
+				<stop offset="55%" stopColor="#7b4bd6" />
+				<stop offset="100%" stopColor="#ff8a5c" />
+			</linearGradient>
+		</defs>
+		<rect x={170} y={250} width={740} height={1330} rx={76} fill="#16102a" stroke={OUT} strokeWidth={12} />
+		<rect x={206} y={296} width={668} height={1238} rx={44} fill={`url(#${uid}wp)`} />
+		<rect x={440} y={312} width={200} height={34} rx={17} fill="#16102a" />
+		<text x={540} y={560} textAnchor="middle" fontFamily={CAPTION} fontSize={196} fill="#fff">
+			{time}
+		</text>
+		{day ? (
+			<text x={540} y={628} textAnchor="middle" fontFamily={ROUND} fontWeight={600} fontSize={44} fill="#fff" opacity={0.85}>
+				{day}
+			</text>
+		) : null}
+		{notes.map(([app, who, msg], i) => {
+			const t = Math.max(0, Math.min(1, (f - 6 - i * 9) / 6));
+			const e = 1 - (1 - t) * (1 - t);
+			const y = 700 + i * 262;
+			const lines = msg.length > 27 ? [msg.slice(0, msg.lastIndexOf(' ', 27)), msg.slice(msg.lastIndexOf(' ', 27) + 1)] : [msg];
+			return t > 0 ? (
+				<g key={i} transform={`translate(0 ${(1 - e) * 80})`} opacity={e}>
+					<rect x={236} y={y} width={608} height={236} rx={34} fill="#fff" opacity={0.96} stroke={OUT} strokeWidth={7} />
+					<text x={270} y={y + 54} fontFamily={ROUND} fontWeight={700} fontSize={30} fill="#8a7fb0" letterSpacing={3}>
+						{app}
+					</text>
+					<text x={270} y={y + 110} fontFamily={ROUND} fontWeight={700} fontSize={48} fill={OUT}>
+						{who}
+					</text>
+					{lines.map((ln, j) => (
+						<text key={j} x={270} y={y + 164 + j * 50} fontFamily={ROUND} fontWeight={600} fontSize={42} fill="#3a2f5e">
+							{ln}
+						</text>
+					))}
+				</g>
+			) : null;
+		})}
+	</g>
+);

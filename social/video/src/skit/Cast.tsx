@@ -13,6 +13,8 @@ export type Look = 'cam' | 'left' | 'right' | 'down' | 'up';
 export type Acting = {face: Face; pose: Pose; look: Look; mouth: number; f: number; uid: string};
 
 export const OUT = '#1d1230';
+// The show is animated like paper cutouts: a pose holds for three frames, then snaps.
+export const step = (f: number, n = 3) => Math.floor(f / n) * n;
 const SKIN = '#f2b88f';
 const SKIN_SH = '#dd9b72';
 const HAIR = '#2b1a45';
@@ -62,7 +64,7 @@ const Eye: React.FC<{cx: number; cy: number; spec: FaceSpec; look: [number, numb
 	const ey = ry * spec.eye;
 	const lid = Math.max(spec.lid, closed);
 	const lidY = cy - ey + 2 * ey * lid;
-	const pr = 23 * spec.pupil * (rx / 46);
+	const pr = 13 * Math.min(1.25, spec.pupil) * (rx / 46);
 	const px = cx + look[0] * (rx / 46);
 	const py = cy + look[1] * (ry / 54) + (lid > 0.3 ? 6 : 0);
 	const lowerY = cy + ey - 2 * ey * (spec.lower ?? 0);
@@ -74,8 +76,6 @@ const Eye: React.FC<{cx: number; cy: number; spec: FaceSpec; look: [number, numb
 			<ellipse cx={cx} cy={cy} rx={ex} ry={ey} fill="#fff" stroke={OUT} strokeWidth={8} />
 			<g clipPath={`url(#${uid})`}>
 				<circle cx={px} cy={py} r={pr} fill={pupil} />
-				<circle cx={px - pr * 0.35} cy={py - pr * 0.4} r={pr * 0.32} fill="#fff" />
-				{spec.pupil > 1.2 ? <circle cx={px + pr * 0.35} cy={py + pr * 0.3} r={pr * 0.18} fill="#fff" /> : null}
 				{lid > 0.02 ? <rect x={cx - ex - 6} y={cy - ey - 6} width={2 * ex + 12} height={lidY - (cy - ey) + 6} fill={lidColor} /> : null}
 				{lid > 0.02 ? <line x1={cx - ex} y1={lidY} x2={cx + ex} y2={lidY} stroke={OUT} strokeWidth={8} /> : null}
 				{spec.lower ? <rect x={cx - ex - 6} y={lowerY} width={2 * ex + 12} height={ey} fill={lidColor} /> : null}
@@ -179,12 +179,15 @@ const MILO_ARMS: Record<Pose, {l: Pt[]; r: Pt[]; front: boolean}> = {
 export const Milo: React.FC<{a: Acting}> = ({a}) => {
 	const spec = FACES[a.face];
 	const look = LOOKS[a.look];
-	const f = a.f;
+	const f = step(a.f);
 	const panic = a.face === 'panic';
+	const talking = a.mouth > 0.1;
+	const beat = Math.floor(a.f / 3) % 2 ? 1 : -1;
+	const tilt = talking ? beat * (1.5 + 3 * a.mouth) : 0;
 	const jx = panic ? Math.sin(f * 2.9) * 4 : 0;
 	const jy = panic ? Math.cos(f * 3.7) * 3 : 0;
 	const breathe = Math.sin(f / 14) * 3;
-	const bob = a.mouth > 0.1 ? Math.sin(f / 1.7) * 4 * a.mouth : 0;
+	const bob = talking ? (beat > 0 ? -10 * a.mouth : 0) : 0;
 	const shrug = a.pose === 'shrug' ? -16 : 0;
 	const arms = MILO_ARMS[a.pose];
 	const wob = (p: Pt, k: number): Pt => [p[0] + (a.pose === 'headgrab' ? Math.sin(f * 2.3 + k) * 5 : a.pose === 'armsup' ? Math.sin(f / 2.2 + k) * 14 : 0), p[1] + (a.pose === 'armsup' ? Math.cos(f / 2.6 + k) * 8 : 0)];
@@ -233,13 +236,11 @@ export const Milo: React.FC<{a: Acting}> = ({a}) => {
 			</g>
 			{!arms.front ? armsEl : null}
 			{/* head */}
-			<g transform={`translate(0 ${bob + shrug * 0.5})`}>
+			<g transform={`translate(0 ${bob + shrug * 0.5}) rotate(${tilt} 300 470)`}>
 				<rect x={262} y={440} width={76} height={120} fill={SKIN_SH} stroke={OUT} strokeWidth={8} />
 				<ellipse cx={126} cy={318} rx={28} ry={40} fill={SKIN} stroke={OUT} strokeWidth={8} />
 				<ellipse cx={474} cy={318} rx={28} ry={40} fill={SKIN} stroke={OUT} strokeWidth={8} />
 				<ellipse cx={300} cy={300} rx={172} ry={182} fill={SKIN} stroke={OUT} strokeWidth={9} />
-				<ellipse cx={206} cy={372} rx={30} ry={18} fill="#f39a86" opacity={0.5} />
-				<ellipse cx={394} cy={372} rx={30} ry={18} fill="#f39a86" opacity={0.5} />
 				{curls.map(([x, y, r], i) => (
 					<circle key={`o${i}`} cx={x} cy={y} r={r} fill={OUT} stroke={OUT} strokeWidth={18} />
 				))}
@@ -247,14 +248,13 @@ export const Milo: React.FC<{a: Acting}> = ({a}) => {
 					<circle key={`h${i}`} cx={x} cy={y} r={r} fill={HAIR} />
 				))}
 				<path d="M 232 96 Q 262 70 292 96 M 330 88 Q 364 70 388 104 M 190 176 Q 214 150 240 172" stroke="#4a3270" strokeWidth={8} strokeLinecap="round" fill="none" />
-				<Eye cx={232} cy={306} spec={spec} look={look} lidColor={SKIN} uid={`${a.uid}el`} closed={closed} />
-				<Eye cx={368} cy={306} spec={spec} look={look} lidColor={SKIN} uid={`${a.uid}er`} closed={closed} />
+				<Eye cx={236} cy={300} spec={spec} look={look} lidColor={SKIN} uid={`${a.uid}el`} closed={closed} rx={60} ry={68} />
+				<Eye cx={364} cy={300} spec={spec} look={look} lidColor={SKIN} uid={`${a.uid}er`} closed={closed} rx={60} ry={68} />
 				<g transform={`translate(0 ${spec.by})`}>
-					<rect x={186} y={214} width={92} height={20} rx={10} fill={OUT} transform={`rotate(${-spec.bl} 232 224)`} />
-					<rect x={322} y={214} width={92} height={20} rx={10} fill={OUT} transform={`rotate(${spec.br} 368 224)`} />
+					<rect x={186} y={196} width={92} height={20} rx={10} fill={OUT} transform={`rotate(${-spec.bl} 232 206)`} />
+					<rect x={322} y={196} width={92} height={20} rx={10} fill={OUT} transform={`rotate(${spec.br} 368 206)`} />
 				</g>
-				<path d="M 292 348 Q 300 366 312 350" stroke={SKIN_SH} strokeWidth={8} strokeLinecap="round" fill="none" />
-				<Mouth cx={300} cy={412} shape={spec.mouth} m={a.mouth} wide={spec.wide} uid={`${a.uid}m`} />
+				<Mouth cx={300} cy={420} shape={spec.mouth} m={a.mouth} wide={spec.wide} uid={`${a.uid}m`} />
 				{spec.sweat ? (
 					<g fill="#8fdcff" stroke={OUT} strokeWidth={6}>
 						<path d={`M 462 ${150 + ((f * 3) % 60)} q -18 30 0 42 q 18 -12 0 -42 Z`} />
@@ -290,12 +290,16 @@ const SCOUT_HANDS: Record<Pose, {l: Pt; r: Pt; finger?: Pt}> = {
 export const Scout: React.FC<{a: Acting; glow?: boolean}> = ({a, glow = true}) => {
 	const spec = FACES[a.face];
 	const look = LOOKS[a.look];
-	const f = a.f;
+	const f = step(a.f);
+	// Shocked or panicking, the flame flares: taller, wilder, hotter.
+	const flare = a.face === 'shock' || a.face === 'panic' ? 1 : 0;
+	const wild = 1 + 1.6 * flare;
 	const float = Math.sin(f / 11) * 12;
-	const s1 = Math.sin(f / 4.3) * 14;
-	const s2 = Math.sin(f / 3.1 + 1.3) * 10;
-	const s3 = Math.cos(f / 5.2) * 8;
-	const talk = a.mouth > 0.1 ? 1 + 0.02 * a.mouth : 1;
+	const s1 = Math.sin(f / (4.3 - 2.4 * flare)) * 14 * wild;
+	const s2 = Math.sin(f / (3.1 - 1.6 * flare) + 1.3) * 10 * wild;
+	const s3 = Math.cos(f / (5.2 - 3 * flare)) * 8 * wild;
+	const hop = a.mouth > 0.1 && Math.floor(a.f / 3) % 2 ? 1 : 0;
+	const talk = 1 + 0.035 * a.mouth * hop + 0.13 * flare;
 	const outer = `M 300 800 C 150 800 70 690 90 560 C 105 470 175 430 190 330 C 200 270 ${175 + s2} ${230 + s3} ${215 + s2} ${150 + s3} C 235 210 280 220 300 180 C 320 130 ${300 + s1} ${90 + s3} ${345 + s1} ${40 + s3 * 0.6} C 370 130 450 180 470 300 C 480 360 455 400 485 450 C 530 520 530 600 505 670 C 475 750 400 800 300 800 Z`;
 	const inner = `M 300 772 C 190 772 128 692 144 592 C 158 512 228 472 ${248 + s2 * 0.5} ${388 + s3} C 272 436 328 426 ${350 + s1 * 0.5} ${342 + s3} C 380 424 442 472 456 572 C 470 682 400 772 300 772 Z`;
 	const hands = SCOUT_HANDS[a.pose];
@@ -307,32 +311,25 @@ export const Scout: React.FC<{a: Acting; glow?: boolean}> = ({a, glow = true}) =
 		<g transform={`translate(0 ${float})`}>
 			{glow ? (
 				<g>
-					<defs>
-						<radialGradient id={`${a.uid}g`}>
-							<stop offset="0%" stopColor="#ffb347" stopOpacity={0.62} />
-							<stop offset="55%" stopColor="#ff7a2f" stopOpacity={0.22} />
-							<stop offset="100%" stopColor="#ff5f1f" stopOpacity={0} />
-						</radialGradient>
-					</defs>
-					<circle cx={300} cy={520} r={500 + Math.sin(f / 6) * 14} fill={`url(#${a.uid}g)`} />
+					<circle cx={300} cy={520} r={(470 + 60 * flare) + (Math.floor(f / 6) % 2) * 16} fill={flare ? '#ff7a2f' : '#ffb347'} opacity={0.16 + 0.1 * flare} />
+					<circle cx={300} cy={520} r={(360 + 60 * flare) + (Math.floor(f / 6) % 2) * 12} fill="#ffc857" opacity={0.2 + 0.1 * flare} />
 				</g>
 			) : null}
 			<g transform={`translate(300 800) scale(${2 - talk} ${talk}) translate(-300 -800)`}>
 				<path d={outer} fill={EMBER} stroke={F_OUT} strokeWidth={10} strokeLinejoin="round" />
 				<path d={inner} fill={SAFFRON} />
-				<path d="M 196 640 Q 180 560 232 500" stroke="#ffe7a8" strokeWidth={16} strokeLinecap="round" fill="none" opacity={0.85} />
 				{/* the scout neckerchief */}
 				<path d="M 108 668 Q 300 770 492 668 L 484 716 Q 300 818 116 716 Z" fill="#6c5ce7" stroke={OUT} strokeWidth={8} strokeLinejoin="round" />
 				<path d="M 286 772 L 256 850 L 300 826 L 344 850 L 314 772 Z" fill="#5a4bd4" stroke={OUT} strokeWidth={8} strokeLinejoin="round" />
 				<circle cx={300} cy={772} r={22} fill="#8f83ff" stroke={OUT} strokeWidth={8} />
 				{/* face */}
-				<Eye cx={246} cy={566} spec={spec} look={look} lidColor={SAFFRON} uid={`${a.uid}el`} closed={closed} rx={38} ry={44} pupil={F_INK} />
-				<Eye cx={354} cy={566} spec={spec} look={look} lidColor={SAFFRON} uid={`${a.uid}er`} closed={closed} rx={38} ry={44} pupil={F_INK} />
+				<Eye cx={250} cy={560} spec={spec} look={look} lidColor={SAFFRON} uid={`${a.uid}el`} closed={closed} rx={48} ry={54} pupil={F_INK} />
+				<Eye cx={350} cy={560} spec={spec} look={look} lidColor={SAFFRON} uid={`${a.uid}er`} closed={closed} rx={48} ry={54} pupil={F_INK} />
 				<g transform={`translate(0 ${spec.by * 0.7})`}>
-					<rect x={212} y={496} width={68} height={15} rx={7} fill={F_INK} transform={`rotate(${-spec.bl} 246 503)`} />
-					<rect x={320} y={496} width={68} height={15} rx={7} fill={F_INK} transform={`rotate(${spec.br} 354 503)`} />
+					<rect x={212} y={482} width={68} height={15} rx={7} fill={F_INK} transform={`rotate(${-spec.bl} 246 489)`} />
+					<rect x={320} y={482} width={68} height={15} rx={7} fill={F_INK} transform={`rotate(${spec.br} 354 489)`} />
 				</g>
-				<Mouth cx={300} cy={636} shape={spec.mouth} m={a.mouth} wide={spec.wide} uid={`${a.uid}m`} k={0.72} ink={F_INK} />
+				<Mouth cx={300} cy={646} shape={spec.mouth} m={a.mouth} wide={spec.wide} uid={`${a.uid}m`} k={0.72} ink={F_INK} />
 			</g>
 			<Hand at={hl} color={SAFFRON} r={36} />
 			<Hand at={hr} color={SAFFRON} r={36} finger={hands.finger ? hb(hands.finger, 2) : undefined} />

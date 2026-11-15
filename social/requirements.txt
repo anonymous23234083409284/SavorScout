@@ -6,3 +6,5 @@ pyarrow==26.0.0
 scipy==1.18.1
 shapely==2.2.0
 opencv-python-headless==4.10.0.84
+apify-client>=3.5
+anthropic>=2.8

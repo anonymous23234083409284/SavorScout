@@ -5,10 +5,19 @@ problem, Scout (our flame) turns up with one real number from SavorScout's data,
 for the site is a joke inside the scene. This file is the taste: anyone (a person, or any
 assistant running the daily job) who follows it can write, check and ship an episode.
 
-- Scripts: `social/show/gold/*.json` (hand-written; the standard to match).
+- Shapes: `social/show/FORMATS.md` (formats found on TikTok, why they work, the trojan-horse rules).
+- Scripts: `social/show/gold/*.json` (hand-written; the standard to match): `four-dollars` (the
+  Rescue), `no-way` (the Withheld Reveal), `five-stages` (a no-face video: narrator over memes).
 - Engine: `python social/pipeline/show.py lint|build <episode.json>` (voices, timing, sound,
   captions, render). `show.py`'s header documents every kind of beat.
-- Drawings: `social/video/src/skit/` (cast, sets, props) and `Skit.tsx` (shots, captions).
+- Voices: ElevenLabs performs the lines (`show.py lines`, then `show.py takes`; section 10); the
+  local voice reads anything without a take.
+- Drawings: `social/video/src/skit/` (cast, sets, props) and `Skit.tsx` (shots, captions, memes).
+- Memes: `social/pipeline/klipy.py` finds them for `{"meme": ...}` beats.
+
+The owner's direction (Nov 15): forget polish, be funny. Paper-cutout animation, acted voices,
+specific and slightly unhinged lines ("Breakfast: one three-week-old stale peanut"), and the
+site gets one or two lines at the end.
 
 ## 1. Where the format comes from
 
@@ -48,9 +57,14 @@ says thank you properly.
 - Gets SavorScout's name wrong (Flavor Scout, Sailor Scout, Saver Scout...). Always.
 
 **Scout, SavorScout's flame.** Calm, dry, unbothered. Knows every place to eat near every campus.
-- Answers panic with one exact number. Short sentences. Never raises its voice.
+- Answers panic with one exact number. Short sentences.
 - Never explains a joke, never says "actually", never sells. It states facts and lets them land.
-- It is a flame: bad plans it is handed catch fire. It doesn't comment on that.
+- Loses its composure exactly once an episode, when it sees how bad things are: "What the HELL
+  is this?!" The flame flares, the plan catches fire, and one line later it is calm again as if
+  nothing happened. The blow-up is the biggest laugh; don't spend it twice.
+
+**The narrator** (no-face videos only). The fast, punchy voice of a friend telling you
+something outrageous. Never an announcer. Talks to "you".
 
 The contrast is the engine: **Milo exaggerates, Scout understates.** If both are joking, nothing
 is funny. If a line could be said by either of them, rewrite it.
@@ -63,8 +77,8 @@ is funny. If a line could be said by either of them, rewrite it.
   the week, a brand of sadness.
 - **Three, with the third one wrong.** Breakfast: a free sample. Lunch: smelling someone's
   fries. Dinner: sleep. Two set the pattern, the third breaks it.
-- **Silence.** One beat per episode has no words and no music: Scout reads the plan. Let it sit
-  for two full seconds.
+- **Silence, then the explosion.** One beat per episode has no words and no music: Scout reads
+  the plan for two full seconds. Then the calm one loses it. Quiet makes the shout funny.
 - **Status.** Milo acts superior while being helped ("I was going to work that out"). Scout
   never fights for status, which is why it always has it.
 - **The callback.** Bring one earlier phrase back near the end ("Dinner: sleep is still plan B").
@@ -102,7 +116,7 @@ troubles are his own; Scout answers with how many places there are, and the site
 
 A format is a skeleton of beats. The cast, the rules above and the data stay the same.
 
-**The Rescue** (built; `gold/four-dollars.json` is the model). 30-40 s, about 95 words.
+**The Rescue** (built; `gold/four-dollars.json` is the model). 35-47 s, about 95 words.
 
 | beat | seconds | who | what |
 |---|---|---|---|
@@ -110,12 +124,16 @@ A format is a skeleton of beats. The cast, the rules above and the data stay the
 | Spiral | 3-9 | Milo | His plan: three items, the third one wrong. |
 | Entrance | 9-11 | Scout | "Hey. You good?" Flat. |
 | Wrong name | 11-16 | both | Milo gets the site's name wrong; Scout starts to correct him; he gets it wrong again. |
-| Verdict | 16-21 | Scout | "Your plan can't be that bad." Reads it in silence. It burns. |
+| Verdict | 16-23 | Scout | "Your plan can't be that bad." Reads it in silence. "What the HELL is this?!" It burns. |
 | The fix | 21-27 | Scout | The real map and the real number, then one dry line about it. |
 | Undercut | 27-30 | Milo | Ungrateful, with a callback. |
 | Plug | 30-36 | Milo | To camera: the site's name, said as a joke. End card. |
 
-Formats designed and not built yet (each needs its own skeleton here and, where noted, drawings):
+`FORMATS.md` section 3 has the other shapes with their skeletons (the Withheld Reveal, the
+Second-Person Spiral, the Deadpan Survival Series, the Talking Object). Only the Rescue must
+have the map; every format must say the site's name once, show it once, and end on the card.
+
+Formats sketched earlier and not built yet (each needs its own skeleton and, where noted, drawings):
 - **The Group Chat.** A text thread: nobody can decide where to eat, Scout joins with a number.
   Needs a chat screen.
 - **The Intervention.** Milo's Wallet and Stomach argue; Scout settles it. Needs two characters.
@@ -136,10 +154,15 @@ Formats designed and not built yet (each needs its own skeleton here and, where 
 6. **Write Scout's lines last.** Fewer words than you think. One line after the number.
 7. **Write the undercut and the plug.** The plug says the site's real name once, correctly.
 8. **Cut.** Every line under 9 words where possible, 16 at most. 55-125 words in all.
-9. **Say it out loud, fast.** If a line trips you, it trips the voice. No capitals for emphasis
-   (the voice would spell them out); mark the caption's coloured word with `*stars*`.
-10. `python social/pipeline/show.py lint <file>`, then `build <file> --render`, then look at
-    the frames: the opening frame must show the problem, and no caption may be cut off.
+9. **Say it out loud, fast.** If a line trips you, it trips the voice. No capitals in `say`
+   (the local voice would spell them out): mark the caption's coloured word with `*stars*`, and
+   put a shouted word in capitals in `"voice"` (the text ElevenLabs performs) and in `"cap"`.
+10. **Direct the actors.** Give every line an `"act"`: the ElevenLabs tag for how it's said
+    (`[panicking]`, `[deadpan]`, `[shocked] [shouting]`, `[sarcastic]`, `[sighs]`...). Milo is
+    always a little too much; Scout is flat until the blow-up.
+11. `python social/pipeline/show.py lint <file>`, voice it (section 10), `build <file> --render`,
+    then look at the frames: the opening frame must show the problem, and no caption may be
+    cut off.
 
 ## 8. Judging an episode
 
@@ -151,9 +174,42 @@ Score each from 0 to 2 and ship at 8 or more of 10. Below that, rewrite the weak
 - **Truth:** is the number real, and is it used as a punchline rather than read out?
 - **Plug:** is the site's name a joke and not an advert?
 
-## 9. How the show learns
+## 9. The look and the memes
+
+Paper cutouts: flat shapes with a paper grain and a drop shadow, big round eyes with dot
+pupils, poses that hold for three frames and snap, three mouth shapes, heads that hop when they
+talk. It's meant to look handmade and a bit cheap; don't smooth it. When Scout is shocked the
+flame flares (`face: "shock"`). New props go in `Stage.tsx` in the same style.
+
+A meme beat (`{"meme": {"q": "shocked cat"}, "who": ..., "say": ..., "top": "text above"}`)
+cuts a reaction clip in full-frame, like a photo taped to the page. `klipy.py search "..."`
+lists candidates; pick with `"pick": n`. A meme is a reaction held under four seconds, never
+the joke. Prefer animals and anonymous reactions to film, TV and celebrities.
+
+## 10. Voices
+
+1. `python social/pipeline/show.py lines <episode.json>` prints one prompt per character: every
+   line with its acting tag, `[long pause]` between lines, and the voice to use (`cast.json`).
+2. Generate each prompt once with the ElevenLabs connector: model `eleven_v4`, that voice,
+   **one take** (the default is two; a second take doubles the cost). If it says the free queue
+   is busy, wait a minute and send it again; one generation runs at a time.
+3. Download the audio (the link is on elevenlabsusercontent.com) and run
+   `python social/pipeline/show.py takes <episode.json> <who> <file>`. It cuts the recording at
+   the pauses and prints each line's length; a line flagged `<-- check this cut` means a pause
+   inside a line was mistaken for a break (rewrite that line without a full stop in the middle,
+   or generate again).
+4. The lines are kept in `social/show/takes/<id>/`, so a rebuild costs nothing. Change a line's
+   words and it needs a new take; until then the local voice reads it.
+
+Cost: an episode is 500-950 characters. The free plan gives 10,000 a month (about 12
+episodes) and does not license commercial use; the Starter plan does. With no ElevenLabs at
+all, episodes still build with the local voice (flatter, but free and unlimited).
+
+## 11. How the show learns
 
 Each built episode records its ingredients (`out/show/<id>/episode.json`: format, situation,
-campus, lines). Views, watch time and shares come from the daily stats. The plan for days 2-3:
-score situations, games and formats the way the lab scores countdowns, write more of what
-earns shares, and retire what doesn't.
+campus, voice, lines). Views, watch time and shares come from the daily stats
+(`make_day.py stats`). Judge a format by its share rate first (the hunted hits were shared by
+about 3% of viewers), then views against our median. Each week: `hook_hunter.py hunt` brings new
+shapes (FORMATS.md section 5), write more in the shapes that earned shares, retire a shape after
+three episodes under the median, and note what happened at the end of FORMATS.md.

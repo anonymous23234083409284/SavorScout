@@ -1,0 +1,102 @@
+{
+ "id": "five-stages-nyu",
+ "format": "noface",
+ "campus": "new-york-university",
+ "music": "cozy",
+ "situation": "nobody can decide where to eat",
+ "games": [
+  "mock-serious list",
+  "escalation",
+  "the stat as the twist",
+  "undercut plug"
+ ],
+ "_how": "A no-face video: the narrator over memes. Trojan horse: 30 seconds of a joke everyone has lived, one real number as the twist, one line for the site. Each meme is a reaction held under 4 seconds; 'top' is the text above it.",
+ "beats": [
+  {
+   "meme": {
+    "q": "dramatic chipmunk",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "say": "The five stages of deciding where to eat.",
+   "cap": "The *five stages* of deciding where to eat.",
+   "act": "[excited]"
+  },
+  {
+   "meme": {
+    "q": "confident dog walking",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "top": "STAGE 1: CONFIDENCE",
+   "say": "Stage one. Confidence. I'm not picky.",
+   "cap": "Stage one. Confidence. *I'm not picky.*",
+   "act": "[cheerfully]"
+  },
+  {
+   "meme": {
+    "q": "side eye cat",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "top": "STAGE 2: \"ANYTHING IS FINE\"",
+   "say": "Stage two. Someone says anything is fine. It is not fine.",
+   "cap": "Stage two. Someone says anything is fine. It is *not* fine.",
+   "act": "[deadpan]"
+  },
+  {
+   "meme": {
+    "q": "dog staring at laptop",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "top": "STAGE 3: RESEARCH",
+   "say": "Stage three. Forty minutes on your phone. Nothing looks good.",
+   "cap": "Stage three. *Forty minutes* on your phone. Nothing looks good.",
+   "act": "[tired]"
+  },
+  {
+   "meme": {
+    "q": "sad cat eating",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "top": "STAGE 4: GRIEF",
+   "say": "Stage four. Grief. You eat cereal. For dinner. Again.",
+   "cap": "Stage four. Grief. You eat *cereal.* For dinner. Again.",
+   "act": "[sad]"
+  },
+  {
+   "map": "w",
+   "who": "narrator",
+   "say": "Stage five. Finding out there are {w} places to eat within a 10-minute walk of you.",
+   "act": "[surprised]"
+  },
+  {
+   "meme": {
+    "q": "shocked cat",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "say": "This whole time.",
+   "cap": "This *whole* time.",
+   "act": "[whispers]",
+   "hold": 0.7
+  },
+  {
+   "meme": {
+    "q": "cat nodding",
+    "kind": "gifs"
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Stages one through four are optional.",
+   "cap": "*SavorScout.net.* Stages one through four are optional.",
+   "act": "[deadpan]",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "caption": "the 5 stages of deciding where to eat. stage 2 ended friendships\n\n#wheretoeat #collegelife #nyu #collegefood #relatable"
+}

@@ -1,5 +1,5 @@
 {
- "_why": "The show's cast: who they are and how they sound. show.py reads the voices; BIBLE.md says how to write for them. Voices are from the open-source Kokoro model (tts.py). speed is the speaking rate; pitch above 1 raises the voice slightly (Milo sounds younger and more frantic).",
+ "_why": "The show's cast: who they are and how they sound. show.py reads the voices; BIBLE.md says how to write for them. \"eleven\" is the ElevenLabs voice that performs the character (python show.py lines / takes); \"voice\", speed and pitch are the local Kokoro voice (tts.py) that reads any line with no recorded take, so an episode always builds.",
  "milo": {
   "name": "Milo",
   "role": "the student",
@@ -7,7 +7,13 @@
   "speed": 1.12,
   "pitch": 1.05,
   "gain": 1.0,
-  "persona": "Broke, dramatic, always one meal from disaster. Treats small food problems like the end of the world, then commits to a terrible plan with total confidence. Never learns. Never says thank you properly."
+  "persona": "Broke, dramatic, always one meal from disaster. Treats small food problems like the end of the world, then commits to a terrible plan with total confidence. Never learns. Never says thank you properly.",
+  "eleven": {
+   "voice_id": "TX3LPaxmHKxFdv7VOQHJ",
+   "name": "Liam - Energetic, Social Media Creator",
+   "model": "eleven_v4",
+   "direction": "fast, panicky, over-dramatic; tags like [panicking], [trembling voice], [gasps], [excited], [sarcastic], [annoyed], [sighs]"
+  }
  },
  "scout": {
   "name": "Scout",
@@ -16,6 +22,27 @@
   "speed": 1.0,
   "pitch": 1.0,
   "gain": 1.0,
-  "persona": "Calm, dry, unbothered. Knows every place to eat near every campus and answers panic with one exact number. Never raises its voice, never explains a joke. Sets bad plans on fire, because it is a flame."
+  "persona": "Calm, dry, unbothered. Knows every place to eat near every campus and answers panic with one exact number. Never explains a joke. Loses its composure exactly once an episode, when it sees how bad the plan is, and flares up; then it's calm again as if nothing happened.",
+  "eleven": {
+   "voice_id": "SAz9YHcvj6GT2YYXdXww",
+   "name": "River - Relaxed, Neutral, Informative",
+   "model": "eleven_v4",
+   "direction": "calm and flat ([calm], [flatly], [deadpan]) until the one moment it loses it ([shocked] [shouting], capitals on the hit word)"
+  }
+ },
+ "narrator": {
+  "name": "Narrator",
+  "role": "the voice of the no-face videos",
+  "voice": "am_michael",
+  "speed": 1.15,
+  "pitch": 1.0,
+  "gain": 1.0,
+  "persona": "The fast, punchy social-media voice: hooks in the first second, talks like a friend telling you something outrageous, never like an announcer.",
+  "eleven": {
+   "voice_id": "uC1r2TVqMMkHyjSAteKk",
+   "name": "Ian - Deep, Punchy Social Hook Voice",
+   "model": "eleven_v4",
+   "direction": "quick and upbeat; [excited] on the hook, [sarcastic] or [deadpan] on the punchline; fallback voice Liam (TX3LPaxmHKxFdv7VOQHJ) if Ian isn't available on the plan"
+  }
  }
 }

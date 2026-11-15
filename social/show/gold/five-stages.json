@@ -15,7 +15,8 @@
   {
    "meme": {
     "q": "dramatic chipmunk",
-    "kind": "gifs"
+    "kind": "gifs",
+    "pick": 1
    },
    "who": "narrator",
    "say": "The five stages of deciding where to eat.",
@@ -25,7 +26,8 @@
   {
    "meme": {
     "q": "confident dog walking",
-    "kind": "gifs"
+    "kind": "gifs",
+    "pick": 4
    },
    "who": "narrator",
    "top": "STAGE 1: CONFIDENCE",
@@ -36,7 +38,8 @@
   {
    "meme": {
     "q": "side eye cat",
-    "kind": "gifs"
+    "kind": "gifs",
+    "pick": 0
    },
    "who": "narrator",
    "top": "STAGE 2: \"ANYTHING IS FINE\"",
@@ -46,8 +49,9 @@
   },
   {
    "meme": {
-    "q": "dog staring at laptop",
-    "kind": "gifs"
+    "q": "dog looking at phone",
+    "kind": "gifs",
+    "pick": 0
    },
    "who": "narrator",
    "top": "STAGE 3: RESEARCH",
@@ -58,7 +62,8 @@
   {
    "meme": {
     "q": "sad cat eating",
-    "kind": "gifs"
+    "kind": "gifs",
+    "pick": 0
    },
    "who": "narrator",
    "top": "STAGE 4: GRIEF",
@@ -75,7 +80,8 @@
   {
    "meme": {
     "q": "shocked cat",
-    "kind": "gifs"
+    "kind": "gifs",
+    "pick": 5
    },
    "who": "narrator",
    "say": "This whole time.",
@@ -86,7 +92,8 @@
   {
    "meme": {
     "q": "cat nodding",
-    "kind": "gifs"
+    "kind": "gifs",
+    "pick": 1
    },
    "who": "narrator",
    "say": "Savor Scout dot net. Stages one through four are optional.",

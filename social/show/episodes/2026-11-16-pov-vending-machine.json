@@ -1,0 +1,73 @@
+{
+ "id": "pov-vending-machine",
+ "format": "pov",
+ "bank": "pov-vending-machine",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "POV: you are the dorm vending machine at 2 a.m.\n\n#collegelife #collegefood #relatable #fyp",
+ "beats": [
+  {
+   "meme": {
+    "q": "cat staring from dark"
+   },
+   "who": "narrator",
+   "say": "You're the dorm vending machine. It's two a.m.",
+   "title": "POV: you're the vending machine",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "meme": {
+    "q": "raccoon walking at night"
+   },
+   "top": "\"HIM AGAIN\"",
+   "who": "narrator",
+   "say": "Here he comes. Third night in a row."
+  },
+  {
+   "meme": {
+    "q": "cat counting money"
+   },
+   "who": "narrator",
+   "say": "He has a wrinkled dollar. You reject it. For fun.",
+   "cap": "He has a wrinkled dollar. You reject it. For *fun.*"
+  },
+  {
+   "meme": {
+    "q": "dog begging"
+   },
+   "who": "narrator",
+   "say": "He smooths it on his leg. He whispers please."
+  },
+  {
+   "meme": {
+    "q": "cat pushing things off table"
+   },
+   "who": "narrator",
+   "say": "You take it. You give him the pretzels he didn't pick."
+  },
+  {
+   "meme": {
+    "q": "sad dog walking away"
+   },
+   "who": "narrator",
+   "say": "He says thank you anyway.",
+   "hold": 0.7
+  },
+  {
+   "meme": {
+    "q": "guilty dog"
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Free him from you.",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "track": "lofi-107"
+}

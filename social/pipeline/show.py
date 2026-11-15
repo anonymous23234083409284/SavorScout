@@ -625,7 +625,7 @@ def build(path, render=False):
     out_mp4 = os.path.abspath(os.path.join(work, ep["id"] + ".mp4"))
     manifest = os.path.join(work, "manifest.json")
     json.dump({"videos": [{"id": ep["id"], "composition": "Skit", "props": props, "crf": 21, "out": out_mp4}]}, open(manifest, "w"))
-    json.dump({"id": ep["id"], "campus": ep["campus"], "format": ep.get("format"), "track": track["id"], "seconds": round(C["total"] / FPS, 1),
+    json.dump({"id": ep["id"], "campus": ep.get("campus"), "format": ep.get("format"), "track": track["id"], "seconds": round(C["total"] / FPS, 1),
                "shots": len(C["shots"]), "voice": "elevenlabs" if os.path.isdir(os.path.join(TAKES, ep["id"])) else "local", "lines": [{"who": w, "say": s} for w, s in C["said"]]}, open(os.path.join(work, "episode.json"), "w"), indent=1)
     print(f"{ep['id']}: {C['total'] / FPS:.1f} s, {len(C['shots'])} shots, {len(C['said'])} lines, track {track['id']}")
     t = 0
@@ -739,6 +739,12 @@ def bank_episode(sc, campus=None):
     beats.append({"end": True})
     ep = {"id": sc["id"], "format": sc["format"], "bank": sc["id"], "cast": sc["cast"], "music": "cozy",
           "caption": sc["caption"] + "\n\n#collegelife #collegefood #relatable " + ("#skit" if "narrator" not in sc["cast"] else "#fyp"), "beats": beats}
+    # every episode gets its own soundtrack (the owner's rule: no two videos in a day share one);
+    # change "track" in the episode file if two of a day's episodes land on the same one
+    lib = (jload("/tmp/sounds/library.json") or {}).get("tracks", [])
+    calm = [t["id"] for t in lib if t.get("mood") == "cozy"] or [t["id"] for t in lib]
+    if calm:
+        ep["track"] = calm[int(hashlib.sha1((sc["id"] + (campus or "")).encode()).hexdigest(), 16) % len(calm)]
     if sc["set"]:
         ep["set"] = sc["set"]
     if campus:

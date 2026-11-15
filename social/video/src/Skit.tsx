@@ -224,7 +224,7 @@ const MemeShot: React.FC<{s: Shot}> = ({s}) => {
 	const m = s.meme!;
 	const pop = spring({frame: f, fps, config: {damping: 11, stiffness: 210, mass: 0.6}});
 	const W = 960;
-	const H = Math.min(1100, Math.round((W * m.h) / m.w));
+	const H = Math.min(940, Math.round((W * m.h) / m.w));
 	const w = Math.round((H * m.w) / m.h) > W ? W : Math.round((H * m.w) / m.h);
 	const top = m.top ? 330 : 400;
 	return (

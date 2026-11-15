@@ -1,0 +1,77 @@
+{
+ "id": "delivery-math-uc-berkeley",
+ "format": "spiral",
+ "bank": "delivery-math",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "delivery app math is a crime against you specifically\n\n#collegelife #collegefood #relatable #fyp",
+ "beats": [
+  {
+   "meme": {
+    "q": "cat doing math"
+   },
+   "who": "narrator",
+   "say": "Delivery app math. Stay with me.",
+   "title": "delivery app math",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "meme": {
+    "q": "happy dog"
+   },
+   "top": "$9",
+   "who": "narrator",
+   "say": "The burrito is nine dollars. You can afford nine dollars."
+  },
+  {
+   "meme": {
+    "q": "confused dog tilting head"
+   },
+   "top": "+$4 SERVICE",
+   "who": "narrator",
+   "say": "Service fee. Four dollars. For the service of fees.",
+   "cap": "Service fee. Four dollars. For the *service* of fees."
+  },
+  {
+   "meme": {
+    "q": "cat shocked"
+   },
+   "top": "+$5 DELIVERY, +$3 \"OTHER\"",
+   "who": "narrator",
+   "say": "Delivery. Five. And three dollars for something called other.",
+   "cap": "Delivery. Five. And three dollars for something called *other.*"
+  },
+  {
+   "meme": {
+    "q": "crying cat"
+   },
+   "top": "$24",
+   "who": "narrator",
+   "say": "Tip. It's now twenty-four dollars. For a burrito. That's cold.",
+   "hold": 0.7
+  },
+  {
+   "map": "w",
+   "who": "narrator",
+   "say": "There are {w} places to eat within a 10-minute walk of you."
+  },
+  {
+   "meme": {
+    "q": "happy dog running",
+    "pick": 0
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Legs are free.",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "campus": "university-of-california-berkeley",
+ "track": "lofi-119"
+}

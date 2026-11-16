@@ -1,0 +1,93 @@
+{
+ "tiktok": [
+  {
+   "video": "the-read-fridge-nyu",
+   "at": "2026-11-16T13:55:00-05:00",
+   "text": "when someone who knows food opens your fridge\n\n#collegelife #collegefood #relatable #skit"
+  },
+  {
+   "video": "five-stages-hungry-nyu",
+   "at": "2026-11-16T16:15:00-05:00",
+   "text": "the 5 stages of deciding where to eat. stage 2 has ended friendships\n\n#collegelife #collegefood #relatable #fyp"
+  },
+  {
+   "video": "pov-vending-machine",
+   "at": "2026-11-16T18:35:00-05:00",
+   "text": "POV: you are the dorm vending machine at 2 a.m.\n\n#collegelife #collegefood #relatable #fyp"
+  },
+  {
+   "video": "delivery-math-uc-berkeley",
+   "at": "2026-11-16T20:55:00-05:00",
+   "text": "delivery app math is a crime against you specifically\n\n#collegelife #collegefood #relatable #fyp"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-fridge",
+   "at": "2026-11-16T14:30:00-05:00",
+   "thread": [
+    "Roommate: \"Welcome to my fridge. I just restocked.\"\n\nThe fridge: mustard, an older mustard, and a burrito named Gerald.\n\n\"Why does it have a name?\"\n\n\"He's been through a lot.\"",
+    "There are 1,462 places to eat within a 10-minute walk of NYU. Leave Gerald. Go.\n\nsavorscout.net"
+   ]
+  },
+  {
+   "id": "x-stages",
+   "at": "2026-11-16T16:20:00-05:00",
+   "thread": [
+    "The 5 stages of deciding where to eat:\n\n1. Confidence (\"I'm not picky\")\n2. \"Anything is fine\" (it is not fine)\n3. 40 minutes on your phone\n4. Grief. Cereal for dinner. Again\n5. Finding out there are 1,462 places to eat within a 10-minute walk of NYU",
+    "Stages 1 through 4 are optional.\n\nsavorscout.net"
+   ]
+  },
+  {
+   "id": "x-vending",
+   "at": "2026-11-16T18:10:00-05:00",
+   "thread": [
+    "POV: you're the dorm vending machine at 2 a.m.\n\nHe has a wrinkled dollar. You reject it. For fun.\n\nHe smooths it on his leg. He whispers \"please.\"\n\nYou give him the pretzels he didn't pick.\n\nHe says thank you anyway.",
+    "Free him from the vending machine. Every place to eat near your campus, on one map: savorscout.net"
+   ]
+  },
+  {
+   "id": "x-delivery",
+   "at": "2026-11-16T20:00:00-05:00",
+   "thread": [
+    "Delivery app math:\n\nBurrito: $9\nService fee: $4\nDelivery: $5\n\"Other\": $3\nTip: $3\n\nTotal: $24, for a burrito that arrives cold.",
+    "There are 277 places to eat within a 10-minute walk of UC Berkeley. Legs are free.\n\nsavorscout.net"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "th-fridge",
+   "at": "2026-11-16T15:05:00-05:00",
+   "thread": [
+    "Roommate: \"Welcome to my fridge. I just restocked.\"\n\nThe fridge: mustard, an older mustard, and a burrito named Gerald.\n\n\"Why does it have a name?\"\n\n\"He's been through a lot.\"",
+    "There are 1,462 places to eat within a 10-minute walk of NYU. Leave Gerald. Go.\n\nsavorscout.net"
+   ]
+  },
+  {
+   "id": "th-stages",
+   "at": "2026-11-16T16:55:00-05:00",
+   "thread": [
+    "The 5 stages of deciding where to eat:\n\n1. Confidence (\"I'm not picky\")\n2. \"Anything is fine\" (it is not fine)\n3. 40 minutes on your phone\n4. Grief. Cereal for dinner. Again\n5. Finding out there are 1,462 places to eat within a 10-minute walk of NYU",
+    "Stages 1 through 4 are optional.\n\nsavorscout.net"
+   ]
+  },
+  {
+   "id": "th-vending",
+   "at": "2026-11-16T18:45:00-05:00",
+   "thread": [
+    "POV: you're the dorm vending machine at 2 a.m.\n\nHe has a wrinkled dollar. You reject it. For fun.\n\nHe smooths it on his leg. He whispers \"please.\"\n\nYou give him the pretzels he didn't pick.\n\nHe says thank you anyway.",
+    "Free him from the vending machine. Every place to eat near your campus, on one map: savorscout.net"
+   ]
+  },
+  {
+   "id": "th-delivery",
+   "at": "2026-11-16T20:35:00-05:00",
+   "thread": [
+    "Delivery app math:\n\nBurrito: $9\nService fee: $4\nDelivery: $5\n\"Other\": $3\nTip: $3\n\nTotal: $24, for a burrito that arrives cold.",
+    "There are 277 places to eat within a 10-minute walk of UC Berkeley. Legs are free.\n\nsavorscout.net"
+   ]
+  }
+ ],
+ "cards": {}
+}

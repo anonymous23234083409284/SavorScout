@@ -1,0 +1,74 @@
+[
+ {
+  "service": "tiktok",
+  "at": "2026-11-16T18:55:00.000Z",
+  "post_id": "6afb4aadd1e269de78f8d25f",
+  "what": "the-read-fridge-nyu"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-16T21:15:00.000Z",
+  "post_id": "6afb4aadca12ef5afd67ccf6",
+  "what": "five-stages-hungry-nyu"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-16T23:35:00.000Z",
+  "post_id": "6afb4aaed1e269de78f8d2a7",
+  "what": "pov-vending-machine"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-17T01:55:00.000Z",
+  "post_id": "6afb4aafd2971d5b1dc55329",
+  "what": "delivery-math-uc-berkeley"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-16T19:30:00.000Z",
+  "post_id": "6afb4aafd1e269de78f8d32f",
+  "what": "x-fridge"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-16T21:20:00.000Z",
+  "post_id": "6afb4aafca12ef5afd67cd49",
+  "what": "x-stages"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-16T23:10:00.000Z",
+  "post_id": "6afb4aaf3393e02ff1072296",
+  "what": "x-vending"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-17T01:00:00.000Z",
+  "post_id": "6afb4ab0ca12ef5afd67cdb4",
+  "what": "x-delivery"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-16T20:05:00.000Z",
+  "post_id": "6afb4ab0ca12ef5afd67cde6",
+  "what": "th-fridge"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-16T21:55:00.000Z",
+  "post_id": "6afb4ab1ca12ef5afd67ce0d",
+  "what": "th-stages"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-16T23:45:00.000Z",
+  "post_id": "6afb4ab1ca12ef5afd67ce3c",
+  "what": "th-vending"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-17T01:35:00.000Z",
+  "post_id": "6afb4ab1d1e269de78f8d3f9",
+  "what": "th-delivery"
+ }
+]

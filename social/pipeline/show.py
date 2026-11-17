@@ -792,6 +792,43 @@ def bank_cmd(a):
         print(out, "|", "; ".join(probs) if probs else "passes the show's rules")
 
 
+# ---- search videos ----------------------------------------------------------------------------
+# Students search TikTok for "food near <campus>". A search video answers exactly that, in the words they
+# type: the campus name in the first spoken line, the on-screen title and the caption, then the real maps.
+# The narrator is the free local voice, so these cost no ElevenLabs characters.
+
+def say_street(st):
+    """'N High St' -> 'North High Street': the way people say a street name aloud."""
+    words = {"N": "North", "S": "South", "E": "East", "W": "West", "St": "Street", "Ave": "Avenue", "Blvd": "Boulevard",
+             "Rd": "Road", "Dr": "Drive", "Pl": "Place", "Ln": "Lane", "Pkwy": "Parkway", "Hwy": "Highway", "NW": "Northwest",
+             "NE": "Northeast", "SW": "Southwest", "SE": "Southeast", "Sq": "Square", "Ct": "Court"}
+    return " ".join(words.get(w, w) for w in st.split())
+
+
+def search_episode(slug, date):
+    F = facts(slug)
+    name = F["campus"]
+    tag = re.sub(r"[^a-z0-9]", "", name.lower())
+    beats = [{"meme": {"q": "hungry dog looking around"}, "who": "narrator", "say": f"Where to eat near {name}.",
+              "cap": f"Where to eat near *{name}*", "title": f"where to eat near {name}"},
+             {"map": "w", "who": "narrator", "say": "There are {w} places to eat within a 10-minute walk of campus."}]
+    if F.get("street") and F.get("street_n"):
+        beats.append({"map": "street_n", "who": "narrator", "say": f"The busiest food street: {say_street(F['street'])}, with {{street_n}} places."})
+    if F.get("pizza"):
+        beats.append({"map": "pizza", "who": "narrator", "say": "Pizza? {pizza} pizza places within a mile."})
+    if F.get("coffee"):
+        beats.append({"map": "coffee", "who": "narrator", "say": "Coffee? {coffee} coffee shops within a mile.", "hold": 0.5})
+    beats.append({"meme": {"q": "dog running happily outside"}, "who": "narrator",
+                  "say": "Every one of them, closest first, on Savor Scout dot net.", "cap": "Every one, closest first: *SavorScout.net*", "chip": True})
+    beats.append({"end": True})
+    ep = {"id": f"near-{re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')}", "format": "search", "campus": slug, "cast": ["narrator"],
+          "music": "cozy", "caption": f"Where to eat near {name}: {F['w']} places within a 10-minute walk of campus\n\n#{tag} #foodnear{tag} #collegefood #wheretoeat",
+          "beats": beats}
+    out = os.path.join(SHOW, "episodes", f"{date}-{ep['id']}.json")
+    json.dump(ep, open(out, "w"), indent=1, ensure_ascii=False)
+    return out, ep
+
+
 def batch(batch_id, paths, day=None):
     """Hand built episodes to the publisher: batches/<id>/ (videos.json, posts.json) and
     out/batches/<id>/ (reels.json, the videos), the layout make_day.py publish and verify read.
@@ -846,6 +883,10 @@ if __name__ == "__main__":
         print_lines(jload(a[1]))
     elif a[0] == "takes" and len(a) > 3:
         store_takes(jload(a[1]), a[2], a[3])
+    elif a[0] == "search" and len(a) > 2:      # show.py search <campus slug> <date>
+        out, ep = search_episode(a[1], a[2])
+        probs = lint(ep)
+        print(out, "|", "; ".join(probs) if probs else "passes the show's rules")
     elif a[0] == "bank":
         bank_cmd(a[1:])
     elif a[0] == "batch" and len(a) > 2:

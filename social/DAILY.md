@@ -8,43 +8,24 @@ the `social-media` branch (`sounds/`) rotates, least recently used first.
 A scheduled Claude session runs this every afternoon and schedules the next
 day. These are its steps. A person can run them the same way.
 
-## The show (from Nov 15): the format the owner wants
+## The daily mix (from Nov 17): countdowns first, search videos on top
 
-The owner's direction: comedy first, the site last. Short animated skits with our cast (Milo and
-Scout) or no-face videos (a narrator over memes), built so they'd be shared with no product in
-them, with one or two lines for SavorScout at the end. Countdowns are the fallback, not the goal.
+The owner's direction on Nov 17, after the numbers came in: the animated skits and meme videos are
+paused (117 median views and 3.5 s watched, against 1,505 views and 8.6 s for countdowns). Each day:
 
-Everything needed is written down:
-- `social/show/BIBLE.md`: the cast, what makes a line funny, the corny test, how to write, voice,
-  build and judge an episode.
-- `social/show/FORMATS.md`: the shapes that work (found on TikTok by `hook_hunter.py`), the
-  trojan-horse rules, the Cluely case study, and the weekly routine.
-- `social/show/gold/`: finished scripts to match (`four-dollars`, `no-way`, `five-stages`).
-
-Each day, for as many of the day's videos as the voice budget allows (at least two: one skit
-and one no-face video):
-1. First use anything in `social/show/episodes/ready/`: episodes already built and checked (memes picked) but not
-   posted yet. Move one to `social/show/episodes/<date>-<id>.json` when you use it. Then take scripts from the bank (BIBLE.md section 0): `show.py bank list`, pick ones not made
-   recently and of different formats, choose a campus for each (big, well-known schools; rotate
-   them), and `show.py bank make <id> <campus> <date>`. Only write a new script (BIBLE.md
-   section 7) when the bank has nothing fresh for the day or a trend deserves one.
-2. `python social/pipeline/show.py lint <file>`; fix until it passes; score it with the rubric in
-   BIBLE.md section 8 and rewrite the weakest beat until it's 8 of 10.
-3. Voice it with the ElevenLabs connector (BIBLE.md section 10: `show.py lines`, generate one
-   take per character, `show.py takes`). Check `account_get_usage` first: an episode costs
-   500-950 characters. If ElevenLabs isn't connected or the month's characters are gone, build
-   with the local voice (`tts.py check`) and say so in the report.
-4. `python social/pipeline/show.py build <file> --render`; look at a frame from every shot (the
-   opening frame shows the problem, no caption cut off, the right set behind each character).
-5. `python social/pipeline/show.py batch <date>s <files...>`; then
-   `python social/pipeline/make_day.py publish <date>s <sounds dir> --dry-run`, publish, and
-   `make_day.py verify <date>s`. The show batch posts at the day's TikTok times, so a day with
-   show episodes needs that many fewer countdowns: drop the weakest countdowns from the lab's
-   plan, or skip the countdown batch entirely when four episodes are ready.
-6. Once a week: `python social/pipeline/hook_hunter.py hunt`, read the new scripts, update
-   FORMATS.md (its section 5).
-
-Never ship an episode that fails lint or scores under 8; a countdown is better than a bad skit.
+1. **Four countdowns** from the lab (steps 0-5 below). Prefer famous schools, university systems,
+   big states and cities, and rivalries (rivalry week is Nov 27-28); no part 2s (both flopped).
+2. **The social-media voice on countdowns.** Check ElevenLabs (`account_get_usage`). While more than
+   1,500 characters are left this month, record the day's two best countdowns in ElevenLabs's
+   "Liam - Energetic, Social Media Creator" voice: `python social/pipeline/cdvoice.py lines <date>`, generate
+   each prompt once (eleven_v4, one take), download it, `python social/pipeline/cdvoice.py cut <date> <id> <file>`,
+   then build. The rest use the free local voice. A countdown costs 450-600 characters.
+3. **Two or three TikTok search videos** ("where to eat near <campus>"), extra to the four, posted
+   between them: `python social/pipeline/show.py search <campus slug> <date>`, then `show.py build <file> --render`,
+   check the frames, `show.py batch <date>s ...`, publish and verify as for the show. Work down the biggest
+   campuses, one per campus, never the same campus twice (`ls social/show/episodes/*near-*`). Judge them
+   by views after day 3, not day 1: they are meant to be found in search for months.
+4. The show bank (`social/show/`) stays for later; do not post skits or meme videos unless the owner asks.
 
 ## 0. Read the numbers first, then ask the lab
 

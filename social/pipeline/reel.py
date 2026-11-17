@@ -259,9 +259,15 @@ def build(video, date, lib, sounds_dir, rank_dir, work, used_clips, seed, key=No
     lines = [(i, sc["say"]) for i, sc in enumerate(video["scenes"]) if sc.get("say")]
     if lines:
         import tts
-        res = tts.synth([t for _, t in lines], os.path.join(work, "voice"))
-        if res:
-            said = {i: r for (i, _), r in zip(lines, res)}
+        import cdvoice                          # lines recorded with ElevenLabs win (cdvoice.py)
+        rec = {i: cdvoice.take(date, video["id"], t) for i, t in lines}
+        rest = [(i, t) for i, t in lines if not rec[i]]
+        res = tts.synth([t for _, t in rest], os.path.join(work, "voice")) if rest else []
+        if res is not None:
+            said = {i: r for i, r in rec.items() if r}
+            said.update({i: r for (i, _), r in zip(rest, res)})
+            if any(rec.values()):
+                print(f"{video['id']}: {sum(1 for r in rec.values() if r)} of {len(lines)} lines in the recorded voice")
         else:
             print(f"{video['id']}: no voice installed here, so no voiceover (tts.py check)")
     for i, sc in enumerate(video["scenes"]):

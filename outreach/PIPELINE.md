@@ -59,6 +59,9 @@ savorscout.net
 
 ## Rules
 
+- **No money, ever (the owner's rule, Nov 17).** Never offer payment, a fee, a sponsored post or a
+  link exchange. Skip any target whose page asks for payment to be featured. If a reply asks for a
+  fee, thank them, say we can't do paid placements, and leave it there.
 - One email per address, ever, unless they reply. No follow-up to silence for now.
 - Ten a day at most, weekdays only, one at a time (never bcc, never a mail merge).
 - Only true things: the article was really read, every number is from `scripts/data/rankings.js`,

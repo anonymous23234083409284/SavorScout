@@ -51,13 +51,43 @@ def targets(n):
     return rows[:n]
 
 
+GROUPS = None
+
+
+def groups():
+    """How each ranking is said in a sentence, from scripts/data/rankings.js: a state ranking
+    (`big`) covers only that state's universities with 20,000+ students, so it is never "all
+    Texas campuses" but "the 13 big Texas universities"."""
+    global GROUPS
+    if GROUPS is None:
+        js = "console.log(JSON.stringify(require(process.argv[1]).map(g => ({s: g.s, big: !!g.big}))))"
+        out = subprocess.run(["node", "-e", js, os.path.join(ROOT, "scripts", "data", "rankings.js")], capture_output=True, text=True, check=True).stdout
+        GROUPS = {g["s"]: g for g in json.loads(out)}
+    return GROUPS
+
+
+def ordinal(n):
+    return {1: "first", 2: "second", 3: "third"}.get(n) or f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
+
+
+def scope(r):
+    """("all 18 Big Ten campuses", "of the 18 Big Ten schools") or, for a state, ("the 13 big Texas
+    universities", "of the 13")."""
+    if groups().get(r["s"], {}).get("big"):
+        return f"the {r['n']} big {r['group']} universities", f"of the {r['n']}"
+    return f"all {r['n']} {r['group']} campuses", f"of the {r['n']} {r['group']} schools"
+
+
 def fact(p):
     """One true, punchy sentence about the school, and the links that back it."""
     r = min(p["rankings"], key=lambda r: r["rank"])
-    place = {1: "first", 2: "second", 3: "third"}.get(r["rank"], f"{r['rank']}th")
-    line = (f"{p['school']} comes out {place} of the {r['n']} {r['group']} schools, with {r['w']} places to eat within a 10-minute walk of campus"
-            if r["rank"] <= 3 else
-            f"{p['school']} has {r['w']} places to eat within a 10-minute walk of campus, which puts it {place} of the {r['n']} {r['group']} schools")
+    of = scope(r)[1]
+    if r["rank"] <= 3:
+        line = f"{p['school']} comes out {ordinal(r['rank'])} {of}, with {r['w']} places to eat within a 10-minute walk of campus"
+    elif r["rank"] == r["n"]:
+        line = f"{p['school']} has {r['w']} places to eat within a 10-minute walk of campus, the fewest {of}"
+    else:
+        line = f"{p['school']} has {r['w']} places to eat within a 10-minute walk of campus, which puts it {ordinal(r['rank'])} {of}"
     return line, f"https://www.savorscout.net/rankings/{r['s']}", f"https://www.savorscout.net/campus/{p['slug']}", r
 
 
@@ -77,7 +107,7 @@ def draft(p, title=None, author=None, detail=None, url=None, name=None):
                f"You're welcome to use the numbers, and I'm glad to share the data behind them.")
     body = (f"{hello}\n\n{opener}\n\n"
             f"I run Savor Scout, a free site that maps places to eat near campuses. We just finished counting every place to eat "
-            f"within a 10-minute walk of all {r['n']} {r['group']} campuses, using open map data, and found that {line}.\n\n"
+            f"within a 10-minute walk of {scope(r)[0]}, using open map data, and found that {line}.\n\n"
             f"The full breakdown is here:\n{ranking}\n\nAnd every place near {p['school']}:\n{campus}\n\n{ask}\n\nBest,\n{SIGN}")
     return subject, body
 

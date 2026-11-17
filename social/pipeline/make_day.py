@@ -124,8 +124,12 @@ def prune(date, keep_days=3):
 def render(date):
     _, out, _ = paths(date)
     prune(date)
+    env = dict(os.environ)          # the browser preinstalled in the cloud container, unless one is set
+    env.setdefault("REMOTION_BROWSER", "/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell")
+    if not os.path.exists(env["REMOTION_BROWSER"]):
+        env.pop("REMOTION_BROWSER")
     subprocess.run(["node", os.path.join(SOCIAL, "video", "render.mjs"), os.path.join(out, "manifest.json")],
-                   cwd=os.path.join(SOCIAL, "video"), check=True)
+                   cwd=os.path.join(SOCIAL, "video"), check=True, env=env)
 
 
 def photo(spec, date):
@@ -378,30 +382,59 @@ def stats():
     tz = ZoneInfo(json.load(open(os.path.join(SOCIAL, "config.json")))["timezone"])
     remote, _ = remote_and_slug()
     history = json.loads(host.read_file(remote, "history.json") or "{}")
-    ids = {}
+    ids, due = {}, {}
     for group in ("days", "weeks", "batches"):
         for key, b in (history.get(group) or {}).items():
             for p in b.get("posts", []):
                 ids[p["post_id"]] = (p["service"], p.get("what") or key)
+                due[p["post_id"]] = p.get("at") or key
     for f in glob.glob(os.path.join(SOCIAL, "batches", "*", "scheduled.json")):
         for p in json.load(open(f)):
             ids[p["post_id"]] = (p["service"], p["what"])
+            due[p["post_id"]] = p.get("at") or ""
+    # The last pull's numbers, by post: a post Buffer won't answer for (its API allows only so many
+    # requests in a window, one per post here) keeps what it had instead of vanishing from the file.
+    try:
+        prev = json.load(open(os.path.join(SOCIAL, "stats.json")))["posts"]
+    except (FileNotFoundError, ValueError, KeyError):
+        prev = []
+    old = {r["id"]: r for r in prev if r.get("id")}
+    old_by_what = {(r["service"], r["what"]): r for r in prev}      # rows from before posts carried their id
     query = """query($id: PostId!) { post(input: {id: $id}) { id status sentAt text externalLink
       metrics { name value } } }"""
-    rows = []
-    for pid, (service, what) in ids.items():
-        try:
-            p = buffer.gql(query, {"id": pid})["post"]
-        except Exception as e:                   # a post deleted in Buffer
+    rows, kept, missing, limited = [], 0, 0, False
+    for pid in sorted(ids, key=lambda i: due.get(i) or "", reverse=True):   # newest first: they matter most
+        service, what = ids[pid]
+        p = None
+        if not limited:
+            try:
+                p = buffer.gql(query, {"id": pid}, retries=4)["post"]
+            except buffer.BufferError as e:
+                if "HTTP 429" in str(e):        # out of requests for now: stop asking, keep the old numbers
+                    limited = True
+                elif "not found" not in str(e).lower():
+                    print(f"  could not read {service} {what}: {str(e)[:120]}")
+            except Exception as e:               # a network hiccup
+                print(f"  could not read {service} {what}: {e}")
+        if p is None:
+            last = old.get(pid) or old_by_what.get((service, what))
+            if last:
+                rows.append({**last, "id": pid})
+                kept += 1
+            else:
+                missing += 1
             continue
-        if not p or p["status"] != "sent":
+        if p["status"] != "sent":
             continue
         m = {x["name"]: x["value"] for x in p.get("metrics") or []}
-        rows.append({"service": service, "what": what, "sent": p["sentAt"], "link": p.get("externalLink"),
+        rows.append({"id": pid, "service": service, "what": what, "sent": p["sentAt"], "link": p.get("externalLink"),
                      "text": p["text"].split("\n")[0][:90], "views": m.get("Video Views", m.get("Views", m.get("Impressions", 0))),
                      "avg_watch_s": m.get("Avg. Watch Time (sec)"), "shares": m.get("Shares", m.get("Reposts", 0)),
                      "likes": m.get("Reactions", 0), "comments": m.get("Comments", 0), "metrics": m})
     rows.sort(key=lambda r: r["sent"])
+    if limited or kept or missing:
+        print(f"Buffer's rate limit stopped the pull: {kept} posts keep their last numbers, {missing} have none yet. "
+              f"Run `make_day.py stats` again in an hour for fresh numbers.")
     with open(os.path.join(SOCIAL, "stats.json"), "w") as f:
         json.dump({"pulled": dt.datetime.now(dt.timezone.utc).isoformat(timespec="minutes"), "posts": rows}, f, indent=1)
     for service, key in (("tiktok", "avg_watch_s"), ("threads", "views"), ("twitter", "views")):

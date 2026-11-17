@@ -32,7 +32,9 @@ def gql(query, variables=None, retries=3):
         except urllib.error.HTTPError as e:
             detail = e.read().decode(errors="replace")[:500]
             if e.code in (429, 500, 502, 503, 504) and attempt < retries - 1:
-                time.sleep(5 * (attempt + 1))
+                wait = e.headers.get("Retry-After") if e.headers else None
+                # A rate limit lasts longer than a server hiccup: honour Retry-After, else back off harder.
+                time.sleep(min(120, int(wait)) if wait and wait.isdigit() else (20 if e.code == 429 else 5) * (attempt + 1))
                 continue
             raise BufferError(f"HTTP {e.code}: {detail}") from None
         if data.get("errors"):

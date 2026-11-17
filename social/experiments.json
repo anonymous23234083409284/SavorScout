@@ -99,17 +99,25 @@
    "video": "houston-tx-countdown",
    "experiment": "g_city",
    "what": "countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Rice (4th))",
-   "status": "posted",
+   "status": "retry",
    "predicted": 2787,
-   "note": "Tease changed by hand from UH (2nd) to Rice (4th): clearer to non-locals and better known; school names spelled out (University of Houston, UH-Downtown, UH-Clear Lake)."
+   "note": "Tease changed by hand from UH (2nd) to Rice (4th): clearer to non-locals and better known; school names spelled out (University of Houston, UH-Downtown, UH-Clear Lake).",
+   "views": 954,
+   "watch_s": 9.2,
+   "shares": 1,
+   "scored": "2026-11-17"
   },
   {
    "date": "2026-11-12",
    "video": "20-countdown",
    "experiment": "g_famous",
    "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
-   "status": "posted",
-   "predicted": 4637
+   "status": "promote",
+   "predicted": 4637,
+   "views": 8582,
+   "watch_s": 11.58,
+   "shares": 63,
+   "scored": "2026-11-17"
   },
   {
    "date": "2026-11-12",
@@ -124,16 +132,24 @@
    "video": "uc-part2",
    "experiment": "part2",
    "what": "part2: All 9 UC campuses by mile (#1 UC Berkeley 428, tease UCLA (2nd))",
-   "status": "posted",
-   "predicted": 4342
+   "status": "retry",
+   "predicted": 4342,
+   "views": 792,
+   "watch_s": 7.74,
+   "shares": 5,
+   "scored": "2026-11-17"
   },
   {
    "date": "2026-11-13",
    "video": "unc-duke-rivalry",
    "experiment": "rivalry",
    "what": "rivalry: UNC vs Duke, restaurants within a 10-minute walk (87 vs 9)",
-   "status": "posted",
-   "note": "Swapped by hand for the lab's New York short (odd #1, and shorts looked weak in competitor data)."
+   "status": "retry",
+   "note": "Swapped by hand for the lab's New York short (odd #1, and shorts looked weak in competitor data).",
+   "views": 922,
+   "watch_s": 7.64,
+   "shares": 2,
+   "scored": "2026-11-17"
   },
   {
    "date": "2026-11-14",
@@ -156,6 +172,15 @@
    "experiment": "part2",
    "what": "part 2: big Pennsylvania universities by busiest food street (#1 Drexel 70; Penn 4th to 2nd)",
    "status": "posted"
+  },
+  {
+   "date": "2026-11-18",
+   "video": "20-part2",
+   "experiment": "metric_street",
+   "what": "countdown: 20 famous American universities by busiest food street (#1 NYU 190, tease Harvard (4th))",
+   "status": "posted",
+   "predicted": 3094,
+   "note": "Scripted by the lab as a part 2; reframed by hand as a standalone countdown on Nov 17 because both part 2s with numbers underperformed (UC 792, Pennsylvania 362). Predicted views were for the part 2."
   }
  ]
 }

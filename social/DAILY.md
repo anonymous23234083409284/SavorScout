@@ -23,7 +23,8 @@ Everything needed is written down:
 
 Each day, for as many of the day's videos as the voice budget allows (at least two: one skit
 and one no-face video):
-1. Take scripts from the bank (BIBLE.md section 0): `show.py bank list`, pick ones not made
+1. First use anything in `social/show/episodes/ready/`: episodes already built and checked (memes picked) but not
+   posted yet. Move one to `social/show/episodes/<date>-<id>.json` when you use it. Then take scripts from the bank (BIBLE.md section 0): `show.py bank list`, pick ones not made
    recently and of different formats, choose a campus for each (big, well-known schools; rotate
    them), and `show.py bank make <id> <campus> <date>`. Only write a new script (BIBLE.md
    section 7) when the bank has nothing fresh for the day or a trend deserves one.

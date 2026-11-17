@@ -1,0 +1,103 @@
+{
+ "tiktok": [
+  {
+   "video": "20-part2",
+   "at": "2026-11-18T21:20:00-05:00",
+   "text": "Harvard is 4th 👀 Which famous university has the busiest food street? Send this to a friend at one of these schools.\n\n#nyu #columbia #ucberkeley #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-20-part2",
+   "at": "2026-11-18T17:39:00-05:00",
+   "card": "20-part2",
+   "thread": [
+    "NYU has the most places to eat on its busiest food street of any school on the list. Columbia is 46 behind.\n\n20 famous American universities (top 14 of 20):",
+    "1. NYU: 190\n2. Columbia: 144\n3. UC Berkeley: 122\n4. Harvard: 93\n5. Georgetown: 92\n6. MIT: 83\n7. USC: 67\n8. Princeton: 56\n9. Penn: 51\n10. Michigan: 48\n11. Northwestern: 42\n12. Johns Hopkins: 41\n12. Yale: 41\n14. Stanford: 37",
+    "Places to eat on each campus's busiest street, within a mile of its center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-20-part2",
+   "at": "2026-11-18T18:08:00-05:00",
+   "card": "20-part2",
+   "topic": "Famous",
+   "thread": [
+    "NYU has the most places to eat on its busiest food street of any school on the list. Columbia is 46 behind. 20 famous American universities (top 14 of 20):\n\nNYU 190, Columbia 144, UC Berkeley 122, Harvard 93, Georgetown 92, MIT 83, USC 67, Princeton 56, Penn 51, Michigan 48, Northwestern 42, Johns Hopkins 41, Yale 41, Stanford 37.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  }
+ ],
+ "cards": {
+  "20-part2": {
+   "type": "ranking",
+   "title": "Famous universities ranked by *their busiest food street*",
+   "subtitle": "20 famous American universities. Places to eat on one street, within a mile.",
+   "rows": [
+    [
+     "1",
+     "NYU",
+     190
+    ],
+    [
+     "2",
+     "Columbia",
+     144
+    ],
+    [
+     "3",
+     "UC Berkeley",
+     122
+    ],
+    [
+     "4",
+     "Harvard",
+     93
+    ],
+    [
+     "5",
+     "Georgetown",
+     92
+    ],
+    [
+     "6",
+     "MIT",
+     83
+    ],
+    [
+     "7",
+     "USC",
+     67
+    ],
+    [
+     "8",
+     "Princeton",
+     56
+    ],
+    [
+     "9",
+     "Penn",
+     51
+    ],
+    [
+     "10",
+     "Michigan",
+     48
+    ],
+    [
+     "11",
+     "Northwestern",
+     42
+    ],
+    [
+     "12",
+     "Johns Hopkins",
+     41
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

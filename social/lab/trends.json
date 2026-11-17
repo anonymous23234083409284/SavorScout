@@ -1,3 +1,8 @@
-{"date": "2026-11-13",
- "pin": ["system:uc|mile|part2"],
- "boost": [{"match": "system:uc", "weight": 0.3, "why": "part 2 of our biggest hit (UC campuses, 17.9K views): within a mile, UCLA jumps from 5th to 2nd"}]}
+{
+ "date": "2026-11-18",
+ "pin": [
+  "famous:20|street|countdown"
+ ],
+ "boost": [],
+ "note": "2026-11-18: show episodes take three of the four slots; the one countdown is the famous-20 set (our second-biggest recent hit, 8,582 views) re-ranked by busiest food street, as a plain countdown rather than a part 2 (the only part 2 with numbers, UC, did 792). Rivalry week is Nov 27-28 (Michigan-Ohio State, Iron Bowl, UCLA-USC, Texas-Texas A&M, Florida-Florida State): boost rivalry head-to-heads from about Nov 24."
+}

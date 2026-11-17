@@ -1,0 +1,84 @@
+{
+ "id": "three-places-michigan",
+ "format": "reveal",
+ "bank": "three-places",
+ "cast": [
+  "june",
+  "theo"
+ ],
+ "music": "cozy",
+ "caption": "Michigan students: 2 years in Ann Arbor and you've eaten at the same 3 places 😭 tag your roommate\n\n#umich #michigan #collegelife #collegefood #skit",
+ "beats": [
+  {
+   "who": "june",
+   "say": "How long have we lived here?",
+   "face": "neutral",
+   "pose": "idle",
+   "title": "2 years at Michigan, 3 restaurants",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "who": "theo",
+   "say": "Two years.",
+   "face": "happy",
+   "pose": "idle",
+   "two": true
+  },
+  {
+   "who": "june",
+   "say": "And how many places have we eaten at?",
+   "face": "neutral",
+   "pose": "idle"
+  },
+  {
+   "who": "theo",
+   "say": "The noodle place. The other noodle place. And the gas station.",
+   "face": "neutral",
+   "pose": "chin",
+   "hold": 0.4
+  },
+  {
+   "who": "june",
+   "say": "Three.",
+   "face": "deadpan",
+   "pose": "idle",
+   "hold": 0.9
+  },
+  {
+   "map": "w",
+   "who": "scout",
+   "say": "There are {w} places to eat within a 10-minute walk of you."
+  },
+  {
+   "who": "theo",
+   "react": true,
+   "face": "shock",
+   "dur": 1.4
+  },
+  {
+   "who": "theo",
+   "say": "Why did nobody tell us?",
+   "voice": "Why did nobody TELL us?",
+   "cap": "Why did nobody *TELL* us?",
+   "face": "plead",
+   "pose": "idle"
+  },
+  {
+   "who": "scout",
+   "say": "I've been telling people. Savor Scout dot net.",
+   "act": "[deadpan]",
+   "face": "deadpan",
+   "pose": "idle",
+   "chip": true,
+   "look": "cam"
+  },
+  {
+   "end": true
+  }
+ ],
+ "track": "lofi-122",
+ "set": "quad",
+ "campus": "university-of-michigan-ann-arbor"
+}

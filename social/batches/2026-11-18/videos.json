@@ -1,0 +1,187 @@
+{
+ "date": "2026-11-18",
+ "videos": [
+  {
+   "id": "20-part2",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "new-york-university",
+     "text": "Which famous university has the busiest *food street?*",
+     "sub": "Hint: it's not Harvard.",
+     "say": "Which famous university has the busiest food street?"
+    },
+    {
+     "beats": 16,
+     "style": "list",
+     "title": "20 famous American universities",
+     "rows": [
+      [
+       "20",
+       "Dartmouth",
+       "19"
+      ],
+      [
+       "19",
+       "UCLA",
+       "26"
+      ],
+      [
+       "18",
+       "Cornell",
+       "30"
+      ],
+      [
+       "17",
+       "Duke",
+       "31"
+      ],
+      [
+       "16",
+       "Brown",
+       "34"
+      ],
+      [
+       "15",
+       "UChicago",
+       "36"
+      ],
+      [
+       "14",
+       "Stanford",
+       "37"
+      ],
+      [
+       "12",
+       "Yale",
+       "41"
+      ],
+      [
+       "12",
+       "Johns Hopkins",
+       "41"
+      ],
+      [
+       "11",
+       "Northwestern",
+       "42"
+      ],
+      [
+       "10",
+       "Michigan",
+       "48"
+      ],
+      [
+       "9",
+       "Penn",
+       "51"
+      ],
+      [
+       "8",
+       "Princeton",
+       "56"
+      ],
+      [
+       "7",
+       "USC",
+       "67"
+      ],
+      [
+       "6",
+       "MIT",
+       "83"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Dartmouth, with 19. UCLA, 26. Cornell, 30.",
+     "clip": 5552575
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Georgetown",
+     "count": 92,
+     "sub": "Within a mile of campus",
+     "map": "georgetown-university",
+     "label": "places to eat on Wisconsin Ave NW",
+     "say": "Number 5: Georgetown. Wisconsin Avenue, with 92 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Harvard",
+     "count": 93,
+     "sub": "Within a mile of campus",
+     "map": "harvard-university",
+     "label": "places to eat on Massachusetts Ave",
+     "say": "Number 4: Harvard. Massachusetts Avenue, with 93 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UC Berkeley",
+     "count": 122,
+     "sub": "Within a mile of campus",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat on Shattuck Ave",
+     "say": "Number 3: UC Berkeley. Shattuck Avenue, with 122 places."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Columbia",
+     "count": 144,
+     "sub": "Within a mile of campus",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "label": "places to eat on Broadway",
+     "say": "Number 2: Columbia. Broadway, with 144 places."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "NYU",
+     "count": 190,
+     "sub": "Within a mile of campus",
+     "map": "new-york-university",
+     "label": "places to eat on 1st Ave",
+     "say": "And number one: NYU. 1st Avenue, with 190 places."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to a friend at one of these schools.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which group of schools should we rank next?",
+     "clip": 5552575
+    }
+   ],
+   "lab": {
+    "key": "famous:20",
+    "metric": "street",
+    "format": "countdown",
+    "candidate": "famous:20|street|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    },
+    "note": "Scripted as a part 2 by the lab, reframed by hand on Nov 17 as a standalone countdown: both part 2s with numbers underperformed (UC 792, Pennsylvania 362)."
+   }
+  }
+ ]
+}

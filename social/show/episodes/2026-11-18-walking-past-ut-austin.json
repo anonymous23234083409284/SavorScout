@@ -1,0 +1,75 @@
+{
+ "id": "walking-past-ut-austin",
+ "format": "spiral",
+ "bank": "walking-past",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "UT Austin: you've walked past that place on the Drag 200 times. today is next time\n\n#utaustin #hookem #collegelife #collegefood #relatable",
+ "beats": [
+  {
+   "meme": {
+    "q": "dog walking"
+   },
+   "who": "narrator",
+   "say": "There's a place you walk past every single day.",
+   "title": "the place you walk past at UT every day",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "meme": {
+    "q": "cat looking through window"
+   },
+   "who": "narrator",
+   "say": "It smells incredible. People inside look happy.",
+   "cap": "It smells incredible. People inside look *happy.*",
+   "hold": 0.4
+  },
+  {
+   "meme": {
+    "q": "worried dog wide eyed expression"
+   },
+   "top": "\"NEXT TIME\"",
+   "who": "narrator",
+   "say": "Every day you say, next time. For two years."
+  },
+  {
+   "meme": {
+    "q": "sad dachshund dog sighs"
+   },
+   "who": "narrator",
+   "say": "You know the staff by face. They don't know you exist.",
+   "cap": "You know the staff by face. They don't know you *exist.*",
+   "hold": 0.5
+  },
+  {
+   "meme": {
+    "q": "cat eating same food"
+   },
+   "who": "narrator",
+   "say": "Then you go eat the same sandwich. Again.",
+   "hold": 0.6
+  },
+  {
+   "map": "w",
+   "who": "narrator",
+   "say": "There are {w} places to eat within a 10-minute walk of you. You know four."
+  },
+  {
+   "meme": {
+    "q": "happy australian shepherd puppy running"
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Today is next time.",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "track": "lofi-128",
+ "campus": "the-university-of-texas-at-austin"
+}

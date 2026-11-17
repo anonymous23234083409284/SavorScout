@@ -1,0 +1,27 @@
+{
+ "date": "2026-11-18",
+ "videos": [],
+ "show": [
+  {
+   "id": "three-places-michigan",
+   "script": "show/episodes/2026-11-18-three-places-michigan.json",
+   "format": "reveal",
+   "seconds": 25.1,
+   "voice": "elevenlabs"
+  },
+  {
+   "id": "freshman-senior-ohio-state",
+   "script": "show/episodes/2026-11-18-freshman-senior-ohio-state.json",
+   "format": "types",
+   "seconds": 25.2,
+   "voice": "local"
+  },
+  {
+   "id": "walking-past-ut-austin",
+   "script": "show/episodes/2026-11-18-walking-past-ut-austin.json",
+   "format": "spiral",
+   "seconds": 25.1,
+   "voice": "local"
+  }
+ ]
+}

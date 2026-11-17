@@ -1,0 +1,79 @@
+{
+ "id": "freshman-senior-ohio-state",
+ "format": "types",
+ "bank": "freshman-senior",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "freshman vs senior at the Ohio State dining hall. the chicken remembers you\n\n#ohiostate #osu #collegelife #collegefood #relatable",
+ "beats": [
+  {
+   "meme": {
+    "q": "excited chihuahua puppy"
+   },
+   "top": "FRESHMAN",
+   "who": "narrator",
+   "say": "Freshman year. Unlimited dining hall. You are free.",
+   "cap": "Freshman year. Unlimited dining hall. You are *free.*",
+   "title": "freshman vs senior at Ohio State",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "meme": {
+    "q": "hungry puppy eating"
+   },
+   "top": "FRESHMAN",
+   "who": "narrator",
+   "say": "Three plates. A waffle with ice cream. At noon.",
+   "hold": 0.4
+  },
+  {
+   "meme": {
+    "q": "tired old dog"
+   },
+   "top": "SENIOR",
+   "who": "narrator",
+   "say": "Senior year. You walk in. You look at the same chicken."
+  },
+  {
+   "meme": {
+    "q": "black cat intense stare"
+   },
+   "top": "SENIOR",
+   "who": "narrator",
+   "say": "The chicken looks back. You have known each other for years.",
+   "cap": "The chicken looks back. You have known each other for *years.*",
+   "hold": 0.7
+  },
+  {
+   "meme": {
+    "q": "sad dog eating"
+   },
+   "who": "narrator",
+   "say": "You get the chicken anyway. Out of loyalty.",
+   "cap": "You get the chicken anyway. Out of *loyalty.*",
+   "hold": 0.8
+  },
+  {
+   "map": "w",
+   "who": "narrator",
+   "say": "There are {w} places to eat within a 10-minute walk that are not that chicken."
+  },
+  {
+   "meme": {
+    "q": "old dog walking away"
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Leave the chicken.",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "track": "lofi-134",
+ "campus": "ohio-state-university-main-campus"
+}

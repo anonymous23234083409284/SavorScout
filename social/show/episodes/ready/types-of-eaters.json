@@ -1,0 +1,69 @@
+{
+ "id": "types-of-eaters",
+ "format": "types",
+ "bank": "types-of-eaters",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "the 4 friends at every group dinner. tag yours\n\n#collegelife #collegefood #relatable #fyp",
+ "beats": [
+  {
+   "meme": {
+    "q": "four cats watching"
+   },
+   "who": "narrator",
+   "say": "Four friends at every group dinner.",
+   "title": "the 4 friends at every dinner",
+   "fx": [
+    "cold"
+   ]
+  },
+  {
+   "meme": {
+    "q": "cat not caring"
+   },
+   "top": "THE \"I'M NOT HUNGRY\"",
+   "who": "narrator",
+   "say": "One. Not hungry. Eats half of your fries.",
+   "cap": "One. Not hungry. Eats half of *your* fries."
+  },
+  {
+   "meme": {
+    "q": "cat calculator"
+   },
+   "top": "THE ACCOUNTANT",
+   "who": "narrator",
+   "say": "Two. The accountant. You owe her forty cents."
+  },
+  {
+   "meme": {
+    "q": "dog looking at menu"
+   },
+   "top": "THE RESEARCHER",
+   "who": "narrator",
+   "say": "Three. Read every review. Still orders chicken tenders."
+  },
+  {
+   "meme": {
+    "q": "late dog running"
+   },
+   "top": "THE LATE ONE",
+   "who": "narrator",
+   "say": "Four. On the way. Has not left the house.",
+   "hold": 0.6
+  },
+  {
+   "meme": {
+    "q": "cat pointing at you"
+   },
+   "who": "narrator",
+   "say": "Savor Scout dot net. Send this to number four.",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ],
+ "track": "lofi-128"
+}

@@ -4,6 +4,9 @@
     python cdvoice.py lines <date>                 one prompt per countdown: generate each ONCE with the
                                                    ElevenLabs connector (eleven_v4, the voice below, one take)
     python cdvoice.py cut <date> <video id> <audio file>   cut that recording into the video's lines
+    python cdvoice.py hooks <date>                 THE DEFAULT SINCE NOV 18: only each countdown's opening question,
+                                                   in the social-media girl voice (Laura), ~80 characters each
+    python cdvoice.py hook <date> <video id> <audio file>  save that recording as the video's hook
 
 Then build as usual: reel.py uses a recorded line wherever one exists for the exact words, and the local
 voice for anything else (so a reworded line falls back safely). Takes live in social/show/takes/cd-<date>-<id>/.
@@ -16,6 +19,8 @@ sys.path.insert(0, HERE)
 import show
 
 VOICE = {"voice_id": "TX3LPaxmHKxFdv7VOQHJ", "name": "Liam - Energetic, Social Media Creator", "model": "eleven_v4"}
+# The owner's direction (Nov 18): a social-media girl voice on the hook, the local voice for the rest.
+HOOK = {"voice_id": "FGY2WhTYpPnrIDTdsKH5", "name": "Laura - Enthusiast, Quirky Attitude", "model": "eleven_v4"}
 WHO = "countdown"
 
 
@@ -54,6 +59,19 @@ if __name__ == "__main__":
         for v in videos(a[1]):
             p = prompt(v)
             print(f"=== {v['id']}: voice {VOICE['name']} ({VOICE['voice_id']}), {VOICE['model']}, one take, {len(p)} characters ===\n{p}\n")
+    elif len(a) == 2 and a[0] == "hooks":
+        for v in videos(a[1]):
+            p = "[excited] " + next(s["say"] for s in v["scenes"] if s.get("say"))
+            print(f"=== {v['id']}: voice {HOOK['name']} ({HOOK['voice_id']}), {HOOK['model']}, one take, {len(p)} characters ===\n{p}\n")
+    elif len(a) == 4 and a[0] == "hook":
+        v = next(x for x in videos(a[1]) if x["id"] == a[2])
+        t = next(s["say"] for s in v["scenes"] if s.get("say"))
+        d = folder(a[1], a[2]); os.makedirs(d, exist_ok=True)
+        import subprocess
+        out = os.path.join(d, f"01-{show.line_key(WHO, t)}.wav")      # trim the silence at both ends
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", a[3], "-ac", "1", "-ar", str(show.SR), "-af",
+                        "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse", out], check=True)
+        print(f"  {len(show.read_wav(out)) / show.SR:5.2f} s  {t}")
     elif len(a) == 4 and a[0] == "cut":
         v = next(x for x in videos(a[1]) if x["id"] == a[2])
         texts = [s["say"] for s in v["scenes"] if s.get("say")]

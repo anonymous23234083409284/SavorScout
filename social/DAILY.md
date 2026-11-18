@@ -8,24 +8,21 @@ the `social-media` branch (`sounds/`) rotates, least recently used first.
 A scheduled Claude session runs this every afternoon and schedules the next
 day. These are its steps. A person can run them the same way.
 
-## The daily mix (from Nov 17): countdowns first, search videos on top
+## The daily mix (from Nov 18): countdowns only, with a girl-voice hook
 
-The owner's direction on Nov 17, after the numbers came in: the animated skits and meme videos are
-paused (117 median views and 3.5 s watched, against 1,505 views and 8.6 s for countdowns). Each day:
+The owner's direction on Nov 18: stop the meme format. No skits, no meme videos and no meme-based
+"where to eat near X" search videos (they lean on Klipy memes). Each day:
 
-1. **Four countdowns** from the lab (steps 0-5 below). Prefer famous schools, university systems,
-   big states and cities, and rivalries (rivalry week is Nov 27-28); no part 2s (both flopped).
-2. **The social-media voice on countdowns.** Check ElevenLabs (`account_get_usage`). While more than
-   1,500 characters are left this month, record the day's two best countdowns in ElevenLabs's
-   "Liam - Energetic, Social Media Creator" voice: `python social/pipeline/cdvoice.py lines <date>`, generate
-   each prompt once (eleven_v4, one take), download it, `python social/pipeline/cdvoice.py cut <date> <id> <file>`,
-   then build. The rest use the free local voice. A countdown costs 450-600 characters.
-3. **Two or three TikTok search videos** ("where to eat near <campus>"), extra to the four, posted
-   between them: `python social/pipeline/show.py search <campus slug> <date>`, then `show.py build <file> --render`,
-   check the frames, `show.py batch <date>s ...`, publish and verify as for the show. Work down the biggest
-   campuses, one per campus, never the same campus twice (`ls social/show/episodes/*near-*`). Judge them
-   by views after day 3, not day 1: they are meant to be found in search for months.
-4. The show bank (`social/show/`) stays for later; do not post skits or meme videos unless the owner asks.
+1. **Four countdowns** from the lab (steps 0-5 below), 30-60 s each. Prefer famous schools, university
+   systems, big states and rivalries (rivalry week is Nov 27-28); no part 2s. Improve the countdown
+   itself: sharper hooks, a surprise named in the hook ("Hint: it's not X"), head-to-head rivalries.
+2. **The hook in the ElevenLabs social-media girl voice** on every countdown: `python social/pipeline/cdvoice.py hooks <date>`
+   prints each opening line; generate each once with the ElevenLabs connector (voice "Laura - Enthusiast,
+   Quirky Attitude", FGY2WhTYpPnrIDTdsKH5, eleven_v4, one take, ~80-110 characters), download it, then
+   `python social/pipeline/cdvoice.py hook <date> <id> <file>`, then build. The rest of each countdown is read by
+   the local voice. If ElevenLabs refuses (the free tier was briefly disabled for "unusual activity" on
+   Nov 18), build with the local voice and say so in the report.
+3. The show bank (`social/show/`) and search videos stay parked; do not post them unless the owner asks.
 
 ## 0. Read the numbers first, then ask the lab
 

@@ -1,0 +1,27 @@
+{
+ "date": "2026-11-19",
+ "videos": [],
+ "show": [
+  {
+   "id": "near-ohio-state",
+   "script": "show/episodes/2026-11-19-near-ohio-state.json",
+   "format": "search",
+   "seconds": 21.7,
+   "voice": "local"
+  },
+  {
+   "id": "near-ut-austin",
+   "script": "show/episodes/2026-11-19-near-ut-austin.json",
+   "format": "search",
+   "seconds": 21.8,
+   "voice": "local"
+  },
+  {
+   "id": "near-michigan",
+   "script": "show/episodes/2026-11-19-near-michigan.json",
+   "format": "search",
+   "seconds": 21.3,
+   "voice": "local"
+  }
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "date": "2026-11-19",
+ "videos": [
+  {
+   "id": "big-ten-countdown",
+   "score": 55,
+   "issues": [
+    "shots run 6.2 s; winners cut about every 3.7 s",
+    "46 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "rivalry-usc-rivalry",
+   "score": 55,
+   "issues": [
+    "shots run 6.0 s; winners cut about every 3.7 s",
+    "34 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "rivalry-yale-rivalry",
+   "score": 55,
+   "issues": [
+    "shots run 6.0 s; winners cut about every 3.7 s",
+    "33 s long; breakouts cluster at 6-24 s",
+    "12 words on the opening frame; winners use 6 or fewer"
+   ]
+  },
+  {
+   "id": "sec-countdown",
+   "score": 70,
+   "issues": [
+    "40 s long; breakouts cluster at 6-24 s",
+    "11 words on the opening frame; winners use 6 or fewer"
+   ]
+  }
+ ]
+}

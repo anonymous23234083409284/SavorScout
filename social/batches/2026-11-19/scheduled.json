@@ -1,0 +1,74 @@
+[
+ {
+  "service": "tiktok",
+  "at": "2026-11-19T17:17:00.000Z",
+  "post_id": "6afdfb932553d428edbf3e6e",
+  "what": "big-ten-countdown"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-19T20:23:00.000Z",
+  "post_id": "6afdfb949278850adf060dcd",
+  "what": "rivalry-yale-rivalry"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-19T23:18:00.000Z",
+  "post_id": "6afdfb9401e19856617b5034",
+  "what": "sec-countdown"
+ },
+ {
+  "service": "tiktok",
+  "at": "2026-11-20T02:17:00.000Z",
+  "post_id": "6afdfb950f7628381fed0381",
+  "what": "rivalry-usc-rivalry"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-19T21:40:00.000Z",
+  "post_id": "6afdfb962553d428edbf3fb7",
+  "what": "x-big-ten-countdown"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-19T22:40:00.000Z",
+  "post_id": "6afdfb96f83633dc1baad0e8",
+  "what": "x-rivalry-yale-rivalry"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-19T23:38:00.000Z",
+  "post_id": "6afdfb969278850adf061052",
+  "what": "x-sec-countdown"
+ },
+ {
+  "service": "twitter",
+  "at": "2026-11-20T00:39:00.000Z",
+  "post_id": "6afdfb970f7628381fed0407",
+  "what": "x-rivalry-usc-rivalry"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-19T22:11:00.000Z",
+  "post_id": "6afdfb977d64a85c92a4a1a7",
+  "what": "t-big-ten-countdown"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-19T23:10:00.000Z",
+  "post_id": "6afdfb972553d428edbf407c",
+  "what": "t-rivalry-yale-rivalry"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-20T00:10:00.000Z",
+  "post_id": "6afdfb9801e19856617b5210",
+  "what": "t-sec-countdown"
+ },
+ {
+  "service": "threads",
+  "at": "2026-11-20T01:09:00.000Z",
+  "post_id": "6afdfb9801e19856617b537e",
+  "what": "t-rivalry-usc-rivalry"
+ }
+]

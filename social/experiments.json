@@ -156,22 +156,34 @@
    "video": "nyc-countdown",
    "experiment": "g_city",
    "what": "countdown: 11 New York City colleges by w (#1 Touro 1,478, tease Columbia 9th)",
-   "status": "posted",
-   "note": "Swapped by hand for California (31-row list, duplicate names)."
+   "status": "drop",
+   "note": "Swapped by hand for California (31-row list, duplicate names).",
+   "views": 457,
+   "watch_s": 8.83,
+   "shares": 0,
+   "scored": "2026-11-18"
   },
   {
    "date": "2026-11-14",
    "video": "ivy-league-countdown",
    "experiment": "metric_street",
    "what": "countdown: Ivy League by busiest food street (#1 Columbia 144)",
-   "status": "posted"
+   "status": "drop",
+   "views": 462,
+   "watch_s": 6.55,
+   "shares": 1,
+   "scored": "2026-11-18"
   },
   {
    "date": "2026-11-14",
    "video": "pa-part2",
    "experiment": "part2",
    "what": "part 2: big Pennsylvania universities by busiest food street (#1 Drexel 70; Penn 4th to 2nd)",
-   "status": "posted"
+   "status": "drop",
+   "views": 363,
+   "watch_s": 5.43,
+   "shares": 0,
+   "scored": "2026-11-18"
   },
   {
    "date": "2026-11-18",
@@ -181,6 +193,78 @@
    "status": "posted",
    "predicted": 3094,
    "note": "Scripted by the lab as a part 2; reframed by hand as a standalone countdown on Nov 17 because both part 2s with numbers underperformed (UC 792, Pennsylvania 362). Predicted views were for the part 2."
+  },
+  {
+   "date": "2026-11-19",
+   "video": "rivalry-yale-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Yale vs Harvard",
+   "status": "posted",
+   "predicted": 400
+  },
+  {
+   "date": "2026-11-19",
+   "video": "sec-short",
+   "experiment": "short",
+   "what": "short: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th))",
+   "status": "posted",
+   "predicted": 3865
+  },
+  {
+   "date": "2026-11-19",
+   "video": "rivalry-yale-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Yale vs Harvard",
+   "status": "posted",
+   "predicted": 400
+  },
+  {
+   "date": "2026-11-19",
+   "video": "ut-short",
+   "experiment": "short",
+   "what": "short: Utah universities with 10,000+ students by w (#1 BYU 29, tease Utah (4th))",
+   "status": "posted",
+   "predicted": 2201
+  },
+  {
+   "date": "2026-11-19",
+   "video": "rivalry-yale-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Yale vs Harvard",
+   "status": "posted",
+   "predicted": 400
+  },
+  {
+   "date": "2026-11-19",
+   "video": "rivalry-yale-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Yale vs Harvard",
+   "status": "posted",
+   "predicted": 400
+  },
+  {
+   "date": "2026-11-19",
+   "video": "ca-short",
+   "experiment": "short",
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th))",
+   "status": "posted",
+   "predicted": 5065
+  },
+  {
+   "date": "2026-11-19",
+   "video": "rivalry-yale-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Yale vs Harvard",
+   "status": "posted",
+   "predicted": 400
+  },
+  {
+   "date": "2026-11-19",
+   "video": "rivalry-usc-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: USC vs UCLA",
+   "status": "posted",
+   "predicted": 427
   }
  ]
 }

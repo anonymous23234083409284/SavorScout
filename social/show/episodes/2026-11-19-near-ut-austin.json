@@ -1,0 +1,54 @@
+{
+ "id": "near-ut-austin",
+ "format": "search",
+ "campus": "the-university-of-texas-at-austin",
+ "cast": [
+  "narrator"
+ ],
+ "music": "cozy",
+ "caption": "Where to eat near UT Austin: 115 places within a 10-minute walk of campus\n\n#utaustin #foodnearutaustin #collegefood #wheretoeat",
+ "beats": [
+  {
+   "meme": {
+    "q": "hungry dog looking around"
+   },
+   "who": "narrator",
+   "say": "Where to eat near UT Austin.",
+   "cap": "Where to eat near *UT Austin*",
+   "title": "where to eat near UT Austin"
+  },
+  {
+   "map": "w",
+   "who": "narrator",
+   "say": "There are {w} places to eat within a 10-minute walk of campus."
+  },
+  {
+   "map": "street_n",
+   "who": "narrator",
+   "say": "The busiest food street: Guadalupe Street, with {street_n} places."
+  },
+  {
+   "map": "pizza",
+   "who": "narrator",
+   "say": "Pizza? {pizza} pizza places within a mile."
+  },
+  {
+   "map": "coffee",
+   "who": "narrator",
+   "say": "Coffee? {coffee} coffee shops within a mile.",
+   "hold": 0.5
+  },
+  {
+   "meme": {
+    "q": "dog running happily outside"
+   },
+   "who": "narrator",
+   "say": "Every one of them, closest first, on Savor Scout dot net.",
+   "cap": "Every one, closest first: *SavorScout.net*",
+   "chip": true
+  },
+  {
+   "end": true
+  }
+ ]
+}

@@ -1,0 +1,268 @@
+{
+ "date": "2026-11-19",
+ "videos_learned_from": 58,
+ "r2_views": 0.84,
+ "chosen": [
+  {
+   "id": "conf:big-ten|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 18 Big Ten schools by w (#1 Michigan 224, tease Northwestern (3rd))",
+   "views_mid": 2147,
+   "views_lo": 1321,
+   "views_hi": 3488,
+   "win_rate": 0.967,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); college basketball season (+0.05)"
+  },
+  {
+   "id": "rivalry:harvard-university|yale-university",
+   "format": "rivalry",
+   "slot": "experiment",
+   "new": [
+    "rivalry"
+   ],
+   "what": "rivalry: Yale vs Harvard",
+   "views_mid": 400,
+   "views_lo": 131,
+   "views_hi": 1217,
+   "win_rate": 0.0,
+   "why": "+ more famous schools on screen (+1 tier); + a two-school rivalry head-to-head; + one more school in the ranking"
+  },
+  {
+   "id": "conf:sec|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th))",
+   "views_mid": 1912,
+   "views_lo": 1213,
+   "views_hi": 3012,
+   "win_rate": 0.97,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); college basketball season (+0.05)"
+  },
+  {
+   "id": "rivalry:university-of-southern-california|university-of-california-los-angeles",
+   "format": "rivalry",
+   "slot": "experiment",
+   "new": [
+    "rivalry"
+   ],
+   "what": "rivalry: USC vs UCLA",
+   "views_mid": 427,
+   "views_lo": 126,
+   "views_hi": 1435,
+   "win_rate": 0.03,
+   "why": "+ more famous schools on screen (+1 tier); + a two-school rivalry head-to-head; + one more school in the ranking"
+  }
+ ],
+ "top": [
+  {
+   "id": "conf:ivy-league|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: All 8 Ivy League schools by w (#1 Yale 223, tease Harvard (3rd))",
+   "views_mid": 6002,
+   "views_lo": 1519,
+   "views_hi": 23705,
+   "win_rate": 0.187,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + a 15-20 second top-3 cut; teased Harvard 7d ago (-0.3); same grouping 5d ago (-0.25); teased Harvard 5d ago (-0.3); teased Harvard 1d ago (-0.3)"
+  },
+  {
+   "id": "state:CA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th))",
+   "views_mid": 5065,
+   "views_lo": 1429,
+   "views_hi": 17939,
+   "win_rate": 0.833,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "conf:big-ten|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: All 18 Big Ten schools by w (#1 Michigan 224, tease Northwestern (3rd))",
+   "views_mid": 4844,
+   "views_lo": 1267,
+   "views_hi": 18502,
+   "win_rate": 0.833,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); college basketball season (+0.05)"
+  },
+  {
+   "id": "conf:sec|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th))",
+   "views_mid": 3865,
+   "views_lo": 1019,
+   "views_hi": 14641,
+   "win_rate": 0.737,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); college basketball season (+0.05)"
+  },
+  {
+   "id": "famous:20|mile|part2",
+   "format": "part2",
+   "slot": null,
+   "new": [
+    "part2"
+   ],
+   "what": "part2: 20 famous American universities by mile (#1 NYU 4608, tease Harvard (7th))",
+   "views_mid": 3309,
+   "views_lo": 1053,
+   "views_hi": 10397,
+   "win_rate": 0.573,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - a 'part 2' of an earlier hit; + a famous-schools grouping"
+  },
+  {
+   "id": "conf:ivy-league|w|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [],
+   "what": "countdown: All 8 Ivy League schools by w (#1 Yale 223, tease Harvard (3rd))",
+   "views_mid": 3091,
+   "views_lo": 1739,
+   "views_hi": 5495,
+   "win_rate": 0.467,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); teased Harvard 7d ago (-0.3); same grouping 5d ago (-0.25); teased Harvard 5d ago (-0.3); teased Harvard 1d ago (-0.3)"
+  },
+  {
+   "id": "state:NY|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: New York universities with 10,000+ students by w (#1 Touro 1478, tease Columbia (9th))",
+   "views_mid": 2826,
+   "views_lo": 804,
+   "views_hi": 9916,
+   "win_rate": 0.203,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); teased Columbia 5d ago (-0.3)"
+  },
+  {
+   "id": "state:UT|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Utah universities with 10,000+ students by w (#1 BYU 29, tease Utah (4th))",
+   "views_mid": 2201,
+   "views_lo": 623,
+   "views_hi": 7769,
+   "win_rate": 0.25,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "conf:big-ten|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 18 Big Ten schools by w (#1 Michigan 224, tease Northwestern (3rd))",
+   "views_mid": 2147,
+   "views_lo": 1321,
+   "views_hi": 3488,
+   "win_rate": 0.967,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); college basketball season (+0.05)"
+  },
+  {
+   "id": "city:Philadelphia-PA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_city",
+    "short"
+   ],
+   "what": "short: Philadelphia colleges with 5,000+ students by w (#1 Thomas Jefferson 562, tease Penn (3rd))",
+   "views_mid": 2023,
+   "views_lo": 496,
+   "views_hi": 8238,
+   "win_rate": 0.13,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - grouping by city; teased Penn 5d ago (-0.3)"
+  },
+  {
+   "id": "city:Washington-DC|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_city",
+    "short"
+   ],
+   "what": "short: Washington colleges with 5,000+ students by w (#1 GW 280, tease Georgetown (3rd))",
+   "views_mid": 2011,
+   "views_lo": 495,
+   "views_hi": 8154,
+   "win_rate": 0.123,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - grouping by city; teased Georgetown 7d ago (-0.3)"
+  },
+  {
+   "id": "conf:sec|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th))",
+   "views_mid": 1912,
+   "views_lo": 1213,
+   "views_hi": 3012,
+   "win_rate": 0.97,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); college basketball season (+0.05)"
+  },
+  {
+   "id": "state:WI|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Wisconsin universities with 10,000+ students by w (#1 Wisconsin 86)",
+   "views_mid": 1874,
+   "views_lo": 513,
+   "views_hi": 6838,
+   "win_rate": 0.217,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "city:Baltimore-MD|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_city",
+    "short"
+   ],
+   "what": "short: Baltimore colleges with 5,000+ students by w (#1 Maryland, Baltimore 111, tease Johns Hopkins (2nd))",
+   "views_mid": 1729,
+   "views_lo": 426,
+   "views_hi": 7001,
+   "win_rate": 0.14,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - grouping by city"
+  },
+  {
+   "id": "state:MO|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Missouri universities with 10,000+ students by w (#1 Mizzou 98)",
+   "views_mid": 1661,
+   "views_lo": 450,
+   "views_hi": 6113,
+   "win_rate": 0.063,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - more famous schools on screen (+1 tier)"
+  }
+ ]
+}

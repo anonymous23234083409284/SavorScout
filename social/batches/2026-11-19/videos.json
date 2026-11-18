@@ -1,0 +1,491 @@
+{
+ "date": "2026-11-19",
+ "videos": [
+  {
+   "id": "big-ten-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/big-ten/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-michigan-ann-arbor",
+     "text": "Which Big Ten school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Northwestern.",
+     "say": "Which Big Ten school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 15,
+     "style": "list",
+     "title": "All 18 Big Ten schools",
+     "rows": [
+      [
+       "18",
+       "UCLA",
+       "14"
+      ],
+      [
+       "17",
+       "Maryland",
+       "21"
+      ],
+      [
+       "16",
+       "Minnesota",
+       "55"
+      ],
+      [
+       "15",
+       "Oregon",
+       "57"
+      ],
+      [
+       "14",
+       "Purdue",
+       "61"
+      ],
+      [
+       "13",
+       "Washington",
+       "70"
+      ],
+      [
+       "12",
+       "Michigan State",
+       "84"
+      ],
+      [
+       "10",
+       "Wisconsin",
+       "86"
+      ],
+      [
+       "10",
+       "Ohio State",
+       "86"
+      ],
+      [
+       "9",
+       "USC",
+       "94"
+      ],
+      [
+       "8",
+       "Nebraska",
+       "102"
+      ],
+      [
+       "7",
+       "UIUC",
+       "109"
+      ],
+      [
+       "6",
+       "Iowa",
+       "132"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UCLA, with 14. Maryland, 21. Minnesota, 55."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Indiana",
+     "count": 138,
+     "sub": "Busiest food street: Kirkwood Ave",
+     "map": "indiana-university-bloomington",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Indiana. 138. Busiest food street: Kirkwood Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Penn State",
+     "count": 156,
+     "sub": "Busiest food street: College Ave",
+     "map": "pennsylvania-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Penn State. 156. Busiest food street: College Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Northwestern",
+     "count": 162,
+     "sub": "Busiest food street: Davis St",
+     "map": "northwestern-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Northwestern. 162. Busiest food street: Davis Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Rutgers",
+     "count": 182,
+     "sub": "Busiest food street: Easton Ave",
+     "map": "rutgers-university-new-brunswick",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Rutgers. 182. Busiest food street: Easton Avenue."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "Michigan",
+     "count": 224,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-michigan-ann-arbor",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Michigan. 224."
+    }
+   ],
+   "lab": {
+    "key": "conf:big-ten",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:big-ten|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "rivalry-yale-rivalry",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/yale-university/",
+   "scenes": [
+    {
+     "beats": 7,
+     "style": "hook",
+     "map": "yale-university",
+     "text": "Yale vs Harvard: which campus has more *restaurants within a 10-minute walk?*",
+     "sub": "Comment your guess before it shows.",
+     "say": "Yale vs Harvard: which campus has more restaurants within a 10-minute walk? Guess before it shows."
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "",
+     "text": "Harvard",
+     "count": 156,
+     "sub": "Busiest food street: Massachusetts Ave",
+     "map": "harvard-university",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Harvard: 156."
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "Yale",
+     "count": 223,
+     "sub": "Busiest food street: Chapel St",
+     "map": "yale-university",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Yale: 223."
+    },
+    {
+     "beats": 8,
+     "style": "cap",
+     "text": "Yale wins by *67.*",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Yale wins by 67."
+    },
+    {
+     "beats": 7,
+     "style": "cap",
+     "text": "Busiest food street: *Chapel St* at Yale (41 places), *Massachusetts Ave* at Harvard (93)",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Yale's busiest food street, Chapel Street, has 41. Harvard's, Massachusetts Avenue, has 93."
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Which rivalry should we settle next? *Comment below.*",
+     "sub": "Send this to a Harvard fan.",
+     "reuse": 3,
+     "say": "Which rivalry should we settle next? Comment below."
+    }
+   ],
+   "lab": {
+    "key": "rivalry:harvard-university|yale-university",
+    "metric": "w",
+    "format": "rivalry",
+    "candidate": "rivalry:harvard-university|yale-university",
+    "style": {
+     "punch": true,
+     "loop_end": false,
+     "hook_beats": 7,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "sec-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/sec/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "vanderbilt-university",
+     "text": "Which SEC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Alabama.",
+     "say": "Which SEC school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 13,
+     "style": "list",
+     "title": "All 16 SEC schools",
+     "rows": [
+      [
+       "16",
+       "Mississippi State",
+       "8"
+      ],
+      [
+       "14",
+       "Ole Miss",
+       "10"
+      ],
+      [
+       "14",
+       "Arkansas",
+       "10"
+      ],
+      [
+       "12",
+       "Tennessee",
+       "21"
+      ],
+      [
+       "12",
+       "Auburn",
+       "21"
+      ],
+      [
+       "11",
+       "Alabama",
+       "27"
+      ],
+      [
+       "10",
+       "Texas A&M",
+       "40"
+      ],
+      [
+       "9",
+       "LSU",
+       "41"
+      ],
+      [
+       "8",
+       "South Carolina",
+       "47"
+      ],
+      [
+       "7",
+       "Florida",
+       "48"
+      ],
+      [
+       "6",
+       "Oklahoma",
+       "64"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Mississippi State, with just 8. Ole Miss, 10. And Alabama? Only eleventh."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Kentucky",
+     "count": 69,
+     "sub": "Busiest food street: Broadway",
+     "map": "university-of-kentucky",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Kentucky. 69. Busiest food street: Broadway."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UGA",
+     "count": 98,
+     "sub": "Tied with Mizzou for 3rd. Busiest food street: Broad St",
+     "map": "university-of-georgia",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UGA. 98."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Mizzou",
+     "count": 98,
+     "sub": "Tied with UGA for 3rd. Busiest food street: 9th St",
+     "map": "university-of-missouri-columbia",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Mizzou. 98."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UT Austin",
+     "count": 115,
+     "sub": "Busiest food street: Guadalupe St",
+     "map": "the-university-of-texas-at-austin",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: UT Austin. 115. Busiest food street: Guadalupe Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Vanderbilt",
+     "count": 129,
+     "sub": "Busiest food street: W End Ave",
+     "map": "vanderbilt-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Vanderbilt. 129."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another SEC school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which conference should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "conf:sec",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:sec|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "rivalry-usc-rivalry",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/university-of-southern-california/",
+   "scenes": [
+    {
+     "beats": 7,
+     "style": "hook",
+     "map": "university-of-southern-california",
+     "text": "USC vs UCLA: which campus has more *restaurants within a 10-minute walk?*",
+     "sub": "Comment your guess before it shows.",
+     "say": "USC vs UCLA: which campus has more restaurants within a 10-minute walk? Guess before it shows."
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "",
+     "text": "UCLA",
+     "count": 14,
+     "sub": "Busiest food street: Gayley Ave",
+     "map": "university-of-california-los-angeles",
+     "label": "places to eat within a 10-minute walk",
+     "say": "UCLA: 14."
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "USC",
+     "count": 94,
+     "sub": "Busiest food street: Figueroa St",
+     "map": "university-of-southern-california",
+     "label": "places to eat within a 10-minute walk",
+     "say": "USC: 94."
+    },
+    {
+     "beats": 8,
+     "style": "cap",
+     "text": "USC has more than *6 times as many.*",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "USC has more than 6 times as many."
+    },
+    {
+     "beats": 7,
+     "style": "cap",
+     "text": "Busiest food street: *Figueroa St* at USC (67 places), *Gayley Ave* at UCLA (26)",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "USC's busiest food street, Figueroa Street, has 67. UCLA's, Gayley Avenue, has 26."
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Which rivalry should we settle next? *Comment below.*",
+     "sub": "Send this to a UCLA fan.",
+     "reuse": 3,
+     "say": "Which rivalry should we settle next? Comment below."
+    }
+   ],
+   "lab": {
+    "key": "rivalry:university-of-southern-california|university-of-california-los-angeles",
+    "metric": "w",
+    "format": "rivalry",
+    "candidate": "rivalry:university-of-southern-california|university-of-california-los-angeles",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 7,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

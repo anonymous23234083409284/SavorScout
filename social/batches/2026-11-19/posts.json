@@ -1,0 +1,280 @@
+{
+ "tiktok": [
+  {
+   "video": "big-ten-countdown",
+   "at": "2026-11-19T12:17:00-05:00",
+   "text": "Northwestern is 3rd 👀 Which Big Ten school has the most restaurants within a 10-minute walk? Send this to your friend at another Big Ten school.\n\n#michigan #rutgers #northwestern #collegelife #collegefood"
+  },
+  {
+   "video": "rivalry-yale-rivalry",
+   "at": "2026-11-19T15:23:00-05:00",
+   "text": "Yale vs Harvard 👀 Which campus has more restaurants within a 10-minute walk? Comment your guess before it shows.\n\n#yale #harvard #collegelife #collegefood"
+  },
+  {
+   "video": "sec-countdown",
+   "at": "2026-11-19T18:18:00-05:00",
+   "text": "Alabama is 11th 👀 Which SEC school has the most restaurants within a 10-minute walk? Send this to your friend at another SEC school.\n\n#vanderbilt #utaustin #mizzou #collegelife #collegefood"
+  },
+  {
+   "video": "rivalry-usc-rivalry",
+   "at": "2026-11-19T21:17:00-05:00",
+   "text": "USC vs UCLA 👀 Which campus has more restaurants within a 10-minute walk? Comment your guess before it shows.\n\n#usc #ucla #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-big-ten-countdown",
+   "at": "2026-11-19T16:40:00-05:00",
+   "card": "big-ten-countdown",
+   "thread": [
+    "Michigan has the most restaurants within a 10-minute walk of campus of any Big Ten school. Rutgers is 42 behind.\n\nAll 18 Big Ten schools (top 14 of 18):",
+    "1. Michigan: 224\n2. Rutgers: 182\n3. Northwestern: 162\n4. Penn State: 156\n5. Indiana: 138\n6. Iowa: 132\n7. UIUC: 109\n8. Nebraska: 102\n9. USC: 94\n10. Ohio State: 86\n10. Wisconsin: 86\n12. Michigan State: 84\n13. Washington: 70\n14. Purdue: 61",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/big-ten/"
+   ]
+  },
+  {
+   "id": "x-rivalry-yale-rivalry",
+   "at": "2026-11-19T17:40:00-05:00",
+   "card": "rivalry-yale-rivalry",
+   "thread": [
+    "Yale has 223 restaurants within a 10-minute walk of campus. Harvard has 156.",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus: https://www.savorscout.net/campus/yale-university/"
+   ]
+  },
+  {
+   "id": "x-sec-countdown",
+   "at": "2026-11-19T18:38:00-05:00",
+   "card": "sec-countdown",
+   "thread": [
+    "Vanderbilt has the most restaurants within a 10-minute walk of campus of any SEC school. UT Austin is 14 behind.\n\nAll 16 SEC schools (top 14 of 16):",
+    "1. Vanderbilt: 129\n2. UT Austin: 115\n3. Mizzou: 98\n3. UGA: 98\n5. Kentucky: 69\n6. Oklahoma: 64\n7. Florida: 48\n8. South Carolina: 47\n9. LSU: 41\n10. Texas A&M: 40\n11. Alabama: 27\n12. Auburn: 21\n12. Tennessee: 21\n14. Arkansas: 10",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/sec/"
+   ]
+  },
+  {
+   "id": "x-rivalry-usc-rivalry",
+   "at": "2026-11-19T19:39:00-05:00",
+   "card": "rivalry-usc-rivalry",
+   "thread": [
+    "USC has 94 restaurants within a 10-minute walk of campus. UCLA has 14.",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus: https://www.savorscout.net/campus/university-of-southern-california/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-big-ten-countdown",
+   "at": "2026-11-19T17:11:00-05:00",
+   "card": "big-ten-countdown",
+   "topic": "Ten",
+   "thread": [
+    "Michigan has the most restaurants within a 10-minute walk of campus of any Big Ten school. Rutgers is 42 behind. All 18 Big Ten schools (top 14 of 18):\n\nMichigan 224, Rutgers 182, Northwestern 162, Penn State 156, Indiana 138, Iowa 132, UIUC 109, Nebraska 102, USC 94, Ohio State 86, Wisconsin 86, Michigan State 84, Washington 70, Purdue 61.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/big-ten/"
+   ]
+  },
+  {
+   "id": "t-rivalry-yale-rivalry",
+   "at": "2026-11-19T18:10:00-05:00",
+   "card": "rivalry-yale-rivalry",
+   "topic": "College Football",
+   "thread": [
+    "Yale has 223 restaurants within a 10-minute walk of campus. Harvard has 156.\n\nWhich rivalry should we settle next?",
+    "Look up any campus: https://www.savorscout.net/campus/yale-university/"
+   ]
+  },
+  {
+   "id": "t-sec-countdown",
+   "at": "2026-11-19T19:10:00-05:00",
+   "card": "sec-countdown",
+   "topic": "SEC",
+   "thread": [
+    "Vanderbilt has the most restaurants within a 10-minute walk of campus of any SEC school. UT Austin is 14 behind. All 16 SEC schools (top 14 of 16):\n\nVanderbilt 129, UT Austin 115, Mizzou 98, UGA 98, Kentucky 69, Oklahoma 64, Florida 48, South Carolina 47, LSU 41, Texas A&M 40, Alabama 27, Auburn 21, Tennessee 21, Arkansas 10.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/sec/"
+   ]
+  },
+  {
+   "id": "t-rivalry-usc-rivalry",
+   "at": "2026-11-19T20:09:00-05:00",
+   "card": "rivalry-usc-rivalry",
+   "topic": "College Football",
+   "thread": [
+    "USC has 94 restaurants within a 10-minute walk of campus. UCLA has 14.\n\nWhich rivalry should we settle next?",
+    "Look up any campus: https://www.savorscout.net/campus/university-of-southern-california/"
+   ]
+  }
+ ],
+ "cards": {
+  "big-ten-countdown": {
+   "type": "ranking",
+   "title": "Big Ten schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 18 Big Ten schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Michigan",
+     224
+    ],
+    [
+     "2",
+     "Rutgers",
+     182
+    ],
+    [
+     "3",
+     "Northwestern",
+     162
+    ],
+    [
+     "4",
+     "Penn State",
+     156
+    ],
+    [
+     "5",
+     "Indiana",
+     138
+    ],
+    [
+     "6",
+     "Iowa",
+     132
+    ],
+    [
+     "7",
+     "UIUC",
+     109
+    ],
+    [
+     "8",
+     "Nebraska",
+     102
+    ],
+    [
+     "9",
+     "USC",
+     94
+    ],
+    [
+     "10",
+     "Ohio State",
+     86
+    ],
+    [
+     "10",
+     "Wisconsin",
+     86
+    ],
+    [
+     "12",
+     "Michigan State",
+     84
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "rivalry-yale-rivalry": {
+   "type": "ranking",
+   "title": "Yale vs Harvard: *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus.",
+   "rows": [
+    [
+     "1",
+     "Yale",
+     223
+    ],
+    [
+     "2",
+     "Harvard",
+     156
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "sec-countdown": {
+   "type": "ranking",
+   "title": "SEC schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 16 SEC schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Vanderbilt",
+     129
+    ],
+    [
+     "2",
+     "UT Austin",
+     115
+    ],
+    [
+     "3",
+     "Mizzou",
+     98
+    ],
+    [
+     "3",
+     "UGA",
+     98
+    ],
+    [
+     "5",
+     "Kentucky",
+     69
+    ],
+    [
+     "6",
+     "Oklahoma",
+     64
+    ],
+    [
+     "7",
+     "Florida",
+     48
+    ],
+    [
+     "8",
+     "South Carolina",
+     47
+    ],
+    [
+     "9",
+     "LSU",
+     41
+    ],
+    [
+     "10",
+     "Texas A&M",
+     40
+    ],
+    [
+     "11",
+     "Alabama",
+     27
+    ],
+    [
+     "12",
+     "Auburn",
+     21
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "rivalry-usc-rivalry": {
+   "type": "ranking",
+   "title": "USC vs UCLA: *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus.",
+   "rows": [
+    [
+     "1",
+     "USC",
+     94
+    ],
+    [
+     "2",
+     "UCLA",
+     14
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

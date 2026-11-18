@@ -831,7 +831,7 @@ def plan(date, seed=None, draws=300):
             print(f"pinned {pid} isn't a candidate today (used recently, or more than one new thing); skipped")
             continue
         c, slot = cands[i], "proven" if is_cd[i] else "experiment"
-        if sum(1 for x in chosen if x["slot"] == slot) < 2:
+        if len(chosen) < 4:                    # the day's research may pin more than two of one slot
             c["sample"], c["slot"] = float(s[i]), slot
             chosen.append(c)
             used_keys.add(c["key"]), used_tops.add(c["rows"][0][1]), used_kinds.add(c["kind"])
@@ -839,7 +839,7 @@ def plan(date, seed=None, draws=300):
     for slot, pool, strict in (("proven", is_cd, True), ("proven", is_cd, False), ("experiment", is_ex, True)):
         order = sorted([i for i in range(len(cands)) if pool[i]], key=lambda i: -s[i])
         picked = sum(1 for c in chosen if c["slot"] == slot)
-        if picked >= 2:
+        if picked >= 2 or len(chosen) >= 4:
             continue
         for i in order:
             c = cands[i]

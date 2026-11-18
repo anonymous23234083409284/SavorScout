@@ -1,8 +1,11 @@
 {
- "date": "2026-11-18",
+ "date": "2026-11-19",
  "pin": [
-  "famous:20|street|countdown"
+  "rivalry:harvard-university|yale-university",
+  "conf:big-ten|w|countdown",
+  "rivalry:university-of-southern-california|university-of-california-los-angeles",
+  "conf:sec|w|countdown"
  ],
  "boost": [],
- "note": "2026-11-18: show episodes take three of the four slots; the one countdown is the famous-20 set (our second-biggest recent hit, 8,582 views) re-ranked by busiest food street, as a plain countdown rather than a part 2 (the only part 2 with numbers, UC, did 792). Rivalry week is Nov 27-28 (Michigan-Ohio State, Iron Bowl, UCLA-USC, Texas-Texas A&M, Florida-Florida State): boost rivalry head-to-heads from about Nov 24."
+ "note": "2026-11-19: Harvard-Yale (The Game) is Sat Nov 21, so its head-to-head goes now, with USC-UCLA as a second rivalry. Countdowns 30-60 s only (no 15-20 s shorts). Big Ten (last Nov 1) and SEC (Nov 4) return as refreshed countdowns with the new voice; the California list was skipped (an online school, Northcentral, and an unclear 'California State'), and city lists keep flopping. Rivalry week Nov 27-28: boost head-to-heads from Nov 24."
 }

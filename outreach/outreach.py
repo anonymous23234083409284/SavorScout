@@ -46,7 +46,7 @@ def pitches():
 
 def targets(n):
     done = {r["to"] for r in sent()}
-    rows = [p for p in pitches() if p.get("email") and sha(p["email"]) not in done]
+    rows = [p for p in pitches() if p.get("email") and p.get("rankings") and sha(p["email"]) not in done]
     rows.sort(key=lambda p: (p.get("unconfirmed", False), p.get("tier", 9), min((r["rank"] for r in p["rankings"]), default=99)))
     return rows[:n]
 

@@ -2,7 +2,7 @@
 
 Learned from **58 TikToks** posted 2026-11-01 to 2026-11-17. The model explains about 84% of the differences in views (in-sample, so treat it as a guide). Multipliers below are on views; "clear" means the data shows it repeatedly, "likely" means it leans that way, "unclear" means not enough evidence yet.
 
-**Last 7 days:** 23 videos, median 803 views, 9 of 23 at 1,000+.
+**Last 7 days:** 19 videos, median 709 views, 6 of 19 at 1,000+.
 
 ## What drives views
 
@@ -83,14 +83,17 @@ The lab starts from these (both platforms combined, the more certain one countin
 
 ## Experiments
 
-- 2026-11-12 g_city: countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Rice (4th)) -> **retry** (954 views, 9.2s; predicted 2,787)
-- 2026-11-12 g_famous: countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th)) -> **promote** (8,582 views, 11.58s; predicted 4,637)
-- 2026-11-12 voice: every video read aloud from frame 0 (Kokoro voice), the hook map pushing in, first entry at ~4.5 s instead of 5.7 s, last place called out, #1's margin spoken -> **posted** (waiting for 3 days of numbers; predicted ?)
-- 2026-11-13 part2: part2: All 9 UC campuses by mile (#1 UC Berkeley 428, tease UCLA (2nd)) -> **retry** (792 views, 7.74s; predicted 4,342)
-- 2026-11-13 rivalry: rivalry: UNC vs Duke, restaurants within a 10-minute walk (87 vs 9) -> **retry** (922 views, 7.64s; predicted ?)
-- 2026-11-14 g_city: countdown: 11 New York City colleges by w (#1 Touro 1,478, tease Columbia 9th) -> **drop** (457 views, 8.83s; predicted ?)
 - 2026-11-14 metric_street: countdown: Ivy League by busiest food street (#1 Columbia 144) -> **drop** (462 views, 6.55s; predicted ?)
 - 2026-11-14 part2: part 2: big Pennsylvania universities by busiest food street (#1 Drexel 70; Penn 4th to 2nd) -> **drop** (363 views, 5.43s; predicted ?)
 - 2026-11-18 metric_street: countdown: 20 famous American universities by busiest food street (#1 NYU 190, tease Harvard (4th)) -> **posted** (waiting for 3 days of numbers; predicted 3,094)
+- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
+- 2026-11-19 short: short: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th)) -> **posted** (waiting for 3 days of numbers; predicted 3,865)
+- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
+- 2026-11-19 short: short: Utah universities with 10,000+ students by w (#1 BYU 29, tease Utah (4th)) -> **posted** (waiting for 3 days of numbers; predicted 2,201)
+- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
+- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
+- 2026-11-19 short: short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th)) -> **posted** (waiting for 3 days of numbers; predicted 5,065)
+- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
+- 2026-11-19 rivalry: rivalry: USC vs UCLA -> **posted** (waiting for 3 days of numbers; predicted 427)
 
 _Written by social/pipeline/lab.py. Regenerated every daily run._

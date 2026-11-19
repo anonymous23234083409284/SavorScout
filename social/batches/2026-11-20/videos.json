@@ -1,0 +1,563 @@
+{
+ "date": "2026-11-20",
+ "videos": [
+  {
+   "id": "acc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/acc/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which ACC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Stanford.",
+     "say": "Which ACC school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 15,
+     "style": "list",
+     "title": "All 18 ACC schools",
+     "rows": [
+      [
+       "17",
+       "Wake Forest",
+       "6"
+      ],
+      [
+       "17",
+       "Notre Dame",
+       "6"
+      ],
+      [
+       "16",
+       "Boston College",
+       "8"
+      ],
+      [
+       "15",
+       "Duke",
+       "9"
+      ],
+      [
+       "14",
+       "Miami",
+       "16"
+      ],
+      [
+       "13",
+       "Louisville",
+       "27"
+      ],
+      [
+       "12",
+       "Stanford",
+       "29"
+      ],
+      [
+       "11",
+       "Georgia Tech",
+       "34"
+      ],
+      [
+       "10",
+       "Clemson",
+       "43"
+      ],
+      [
+       "9",
+       "Syracuse",
+       "47"
+      ],
+      [
+       "8",
+       "Florida State",
+       "50"
+      ],
+      [
+       "7",
+       "Virginia",
+       "58"
+      ],
+      [
+       "6",
+       "SMU",
+       "62"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Wake Forest, with just 6. Notre Dame, 6. And Stanford? Only twelfth."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Virginia Tech",
+     "count": 64,
+     "sub": "Busiest food street: Main St",
+     "map": "virginia-polytechnic-institute-and-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Virginia Tech. 64. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "NC State",
+     "count": 75,
+     "sub": "Busiest food street: Hillsborough St",
+     "map": "north-carolina-state-university-at-raleigh",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: NC State. 75. Busiest food street: Hillsborough Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UNC Chapel Hill",
+     "count": 87,
+     "sub": "Busiest food street: Franklin St",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UNC Chapel Hill. 87. Busiest food street: Franklin Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Pitt",
+     "count": 135,
+     "sub": "Busiest food street: Forbes Ave",
+     "map": "university-of-pittsburgh-pittsburgh-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Pitt. 135. Busiest food street: Forbes Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: UC Berkeley. 277."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another ACC school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which conference should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "conf:acc",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:acc|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "rivalry-alabama-rivalry",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/the-university-of-alabama/",
+   "scenes": [
+    {
+     "beats": 7,
+     "style": "hook",
+     "map": "the-university-of-alabama",
+     "text": "Alabama vs Auburn: which campus has more *restaurants within a 10-minute walk?*",
+     "sub": "Comment your guess before it shows.",
+     "say": "Alabama vs Auburn: which campus has more restaurants within a 10-minute walk? Guess before it shows."
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "",
+     "text": "Auburn",
+     "count": 21,
+     "sub": "Busiest food street: College St",
+     "map": "auburn-university",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Auburn: 21."
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "Alabama",
+     "count": 27,
+     "sub": "Busiest food street: University Blvd",
+     "map": "the-university-of-alabama",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Alabama: 27."
+    },
+    {
+     "beats": 8,
+     "style": "cap",
+     "text": "Alabama wins by *6.*",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Alabama wins by 6."
+    },
+    {
+     "beats": 7,
+     "style": "cap",
+     "text": "Busiest food street: *University Blvd* at Alabama (30 places), *College St* at Auburn (33)",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Alabama's busiest food street, University Boulevard, has 30. Auburn's, College Street, has 33."
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Which rivalry should we settle next? *Comment below.*",
+     "sub": "Send this to an Auburn fan.",
+     "reuse": 3,
+     "say": "Which rivalry should we settle next? Comment below."
+    }
+   ],
+   "lab": {
+    "key": "rivalry:the-university-of-alabama|auburn-university",
+    "metric": "w",
+    "format": "rivalry",
+    "candidate": "rivalry:the-university-of-alabama|auburn-university",
+    "style": {
+     "punch": true,
+     "loop_end": false,
+     "hook_beats": 7,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "tx-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/texas/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "the-university-of-texas-at-austin",
+     "text": "Which big Texas university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Texas A&M.",
+     "say": "Which Texas university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 10,
+     "style": "list",
+     "title": "Big Texas universities",
+     "rows": [
+      [
+       "13",
+       "UT Dallas",
+       "10"
+      ],
+      [
+       "12",
+       "UTSA",
+       "16"
+      ],
+      [
+       "11",
+       "Houston",
+       "20"
+      ],
+      [
+       "10",
+       "Sam Houston State",
+       "29"
+      ],
+      [
+       "9",
+       "UT Arlington",
+       "35"
+      ],
+      [
+       "8",
+       "Texas A&M",
+       "40"
+      ],
+      [
+       "7",
+       "UTRGV",
+       "42"
+      ],
+      [
+       "6",
+       "UTEP",
+       "47"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UT Dallas, with 10. UTSA, 16. Houston, 20."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Texas Tech",
+     "count": 49,
+     "sub": "Tied with Baylor for 4th. Busiest food street: University Ave",
+     "map": "texas-tech-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Texas Tech. 49."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Baylor",
+     "count": 49,
+     "sub": "Tied with Texas Tech for 4th. Busiest food street: Franklin Ave",
+     "map": "baylor-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Baylor. 49."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "North Texas",
+     "count": 51,
+     "sub": "Busiest food street: Hickory St",
+     "map": "university-of-north-texas",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: North Texas. 51. Busiest food street: Hickory Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Texas State",
+     "count": 79,
+     "sub": "Busiest food street: LBJ Dr",
+     "map": "texas-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Texas State. 79. Busiest food street: LBJ Drive."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UT Austin",
+     "count": 115,
+     "sub": "Busiest food street: Guadalupe St",
+     "map": "the-university-of-texas-at-austin",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UT Austin. 115."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Texas school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:TX",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:TX|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "big-12-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/big-12/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-cincinnati-main-campus",
+     "text": "Which Big 12 school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Arizona State.",
+     "say": "Which Big 12 school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 13,
+     "style": "list",
+     "title": "All 16 Big 12 schools",
+     "rows": [
+      [
+       "16",
+       "Kansas",
+       "11"
+      ],
+      [
+       "15",
+       "Utah",
+       "16"
+      ],
+      [
+       "14",
+       "Houston",
+       "20"
+      ],
+      [
+       "13",
+       "Oklahoma State",
+       "24"
+      ],
+      [
+       "12",
+       "BYU",
+       "29"
+      ],
+      [
+       "11",
+       "UCF",
+       "30"
+      ],
+      [
+       "10",
+       "TCU",
+       "35"
+      ],
+      [
+       "7",
+       "Texas Tech",
+       "49"
+      ],
+      [
+       "7",
+       "Iowa State",
+       "49"
+      ],
+      [
+       "7",
+       "Baylor",
+       "49"
+      ],
+      [
+       "6",
+       "Kansas State",
+       "52"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Kansas, with 11. Utah, 16. Houston, 20."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "CU Boulder",
+     "count": 70,
+     "sub": "Busiest food street: Pearl St",
+     "map": "university-of-colorado-boulder",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: CU Boulder. 70. Busiest food street: Pearl Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Arizona State",
+     "count": 76,
+     "sub": "Busiest food street: Mill Ave",
+     "map": "arizona-state-university-campus-immersion",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Arizona State. 76. Busiest food street: Mill Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "West Virginia",
+     "count": 81,
+     "sub": "Busiest food street: High St",
+     "map": "west-virginia-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: West Virginia. 81. Busiest food street: High Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Arizona",
+     "count": 84,
+     "sub": "Busiest food street: E University Blvd",
+     "map": "university-of-arizona",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Arizona. 84. Busiest food street: University Boulevard."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Cincinnati",
+     "count": 101,
+     "sub": "Busiest food street: McMillan St",
+     "map": "university-of-cincinnati-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Cincinnati. 101."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Big 12 school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which conference should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "conf:big-12",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:big-12|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

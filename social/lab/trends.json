@@ -1,11 +1,11 @@
 {
- "date": "2026-11-19",
+ "date": "2026-11-20",
  "pin": [
-  "rivalry:harvard-university|yale-university",
-  "conf:big-ten|w|countdown",
-  "rivalry:university-of-southern-california|university-of-california-los-angeles",
-  "conf:sec|w|countdown"
+  "conf:acc|w|countdown",
+  "rivalry:the-university-of-alabama|auburn-university",
+  "state:TX|w|countdown",
+  "conf:big-12|w|countdown"
  ],
  "boost": [],
- "note": "2026-11-19: Harvard-Yale (The Game) is Sat Nov 21, so its head-to-head goes now, with USC-UCLA as a second rivalry. Countdowns 30-60 s only (no 15-20 s shorts). Big Ten (last Nov 1) and SEC (Nov 4) return as refreshed countdowns with the new voice; the California list was skipped (an online school, Northcentral, and an unclear 'California State'), and city lists keep flopping. Rivalry week Nov 27-28: boost head-to-heads from Nov 24."
+ "note": "2026-11-20: countdowns only, each with the Laura girl-voice hook. ACC (Berkeley 1st, Stanford 12th) and big Texas (UT Austin 1st, Texas A&M 8th, ahead of the Lone Star Showdown Nov 27) and Big 12 return as refreshed countdowns (last run Nov 5); the Iron Bowl head-to-head (Nov 28) is the rivalry. Michigan-Ohio State is saved for Nov 27."
 }

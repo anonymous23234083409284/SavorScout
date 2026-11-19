@@ -1,0 +1,331 @@
+{
+ "tiktok": [
+  {
+   "video": "acc-countdown",
+   "at": "2026-11-20T12:22:00-05:00",
+   "text": "Stanford is 12th 👀 Which ACC school has the most restaurants within a 10-minute walk? Send this to your friend at another ACC school.\n\n#ucberkeley #pitt #uncchapelhill #collegelife #collegefood"
+  },
+  {
+   "video": "rivalry-alabama-rivalry",
+   "at": "2026-11-20T15:19:00-05:00",
+   "text": "Alabama vs Auburn 👀 Which campus has more restaurants within a 10-minute walk? Comment your guess before it shows.\n\n#alabama #auburn #collegelife #collegefood"
+  },
+  {
+   "video": "tx-countdown",
+   "at": "2026-11-20T18:19:00-05:00",
+   "text": "Texas A&M is 8th 👀 Which big Texas university has the most restaurants within a 10-minute walk? Send this to your friend at another Texas school.\n\n#utaustin #texasstate #northtexas #collegelife #collegefood"
+  },
+  {
+   "video": "big-12-countdown",
+   "at": "2026-11-20T21:18:00-05:00",
+   "text": "Arizona State is 4th 👀 Which Big 12 school has the most restaurants within a 10-minute walk? Send this to your friend at another Big 12 school.\n\n#cincinnati #arizona #westvirginia #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-acc-countdown",
+   "at": "2026-11-20T16:42:00-05:00",
+   "card": "acc-countdown",
+   "thread": [
+    "UC Berkeley has more than twice as many restaurants within a 10-minute walk of campus as Pitt.\n\nAll 18 ACC schools (top 14 of 18):",
+    "1. UC Berkeley: 277\n2. Pitt: 135\n3. UNC Chapel Hill: 87\n4. NC State: 75\n5. Virginia Tech: 64\n6. SMU: 62\n7. Virginia: 58\n8. Florida State: 50\n9. Syracuse: 47\n10. Clemson: 43\n11. Georgia Tech: 34\n12. Stanford: 29\n13. Louisville: 27\n14. Miami: 16",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/acc/"
+   ]
+  },
+  {
+   "id": "x-rivalry-alabama-rivalry",
+   "at": "2026-11-20T17:40:00-05:00",
+   "card": "rivalry-alabama-rivalry",
+   "thread": [
+    "Alabama has 27 restaurants within a 10-minute walk of campus. Auburn has 21.",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus: https://www.savorscout.net/campus/the-university-of-alabama/"
+   ]
+  },
+  {
+   "id": "x-tx-countdown",
+   "at": "2026-11-20T18:42:00-05:00",
+   "card": "tx-countdown",
+   "thread": [
+    "UT Austin has the most restaurants within a 10-minute walk of campus of any big Texas university. Texas State is 36 behind.\n\nThe big Texas universities:",
+    "1. UT Austin: 115\n2. Texas State: 79\n3. North Texas: 51\n4. Baylor: 49\n4. Texas Tech: 49\n6. UTEP: 47\n7. UTRGV: 42\n8. Texas A&M: 40\n9. UT Arlington: 35\n10. Sam Houston State: 29\n11. Houston: 20\n12. UTSA: 16\n13. UT Dallas: 10",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/texas/"
+   ]
+  },
+  {
+   "id": "x-big-12-countdown",
+   "at": "2026-11-20T19:39:00-05:00",
+   "card": "big-12-countdown",
+   "thread": [
+    "Cincinnati has the most restaurants within a 10-minute walk of campus of any Big 12 school. Arizona is 17 behind.\n\nAll 16 Big 12 schools (top 14 of 16):",
+    "1. Cincinnati: 101\n2. Arizona: 84\n3. West Virginia: 81\n4. Arizona State: 76\n5. CU Boulder: 70\n6. Kansas State: 52\n7. Baylor: 49\n7. Iowa State: 49\n7. Texas Tech: 49\n10. TCU: 35\n11. UCF: 30\n12. BYU: 29\n13. Oklahoma State: 24\n14. Houston: 20",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/big-12/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-acc-countdown",
+   "at": "2026-11-20T17:12:00-05:00",
+   "card": "acc-countdown",
+   "topic": "ACC",
+   "thread": [
+    "UC Berkeley has more than twice as many restaurants within a 10-minute walk of campus as Pitt. All 18 ACC schools (top 14 of 18):\n\nUC Berkeley 277, Pitt 135, UNC Chapel Hill 87, NC State 75, Virginia Tech 64, SMU 62, Virginia 58, Florida State 50, Syracuse 47, Clemson 43, Georgia Tech 34, Stanford 29, Louisville 27, Miami 16.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/acc/"
+   ]
+  },
+  {
+   "id": "t-rivalry-alabama-rivalry",
+   "at": "2026-11-20T18:13:00-05:00",
+   "card": "rivalry-alabama-rivalry",
+   "topic": "College Football",
+   "thread": [
+    "Alabama has 27 restaurants within a 10-minute walk of campus. Auburn has 21.\n\nWhich rivalry should we settle next?",
+    "Look up any campus: https://www.savorscout.net/campus/the-university-of-alabama/"
+   ]
+  },
+  {
+   "id": "t-tx-countdown",
+   "at": "2026-11-20T19:13:00-05:00",
+   "card": "tx-countdown",
+   "topic": "Texas",
+   "thread": [
+    "UT Austin has the most restaurants within a 10-minute walk of campus of any big Texas university. Texas State is 36 behind. The big Texas universities:\n\nUT Austin 115, Texas State 79, North Texas 51, Baylor 49, Texas Tech 49, UTEP 47, UTRGV 42, Texas A&M 40, UT Arlington 35, Sam Houston State 29, Houston 20, UTSA 16, UT Dallas 10.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/texas/"
+   ]
+  },
+  {
+   "id": "t-big-12-countdown",
+   "at": "2026-11-20T20:08:00-05:00",
+   "card": "big-12-countdown",
+   "topic": "12",
+   "thread": [
+    "Cincinnati has the most restaurants within a 10-minute walk of campus of any Big 12 school. Arizona is 17 behind. All 16 Big 12 schools (top 14 of 16):\n\nCincinnati 101, Arizona 84, West Virginia 81, Arizona State 76, CU Boulder 70, Kansas State 52, Baylor 49, Iowa State 49, Texas Tech 49, TCU 35, UCF 30, BYU 29, Oklahoma State 24, Houston 20.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/big-12/"
+   ]
+  }
+ ],
+ "cards": {
+  "acc-countdown": {
+   "type": "ranking",
+   "title": "ACC schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 18 ACC schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "Pitt",
+     135
+    ],
+    [
+     "3",
+     "UNC Chapel Hill",
+     87
+    ],
+    [
+     "4",
+     "NC State",
+     75
+    ],
+    [
+     "5",
+     "Virginia Tech",
+     64
+    ],
+    [
+     "6",
+     "SMU",
+     62
+    ],
+    [
+     "7",
+     "Virginia",
+     58
+    ],
+    [
+     "8",
+     "Florida State",
+     50
+    ],
+    [
+     "9",
+     "Syracuse",
+     47
+    ],
+    [
+     "10",
+     "Clemson",
+     43
+    ],
+    [
+     "11",
+     "Georgia Tech",
+     34
+    ],
+    [
+     "12",
+     "Stanford",
+     29
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "rivalry-alabama-rivalry": {
+   "type": "ranking",
+   "title": "Alabama vs Auburn: *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus.",
+   "rows": [
+    [
+     "1",
+     "Alabama",
+     27
+    ],
+    [
+     "2",
+     "Auburn",
+     21
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "tx-countdown": {
+   "type": "ranking",
+   "title": "Big Texas universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "The big Texas universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UT Austin",
+     115
+    ],
+    [
+     "2",
+     "Texas State",
+     79
+    ],
+    [
+     "3",
+     "North Texas",
+     51
+    ],
+    [
+     "4",
+     "Baylor",
+     49
+    ],
+    [
+     "4",
+     "Texas Tech",
+     49
+    ],
+    [
+     "6",
+     "UTEP",
+     47
+    ],
+    [
+     "7",
+     "UTRGV",
+     42
+    ],
+    [
+     "8",
+     "Texas A&M",
+     40
+    ],
+    [
+     "9",
+     "UT Arlington",
+     35
+    ],
+    [
+     "10",
+     "Sam Houston State",
+     29
+    ],
+    [
+     "11",
+     "Houston",
+     20
+    ],
+    [
+     "12",
+     "UTSA",
+     16
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "big-12-countdown": {
+   "type": "ranking",
+   "title": "Big 12 schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 16 Big 12 schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Cincinnati",
+     101
+    ],
+    [
+     "2",
+     "Arizona",
+     84
+    ],
+    [
+     "3",
+     "West Virginia",
+     81
+    ],
+    [
+     "4",
+     "Arizona State",
+     76
+    ],
+    [
+     "5",
+     "CU Boulder",
+     70
+    ],
+    [
+     "6",
+     "Kansas State",
+     52
+    ],
+    [
+     "7",
+     "Baylor",
+     49
+    ],
+    [
+     "7",
+     "Iowa State",
+     49
+    ],
+    [
+     "7",
+     "Texas Tech",
+     49
+    ],
+    [
+     "10",
+     "TCU",
+     35
+    ],
+    [
+     "11",
+     "UCF",
+     30
+    ],
+    [
+     "12",
+     "BYU",
+     29
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

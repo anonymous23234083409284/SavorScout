@@ -265,6 +265,14 @@
    "what": "rivalry: USC vs UCLA",
    "status": "posted",
    "predicted": 427
+  },
+  {
+   "date": "2026-11-20",
+   "video": "rivalry-alabama-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Alabama vs Auburn",
+   "status": "posted",
+   "predicted": 398
   }
  ]
 }

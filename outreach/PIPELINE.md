@@ -72,3 +72,13 @@ savorscout.net
   carry a postal address and a way to opt out; a request for editorial coverage is a grey area.
   If volume ever grows past this hand-sized list, add both.
 - What works gets written here: which subject lines and which kinds of fact earned replies.
+
+## Journalist requests (Featured, HARO, Connectively, Qwoted, Substack)
+
+Every request we look at goes in `outreach/requests.jsonl`, pitched or skipped, so nothing is answered
+twice and nothing is re-judged. Before drafting: `python outreach/outreach.py req-seen "<outlet>" "<question>"`
+(exit 0 = already handled). After sending or deciding: `python outreach/outreach.py req-log <platform> "<outlet>" "<question>" <pitched|skipped|drafted> "note"`.
+`req-list` shows the log. Answer only as what Charan is: a student founder of a free campus-food map
+site. Never pose as a chef, restaurateur, dietitian, or PR rep, and never send an answer with an
+opinion or personal story he hasn't approved. One answer per outlet per story; for outlets that post
+many near-identical questions (College Recruiter), answer at most two, each with a different story.

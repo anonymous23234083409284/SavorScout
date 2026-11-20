@@ -7,6 +7,9 @@
                                                   the email for one target (with or without an article to mention)
     python outreach/outreach.py log <slug|-> <email> <subject>     record a sent email (do this right after sending)
     python outreach/outreach.py seen <email>      exit 0 if this address was already emailed
+    python outreach/outreach.py req-seen "<outlet>" "<question>"    exit 0 if this journalist request was already handled
+    python outreach/outreach.py req-log <platform> "<outlet>" "<question>" <pitched|skipped|drafted> ["note"]
+    python outreach/outreach.py req-list          every journalist request handled so far
 
 PIPELINE.md has the daily routine and the rules. The sent log (outreach/sent.jsonl) is the memory:
 an address in it is never emailed again. Gmail's Sent folder is checked too, in case the log is
@@ -22,6 +25,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SENT = os.path.join(HERE, "sent.jsonl")
+REQS = os.path.join(HERE, "requests.jsonl")      # journalist requests (Featured/HARO/Connectively/Qwoted): one answer each, ever
 SIGN = "Charan Nukathoti (Savor Scout founder)\nsavorscout.net"
 
 
@@ -112,6 +116,18 @@ def draft(p, title=None, author=None, detail=None, url=None, name=None):
     return subject, body
 
 
+def req_id(outlet, question):
+    """The same request seen twice (or reposted with small edits) gets the same id: outlet + the first
+    12 words of the question, lowercased, punctuation stripped."""
+    import re
+    words = re.findall(r"[a-z0-9]+", question.lower())[:12]
+    return hashlib.sha256((outlet.strip().lower() + "|" + " ".join(words)).encode()).hexdigest()[:16]
+
+
+def reqs():
+    return [json.loads(l) for l in open(REQS)] if os.path.exists(REQS) else []
+
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     opt = lambda k: a[a.index(k) + 1] if k in a else None
@@ -136,6 +152,20 @@ if __name__ == "__main__":
         with open(SENT, "a") as f:             # a newsroom's public address is kept readable; a person's is kept only as a hash
             f.write(json.dumps({"date": dt.date.today().isoformat(), "to": sha(a[2]), "address": a[2] if public else None,
                                 "slug": None if a[1] == "-" else a[1], "subject": a[3]}, ensure_ascii=False) + "\n")
+    elif a[0] == "req-seen" and len(a) > 2:
+        hit = [r for r in reqs() if r["id"] == req_id(a[1], a[2])]
+        print(json.dumps(hit[-1]) if hit else "new")
+        sys.exit(0 if hit else 1)
+    elif a[0] == "req-log" and len(a) > 4:
+        i = req_id(a[2], a[3])
+        if any(r["id"] == i and r["status"] == "pitched" for r in reqs()):
+            sys.exit("already pitched: not logging a second answer")
+        with open(REQS, "a") as f:
+            f.write(json.dumps({"date": dt.date.today().isoformat(), "id": i, "platform": a[1], "outlet": a[2],
+                                "question": a[3][:200], "status": a[4], "note": a[5] if len(a) > 5 else ""}, ensure_ascii=False) + "\n")
+    elif a[0] == "req-list":
+        for r in reqs():
+            print(f"{r['date']}  {r['status']:8} {r['platform']:12} {r['outlet']:30} {r['question'][:70]}")
     elif a[0] == "seen" and len(a) > 1:
         sys.exit(0 if seen(a[1]) else 1)
     else:

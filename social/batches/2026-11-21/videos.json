@@ -170,7 +170,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Florida State wins by 2."
+     "say": "Florida State wins by 2.",
+     "clip": 7970393
     },
     {
      "beats": 7,
@@ -189,7 +190,8 @@
      "text": "Which rivalry should we settle next? *Comment below.*",
      "sub": "Send this to a Florida fan.",
      "reuse": 3,
-     "say": "Which rivalry should we settle next? Comment below."
+     "say": "Which rivalry should we settle next? Comment below.",
+     "clip": 5551780
     }
    ],
    "lab": {
@@ -380,7 +382,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "UGA has more than twice as many."
+     "say": "UGA has more than twice as many.",
+     "clip": 7969487
     },
     {
      "beats": 7,
@@ -399,7 +402,8 @@
      "text": "Which rivalry should we settle next? *Comment below.*",
      "sub": "Send this to a Georgia Tech fan.",
      "reuse": 3,
-     "say": "Which rivalry should we settle next? Comment below."
+     "say": "Which rivalry should we settle next? Comment below.",
+     "clip": 6145691
     }
    ],
    "lab": {

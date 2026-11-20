@@ -1,0 +1,265 @@
+{
+ "date": "2026-11-21",
+ "videos_learned_from": 58,
+ "r2_views": 0.84,
+ "chosen": [
+  {
+   "id": "conf:ivy-league|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 8 Ivy League schools by w (#1 Yale 223, tease Harvard (3rd))",
+   "views_mid": 3091,
+   "views_lo": 1739,
+   "views_hi": 5495,
+   "win_rate": 0.573,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); same grouping 7d ago (-0.25); teased Harvard 7d ago (-0.3); teased Harvard 3d ago (-0.3)"
+  },
+  {
+   "id": "rivalry:university-of-florida|florida-state-university",
+   "format": "rivalry",
+   "slot": "experiment",
+   "new": [
+    "rivalry"
+   ],
+   "what": "rivalry: Florida State vs Florida",
+   "views_mid": 394,
+   "views_lo": 128,
+   "views_hi": 1204,
+   "win_rate": 0.003,
+   "why": "+ more famous schools on screen (+1 tier); + a two-school rivalry head-to-head; + one more school in the ranking; rivalry used 2d ago (-0.2); rivalry used 2d ago (-0.2); rivalry used 1d ago (-0.2); rivalry week (The Game, the Iron Bowl and the Apple Cup are Nov 28) (+0.35)"
+  },
+  {
+   "id": "system:uc|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 9 UC campuses by w (#1 UC Berkeley 277, tease UCLA (5th))",
+   "views_mid": 4525,
+   "views_lo": 2461,
+   "views_hi": 8318,
+   "win_rate": 0.99,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + grouping by university system (UC, Cal State); + more famous schools on screen (+1 tier); same grouping 8d ago (-0.25)"
+  },
+  {
+   "id": "rivalry:university-of-georgia|georgia-institute-of-technology-main-campus",
+   "format": "rivalry",
+   "slot": "experiment",
+   "new": [
+    "rivalry"
+   ],
+   "what": "rivalry: UGA vs Georgia Tech",
+   "views_mid": 295,
+   "views_lo": 98,
+   "views_hi": 884,
+   "win_rate": 0.003,
+   "why": "+ a two-school rivalry head-to-head; + more famous schools on screen (+1 tier); + one more school in the ranking; rivalry used 2d ago (-0.2); rivalry used 2d ago (-0.2); rivalry used 1d ago (-0.2); rivalry week (The Game, the Iron Bowl and the Apple Cup are Nov 28) (+0.35)"
+  }
+ ],
+ "top": [
+  {
+   "id": "system:uc|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: All 9 UC campuses by w (#1 UC Berkeley 277, tease UCLA (5th))",
+   "views_mid": 8494,
+   "views_lo": 2208,
+   "views_hi": 32663,
+   "win_rate": 0.9,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + grouping by university system (UC, Cal State); same grouping 8d ago (-0.25)"
+  },
+  {
+   "id": "conf:ivy-league|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: All 8 Ivy League schools by w (#1 Yale 223, tease Harvard (3rd))",
+   "views_mid": 6002,
+   "views_lo": 1519,
+   "views_hi": 23705,
+   "win_rate": 0.367,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + a 15-20 second top-3 cut; same grouping 7d ago (-0.25); teased Harvard 7d ago (-0.3); teased Harvard 3d ago (-0.3)"
+  },
+  {
+   "id": "state:CA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th))",
+   "views_mid": 5065,
+   "views_lo": 1429,
+   "views_hi": 17939,
+   "win_rate": 0.74,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); teased Stanford 1d ago (-0.3)"
+  },
+  {
+   "id": "state:FL|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Big Florida universities by w (#1 Florida State 50, tease Florida (2nd))",
+   "views_mid": 4925,
+   "views_lo": 1362,
+   "views_hi": 17796,
+   "win_rate": 0.86,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "system:uc|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 9 UC campuses by w (#1 UC Berkeley 277, tease UCLA (5th))",
+   "views_mid": 4525,
+   "views_lo": 2461,
+   "views_hi": 8318,
+   "win_rate": 0.99,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + grouping by university system (UC, Cal State); + more famous schools on screen (+1 tier); same grouping 8d ago (-0.25)"
+  },
+  {
+   "id": "state:PA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Big Pennsylvania universities by w (#1 Penn State 156, tease Penn (4th))",
+   "views_mid": 3964,
+   "views_lo": 1130,
+   "views_hi": 13887,
+   "win_rate": 0.19,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 7d ago (-0.25); teased Penn 7d ago (-0.3)"
+  },
+  {
+   "id": "famous:20|mile|part2",
+   "format": "part2",
+   "slot": null,
+   "new": [
+    "part2"
+   ],
+   "what": "part2: 20 famous American universities by mile (#1 NYU 4608, tease Harvard (7th))",
+   "views_mid": 3309,
+   "views_lo": 1053,
+   "views_hi": 10397,
+   "win_rate": 0.567,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - a 'part 2' of an earlier hit; + a famous-schools grouping"
+  },
+  {
+   "id": "conf:ivy-league|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: All 8 Ivy League schools by w (#1 Yale 223, tease Harvard (3rd))",
+   "views_mid": 3091,
+   "views_lo": 1739,
+   "views_hi": 5495,
+   "win_rate": 0.573,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X'); same grouping 7d ago (-0.25); teased Harvard 7d ago (-0.3); teased Harvard 3d ago (-0.3)"
+  },
+  {
+   "id": "state:NY|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: New York universities with 10,000+ students by w (#1 Touro 1478, tease Columbia (9th))",
+   "views_mid": 2826,
+   "views_lo": 804,
+   "views_hi": 9916,
+   "win_rate": 0.067,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); teased Columbia 7d ago (-0.3)"
+  },
+  {
+   "id": "state:UT|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Utah universities with 10,000+ students by w (#1 BYU 29, tease Utah (4th))",
+   "views_mid": 2201,
+   "views_lo": 623,
+   "views_hi": 7769,
+   "win_rate": 0.2,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "state:PA|w|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [],
+   "what": "countdown: Big Pennsylvania universities by w (#1 Penn State 156, tease Penn (4th))",
+   "views_mid": 2154,
+   "views_lo": 1446,
+   "views_hi": 3209,
+   "win_rate": 0.573,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + naming the upset in the hook ('Hint: it's not X'); + more famous schools on screen (+1 tier); same grouping 7d ago (-0.25); teased Penn 7d ago (-0.3)"
+  },
+  {
+   "id": "state:FL|w|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [],
+   "what": "countdown: Big Florida universities by w (#1 Florida State 50, tease Florida (2nd))",
+   "views_mid": 2099,
+   "views_lo": 1423,
+   "views_hi": 3096,
+   "win_rate": 0.983,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + naming the upset in the hook ('Hint: it's not X'); + more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "city:Philadelphia-PA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_city",
+    "short"
+   ],
+   "what": "short: Philadelphia colleges with 5,000+ students by w (#1 Thomas Jefferson 562, tease Penn (3rd))",
+   "views_mid": 2023,
+   "views_lo": 496,
+   "views_hi": 8238,
+   "win_rate": 0.11,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - grouping by city; teased Penn 7d ago (-0.3)"
+  },
+  {
+   "id": "city:Washington-DC|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_city",
+    "short"
+   ],
+   "what": "short: Washington colleges with 5,000+ students by w (#1 GW 280, tease Georgetown (3rd))",
+   "views_mid": 2011,
+   "views_lo": 495,
+   "views_hi": 8154,
+   "win_rate": 0.233,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - grouping by city"
+  },
+  {
+   "id": "state:WI|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Wisconsin universities with 10,000+ students by w (#1 Wisconsin 86)",
+   "views_mid": 1874,
+   "views_lo": 513,
+   "views_hi": 6838,
+   "win_rate": 0.2,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - more famous schools on screen (+1 tier)"
+  }
+ ]
+}

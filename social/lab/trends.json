@@ -1,11 +1,11 @@
 {
- "date": "2026-11-20",
+ "date": "2026-11-21",
  "pin": [
-  "conf:acc|w|countdown",
-  "rivalry:the-university-of-alabama|auburn-university",
-  "state:TX|w|countdown",
-  "conf:big-12|w|countdown"
+  "conf:ivy-league|w|countdown",
+  "rivalry:university-of-florida|florida-state-university",
+  "system:uc|w|countdown",
+  "rivalry:university-of-georgia|georgia-institute-of-technology-main-campus"
  ],
  "boost": [],
- "note": "2026-11-20: countdowns only, each with the Laura girl-voice hook. ACC (Berkeley 1st, Stanford 12th) and big Texas (UT Austin 1st, Texas A&M 8th, ahead of the Lone Star Showdown Nov 27) and Big 12 return as refreshed countdowns (last run Nov 5); the Iron Bowl head-to-head (Nov 28) is the rivalry. Michigan-Ohio State is saved for Nov 27."
+ "note": "2026-11-21: Harvard-Yale is today, so the Ivy countdown (Yale 1st, Harvard 3rd) goes out; Florida-Florida State head-to-head ahead of Nov 28. Lab fills the rest; countdowns only with the Laura hook."
 }

@@ -273,6 +273,22 @@
    "what": "rivalry: Alabama vs Auburn",
    "status": "posted",
    "predicted": 398
+  },
+  {
+   "date": "2026-11-21",
+   "video": "rivalry-florida-state-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: Florida State vs Florida",
+   "status": "posted",
+   "predicted": 394
+  },
+  {
+   "date": "2026-11-21",
+   "video": "rivalry-uga-rivalry",
+   "experiment": "rivalry",
+   "what": "rivalry: UGA vs Georgia Tech",
+   "status": "posted",
+   "predicted": 295
   }
  ]
 }

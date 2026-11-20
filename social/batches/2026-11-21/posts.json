@@ -1,0 +1,245 @@
+{
+ "tiktok": [
+  {
+   "video": "ivy-league-countdown",
+   "at": "2026-11-21T12:17:00-05:00",
+   "text": "Harvard is 3rd 👀 Which Ivy League school has the most restaurants within a 10-minute walk? Send this to your friend at another Ivy League school.\n\n#yale #columbia #harvard #collegelife #collegefood"
+  },
+  {
+   "video": "rivalry-florida-state-rivalry",
+   "at": "2026-11-21T15:23:00-05:00",
+   "text": "Florida State vs Florida 👀 Which campus has more restaurants within a 10-minute walk? Comment your guess before it shows.\n\n#floridastate #florida #collegelife #collegefood"
+  },
+  {
+   "video": "uc-countdown",
+   "at": "2026-11-21T18:21:00-05:00",
+   "text": "UCLA is 5th 👀 Which UC campus has the most restaurants within a 10-minute walk? Send this to your friend at another UC.\n\n#ucberkeley #ucdavis #ucirvine #collegelife #collegefood"
+  },
+  {
+   "video": "rivalry-uga-rivalry",
+   "at": "2026-11-21T21:21:00-05:00",
+   "text": "UGA vs Georgia Tech 👀 Which campus has more restaurants within a 10-minute walk? Comment your guess before it shows.\n\n#uga #georgiatech #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-ivy-league-countdown",
+   "at": "2026-11-21T16:43:00-05:00",
+   "card": "ivy-league-countdown",
+   "thread": [
+    "Yale edges out Columbia by 9 for the most restaurants within a 10-minute walk of campus.\n\nAll 8 Ivy League schools:",
+    "1. Yale: 223\n2. Columbia: 214\n3. Harvard: 156\n4. Brown: 133\n5. Penn: 125\n6. Princeton: 97\n7. Cornell: 69\n8. Dartmouth: 39",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/ivy-league/"
+   ]
+  },
+  {
+   "id": "x-rivalry-florida-state-rivalry",
+   "at": "2026-11-21T17:41:00-05:00",
+   "card": "rivalry-florida-state-rivalry",
+   "thread": [
+    "Florida State has 50 restaurants within a 10-minute walk of campus. Florida has 48.",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus: https://www.savorscout.net/campus/florida-state-university/"
+   ]
+  },
+  {
+   "id": "x-uc-countdown",
+   "at": "2026-11-21T18:43:00-05:00",
+   "card": "uc-countdown",
+   "thread": [
+    "UC Berkeley has more restaurants within a 10-minute walk of campus than UC Davis, UC Irvine and UC San Diego combined.\n\nAll 9 UC campuses:",
+    "1. UC Berkeley: 277\n2. UC Davis: 43\n3. UC Irvine: 37\n4. UC San Diego: 29\n5. UCLA: 14\n6. UC Riverside: 12\n7. UC Santa Barbara: 2\n8. UC Santa Cruz: 1\n9. UC Merced: 0",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/university-of-california/"
+   ]
+  },
+  {
+   "id": "x-rivalry-uga-rivalry",
+   "at": "2026-11-21T19:39:00-05:00",
+   "card": "rivalry-uga-rivalry",
+   "thread": [
+    "UGA has 98 restaurants within a 10-minute walk of campus. Georgia Tech has 34.",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus: https://www.savorscout.net/campus/university-of-georgia/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-ivy-league-countdown",
+   "at": "2026-11-21T17:11:00-05:00",
+   "card": "ivy-league-countdown",
+   "topic": "Ivy League",
+   "thread": [
+    "Yale edges out Columbia by 9 for the most restaurants within a 10-minute walk of campus. All 8 Ivy League schools:\n\nYale 223, Columbia 214, Harvard 156, Brown 133, Penn 125, Princeton 97, Cornell 69, Dartmouth 39.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/ivy-league/"
+   ]
+  },
+  {
+   "id": "t-rivalry-florida-state-rivalry",
+   "at": "2026-11-21T18:09:00-05:00",
+   "card": "rivalry-florida-state-rivalry",
+   "topic": "College Football",
+   "thread": [
+    "Florida State has 50 restaurants within a 10-minute walk of campus. Florida has 48.\n\nWhich rivalry should we settle next?",
+    "Look up any campus: https://www.savorscout.net/campus/florida-state-university/"
+   ]
+  },
+  {
+   "id": "t-uc-countdown",
+   "at": "2026-11-21T19:09:00-05:00",
+   "card": "uc-countdown",
+   "topic": "UC",
+   "thread": [
+    "UC Berkeley has more restaurants within a 10-minute walk of campus than UC Davis, UC Irvine and UC San Diego combined. All 9 UC campuses:\n\nUC Berkeley 277, UC Davis 43, UC Irvine 37, UC San Diego 29, UCLA 14, UC Riverside 12, UC Santa Barbara 2, UC Santa Cruz 1, UC Merced 0.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/university-of-california/"
+   ]
+  },
+  {
+   "id": "t-rivalry-uga-rivalry",
+   "at": "2026-11-21T20:13:00-05:00",
+   "card": "rivalry-uga-rivalry",
+   "topic": "College Football",
+   "thread": [
+    "UGA has 98 restaurants within a 10-minute walk of campus. Georgia Tech has 34.\n\nWhich rivalry should we settle next?",
+    "Look up any campus: https://www.savorscout.net/campus/university-of-georgia/"
+   ]
+  }
+ ],
+ "cards": {
+  "ivy-league-countdown": {
+   "type": "ranking",
+   "title": "Ivy League schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 8 Ivy League schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Yale",
+     223
+    ],
+    [
+     "2",
+     "Columbia",
+     214
+    ],
+    [
+     "3",
+     "Harvard",
+     156
+    ],
+    [
+     "4",
+     "Brown",
+     133
+    ],
+    [
+     "5",
+     "Penn",
+     125
+    ],
+    [
+     "6",
+     "Princeton",
+     97
+    ],
+    [
+     "7",
+     "Cornell",
+     69
+    ],
+    [
+     "8",
+     "Dartmouth",
+     39
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "rivalry-florida-state-rivalry": {
+   "type": "ranking",
+   "title": "Florida State vs Florida: *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus.",
+   "rows": [
+    [
+     "1",
+     "Florida State",
+     50
+    ],
+    [
+     "2",
+     "Florida",
+     48
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "uc-countdown": {
+   "type": "ranking",
+   "title": "UC campuses ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 9 UC campuses. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "UC Davis",
+     43
+    ],
+    [
+     "3",
+     "UC Irvine",
+     37
+    ],
+    [
+     "4",
+     "UC San Diego",
+     29
+    ],
+    [
+     "5",
+     "UCLA",
+     14
+    ],
+    [
+     "6",
+     "UC Riverside",
+     12
+    ],
+    [
+     "7",
+     "UC Santa Barbara",
+     2
+    ],
+    [
+     "8",
+     "UC Santa Cruz",
+     1
+    ],
+    [
+     "9",
+     "UC Merced",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "rivalry-uga-rivalry": {
+   "type": "ranking",
+   "title": "UGA vs Georgia Tech: *restaurants within a 10-minute walk*",
+   "subtitle": "Places to eat within half a mile of each campus.",
+   "rows": [
+    [
+     "1",
+     "UGA",
+     98
+    ],
+    [
+     "2",
+     "Georgia Tech",
+     34
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

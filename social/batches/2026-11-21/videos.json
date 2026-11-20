@@ -1,0 +1,420 @@
+{
+ "date": "2026-11-21",
+ "videos": [
+  {
+   "id": "ivy-league-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/ivy-league/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "yale-university",
+     "text": "Which Ivy League school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Harvard.",
+     "say": "Which Ivy League school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "All 8 Ivy League schools",
+     "rows": [
+      [
+       "8",
+       "Dartmouth",
+       "39"
+      ],
+      [
+       "7",
+       "Cornell",
+       "69"
+      ],
+      [
+       "6",
+       "Princeton",
+       "97"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Dartmouth, with 39. Cornell, 69. Princeton, 97."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Penn",
+     "count": 125,
+     "sub": "Busiest food street: Walnut St",
+     "map": "university-of-pennsylvania",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Penn. 125. Busiest food street: Walnut Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Brown",
+     "count": 133,
+     "sub": "Busiest food street: Thayer St",
+     "map": "brown-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Brown. 133. Busiest food street: Thayer Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Harvard",
+     "count": 156,
+     "sub": "Busiest food street: Massachusetts Ave",
+     "map": "harvard-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Harvard. 156. Busiest food street: Massachusetts Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Columbia",
+     "count": 214,
+     "sub": "Busiest food street: Broadway",
+     "map": "columbia-university-in-the-city-of-new-york",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Columbia. 214. Busiest food street: Broadway."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Yale",
+     "count": 223,
+     "sub": "Busiest food street: Chapel St",
+     "map": "yale-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Yale. 223."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Ivy League school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which conference should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "conf:ivy-league",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:ivy-league|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "rivalry-florida-state-rivalry",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/florida-state-university/",
+   "scenes": [
+    {
+     "beats": 7,
+     "style": "hook",
+     "map": "florida-state-university",
+     "text": "Florida State vs Florida: which campus has more *restaurants within a 10-minute walk?*",
+     "sub": "Comment your guess before it shows.",
+     "say": "Florida State vs Florida: which campus has more restaurants within a 10-minute walk? Guess before it shows."
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "",
+     "text": "Florida",
+     "count": 48,
+     "sub": "Busiest food street: University Ave",
+     "map": "university-of-florida",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Florida: 48."
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "Florida State",
+     "count": 50,
+     "sub": "Busiest food street: Tennessee St",
+     "map": "florida-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Florida State: 50."
+    },
+    {
+     "beats": 8,
+     "style": "cap",
+     "text": "Florida State wins by *2.*",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Florida State wins by 2."
+    },
+    {
+     "beats": 7,
+     "style": "cap",
+     "text": "Busiest food street within a mile: *University Ave* at Florida (70 places), *Tennessee St* at Florida State (49)",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Within a mile, Florida's busiest food street, University Avenue, has 70. Florida State's, Tennessee Street, has 49."
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Which rivalry should we settle next? *Comment below.*",
+     "sub": "Send this to a Florida fan.",
+     "reuse": 3,
+     "say": "Which rivalry should we settle next? Comment below."
+    }
+   ],
+   "lab": {
+    "key": "rivalry:university-of-florida|florida-state-university",
+    "metric": "w",
+    "format": "rivalry",
+    "candidate": "rivalry:university-of-florida|florida-state-university",
+    "style": {
+     "punch": true,
+     "loop_end": false,
+     "hook_beats": 7,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "uc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/university-of-california/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which UC campus has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UCLA.",
+     "say": "Which UC campus has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "All 9 UC campuses",
+     "rows": [
+      [
+       "9",
+       "UC Merced",
+       "0"
+      ],
+      [
+       "8",
+       "UC Santa Cruz",
+       "1"
+      ],
+      [
+       "7",
+       "UC Santa Barbara",
+       "2"
+      ],
+      [
+       "6",
+       "UC Riverside",
+       "12"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UC Merced. Zero. Pack a lunch. UC Santa Cruz, 1. UC Santa Barbara, 2. UC Riverside, 12."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UCLA",
+     "count": 14,
+     "sub": "Busiest food street: Gayley Ave",
+     "map": "university-of-california-los-angeles",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: UCLA. 14. Busiest food street: Gayley Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UC San Diego",
+     "count": 29,
+     "sub": "Busiest food street: Villa La Jolla Dr",
+     "map": "university-of-california-san-diego",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: UC San Diego. 29. Busiest food street: Villa La Jolla Drive."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UC Irvine",
+     "count": 37,
+     "sub": "Busiest food street: Campus Dr",
+     "map": "university-of-california-irvine",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UC Irvine. 37. Busiest food street: Campus Drive."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UC Davis",
+     "count": 43,
+     "sub": "Busiest food street: G St",
+     "map": "university-of-california-davis",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: UC Davis. 43. Busiest food street: G Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: UC Berkeley. 277. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another UC.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which system should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "system:uc",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "system:uc|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "rivalry-uga-rivalry",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/university-of-georgia/",
+   "scenes": [
+    {
+     "beats": 7,
+     "style": "hook",
+     "map": "university-of-georgia",
+     "text": "UGA vs Georgia Tech: which campus has more *restaurants within a 10-minute walk?*",
+     "sub": "Comment your guess before it shows.",
+     "say": "UGA vs Georgia Tech: which campus has more restaurants within a 10-minute walk? Guess before it shows."
+    },
+    {
+     "beats": 11,
+     "style": "rank",
+     "num": "",
+     "text": "Georgia Tech",
+     "count": 34,
+     "sub": "Busiest food street: Peachtree St",
+     "map": "georgia-institute-of-technology-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "Georgia Tech: 34."
+    },
+    {
+     "beats": 12,
+     "style": "rank",
+     "num": "",
+     "text": "UGA",
+     "count": 98,
+     "sub": "Busiest food street: Broad St",
+     "map": "university-of-georgia",
+     "label": "places to eat within a 10-minute walk",
+     "punch": [
+      0.5
+     ],
+     "say": "UGA: 98."
+    },
+    {
+     "beats": 8,
+     "style": "cap",
+     "text": "UGA has more than *twice as many.*",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "UGA has more than twice as many."
+    },
+    {
+     "beats": 7,
+     "style": "cap",
+     "text": "Busiest food street within a mile: *Peachtree St* at Georgia Tech (139 places), *Broad St* at UGA (33)",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Within a mile, Georgia Tech's busiest food street, Peachtree Street, has 139. UGA's, Broad Street, has 33."
+    },
+    {
+     "beats": 7,
+     "style": "end",
+     "text": "Which rivalry should we settle next? *Comment below.*",
+     "sub": "Send this to a Georgia Tech fan.",
+     "reuse": 3,
+     "say": "Which rivalry should we settle next? Comment below."
+    }
+   ],
+   "lab": {
+    "key": "rivalry:university-of-georgia|georgia-institute-of-technology-main-campus",
+    "metric": "w",
+    "format": "rivalry",
+    "candidate": "rivalry:university-of-georgia|georgia-institute-of-technology-main-campus",
+    "style": {
+     "punch": true,
+     "loop_end": false,
+     "hook_beats": 7,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

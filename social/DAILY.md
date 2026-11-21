@@ -8,6 +8,15 @@ the `social-media` branch (`sounds/`) rotates, least recently used first.
 A scheduled Claude session runs this every afternoon and schedules the next
 day. These are its steps. A person can run them the same way.
 
+## Built ahead: Nov 22-29 (made on Nov 21)
+
+The owner asked for a full week built in advance so they can just post. Batches Nov 22-29 are rendered and were
+handed over (videos, cards, POST-THESE.txt). The daily run builds only when the next missing day is at most one
+day away, so it rests until Nov 29, when it builds Nov 30. A reminder publishes Nov 30 through Buffer at 9:30 am ET.
+Hooks: the ElevenLabs free tier runs one generation at a time, so `cdvoice.py hooks-all <date>` puts a day's hooks
+in one prompt and `cdvoice.py cut-hooks <file> <date>` cuts the take. Maps: `make_day.py maps <date>` reuses maps
+from earlier days. The build counts clips used or rejected in unpublished batches, so footage never repeats.
+
 ## Buffer is out of API requests until Mon Nov 30, 9:18 am ET
 
 Buffer allows 3,000 API requests per 30 days (150 per 15 minutes, 600 per day). The old stats pull asked

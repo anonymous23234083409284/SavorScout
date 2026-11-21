@@ -82,3 +82,6 @@ twice and nothing is re-judged. Before drafting: `python outreach/outreach.py re
 site. Never pose as a chef, restaurateur, dietitian, or PR rep, and never send an answer with an
 opinion or personal story he hasn't approved. One answer per outlet per story; for outlets that post
 many near-identical questions (College Recruiter), answer at most two, each with a different story.
+- **No personal exposure (the owner's rule, Nov 21).** Skip any request that needs a headshot, photos,
+  a bio with personal details, a recorded interview, video or TV. Only text answers or data-led pitches
+  that cite Savor Scout's numbers.

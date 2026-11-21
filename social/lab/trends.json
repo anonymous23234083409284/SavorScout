@@ -1,11 +1,11 @@
 {
- "date": "2026-11-21",
+ "date": "2026-11-22",
  "pin": [
-  "conf:ivy-league|w|countdown",
-  "rivalry:university-of-florida|florida-state-university",
-  "system:uc|w|countdown",
-  "rivalry:university-of-georgia|georgia-institute-of-technology-main-campus"
+  "state:PA|w|countdown",
+  "state:VA|w|countdown",
+  "state:NC|w|countdown",
+  "city:Washington-DC|w|countdown"
  ],
  "boost": [],
- "note": "2026-11-21: Harvard-Yale is today, so the Ivy countdown (Yale 1st, Harvard 3rd) goes out; Florida-Florida State head-to-head ahead of Nov 28. Lab fills the rest; countdowns only with the Laura hook."
+ "note": "2026-11-22: owner (Nov 21): stick with what works, countdowns only, post consistently. Four proven countdowns re-run with the Laura hook: Pennsylvania (5,914 views Nov 6), Virginia (4,228 Nov 7), North Carolina (3,957 Nov 7) and DC (5,538 Nov 12). No rivalries, no street metric (both measured below countdowns)."
 }

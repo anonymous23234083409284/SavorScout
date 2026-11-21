@@ -1,0 +1,282 @@
+{
+ "tiktok": [
+  {
+   "video": "pa-countdown",
+   "at": "2026-11-22T12:23:00-05:00",
+   "text": "Penn is 4th 👀 Which big Pennsylvania university has the most restaurants within a 10-minute walk? Send this to your friend at another Pennsylvania school.\n\n#pennstate #drexel #pitt #collegelife #collegefood"
+  },
+  {
+   "video": "washington-dc-countdown",
+   "at": "2026-11-22T15:18:00-05:00",
+   "text": "Georgetown is 3rd 👀 Which college in Washington, D.C. has the most restaurants within a 10-minute walk? Send this to your friend at another D.C. college.\n\n#gw #howard #georgetown #collegelife #collegefood"
+  },
+  {
+   "video": "va-countdown",
+   "at": "2026-11-22T18:23:00-05:00",
+   "text": "UVA is 3rd 👀 Which big Virginia university has the most restaurants within a 10-minute walk? Send this to your friend at another Virginia school.\n\n#vcu #virginiatech #uva #collegelife #collegefood"
+  },
+  {
+   "video": "nc-countdown",
+   "at": "2026-11-22T21:18:00-05:00",
+   "text": "Duke is 10th 👀 Which big North Carolina university has the most restaurants within a 10-minute walk? Send this to your friend at another North Carolina school.\n\n#uncchapelhill #ncstate #eastcarolina #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-pa-countdown",
+   "at": "2026-11-22T16:39:00-05:00",
+   "card": "pa-countdown",
+   "thread": [
+    "Penn State has the most restaurants within a 10-minute walk of campus of any big Pennsylvania university. Drexel is 21 behind.\n\nThe big Pennsylvania universities:",
+    "1. Penn State: 156\n2. Drexel: 135\n2. Pitt: 135\n4. Penn: 125\n5. Temple: 91",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/pennsylvania/"
+   ]
+  },
+  {
+   "id": "x-washington-dc-countdown",
+   "at": "2026-11-22T17:38:00-05:00",
+   "card": "washington-dc-countdown",
+   "thread": [
+    "GW has more restaurants within a 10-minute walk of campus than Howard, Georgetown and Catholic University combined.\n\nEvery Washington, D.C. college with 5,000+ students:",
+    "1. GW: 280\n2. Howard: 77\n3. Georgetown: 52\n4. Catholic University: 35\n5. American: 13",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/dc"
+   ]
+  },
+  {
+   "id": "x-va-countdown",
+   "at": "2026-11-22T18:38:00-05:00",
+   "card": "va-countdown",
+   "thread": [
+    "VCU has more than twice as many restaurants within a 10-minute walk of campus as Virginia Tech.\n\nEvery Virginia university with 10,000+ students:",
+    "1. VCU: 130\n2. Virginia Tech: 64\n3. UVA: 58\n4. Liberty: 40\n5. Old Dominion: 35\n6. George Mason: 17\n7. JMU: 11\n8. Regent: 9",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/va"
+   ]
+  },
+  {
+   "id": "x-nc-countdown",
+   "at": "2026-11-22T19:42:00-05:00",
+   "card": "nc-countdown",
+   "thread": [
+    "UNC Chapel Hill has the most restaurants within a 10-minute walk of campus of any big North Carolina university. NC State is 12 behind.\n\nEvery North Carolina university with 10,000+ students:",
+    "1. UNC Chapel Hill: 87\n2. NC State: 75\n3. East Carolina: 57\n4. App State: 47\n5. UNC Greensboro: 36\n6. UNC Charlotte: 23\n7. UNC Wilmington: 22\n8. NC A&T: 15\n9. Western Carolina: 13\n10. Duke: 9",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/nc"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-pa-countdown",
+   "at": "2026-11-22T17:09:00-05:00",
+   "card": "pa-countdown",
+   "topic": "Pennsylvania",
+   "thread": [
+    "Penn State has the most restaurants within a 10-minute walk of campus of any big Pennsylvania university. Drexel is 21 behind. The big Pennsylvania universities:\n\nPenn State 156, Drexel 135, Pitt 135, Penn 125, Temple 91.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/pennsylvania/"
+   ]
+  },
+  {
+   "id": "t-washington-dc-countdown",
+   "at": "2026-11-22T18:11:00-05:00",
+   "card": "washington-dc-countdown",
+   "topic": "D.C. colleges",
+   "thread": [
+    "GW has more restaurants within a 10-minute walk of campus than Howard, Georgetown and Catholic University combined. Every Washington, D.C. college with 5,000+ students:\n\nGW 280, Howard 77, Georgetown 52, Catholic University 35, American 13.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/dc"
+   ]
+  },
+  {
+   "id": "t-va-countdown",
+   "at": "2026-11-22T19:12:00-05:00",
+   "card": "va-countdown",
+   "topic": "UVA",
+   "thread": [
+    "VCU has more than twice as many restaurants within a 10-minute walk of campus as Virginia Tech. Every Virginia university with 10,000+ students:\n\nVCU 130, Virginia Tech 64, UVA 58, Liberty 40, Old Dominion 35, George Mason 17, JMU 11, Regent 9.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/va"
+   ]
+  },
+  {
+   "id": "t-nc-countdown",
+   "at": "2026-11-22T20:11:00-05:00",
+   "card": "nc-countdown",
+   "topic": "UNC Greensboro",
+   "thread": [
+    "UNC Chapel Hill has the most restaurants within a 10-minute walk of campus of any big North Carolina university. NC State is 12 behind. Every North Carolina university with 10,000+ students:\n\nUNC Chapel Hill 87, NC State 75, East Carolina 57, App State 47, UNC Greensboro 36, UNC Charlotte 23, UNC Wilmington 22, NC A&T 15, Western Carolina 13, Duke 9.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/nc"
+   ]
+  }
+ ],
+ "cards": {
+  "pa-countdown": {
+   "type": "ranking",
+   "title": "Big Pennsylvania universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "The big Pennsylvania universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Penn State",
+     156
+    ],
+    [
+     "2",
+     "Drexel",
+     135
+    ],
+    [
+     "2",
+     "Pitt",
+     135
+    ],
+    [
+     "4",
+     "Penn",
+     125
+    ],
+    [
+     "5",
+     "Temple",
+     91
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "washington-dc-countdown": {
+   "type": "ranking",
+   "title": "D.C. colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Washington, D.C. college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "GW",
+     280
+    ],
+    [
+     "2",
+     "Howard",
+     77
+    ],
+    [
+     "3",
+     "Georgetown",
+     52
+    ],
+    [
+     "4",
+     "Catholic University",
+     35
+    ],
+    [
+     "5",
+     "American",
+     13
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "va-countdown": {
+   "type": "ranking",
+   "title": "Big Virginia universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Virginia university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "VCU",
+     130
+    ],
+    [
+     "2",
+     "Virginia Tech",
+     64
+    ],
+    [
+     "3",
+     "UVA",
+     58
+    ],
+    [
+     "4",
+     "Liberty",
+     40
+    ],
+    [
+     "5",
+     "Old Dominion",
+     35
+    ],
+    [
+     "6",
+     "George Mason",
+     17
+    ],
+    [
+     "7",
+     "JMU",
+     11
+    ],
+    [
+     "8",
+     "Regent",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "nc-countdown": {
+   "type": "ranking",
+   "title": "Big North Carolina universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every North Carolina university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UNC Chapel Hill",
+     87
+    ],
+    [
+     "2",
+     "NC State",
+     75
+    ],
+    [
+     "3",
+     "East Carolina",
+     57
+    ],
+    [
+     "4",
+     "App State",
+     47
+    ],
+    [
+     "5",
+     "UNC Greensboro",
+     36
+    ],
+    [
+     "6",
+     "UNC Charlotte",
+     23
+    ],
+    [
+     "7",
+     "UNC Wilmington",
+     22
+    ],
+    [
+     "8",
+     "NC A&T",
+     15
+    ],
+    [
+     "9",
+     "Western Carolina",
+     13
+    ],
+    [
+     "10",
+     "Duke",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

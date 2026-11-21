@@ -289,6 +289,14 @@
    "what": "rivalry: UGA vs Georgia Tech",
    "status": "posted",
    "predicted": 295
+  },
+  {
+   "date": "2026-11-22",
+   "video": "washington-dc-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Washington colleges with 5,000+ students by w (#1 GW 280, tease Georgetown (3rd))",
+   "status": "posted",
+   "predicted": 976
   }
  ]
 }

@@ -403,10 +403,28 @@ def stats():
     query = """query($id: PostId!) { post(input: {id: $id}) { id status sentAt text externalLink
       metrics { name value } } }"""
     rows, kept, missing, limited = [], 0, 0, False
+    # Buffer's API allows 3,000 requests per 30 days (150 per 15 min, 600 per day). Pulling every post
+    # every run used them all up by Nov 21, which stopped posting until Nov 30. So: only ask about posts
+    # whose numbers are still moving (TikTok from the last 10 days, X/Threads from the last 3), and never
+    # more than 60 requests in one run. Older posts keep their last numbers.
+    now = dt.datetime.now(dt.timezone.utc)
+    asked = 0
+    def settled(pid, service):
+        try:
+            d = dt.datetime.fromisoformat(str(due.get(pid) or "")[:25].replace("Z", "+00:00"))
+            d = d if d.tzinfo else d.replace(tzinfo=tz)
+        except ValueError:
+            return True
+        return (now - d).days > (10 if service == "tiktok" else 3)
     for pid in sorted(ids, key=lambda i: due.get(i) or "", reverse=True):   # newest first: they matter most
         service, what = ids[pid]
         p = None
-        if not limited:
+        if settled(pid, service) or asked >= 60:
+            limited_here = True
+        else:
+            limited_here = False
+            asked += 1
+        if not limited and not limited_here:
             try:
                 p = buffer.gql(query, {"id": pid}, retries=4)["post"]
             except buffer.BufferError as e:
@@ -450,8 +468,33 @@ def stats():
     return rows
 
 
+def handoff(date):
+    """A posting sheet for when Buffer can't be used (its API was out of requests Nov 21-30): every post
+    for the day in time order, with the file to attach and the text to paste. Writes POST-THESE.txt next
+    to the rendered videos and cards."""
+    import datetime as dt
+    p = json.load(open(os.path.join(SOCIAL, "batches", date, "posts.json")))
+    out_dir = os.path.join(SOCIAL, "out", "batches", date)
+    items = [(x["at"], "TikTok", x["video"] + ".mp4", [x["text"]]) for x in p.get("tiktok", [])]
+    items += [(x["at"], "X", x["card"] + ".jpg (in cards/)", x["thread"]) for x in p.get("twitter", [])]
+    items += [(x["at"], "Threads", x["card"] + ".jpg (in cards/)", x["thread"]) for x in p.get("threads", [])]
+    lines = [f"Posts for {date} (Eastern time). Attach the file, paste the text. In a thread, each part is a reply to the one before.", ""]
+    for at, where, f, parts in sorted(items):
+        t = dt.datetime.fromisoformat(at)
+        lines += [f"=== {t:%-I:%M %p}  {where}  ·  attach {f}"]
+        for i, part in enumerate(parts):
+            lines += ([f"--- part {i + 1}"] if len(parts) > 1 else []) + [part]
+        lines += [""]
+    path = os.path.join(out_dir, "POST-THESE.txt")
+    open(path, "w").write("\n".join(lines))
+    print(path)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if cmd == "handoff":
+        handoff(sys.argv[2])
+        sys.exit(0)
     if cmd == "sounds":
         sounds(sys.argv[2])
     elif cmd == "build":

@@ -8,6 +8,16 @@ the `social-media` branch (`sounds/`) rotates, least recently used first.
 A scheduled Claude session runs this every afternoon and schedules the next
 day. These are its steps. A person can run them the same way.
 
+## Buffer is out of API requests until Mon Nov 30, 9:18 am ET
+
+Buffer allows 3,000 API requests per 30 days (150 per 15 minutes, 600 per day). The old stats pull asked
+about every post ever made (~190 requests a run) and used the month up on Nov 21. Until the reset, do not
+call Buffer at all (no `stats`, `publish`, `verify` or `update`): build and render as usual, then
+`python social/pipeline/make_day.py handoff <date>` and send the owner the four videos, the four cards and
+`social/out/batches/<date>/POST-THESE.txt` (every post in time order with the text to paste). From Nov 30,
+publish through Buffer again; `stats` now asks only about posts still gaining views (TikTok from the last
+10 days, X/Threads from the last 3) and never more than 60 requests a run.
+
 ## The daily mix (from Nov 18): countdowns only, with a girl-voice hook
 
 The owner's direction on Nov 18: stop the meme format. No skits, no meme videos and no meme-based

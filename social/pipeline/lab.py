@@ -163,6 +163,12 @@ EXTRA_NAMES.update({
     "university-of-nevada-reno": "Nevada", "university-of-new-hampshire-main-campus": "New Hampshire",
     "university-of-new-mexico-main-campus": "New Mexico", "university-of-massachusetts-amherst": "UMass Amherst",
     "university-of-maryland-college-park": "Maryland", "william-and-mary": "William & Mary", "miami-university-oxford": "Miami (Ohio)",
+    "brigham-young-university-idaho": "BYU-Idaho", "savannah-college-of-art-and-design": "SCAD", "emerson-college": "Emerson",
+    "berklee-college-of-music": "Berklee", "maryville-university-of-saint-louis": "Maryville",
+    "university-of-houston-downtown": "UH-Downtown", "university-of-houston-clear-lake": "UH-Clear Lake",
+    "southern-illinois-university-carbondale": "SIU Carbondale", "southern-illinois-university-edwardsville": "SIU Edwardsville",
+    "case-western-reserve-university": "Case Western", "university-of-akron-main-campus": "Akron", "george-washington-university": "GW", "virginia-commonwealth-university": "VCU",
+    "university-of-dayton": "Dayton", "university-of-rhode-island": "Rhode Island",
 })
 
 def short(slug):
@@ -308,7 +314,8 @@ def ranking(members, metric):
 
 # Mostly-online universities: their enrollment puts them in "10,000+ students" lists, but their address is an
 # office, so "restaurants within a 10-minute walk of campus" means nothing for them.
-ONLINE_ONLY = {"university-of-the-people", "western-governors-university", "national-university", "excelsior-university",
+ONLINE_ONLY = {"northcentral-university", "northeastern-university-professional-programs",  # (and duplicate campus listings)
+                "university-of-the-people", "western-governors-university", "national-university", "excelsior-university",
                "southern-new-hampshire-university", "university-of-phoenix-arizona", "purdue-university-global",
                "capella-university", "walden-university", "american-public-university-system"}
 
@@ -332,7 +339,7 @@ NEW_GROUPS = [
       "the-university-of-tennessee-knoxville", "the-university-of-texas-at-austin", "university-of-utah", "university-of-vermont",
       "university-of-virginia-main-campus", "university-of-washington-seattle-campus", "west-virginia-university",
       "university-of-wisconsin-madison", "university-of-wyoming"]),
-    ("conf:big-east", "conference", "Which Big East school", "Big East schools", "{n} Big East schools",
+    ("conf:big-east", "conference", "Which Big East school", "Big East schools", "{n} of the 11 Big East schools",
      "Send this to your friend at another Big East school.", "Big East school",
      ["university-of-connecticut", "villanova-university", "georgetown-university", "marquette-university", "creighton-university",
       "xavier-university", "butler-university", "st-john-s-university-new-york", "seton-hall-university", "depaul-university"]),
@@ -368,6 +375,11 @@ NEW_GROUPS = [
       "california-state-polytechnic-university-humboldt", "california-state-polytechnic-university-pomona",
       "california-polytechnic-state-university-san-luis-obispo", "san-diego-state-university", "san-jose-state-university",
       "san-francisco-state-university", "sonoma-state-university"]),
+    ("conf:a-10", "conference", "Which Atlantic 10 school", "Atlantic 10 schools", "{n} of the 14 Atlantic 10 schools",
+     "Send this to your friend at another A-10 school.", "Atlantic 10 school",
+     ["university-of-dayton", "duquesne-university", "fordham-university", "george-mason-university", "george-washington-university",
+      "loyola-university-chicago", "university-of-rhode-island", "saint-joseph-s-university", "saint-louis-university",
+      "virginia-commonwealth-university"]),
     ("group:public-ivies", "famous", "Which Public Ivy", "The original Public Ivies", "The {n} original Public Ivies",
      "Send this to your friend at another Public Ivy.", "Public Ivy",
      ["william-and-mary", "miami-university-oxford", "university-of-michigan-ann-arbor", "university-of-north-carolina-at-chapel-hill",
@@ -1248,8 +1260,11 @@ def _video_spec(c, vid):
             top_n += 1
         rest = rows[top_n:]
         if rest and c["format"] != "short":
-            scenes.append({"beats": max(4, min(16, len(rest) + 2)), "style": "list", "title": g["title"],
-                           "rows": [[str(r), short(s), str(v)] for r, s, v in reversed(rest)], "q": Q_CAMPUS})
+            # About 14 rows fit on screen: a longer list shows only its bottom 12 (Nov 21: 50 state flagships).
+            shown = list(reversed(rest))[:12]
+            title = g["title"] if len(rest) <= 14 else f"{g['title']}: the bottom {len(shown)}"
+            scenes.append({"beats": max(4, min(16, len(shown) + 2)), "style": "list", "title": title,
+                           "rows": [[str(r), short(s), str(v)] for r, s, v in shown], "q": Q_CAMPUS})
         for i in reversed(range(top_n)):
             scenes.append(rank_scene(c, i, str(rows[i][0])))
         end = {"beats": 6, "style": "end", "text": "Did we rank your school right? *Comment below.*", "sub": g["cta"]}

@@ -1,0 +1,347 @@
+{
+ "tiktok": [
+  {
+   "video": "oh-countdown",
+   "at": "2026-11-24T12:22:00-05:00",
+   "text": "Ohio State is 2nd 👀 Which big Ohio university has the most restaurants within a 10-minute walk? Send this to your friend at another Ohio school.\n\n#cincinnati #ohiostate #clevelandstate #collegelife #collegefood"
+  },
+  {
+   "video": "tech-countdown",
+   "at": "2026-11-24T15:17:00-05:00",
+   "text": "MIT is 3rd 👀 Which tech school has the most restaurants within a 10-minute walk? Send this to your friend at another tech school.\n\n#stevens #njit #mit #collegelife #collegefood"
+  },
+  {
+   "video": "ga-countdown",
+   "at": "2026-11-24T18:23:00-05:00",
+   "text": "UGA is 3rd 👀 Which big Georgia university has the most restaurants within a 10-minute walk? Send this to your friend at another Georgia school.\n\n#georgiastate #scad #uga #collegelife #collegefood"
+  },
+  {
+   "video": "wi-countdown",
+   "at": "2026-11-24T21:21:00-05:00",
+   "text": "Marquette is 2nd 👀 Which big Wisconsin university has the most restaurants within a 10-minute walk? Send this to your friend at another Wisconsin school.\n\n#wisconsin #marquette #uwmilwaukee #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-oh-countdown",
+   "at": "2026-11-24T16:43:00-05:00",
+   "card": "oh-countdown",
+   "thread": [
+    "Cincinnati has the most restaurants within a 10-minute walk of campus of any big Ohio university. Ohio State is 15 behind.\n\nEvery Ohio university with 10,000+ students:",
+    "1. Cincinnati: 101\n2. Ohio State: 86\n3. Cleveland State: 71\n4. Ohio University: 63\n5. Case Western: 60\n6. Bowling Green State: 47\n7. Dayton: 46\n8. Youngstown State: 42\n9. Akron: 30\n10. Miami (Ohio): 13\n10. Toledo: 13\n12. Kent State: 5",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/oh"
+   ]
+  },
+  {
+   "id": "x-tech-countdown",
+   "at": "2026-11-24T17:41:00-05:00",
+   "card": "tech-countdown",
+   "thread": [
+    "Stevens has the most restaurants within a 10-minute walk of campus of any tech school. NJIT is 72 behind.\n\n17 tech schools (top 14 of 17):",
+    "1. Stevens: 176\n2. NJIT: 104\n3. MIT: 84\n4. Virginia Tech: 64\n5. Texas Tech: 49\n6. Colorado School of Mines: 47\n7. Georgia Tech: 34\n8. Illinois Tech: 31\n9. WPI: 30\n10. CMU: 26\n11. Tennessee Tech: 22\n12. Louisiana Tech: 21\n13. RPI: 14\n14. Florida Tech: 5",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-ga-countdown",
+   "at": "2026-11-24T18:43:00-05:00",
+   "card": "ga-countdown",
+   "thread": [
+    "Georgia State has the most restaurants within a 10-minute walk of campus of any big Georgia university. SCAD is 48 behind.\n\nEvery Georgia university with 10,000+ students:",
+    "1. Georgia State: 194\n2. SCAD: 146\n3. UGA: 98\n4. North Georgia: 37\n5. Georgia Tech: 34\n6. Emory: 30\n7. Georgia Southern: 28\n8. West Georgia: 18\n9. Kennesaw State: 9\n9. Valdosta State: 9",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ga"
+   ]
+  },
+  {
+   "id": "x-wi-countdown",
+   "at": "2026-11-24T19:41:00-05:00",
+   "card": "wi-countdown",
+   "thread": [
+    "Wisconsin has the most restaurants within a 10-minute walk of campus of any big Wisconsin university. Marquette is 42 behind.\n\nEvery Wisconsin university with 10,000+ students:",
+    "1. Wisconsin: 86\n2. Marquette: 44\n3. UW-Milwaukee: 24\n3. UW-Whitewater: 24\n5. UW-La Crosse: 21\n6. UW-Oshkosh: 20\n7. UW-Eau Claire: 18",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/wi"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-oh-countdown",
+   "at": "2026-11-24T17:11:00-05:00",
+   "card": "oh-countdown",
+   "topic": "Ohio",
+   "thread": [
+    "Cincinnati has the most restaurants within a 10-minute walk of campus of any big Ohio university. Ohio State is 15 behind. Every Ohio university with 10,000+ students:\n\nCincinnati 101, Ohio State 86, Cleveland State 71, Ohio University 63, Case Western 60, Bowling Green State 47, Dayton 46, Youngstown State 42, Akron 30, Miami (Ohio) 13, Toledo 13, Kent State 5.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/oh"
+   ]
+  },
+  {
+   "id": "t-tech-countdown",
+   "at": "2026-11-24T18:11:00-05:00",
+   "card": "tech-countdown",
+   "topic": "Tech",
+   "thread": [
+    "Stevens has the most restaurants within a 10-minute walk of campus of any tech school. NJIT is 72 behind. 17 tech schools (top 14 of 17):\n\nStevens 176, NJIT 104, MIT 84, Virginia Tech 64, Texas Tech 49, Colorado School of Mines 47, Georgia Tech 34, Illinois Tech 31, WPI 30, CMU 26, Tennessee Tech 22, Louisiana Tech 21, RPI 14, Florida Tech 5.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-ga-countdown",
+   "at": "2026-11-24T19:13:00-05:00",
+   "card": "ga-countdown",
+   "topic": "Georgia",
+   "thread": [
+    "Georgia State has the most restaurants within a 10-minute walk of campus of any big Georgia university. SCAD is 48 behind. Every Georgia university with 10,000+ students:\n\nGeorgia State 194, SCAD 146, UGA 98, North Georgia 37, Georgia Tech 34, Emory 30, Georgia Southern 28, West Georgia 18, Kennesaw State 9, Valdosta State 9.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ga"
+   ]
+  },
+  {
+   "id": "t-wi-countdown",
+   "at": "2026-11-24T20:08:00-05:00",
+   "card": "wi-countdown",
+   "topic": "Wisconsin",
+   "thread": [
+    "Wisconsin has the most restaurants within a 10-minute walk of campus of any big Wisconsin university. Marquette is 42 behind. Every Wisconsin university with 10,000+ students:\n\nWisconsin 86, Marquette 44, UW-Milwaukee 24, UW-Whitewater 24, UW-La Crosse 21, UW-Oshkosh 20, UW-Eau Claire 18.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/wi"
+   ]
+  }
+ ],
+ "cards": {
+  "oh-countdown": {
+   "type": "ranking",
+   "title": "Big Ohio universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Ohio university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Cincinnati",
+     101
+    ],
+    [
+     "2",
+     "Ohio State",
+     86
+    ],
+    [
+     "3",
+     "Cleveland State",
+     71
+    ],
+    [
+     "4",
+     "Ohio University",
+     63
+    ],
+    [
+     "5",
+     "Case Western",
+     60
+    ],
+    [
+     "6",
+     "Bowling Green State",
+     47
+    ],
+    [
+     "7",
+     "Dayton",
+     46
+    ],
+    [
+     "8",
+     "Youngstown State",
+     42
+    ],
+    [
+     "9",
+     "Akron",
+     30
+    ],
+    [
+     "10",
+     "Miami (Ohio)",
+     13
+    ],
+    [
+     "10",
+     "Toledo",
+     13
+    ],
+    [
+     "12",
+     "Kent State",
+     5
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "tech-countdown": {
+   "type": "ranking",
+   "title": "Tech schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "17 tech schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Stevens",
+     176
+    ],
+    [
+     "2",
+     "NJIT",
+     104
+    ],
+    [
+     "3",
+     "MIT",
+     84
+    ],
+    [
+     "4",
+     "Virginia Tech",
+     64
+    ],
+    [
+     "5",
+     "Texas Tech",
+     49
+    ],
+    [
+     "6",
+     "Colorado School of Mines",
+     47
+    ],
+    [
+     "7",
+     "Georgia Tech",
+     34
+    ],
+    [
+     "8",
+     "Illinois Tech",
+     31
+    ],
+    [
+     "9",
+     "WPI",
+     30
+    ],
+    [
+     "10",
+     "CMU",
+     26
+    ],
+    [
+     "11",
+     "Tennessee Tech",
+     22
+    ],
+    [
+     "12",
+     "Louisiana Tech",
+     21
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ga-countdown": {
+   "type": "ranking",
+   "title": "Big Georgia universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Georgia university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Georgia State",
+     194
+    ],
+    [
+     "2",
+     "SCAD",
+     146
+    ],
+    [
+     "3",
+     "UGA",
+     98
+    ],
+    [
+     "4",
+     "North Georgia",
+     37
+    ],
+    [
+     "5",
+     "Georgia Tech",
+     34
+    ],
+    [
+     "6",
+     "Emory",
+     30
+    ],
+    [
+     "7",
+     "Georgia Southern",
+     28
+    ],
+    [
+     "8",
+     "West Georgia",
+     18
+    ],
+    [
+     "9",
+     "Kennesaw State",
+     9
+    ],
+    [
+     "9",
+     "Valdosta State",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "wi-countdown": {
+   "type": "ranking",
+   "title": "Big Wisconsin universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Wisconsin university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Wisconsin",
+     86
+    ],
+    [
+     "2",
+     "Marquette",
+     44
+    ],
+    [
+     "3",
+     "UW-Milwaukee",
+     24
+    ],
+    [
+     "3",
+     "UW-Whitewater",
+     24
+    ],
+    [
+     "5",
+     "UW-La Crosse",
+     21
+    ],
+    [
+     "6",
+     "UW-Oshkosh",
+     20
+    ],
+    [
+     "7",
+     "UW-Eau Claire",
+     18
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

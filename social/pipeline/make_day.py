@@ -71,6 +71,29 @@ def build(date, sounds_dir, rank_dir):
     # Clips rejected on review (wrong subject, a business name or logo) never come back either.
     used = set(history.get("clips", [])) | set(history.get("rejected", [])) | \
         (set(json.load(open(used_path))) if os.path.exists(used_path) else set())
+    # Batches built ahead or never published (Buffer was out of requests Nov 21-30) are not in history yet:
+    # their clips and the clips rejected on review count too, so a week built in one go never repeats footage.
+    import glob
+    def clip_ids(node):
+        if isinstance(node, dict):
+            if isinstance(node.get("clip"), dict) and node["clip"].get("id"):
+                yield node["clip"]["id"]
+            for v in node.values():
+                yield from clip_ids(v)
+        elif isinstance(node, list):
+            for v in node:
+                yield from clip_ids(v)
+    for other in glob.glob(os.path.join(SOCIAL, "out", "batches", "*")):
+        if os.path.abspath(other) == os.path.abspath(out):
+            continue
+        for name in ("rejected-clips.json", "reels.json"):
+            f = os.path.join(other, name)
+            if os.path.exists(f):
+                try:
+                    d = json.load(open(f))
+                except ValueError:
+                    continue
+                used |= set(d) if name == "rejected-clips.json" else set(clip_ids(d))
     json.dump(sorted(used), open(used_path, "w"))
     subprocess.run([sys.executable, os.path.join(HERE, "reel.py"), os.path.join(wdir, "videos.json"), sounds_dir, rank_dir], check=True)
 
@@ -468,6 +491,36 @@ def stats():
     return rows
 
 
+def maps(date, parallel=2):
+    """Rank maps for a batch: reuses a school's map from any earlier day and renders only the missing ones."""
+    import glob, shutil
+    from concurrent.futures import ThreadPoolExecutor
+    out = subprocess.run([sys.executable, os.path.join(HERE, "lab.py"), "maps", date], capture_output=True, text=True).stdout
+    lines = [l.split() for l in out.splitlines() if re.match(r"^[a-z0-9-]+ -?[0-9.]+ -?[0-9.]+", l)]
+    dest = os.path.join(SOCIAL, "out", "rankmaps", date)
+    os.makedirs(dest, exist_ok=True)
+    todo = []
+    for slug, lat, lng, *_ in lines:
+        d = os.path.join(dest, slug)
+        if os.path.isdir(d) and os.listdir(d):
+            continue
+        prev = [p for p in glob.glob(os.path.join(SOCIAL, "out", "rankmaps", "*", slug)) if os.path.isdir(p) and os.listdir(p)]
+        if prev:
+            shutil.copytree(sorted(prev)[-1], d, dirs_exist_ok=True)
+        else:
+            todo.append((slug, lat, lng))
+    print(f"{len(lines)} maps: {len(lines) - len(todo)} reused, {len(todo)} to render")
+    def one(t):
+        slug, lat, lng = t
+        with open(os.path.join(dest, slug + ".log"), "w") as log:
+            r = subprocess.run([sys.executable, os.path.join(HERE, "rankmap.py"), slug, lat, lng, os.path.join(dest, slug)], stdout=log, stderr=log)
+        print(f"  {slug}: {'ok' if r.returncode == 0 else 'FAILED'}", flush=True)
+        return r.returncode
+    with ThreadPoolExecutor(parallel) as ex:
+        bad = sum(1 for rc in ex.map(one, todo) if rc)
+    return bad
+
+
 def handoff(date, more=()):
     """A posting sheet for when Buffer can't be used (its API was out of requests Nov 21-30): every post
     for the day in time order, with the file to attach and the text to paste. Writes POST-THESE.txt next
@@ -498,6 +551,8 @@ def handoff_items(p):
 
 if __name__ == "__main__":
     cmd = sys.argv[1]
+    if cmd == "maps":
+        sys.exit(1 if maps(sys.argv[2]) else 0)
     if cmd == "handoff":
         handoff(sys.argv[2], sys.argv[3:])
         sys.exit(0)

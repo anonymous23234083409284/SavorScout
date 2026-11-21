@@ -1,0 +1,518 @@
+{
+ "date": "2026-11-26",
+ "videos": [
+  {
+   "id": "pac12-old-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which old Pac-12 school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Stanford.",
+     "say": "Which old Pac-12 school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "The 12 schools of the old Pac-12",
+     "rows": [
+      [
+       "12",
+       "Washington State",
+       "8"
+      ],
+      [
+       "11",
+       "UCLA",
+       "14"
+      ],
+      [
+       "10",
+       "Utah",
+       "16"
+      ],
+      [
+       "9",
+       "Stanford",
+       "29"
+      ],
+      [
+       "8",
+       "Oregon State",
+       "38"
+      ],
+      [
+       "7",
+       "Oregon",
+       "57"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Washington State, with just 8. UCLA, 14. And Stanford? Only ninth."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Washington",
+     "count": 70,
+     "sub": "Tied with CU Boulder for 5th. Busiest food street: University Way NE",
+     "map": "university-of-washington-seattle-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Washington. 70."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "CU Boulder",
+     "count": 70,
+     "sub": "Tied with Washington for 5th. Busiest food street: Pearl St",
+     "map": "university-of-colorado-boulder",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: CU Boulder. 70."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Arizona State",
+     "count": 76,
+     "sub": "Busiest food street: Mill Ave",
+     "map": "arizona-state-university-campus-immersion",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Arizona State. 76. Busiest food street: Mill Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Arizona",
+     "count": 84,
+     "sub": "Busiest food street: E University Blvd",
+     "map": "university-of-arizona",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Arizona. 84. Busiest food street: University Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "USC",
+     "count": 94,
+     "sub": "Busiest food street: Figueroa St",
+     "map": "university-of-southern-california",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: USC. 94. Busiest food street: Figueroa Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: UC Berkeley. 277. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Pac-12 school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which conference should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "conf:pac12-old",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:pac12-old|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "mo-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/mo",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-missouri-columbia",
+     "text": "Which big Missouri university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not WashU.",
+     "say": "Which Missouri university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Missouri universities with 10,000+ students",
+     "rows": [
+      [
+       "7",
+       "WashU",
+       "5"
+      ],
+      [
+       "6",
+       "UMSL",
+       "6"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: WashU, with just 5. Pack a lunch. UMSL, 6."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Missouri State",
+     "count": 23,
+     "sub": "Busiest food street: Walnut St",
+     "map": "missouri-state-university-springfield",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Missouri State. 23. Busiest food street: Walnut Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Central Missouri",
+     "count": 25,
+     "sub": "Busiest food street: Maguire St",
+     "map": "university-of-central-missouri",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Central Missouri. 25. Busiest food street: Maguire Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UMKC",
+     "count": 38,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-missouri-kansas-city",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UMKC. 38. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Saint Louis",
+     "count": 63,
+     "sub": "Busiest food street: Lindell Blvd",
+     "map": "saint-louis-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Saint Louis. 63. Busiest food street: Lindell Boulevard."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Mizzou",
+     "count": 98,
+     "sub": "Busiest food street: 9th St",
+     "map": "university-of-missouri-columbia",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Mizzou. 98."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Missouri school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:MO",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:MO|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "ut-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ut",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "brigham-young-university",
+     "text": "Which big Utah university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Utah.",
+     "say": "Which Utah university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Utah universities with 10,000+ students",
+     "rows": [
+      [
+       "7",
+       "Utah State",
+       "3"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Utah State, with just 3. Pack a lunch."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Weber State",
+     "count": 11,
+     "sub": "Tied with Utah Valley for 5th. Busiest food street: Harrison Blvd",
+     "map": "weber-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Weber State. 11."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Utah Valley",
+     "count": 11,
+     "sub": "Tied with Weber State for 5th. Busiest food street: W University Pkwy",
+     "map": "utah-valley-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Utah Valley. 11."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Utah",
+     "count": 16,
+     "sub": "Busiest food street: S 1300 E",
+     "map": "university-of-utah",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Utah. 16. Busiest food street: 1300 East."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Southern Utah",
+     "count": 17,
+     "sub": "Busiest food street: Main St",
+     "map": "southern-utah-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Southern Utah. 17. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Utah Tech",
+     "count": 27,
+     "sub": "Busiest food street: Red Cliffs Dr",
+     "map": "utah-tech-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Utah Tech. 27. Busiest food street: Red Cliffs Drive."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "BYU",
+     "count": 29,
+     "sub": "Busiest food street: N Freedom Blvd",
+     "map": "brigham-young-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: BYU. 29."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Utah school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:UT",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:UT|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "il-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/il",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "depaul-university",
+     "text": "Which big Illinois university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UChicago.",
+     "say": "Which Illinois university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "Illinois universities with 10,000+ students",
+     "rows": [
+      [
+       "11",
+       "SIU Edwardsville",
+       "0"
+      ],
+      [
+       "10",
+       "College of DuPage",
+       "7"
+      ],
+      [
+       "9",
+       "SIU Carbondale",
+       "19"
+      ],
+      [
+       "8",
+       "UChicago",
+       "25"
+      ],
+      [
+       "7",
+       "Illinois State",
+       "40"
+      ],
+      [
+       "6",
+       "Northern Illinois",
+       "42"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: SIU Edwardsville. Zero. Pack a lunch. College of DuPage, 7. And UChicago? Only eighth."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Loyola Chicago",
+     "count": 72,
+     "sub": "Busiest food street: N Clark St",
+     "map": "loyola-university-chicago",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Loyola Chicago. 72. Busiest food street: Clark Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UIC",
+     "count": 85,
+     "sub": "Busiest food street: W Taylor St",
+     "map": "university-of-illinois-chicago",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: UIC. 85. Busiest food street: Taylor Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UIUC",
+     "count": 109,
+     "sub": "Busiest food street: Green St",
+     "map": "university-of-illinois-urbana-champaign",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UIUC. 109. Busiest food street: Green Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Northwestern",
+     "count": 162,
+     "sub": "Busiest food street: Davis St",
+     "map": "northwestern-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Northwestern. 162. Busiest food street: Davis Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "DePaul",
+     "count": 488,
+     "sub": "Busiest food street: Michigan Ave",
+     "map": "depaul-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: DePaul. 488. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Illinois school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:IL",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:IL|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

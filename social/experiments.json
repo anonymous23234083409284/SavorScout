@@ -337,6 +337,110 @@
    "what": "countdown: Baltimore colleges with 5,000+ students by w (#1 Maryland, Baltimore 111, tease Johns Hopkins (2nd))",
    "status": "posted",
    "predicted": 827
+  },
+  {
+   "date": "2026-11-23",
+   "video": "flagships-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 50 state flagship universities by w (#1 UC Berkeley 277, tease Michigan (2nd))",
+   "status": "posted",
+   "predicted": 4866
+  },
+  {
+   "date": "2026-11-23",
+   "video": "hbcu-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 20 HBCUs by w (#1 Howard 77)",
+   "status": "posted",
+   "predicted": 2014
+  },
+  {
+   "date": "2026-11-23",
+   "video": "boston-ma-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592)",
+   "status": "posted",
+   "predicted": 567
+  },
+  {
+   "date": "2026-11-23",
+   "video": "flagships-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 50 state flagship universities by w (#1 UC Berkeley 277, tease Michigan (2nd))",
+   "status": "posted",
+   "predicted": 4866
+  },
+  {
+   "date": "2026-11-23",
+   "video": "hbcu-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 20 HBCUs by w (#1 Howard 77)",
+   "status": "posted",
+   "predicted": 2014
+  },
+  {
+   "date": "2026-11-23",
+   "video": "boston-ma-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592)",
+   "status": "posted",
+   "predicted": 564
+  },
+  {
+   "date": "2026-11-24",
+   "video": "tech-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 17 tech schools by w (#1 Stevens 176, tease MIT (3rd))",
+   "status": "posted",
+   "predicted": 3460
+  },
+  {
+   "date": "2026-11-25",
+   "video": "jesuit-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 18 Jesuit universities by w (#1 Seattle U 241, tease Georgetown (6th))",
+   "status": "posted",
+   "predicted": 2669
+  },
+  {
+   "date": "2026-11-27",
+   "video": "20-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
+   "status": "posted",
+   "predicted": 7081
+  },
+  {
+   "date": "2026-11-27",
+   "video": "houston-tx-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Houston (2nd))",
+   "status": "posted",
+   "predicted": 866
+  },
+  {
+   "date": "2026-11-27",
+   "video": "philadelphia-pa-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Philadelphia colleges with 5,000+ students by w (#1 Thomas Jefferson 562, tease Penn (3rd))",
+   "status": "posted",
+   "predicted": 1041
+  },
+  {
+   "date": "2026-11-29",
+   "video": "public-ivies-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "status": "posted",
+   "predicted": 5050
+  },
+  {
+   "date": "2026-11-29",
+   "video": "new-york-ny-countdown",
+   "experiment": "g_city",
+   "what": "countdown: New York colleges with 5,000+ students by w (#1 Touro 1478, tease Columbia (9th))",
+   "status": "posted",
+   "predicted": 850
   }
  ]
 }

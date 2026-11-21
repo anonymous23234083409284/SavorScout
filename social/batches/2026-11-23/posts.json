@@ -1,0 +1,352 @@
+{
+ "tiktok": [
+  {
+   "video": "big-east-countdown",
+   "at": "2026-11-23T12:22:00-05:00",
+   "text": "Georgetown is 2nd 👀 Which Big East school has the most restaurants within a 10-minute walk? Send this to your friend at another Big East school.\n\n#depaul #georgetown #marquette #collegelife #collegefood"
+  },
+  {
+   "video": "flagships-countdown",
+   "at": "2026-11-23T15:21:00-05:00",
+   "text": "Michigan is 2nd 👀 Which state flagship university has the most restaurants within a 10-minute walk? Send this to a friend at their state's flagship.\n\n#ucberkeley #michigan #rutgers #collegelife #collegefood"
+  },
+  {
+   "video": "hbcu-countdown",
+   "at": "2026-11-23T18:20:00-05:00",
+   "text": "Delaware State is 2nd 👀 Which HBCU has the most restaurants within a 10-minute walk? Send this to your friend at another HBCU.\n\n#howard #delawarestate #famu #collegelife #collegefood"
+  },
+  {
+   "video": "boston-ma-countdown",
+   "at": "2026-11-23T21:19:00-05:00",
+   "text": "BU is 7th 👀 Which college in Boston has the most restaurants within a 10-minute walk? Send this to your friend at another Boston college.\n\n#suffolk #emerson #berklee #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-big-east-countdown",
+   "at": "2026-11-23T16:43:00-05:00",
+   "card": "big-east-countdown",
+   "thread": [
+    "DePaul has more restaurants within a 10-minute walk of campus than Georgetown, Marquette and St. John's combined.\n\n10 of the 11 Big East schools:",
+    "1. DePaul: 488\n2. Georgetown: 52\n3. Marquette: 44\n4. St. John's: 43\n5. Seton Hall: 18\n6. UConn: 17\n7. Creighton: 14\n8. Xavier: 12\n9. Villanova: 7\n10. Butler: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-flagships-countdown",
+   "at": "2026-11-23T17:40:00-05:00",
+   "card": "flagships-countdown",
+   "thread": [
+    "UC Berkeley has the most restaurants within a 10-minute walk of campus of any state flagship. Michigan is 53 behind.\n\n50 state flagship universities (top 14 of 50):",
+    "1. UC Berkeley: 277\n2. Michigan: 224\n3. Rutgers: 182\n4. Penn State: 156\n5. Indiana: 138\n6. Iowa: 132\n7. UT Austin: 115\n8. UIUC: 109\n9. Nebraska: 102\n10. Mizzou: 98\n10. UGA: 98\n12. UNC Chapel Hill: 87\n13. Ohio State: 86\n13. Wisconsin: 86",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-hbcu-countdown",
+   "at": "2026-11-23T18:43:00-05:00",
+   "card": "hbcu-countdown",
+   "thread": [
+    "Howard has more than twice as many restaurants within a 10-minute walk of campus as Delaware State.\n\n20 HBCUs (top 14 of 20):",
+    "1. Howard: 77\n2. Delaware State: 38\n3. FAMU: 27\n4. Morgan State: 18\n5. NC A&T: 15\n6. NC Central: 11\n7. Albany State: 10\n7. Jackson State: 10\n7. Tennessee State: 10\n10. Virginia State: 8\n11. Grambling State: 7\n11. Texas Southern: 7\n13. Fayetteville State: 6\n13. Norfolk State: 6",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-boston-ma-countdown",
+   "at": "2026-11-23T19:37:00-05:00",
+   "card": "boston-ma-countdown",
+   "thread": [
+    "Suffolk has the most restaurants within a 10-minute walk of campus of any college in Boston. Emerson is 184 behind.\n\nEvery Boston college with 5,000+ students:",
+    "1. Suffolk: 592\n2. Emerson: 408\n3. Berklee: 279\n4. Simmons: 144\n5. Northeastern: 133\n6. MCPHS: 108\n7. BU: 61\n8. UMass Boston: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ma"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-big-east-countdown",
+   "at": "2026-11-23T17:12:00-05:00",
+   "card": "big-east-countdown",
+   "topic": "East",
+   "thread": [
+    "DePaul has more restaurants within a 10-minute walk of campus than Georgetown, Marquette and St. John's combined. 10 of the 11 Big East schools:\n\nDePaul 488, Georgetown 52, Marquette 44, St. John's 43, Seton Hall 18, UConn 17, Creighton 14, Xavier 12, Villanova 7, Butler 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-flagships-countdown",
+   "at": "2026-11-23T18:10:00-05:00",
+   "card": "flagships-countdown",
+   "topic": "State flagship",
+   "thread": [
+    "UC Berkeley has the most restaurants within a 10-minute walk of campus of any state flagship. Michigan is 53 behind. 50 state flagship universities (top 14 of 50):\n\nUC Berkeley 277, Michigan 224, Rutgers 182, Penn State 156, Indiana 138, Iowa 132, UT Austin 115, UIUC 109, Nebraska 102, Mizzou 98, UGA 98, UNC Chapel Hill 87, Ohio State 86, Wisconsin 86.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-hbcu-countdown",
+   "at": "2026-11-23T19:11:00-05:00",
+   "card": "hbcu-countdown",
+   "topic": "HBCUs",
+   "thread": [
+    "Howard has more than twice as many restaurants within a 10-minute walk of campus as Delaware State. 20 HBCUs (top 14 of 20):\n\nHoward 77, Delaware State 38, FAMU 27, Morgan State 18, NC A&T 15, NC Central 11, Albany State 10, Jackson State 10, Tennessee State 10, Virginia State 8, Grambling State 7, Texas Southern 7, Fayetteville State 6, Norfolk State 6.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-boston-ma-countdown",
+   "at": "2026-11-23T20:10:00-05:00",
+   "card": "boston-ma-countdown",
+   "topic": "Boston colleges",
+   "thread": [
+    "Suffolk has the most restaurants within a 10-minute walk of campus of any college in Boston. Emerson is 184 behind. Every Boston college with 5,000+ students:\n\nSuffolk 592, Emerson 408, Berklee 279, Simmons 144, Northeastern 133, MCPHS 108, BU 61, UMass Boston 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ma"
+   ]
+  }
+ ],
+ "cards": {
+  "big-east-countdown": {
+   "type": "ranking",
+   "title": "Big East schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "10 of the 11 Big East schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "DePaul",
+     488
+    ],
+    [
+     "2",
+     "Georgetown",
+     52
+    ],
+    [
+     "3",
+     "Marquette",
+     44
+    ],
+    [
+     "4",
+     "St. John's",
+     43
+    ],
+    [
+     "5",
+     "Seton Hall",
+     18
+    ],
+    [
+     "6",
+     "UConn",
+     17
+    ],
+    [
+     "7",
+     "Creighton",
+     14
+    ],
+    [
+     "8",
+     "Xavier",
+     12
+    ],
+    [
+     "9",
+     "Villanova",
+     7
+    ],
+    [
+     "10",
+     "Butler",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "flagships-countdown": {
+   "type": "ranking",
+   "title": "State flagship universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "50 state flagship universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "Michigan",
+     224
+    ],
+    [
+     "3",
+     "Rutgers",
+     182
+    ],
+    [
+     "4",
+     "Penn State",
+     156
+    ],
+    [
+     "5",
+     "Indiana",
+     138
+    ],
+    [
+     "6",
+     "Iowa",
+     132
+    ],
+    [
+     "7",
+     "UT Austin",
+     115
+    ],
+    [
+     "8",
+     "UIUC",
+     109
+    ],
+    [
+     "9",
+     "Nebraska",
+     102
+    ],
+    [
+     "10",
+     "Mizzou",
+     98
+    ],
+    [
+     "10",
+     "UGA",
+     98
+    ],
+    [
+     "12",
+     "UNC Chapel Hill",
+     87
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "hbcu-countdown": {
+   "type": "ranking",
+   "title": "HBCUs ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "20 HBCUs. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Howard",
+     77
+    ],
+    [
+     "2",
+     "Delaware State",
+     38
+    ],
+    [
+     "3",
+     "FAMU",
+     27
+    ],
+    [
+     "4",
+     "Morgan State",
+     18
+    ],
+    [
+     "5",
+     "NC A&T",
+     15
+    ],
+    [
+     "6",
+     "NC Central",
+     11
+    ],
+    [
+     "7",
+     "Albany State",
+     10
+    ],
+    [
+     "7",
+     "Jackson State",
+     10
+    ],
+    [
+     "7",
+     "Tennessee State",
+     10
+    ],
+    [
+     "10",
+     "Virginia State",
+     8
+    ],
+    [
+     "11",
+     "Grambling State",
+     7
+    ],
+    [
+     "11",
+     "Texas Southern",
+     7
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "boston-ma-countdown": {
+   "type": "ranking",
+   "title": "Boston colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Boston college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Suffolk",
+     592
+    ],
+    [
+     "2",
+     "Emerson",
+     408
+    ],
+    [
+     "3",
+     "Berklee",
+     279
+    ],
+    [
+     "4",
+     "Simmons",
+     144
+    ],
+    [
+     "5",
+     "Northeastern",
+     133
+    ],
+    [
+     "6",
+     "MCPHS",
+     108
+    ],
+    [
+     "7",
+     "BU",
+     61
+    ],
+    [
+     "8",
+     "UMass Boston",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

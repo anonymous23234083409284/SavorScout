@@ -1,0 +1,312 @@
+{
+ "tiktok": [
+  {
+   "video": "nj-countdown",
+   "at": "2026-11-29T12:23:00-05:00",
+   "text": "Rutgers-Newark is 2nd 👀 Which big New Jersey university has the most restaurants within a 10-minute walk? Send this to your friend at another New Jersey school.\n\n#rutgers #rutgersnewark #njit #collegelife #collegefood"
+  },
+  {
+   "video": "id-countdown",
+   "at": "2026-11-29T15:17:00-05:00",
+   "text": "Idaho State is 2nd 👀 Which big Idaho university has the most restaurants within a 10-minute walk? Send this to your friend at another Idaho school.\n\n#byuidaho #idahostate #idaho #collegelife #collegefood"
+  },
+  {
+   "video": "ca-countdown",
+   "at": "2026-11-29T18:18:00-05:00",
+   "text": "Stanford is 14th 👀 Which big California college has the most restaurants within a 10-minute walk? Send this to your friend at another California school.\n\n#ucberkeley #sjsu #usc #collegelife #collegefood"
+  },
+  {
+   "video": "new-york-ny-countdown",
+   "at": "2026-11-29T21:19:00-05:00",
+   "text": "Columbia is 9th 👀 Which college in New York City has the most restaurants within a 10-minute walk? Send this to your friend at another New York City college.\n\n#touro #nyu #thenewschool #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-nj-countdown",
+   "at": "2026-11-29T16:39:00-05:00",
+   "card": "nj-countdown",
+   "thread": [
+    "Rutgers has the most restaurants within a 10-minute walk of campus of any big New Jersey university. Rutgers-Newark is 30 behind.\n\nEvery New Jersey university with 10,000+ students:",
+    "1. Rutgers: 182\n2. Rutgers-Newark: 152\n3. NJIT: 104\n4. Rowan: 32\n5. Kean: 18\n6. Montclair State: 8",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/nj"
+   ]
+  },
+  {
+   "id": "x-id-countdown",
+   "at": "2026-11-29T17:42:00-05:00",
+   "card": "id-countdown",
+   "thread": [
+    "BYU-Idaho has more than twice as many restaurants within a 10-minute walk of campus as Idaho State.\n\nEvery Idaho university with 10,000+ students:",
+    "1. BYU-Idaho: 44\n2. Idaho State: 20\n3. Idaho: 19\n4. Boise State: 15\n5. College of Western Idaho: 3",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/id"
+   ]
+  },
+  {
+   "id": "x-ca-countdown",
+   "at": "2026-11-29T18:39:00-05:00",
+   "card": "ca-countdown",
+   "thread": [
+    "UC Berkeley has the most restaurants within a 10-minute walk of campus of any big California college. SJSU is 137 behind.\n\nEvery California college with 10,000+ students (top 14 of 35):",
+    "1. UC Berkeley: 277\n2. SJSU: 140\n3. USC: 94\n4. Chico State: 88\n5. CSUN: 79\n6. Chapman: 70\n7. SF State: 62\n8. UC Davis: 43\n9. City College of San Francisco: 41\n10. SDSU: 40\n11. Cal State Fullerton: 37\n11. UC Irvine: 37\n13. Sac State: 31\n14. Stanford: 29",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ca"
+   ]
+  },
+  {
+   "id": "x-new-york-ny-countdown",
+   "at": "2026-11-29T19:42:00-05:00",
+   "card": "new-york-ny-countdown",
+   "thread": [
+    "Touro edges out NYU by 16 for the most restaurants within a 10-minute walk of campus.\n\nEvery New York City college with 5,000+ students:",
+    "1. Touro: 1478\n2. NYU: 1462\n3. The New School: 1377\n4. FIT: 1146\n5. Baruch: 1108\n6. Pace: 803\n7. John Jay: 467\n8. Hunter College: 388\n9. Columbia: 214\n10. City College: 213\n11. Yeshiva: 158",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ny"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-nj-countdown",
+   "at": "2026-11-29T17:10:00-05:00",
+   "card": "nj-countdown",
+   "topic": "New Jersey",
+   "thread": [
+    "Rutgers has the most restaurants within a 10-minute walk of campus of any big New Jersey university. Rutgers-Newark is 30 behind. Every New Jersey university with 10,000+ students:\n\nRutgers 182, Rutgers-Newark 152, NJIT 104, Rowan 32, Kean 18, Montclair State 8.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/nj"
+   ]
+  },
+  {
+   "id": "t-id-countdown",
+   "at": "2026-11-29T18:09:00-05:00",
+   "card": "id-countdown",
+   "topic": "Idaho",
+   "thread": [
+    "BYU-Idaho has more than twice as many restaurants within a 10-minute walk of campus as Idaho State. Every Idaho university with 10,000+ students:\n\nBYU-Idaho 44, Idaho State 20, Idaho 19, Boise State 15, College of Western Idaho 3.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/id"
+   ]
+  },
+  {
+   "id": "t-ca-countdown",
+   "at": "2026-11-29T19:08:00-05:00",
+   "card": "ca-countdown",
+   "topic": "California",
+   "thread": [
+    "UC Berkeley has the most restaurants within a 10-minute walk of campus of any big California college. SJSU is 137 behind. Every California college with 10,000+ students (top 14 of 35):\n\nUC Berkeley 277, SJSU 140, USC 94, Chico State 88, CSUN 79, Chapman 70, SF State 62, UC Davis 43, City College of San Francisco 41, SDSU 40, Cal State Fullerton 37, UC Irvine 37, Sac State 31, Stanford 29.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ca"
+   ]
+  },
+  {
+   "id": "t-new-york-ny-countdown",
+   "at": "2026-11-29T20:11:00-05:00",
+   "card": "new-york-ny-countdown",
+   "topic": "New York City colleges",
+   "thread": [
+    "Touro edges out NYU by 16 for the most restaurants within a 10-minute walk of campus. Every New York City college with 5,000+ students:\n\nTouro 1478, NYU 1462, The New School 1377, FIT 1146, Baruch 1108, Pace 803, John Jay 467, Hunter College 388, Columbia 214, City College 213, Yeshiva 158.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ny"
+   ]
+  }
+ ],
+ "cards": {
+  "nj-countdown": {
+   "type": "ranking",
+   "title": "Big New Jersey universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every New Jersey university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Rutgers",
+     182
+    ],
+    [
+     "2",
+     "Rutgers-Newark",
+     152
+    ],
+    [
+     "3",
+     "NJIT",
+     104
+    ],
+    [
+     "4",
+     "Rowan",
+     32
+    ],
+    [
+     "5",
+     "Kean",
+     18
+    ],
+    [
+     "6",
+     "Montclair State",
+     8
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ca-countdown": {
+   "type": "ranking",
+   "title": "Big California colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every California college with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "SJSU",
+     140
+    ],
+    [
+     "3",
+     "USC",
+     94
+    ],
+    [
+     "4",
+     "Chico State",
+     88
+    ],
+    [
+     "5",
+     "CSUN",
+     79
+    ],
+    [
+     "6",
+     "Chapman",
+     70
+    ],
+    [
+     "7",
+     "SF State",
+     62
+    ],
+    [
+     "8",
+     "UC Davis",
+     43
+    ],
+    [
+     "9",
+     "City College of San Francisco",
+     41
+    ],
+    [
+     "10",
+     "SDSU",
+     40
+    ],
+    [
+     "11",
+     "Cal State Fullerton",
+     37
+    ],
+    [
+     "11",
+     "UC Irvine",
+     37
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "new-york-ny-countdown": {
+   "type": "ranking",
+   "title": "New York City colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every New York City college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Touro",
+     1478
+    ],
+    [
+     "2",
+     "NYU",
+     1462
+    ],
+    [
+     "3",
+     "The New School",
+     1377
+    ],
+    [
+     "4",
+     "FIT",
+     1146
+    ],
+    [
+     "5",
+     "Baruch",
+     1108
+    ],
+    [
+     "6",
+     "Pace",
+     803
+    ],
+    [
+     "7",
+     "John Jay",
+     467
+    ],
+    [
+     "8",
+     "Hunter College",
+     388
+    ],
+    [
+     "9",
+     "Columbia",
+     214
+    ],
+    [
+     "10",
+     "City College",
+     213
+    ],
+    [
+     "11",
+     "Yeshiva",
+     158
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "id-countdown": {
+   "type": "ranking",
+   "title": "Big Idaho universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Idaho university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "BYU-Idaho",
+     44
+    ],
+    [
+     "2",
+     "Idaho State",
+     20
+    ],
+    [
+     "3",
+     "Idaho",
+     19
+    ],
+    [
+     "4",
+     "Boise State",
+     15
+    ],
+    [
+     "5",
+     "College of Western Idaho",
+     3
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

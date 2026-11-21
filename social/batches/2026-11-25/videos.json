@@ -1,0 +1,544 @@
+{
+ "date": "2026-11-25",
+ "videos": [
+  {
+   "id": "mi-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/mi",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-michigan-ann-arbor",
+     "text": "Which big Michigan university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Michigan State.",
+     "say": "Which Michigan university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Michigan universities with 10,000+ students",
+     "rows": [
+      [
+       "9",
+       "Grand Valley State",
+       "8"
+      ],
+      [
+       "8",
+       "Eastern Michigan",
+       "13"
+      ],
+      [
+       "7",
+       "Ferris State",
+       "16"
+      ],
+      [
+       "6",
+       "Central Michigan",
+       "20"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Grand Valley State, with just 8. Eastern Michigan, 13. Ferris State, 16. Central Michigan, 20."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Oakland",
+     "count": 21,
+     "sub": "Busiest food street: N Squirrel Rd",
+     "map": "oakland-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Oakland. 21. Busiest food street: Squirrel Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Western Michigan",
+     "count": 27,
+     "sub": "Busiest food street: W Michigan Ave",
+     "map": "western-michigan-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Western Michigan. 27. Busiest food street: Michigan Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Wayne State",
+     "count": 59,
+     "sub": "Busiest food street: Woodward Ave",
+     "map": "wayne-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Wayne State. 59. Busiest food street: Woodward Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Michigan State",
+     "count": 84,
+     "sub": "Busiest food street: Grand River Ave",
+     "map": "michigan-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Michigan State. 84. Busiest food street: Grand River Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Michigan",
+     "count": 224,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-michigan-ann-arbor",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Michigan. 224. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Michigan school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:MI",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:MI|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "jesuit-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "seattle-university",
+     "text": "Which Jesuit university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Georgetown.",
+     "say": "Which Jesuit university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "18 Jesuit universities",
+     "rows": [
+      [
+       "18",
+       "Fairfield",
+       "3"
+      ],
+      [
+       "17",
+       "Loyola Maryland",
+       "5"
+      ],
+      [
+       "16",
+       "Boston College",
+       "8"
+      ],
+      [
+       "15",
+       "Xavier",
+       "12"
+      ],
+      [
+       "14",
+       "Saint Joseph's",
+       "13"
+      ],
+      [
+       "13",
+       "Creighton",
+       "14"
+      ],
+      [
+       "12",
+       "Detroit Mercy",
+       "18"
+      ],
+      [
+       "11",
+       "LMU",
+       "21"
+      ],
+      [
+       "10",
+       "Regis",
+       "22"
+      ],
+      [
+       "9",
+       "Santa Clara",
+       "34"
+      ],
+      [
+       "8",
+       "Gonzaga",
+       "38"
+      ],
+      [
+       "7",
+       "Marquette",
+       "44"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Fairfield, with just 3. Pack a lunch. Loyola Maryland, 5. Boston College, 8."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Saint Louis",
+     "count": 63,
+     "sub": "Busiest food street: Lindell Blvd",
+     "map": "saint-louis-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Saint Louis. 63. Busiest food street: Lindell Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Loyola Chicago",
+     "count": 72,
+     "sub": "Busiest food street: N Clark St",
+     "map": "loyola-university-chicago",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Loyola Chicago. 72. Busiest food street: Clark Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "University of San Francisco",
+     "count": 79,
+     "sub": "Busiest food street: Divisadero St",
+     "map": "university-of-san-francisco",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: University of San Francisco. 79. Busiest food street: Divisadero Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Fordham",
+     "count": 130,
+     "sub": "Busiest food street: Arthur Ave",
+     "map": "fordham-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Fordham. 130. Busiest food street: Arthur Avenue."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "Seattle U",
+     "count": 241,
+     "sub": "Busiest food street: Broadway",
+     "map": "seattle-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Seattle U. 241."
+    }
+   ],
+   "lab": {
+    "key": "group:jesuit",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "group:jesuit|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "al-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/al",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-alabama-at-birmingham",
+     "text": "Which big Alabama university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Alabama.",
+     "say": "Which Alabama university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Troy",
+     "count": 6,
+     "sub": "Busiest food street: S Brundidge St",
+     "map": "troy-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Dead last: Troy, with just 6. Busiest food street: Brundidge Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "South Alabama",
+     "count": 12,
+     "sub": "Busiest food street: Old Shell Rd",
+     "map": "university-of-south-alabama",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: South Alabama. 12. Busiest food street: Old Shell Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Auburn",
+     "count": 21,
+     "sub": "Busiest food street: College St",
+     "map": "auburn-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Auburn. 21. Busiest food street: College Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Alabama",
+     "count": 27,
+     "sub": "Busiest food street: University Blvd",
+     "map": "the-university-of-alabama",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Alabama. 27. Busiest food street: University Boulevard."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UAB",
+     "count": 109,
+     "sub": "Busiest food street: 20th St",
+     "map": "university-of-alabama-at-birmingham",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: UAB. 109. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Alabama school.",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:AL",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:AL|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "csu-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "san-jose-state-university",
+     "text": "Which Cal State campus has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not SDSU.",
+     "say": "Which Cal State campus has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "22 Cal State campuses: the bottom 12",
+     "rows": [
+      [
+       "22",
+       "CSU Monterey Bay",
+       "2"
+      ],
+      [
+       "21",
+       "Cal Poly",
+       "4"
+      ],
+      [
+       "20",
+       "CSU Channel Islands",
+       "5"
+      ],
+      [
+       "18",
+       "CSU Dominguez Hills",
+       "7"
+      ],
+      [
+       "18",
+       "CSU Bakersfield",
+       "7"
+      ],
+      [
+       "17",
+       "Cal State East Bay",
+       "8"
+      ],
+      [
+       "16",
+       "Fresno State",
+       "9"
+      ],
+      [
+       "14",
+       "Long Beach State",
+       "11"
+      ],
+      [
+       "14",
+       "Cal Poly Pomona",
+       "11"
+      ],
+      [
+       "12",
+       "Stanislaus State",
+       "14"
+      ],
+      [
+       "12",
+       "Cal State LA",
+       "14"
+      ],
+      [
+       "11",
+       "CSU San Bernardino",
+       "16"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: CSU Monterey Bay, with just 2. Pack a lunch. Cal Poly, 4. CSU Channel Islands, 5."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "SDSU",
+     "count": 40,
+     "sub": "Busiest food street: El Cajon Blvd",
+     "map": "san-diego-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: SDSU. 40. Busiest food street: El Cajon Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "SF State",
+     "count": 62,
+     "sub": "Busiest food street: 20th Ave",
+     "map": "san-francisco-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: SF State. 62. Busiest food street: 20th Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "CSUN",
+     "count": 79,
+     "sub": "Busiest food street: Reseda Blvd",
+     "map": "california-state-university-northridge",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: CSUN. 79. Busiest food street: Reseda Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Chico State",
+     "count": 88,
+     "sub": "Busiest food street: Broadway St",
+     "map": "california-state-university-chico",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Chico State. 88. Busiest food street: Broadway Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "SJSU",
+     "count": 140,
+     "sub": "Busiest food street: Santa Clara St",
+     "map": "san-jose-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: SJSU. 140."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Cal State.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which system should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "system:csu",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "system:csu|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

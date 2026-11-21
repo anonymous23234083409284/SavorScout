@@ -1,0 +1,283 @@
+{
+ "date": "2026-11-25",
+ "videos_learned_from": 58,
+ "r2_views": 0.82,
+ "chosen": [
+  {
+   "id": "state:MI|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Michigan universities with 10,000+ students by w (#1 Michigan 224)",
+   "views_mid": 1199,
+   "views_lo": 750,
+   "views_hi": 1918,
+   "win_rate": 0.527,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier); - a more famous school named in the tease (+1 tier); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:jesuit|w|countdown",
+   "format": "countdown",
+   "slot": "experiment",
+   "new": [
+    "g_famous"
+   ],
+   "what": "countdown: 18 Jesuit universities by w (#1 Seattle U 241, tease Georgetown (6th))",
+   "views_mid": 2669,
+   "views_lo": 909,
+   "views_hi": 7830,
+   "win_rate": 0.203,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; - more famous schools on screen (+1 tier); teased Georgetown 3d ago (-0.3); teased Georgetown 2d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "state:AL|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Alabama universities with 10,000+ students by w (#1 UAB 109, tease Alabama (2nd))",
+   "views_mid": 1846,
+   "views_lo": 1254,
+   "views_hi": 2716,
+   "win_rate": 0.583,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + naming the upset in the hook ('Hint: it's not X'); + a bigger lead for #1 (x2); teased Alabama 6d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "system:csu|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: 22 Cal State campuses by w (#1 SJSU 140)",
+   "views_mid": 1965,
+   "views_lo": 871,
+   "views_hi": 4430,
+   "win_rate": 0.807,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + grouping by university system (UC, Cal State); - more famous schools on screen (+1 tier); Thanksgiving week: students heading home (+0.1)"
+  }
+ ],
+ "top": [
+  {
+   "id": "group:public-ivies|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "short"
+   ],
+   "what": "short: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 9960,
+   "views_lo": 1944,
+   "views_hi": 51018,
+   "win_rate": 0.793,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; teased UCLA 4d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:public-ivies|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: The 9 original Public Ivies by street (#1 UC Berkeley 122, tease UCLA (8th))",
+   "views_mid": 8287,
+   "views_lo": 1308,
+   "views_hi": 52483,
+   "win_rate": 0.66,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; teased UCLA 4d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:flagships|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 50 state flagship universities by street (#1 UC Berkeley 122, tease Michigan (19th))",
+   "views_mid": 8267,
+   "views_lo": 1303,
+   "views_hi": 52422,
+   "win_rate": 0.567,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 2d ago (-0.25); teased Michigan 2d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:tech|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 17 tech schools by street (#1 Stevens 158, tease MIT (3rd))",
+   "views_mid": 5214,
+   "views_lo": 810,
+   "views_hi": 33521,
+   "win_rate": 0.433,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 1d ago (-0.25); teased MIT 1d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:public-ivies|w|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous"
+   ],
+   "what": "countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 5071,
+   "views_lo": 1899,
+   "views_hi": 13536,
+   "win_rate": 0.55,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier); teased UCLA 4d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:jesuit|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "short"
+   ],
+   "what": "short: 18 Jesuit universities by w (#1 Seattle U 241, tease Georgetown (6th))",
+   "views_mid": 4586,
+   "views_lo": 842,
+   "views_hi": 24954,
+   "win_rate": 0.317,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; teased Georgetown 3d ago (-0.3); teased Georgetown 2d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "state:AL|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Alabama universities with 10,000+ students by w (#1 UAB 109, tease Alabama (2nd))",
+   "views_mid": 4441,
+   "views_lo": 1228,
+   "views_hi": 16046,
+   "win_rate": 0.43,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); teased Alabama 6d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:public-ivies|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street"
+   ],
+   "what": "countdown: The 9 original Public Ivies by street (#1 UC Berkeley 122, tease UCLA (8th))",
+   "views_mid": 4219,
+   "views_lo": 1121,
+   "views_hi": 15866,
+   "win_rate": 0.477,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier); teased UCLA 4d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "state:CA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (14th))",
+   "views_mid": 4043,
+   "views_lo": 1139,
+   "views_hi": 14343,
+   "win_rate": 0.317,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); teased Stanford 5d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:flagships|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street"
+   ],
+   "what": "countdown: 50 state flagship universities by street (#1 UC Berkeley 122, tease Michigan (19th))",
+   "views_mid": 3857,
+   "views_lo": 1037,
+   "views_hi": 14338,
+   "win_rate": 0.357,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier); same grouping 2d ago (-0.25); teased Michigan 2d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "state:IL|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Illinois universities with 10,000+ students by w (#1 DePaul 488, tease UChicago (8th))",
+   "views_mid": 3665,
+   "views_lo": 1053,
+   "views_hi": 12744,
+   "win_rate": 0.597,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "group:jesuit|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 18 Jesuit universities by street (#1 Georgetown 92)",
+   "views_mid": 3327,
+   "views_lo": 478,
+   "views_hi": 23093,
+   "win_rate": 0.46,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "state:FL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Florida universities by street (#1 Florida 70, tease Florida State (2nd))",
+   "views_mid": 3249,
+   "views_lo": 695,
+   "views_hi": 15173,
+   "win_rate": 0.293,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 4d ago (-0.25); Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "system:csu|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: 22 Cal State campuses by w (#1 SJSU 140)",
+   "views_mid": 3245,
+   "views_lo": 783,
+   "views_hi": 13436,
+   "win_rate": 0.427,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + grouping by university system (UC, Cal State); + a 15-20 second top-3 cut; Thanksgiving week: students heading home (+0.1)"
+  },
+  {
+   "id": "state:AL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Alabama universities with 10,000+ students by street (#1 UAB 44, tease Alabama (3rd))",
+   "views_mid": 3220,
+   "views_lo": 687,
+   "views_hi": 15065,
+   "win_rate": 0.267,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); teased Alabama 6d ago (-0.3); Thanksgiving week: students heading home (+0.1)"
+  }
+ ]
+}

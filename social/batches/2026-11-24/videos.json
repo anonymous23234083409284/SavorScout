@@ -1,0 +1,543 @@
+{
+ "date": "2026-11-24",
+ "videos": [
+  {
+   "id": "oh-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/oh",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-cincinnati-main-campus",
+     "text": "Which big Ohio university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Ohio State.",
+     "say": "Which Ohio university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "Ohio universities with 10,000+ students",
+     "rows": [
+      [
+       "12",
+       "Kent State",
+       "5"
+      ],
+      [
+       "10",
+       "Toledo",
+       "13"
+      ],
+      [
+       "10",
+       "Miami (Ohio)",
+       "13"
+      ],
+      [
+       "9",
+       "Akron",
+       "30"
+      ],
+      [
+       "8",
+       "Youngstown State",
+       "42"
+      ],
+      [
+       "7",
+       "Dayton",
+       "46"
+      ],
+      [
+       "6",
+       "Bowling Green State",
+       "47"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Kent State, with just 5. Pack a lunch. Toledo, 13. Miami (Ohio), 13."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Case Western",
+     "count": 60,
+     "sub": "Busiest food street: Euclid Ave",
+     "map": "case-western-reserve-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Case Western. 60. Busiest food street: Euclid Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Ohio University",
+     "count": 63,
+     "sub": "Busiest food street: Court St",
+     "map": "ohio-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Ohio University. 63. Busiest food street: Court Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Cleveland State",
+     "count": 71,
+     "sub": "Busiest food street: Euclid Ave",
+     "map": "cleveland-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Cleveland State. 71. Busiest food street: Euclid Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Ohio State",
+     "count": 86,
+     "sub": "Busiest food street: N High St",
+     "map": "ohio-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Ohio State. 86. Busiest food street: High Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Cincinnati",
+     "count": 101,
+     "sub": "Busiest food street: McMillan St",
+     "map": "university-of-cincinnati-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Cincinnati. 101."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Ohio school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:OH",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:OH|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "tech-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "stevens-institute-of-technology",
+     "text": "Which tech school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not MIT.",
+     "say": "Which tech school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "17 tech schools",
+     "rows": [
+      [
+       "17",
+       "Cal Poly",
+       "4"
+      ],
+      [
+       "14",
+       "RIT",
+       "5"
+      ],
+      [
+       "14",
+       "Michigan Tech",
+       "5"
+      ],
+      [
+       "14",
+       "Florida Tech",
+       "5"
+      ],
+      [
+       "13",
+       "RPI",
+       "14"
+      ],
+      [
+       "12",
+       "Louisiana Tech",
+       "21"
+      ],
+      [
+       "11",
+       "Tennessee Tech",
+       "22"
+      ],
+      [
+       "10",
+       "CMU",
+       "26"
+      ],
+      [
+       "9",
+       "WPI",
+       "30"
+      ],
+      [
+       "8",
+       "Illinois Tech",
+       "31"
+      ],
+      [
+       "7",
+       "Georgia Tech",
+       "34"
+      ],
+      [
+       "6",
+       "Colorado School of Mines",
+       "47"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Cal Poly, with just 4. Pack a lunch. RIT, 5. Michigan Tech, 5."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Texas Tech",
+     "count": 49,
+     "sub": "Busiest food street: University Ave",
+     "map": "texas-tech-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Texas Tech. 49. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Virginia Tech",
+     "count": 64,
+     "sub": "Busiest food street: Main St",
+     "map": "virginia-polytechnic-institute-and-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Virginia Tech. 64. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "MIT",
+     "count": 84,
+     "sub": "Busiest food street: Massachusetts Ave",
+     "map": "massachusetts-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: MIT. 84. Busiest food street: Massachusetts Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "NJIT",
+     "count": 104,
+     "sub": "Busiest food street: Market St",
+     "map": "new-jersey-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: NJIT. 104. Busiest food street: Market Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Stevens",
+     "count": 176,
+     "sub": "Busiest food street: Washington St",
+     "map": "stevens-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Stevens. 176."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another tech school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "group:tech",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "group:tech|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "ga-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ga",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "georgia-state-university",
+     "text": "Which big Georgia university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UGA.",
+     "say": "Which Georgia university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "Georgia universities with 10,000+ students",
+     "rows": [
+      [
+       "9",
+       "Valdosta State",
+       "9"
+      ],
+      [
+       "9",
+       "Kennesaw State",
+       "9"
+      ],
+      [
+       "8",
+       "West Georgia",
+       "18"
+      ],
+      [
+       "7",
+       "Georgia Southern",
+       "28"
+      ],
+      [
+       "6",
+       "Emory",
+       "30"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Valdosta State, with just 9. Kennesaw State, 9. West Georgia, 18. Georgia Southern, 28. Emory, 30."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Georgia Tech",
+     "count": 34,
+     "sub": "Busiest food street: Peachtree St",
+     "map": "georgia-institute-of-technology-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Georgia Tech. 34. Busiest food street: Peachtree Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "North Georgia",
+     "count": 37,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-north-georgia",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: North Georgia. 37. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UGA",
+     "count": 98,
+     "sub": "Busiest food street: Broad St",
+     "map": "university-of-georgia",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UGA. 98. Busiest food street: Broad Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "SCAD",
+     "count": 146,
+     "sub": "Busiest food street: Broughton St",
+     "map": "savannah-college-of-art-and-design",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: SCAD. 146. Busiest food street: Broughton Street."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "Georgia State",
+     "count": 194,
+     "sub": "Busiest food street: Peachtree St",
+     "map": "georgia-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Georgia State. 194."
+    }
+   ],
+   "lab": {
+    "key": "state:GA",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:GA|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "wi-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/wi",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-wisconsin-madison",
+     "text": "Which big Wisconsin university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Wisconsin university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Wisconsin universities with 10,000+ students",
+     "rows": [
+      [
+       "7",
+       "UW-Eau Claire",
+       "18"
+      ],
+      [
+       "6",
+       "UW-Oshkosh",
+       "20"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UW-Eau Claire, with 18. UW-Oshkosh, 20."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UW-La Crosse",
+     "count": 21,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-wisconsin-la-crosse",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: UW-La Crosse. 21. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UW-Whitewater",
+     "count": 24,
+     "sub": "Tied with UW-Milwaukee for 3rd. Busiest food street: Main St",
+     "map": "university-of-wisconsin-whitewater",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UW-Whitewater. 24."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UW-Milwaukee",
+     "count": 24,
+     "sub": "Tied with UW-Whitewater for 3rd. Busiest food street: Oakland Ave",
+     "map": "university-of-wisconsin-milwaukee",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UW-Milwaukee. 24."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Marquette",
+     "count": 44,
+     "sub": "Busiest food street: Wisconsin Ave",
+     "map": "marquette-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Marquette. 44. Busiest food street: Wisconsin Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Wisconsin",
+     "count": 86,
+     "sub": "Busiest food street: State St",
+     "map": "university-of-wisconsin-madison",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Wisconsin. 86."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Wisconsin school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:WI",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:WI|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

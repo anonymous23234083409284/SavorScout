@@ -1,0 +1,573 @@
+{
+ "date": "2026-11-23",
+ "videos": [
+  {
+   "id": "big-east-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "depaul-university",
+     "text": "Which Big East school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Georgetown.",
+     "say": "Which Big East school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "Big East schools",
+     "rows": [
+      [
+       "10",
+       "Butler",
+       "4"
+      ],
+      [
+       "9",
+       "Villanova",
+       "7"
+      ],
+      [
+       "8",
+       "Xavier",
+       "12"
+      ],
+      [
+       "7",
+       "Creighton",
+       "14"
+      ],
+      [
+       "6",
+       "UConn",
+       "17"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Butler, with just 4. Pack a lunch. Villanova, 7. Xavier, 12. Creighton, 14. UConn, 17."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Seton Hall",
+     "count": 18,
+     "sub": "Busiest food street: Orange Ave",
+     "map": "seton-hall-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Seton Hall. 18. Busiest food street: Orange Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "St. John's",
+     "count": 43,
+     "sub": "Busiest food street: Union Tpke",
+     "map": "st-john-s-university-new-york",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: St. John's. 43. Busiest food street: Union Turnpike."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Marquette",
+     "count": 44,
+     "sub": "Busiest food street: Wisconsin Ave",
+     "map": "marquette-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Marquette. 44. Busiest food street: Wisconsin Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Georgetown",
+     "count": 52,
+     "sub": "Busiest food street: Wisconsin Ave NW",
+     "map": "georgetown-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Georgetown. 52. Busiest food street: Wisconsin Avenue."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "DePaul",
+     "count": 488,
+     "sub": "Busiest food street: Michigan Ave",
+     "map": "depaul-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: DePaul. 488. More than the next three combined."
+    }
+   ],
+   "lab": {
+    "key": "conf:big-east",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:big-east|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "flagships-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-california-berkeley",
+     "text": "Which state flagship university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Michigan.",
+     "say": "Which state flagship university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "50 state flagship universities: the bottom 12",
+     "rows": [
+      [
+       "50",
+       "Maine",
+       "0"
+      ],
+      [
+       "49",
+       "North Dakota",
+       "6"
+      ],
+      [
+       "48",
+       "Alaska Fairbanks",
+       "8"
+      ],
+      [
+       "46",
+       "Vermont",
+       "9"
+      ],
+      [
+       "46",
+       "Montana",
+       "9"
+      ],
+      [
+       "44",
+       "Ole Miss",
+       "10"
+      ],
+      [
+       "44",
+       "Arkansas",
+       "10"
+      ],
+      [
+       "42",
+       "Kansas",
+       "11"
+      ],
+      [
+       "42",
+       "Buffalo",
+       "11"
+      ],
+      [
+       "41",
+       "Wyoming",
+       "14"
+      ],
+      [
+       "40",
+       "UMass Amherst",
+       "15"
+      ],
+      [
+       "39",
+       "Utah",
+       "16"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Maine. Zero. Pack a lunch. North Dakota, 6. Alaska Fairbanks, 8."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Indiana",
+     "count": 138,
+     "sub": "Busiest food street: Kirkwood Ave",
+     "map": "indiana-university-bloomington",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Indiana. 138. Busiest food street: Kirkwood Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Penn State",
+     "count": 156,
+     "sub": "Busiest food street: College Ave",
+     "map": "pennsylvania-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Penn State. 156. Busiest food street: College Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Rutgers",
+     "count": 182,
+     "sub": "Busiest food street: Easton Ave",
+     "map": "rutgers-university-new-brunswick",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Rutgers. 182. Busiest food street: Easton Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Michigan",
+     "count": 224,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-michigan-ann-arbor",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Michigan. 224. Busiest food street: Main Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UC Berkeley",
+     "count": 277,
+     "sub": "Busiest food street: Shattuck Ave",
+     "map": "university-of-california-berkeley",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UC Berkeley. 277."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to a friend at their state's flagship.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "group:flagships",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "group:flagships|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "hbcu-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "howard-university",
+     "text": "Which HBCU has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which HBCU has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "20 HBCUs: the bottom 12",
+     "rows": [
+      [
+       "19",
+       "Central State",
+       "0"
+      ],
+      [
+       "19",
+       "Bowie State",
+       "0"
+      ],
+      [
+       "18",
+       "Prairie View A&M",
+       "1"
+      ],
+      [
+       "16",
+       "Winston-Salem State",
+       "2"
+      ],
+      [
+       "16",
+       "Alabama A&M",
+       "2"
+      ],
+      [
+       "15",
+       "Southern University",
+       "4"
+      ],
+      [
+       "13",
+       "Norfolk State",
+       "6"
+      ],
+      [
+       "13",
+       "Fayetteville State",
+       "6"
+      ],
+      [
+       "11",
+       "Texas Southern",
+       "7"
+      ],
+      [
+       "11",
+       "Grambling State",
+       "7"
+      ],
+      [
+       "10",
+       "Virginia State",
+       "8"
+      ],
+      [
+       "7",
+       "Tennessee State",
+       "10"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Central State. Zero. Pack a lunch. Bowie State, 0. Prairie View A&M, 1."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "NC A&T",
+     "count": 15,
+     "sub": "Busiest food street: Elm St",
+     "map": "north-carolina-a-and-t-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: NC A&T. 15. Busiest food street: Elm Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Morgan State",
+     "count": 18,
+     "sub": "Busiest food street: Harford Rd",
+     "map": "morgan-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Morgan State. 18. Busiest food street: Harford Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "FAMU",
+     "count": 27,
+     "sub": "Busiest food street: S Monroe St",
+     "map": "florida-agricultural-and-mechanical-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: FAMU. 27. Busiest food street: Monroe Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Delaware State",
+     "count": 38,
+     "sub": "Busiest food street: Dupont Hwy",
+     "map": "delaware-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Delaware State. 38. Busiest food street: Dupont Highway."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Howard",
+     "count": 77,
+     "sub": "Busiest food street: 14th St NW",
+     "map": "howard-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Howard. 77."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another HBCU.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "group:hbcu",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "group:hbcu|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "boston-ma-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ma",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "suffolk-university",
+     "text": "Which college in Boston has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not BU.",
+     "say": "Which college in Boston has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "Boston colleges with 5,000+ students",
+     "rows": [
+      [
+       "8",
+       "UMass Boston",
+       "4"
+      ],
+      [
+       "7",
+       "BU",
+       "61"
+      ],
+      [
+       "6",
+       "MCPHS",
+       "108"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UMass Boston, with just 4. Pack a lunch. BU, 61. MCPHS, 108."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Northeastern",
+     "count": 133,
+     "sub": "Busiest food street: Boylston St",
+     "map": "northeastern-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Northeastern. 133. Busiest food street: Boylston Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Simmons",
+     "count": 144,
+     "sub": "Busiest food street: Huntington Ave",
+     "map": "simmons-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Simmons. 144. Busiest food street: Huntington Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Berklee",
+     "count": 279,
+     "sub": "Busiest food street: Boylston St",
+     "map": "berklee-college-of-music",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Berklee. 279. Busiest food street: Boylston Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Emerson",
+     "count": 408,
+     "sub": "Busiest food street: Boylston St",
+     "map": "emerson-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Emerson. 408. Busiest food street: Boylston Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Suffolk",
+     "count": 592,
+     "sub": "Busiest food street: Hanover St",
+     "map": "suffolk-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Suffolk. 592."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Boston college.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "city:Boston-MA",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "city:Boston-MA|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

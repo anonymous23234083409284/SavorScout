@@ -1,0 +1,327 @@
+{
+ "tiktok": [
+  {
+   "video": "pac12-old-countdown",
+   "at": "2026-11-26T12:21:00-05:00",
+   "text": "Stanford is 9th 👀 Which old Pac-12 school has the most restaurants within a 10-minute walk? Send this to your friend at another Pac-12 school.\n\n#ucberkeley #usc #arizona #collegelife #collegefood"
+  },
+  {
+   "video": "mo-countdown",
+   "at": "2026-11-26T15:22:00-05:00",
+   "text": "WashU is dead last 👀 Which big Missouri university has the most restaurants within a 10-minute walk? Send this to your friend at another Missouri school.\n\n#mizzou #saintlouis #umkc #collegelife #collegefood"
+  },
+  {
+   "video": "ut-countdown",
+   "at": "2026-11-26T18:23:00-05:00",
+   "text": "Utah is 4th 👀 Which big Utah university has the most restaurants within a 10-minute walk? Send this to your friend at another Utah school.\n\n#byu #utahtech #southernutah #collegelife #collegefood"
+  },
+  {
+   "video": "il-countdown",
+   "at": "2026-11-26T21:22:00-05:00",
+   "text": "UChicago is 8th 👀 Which big Illinois university has the most restaurants within a 10-minute walk? Send this to your friend at another Illinois school.\n\n#depaul #northwestern #uiuc #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-pac12-old-countdown",
+   "at": "2026-11-26T16:40:00-05:00",
+   "card": "pac12-old-countdown",
+   "thread": [
+    "UC Berkeley has more restaurants within a 10-minute walk of campus than USC, Arizona and Arizona State combined.\n\nAll 12 schools of the old Pac-12:",
+    "1. UC Berkeley: 277\n2. USC: 94\n3. Arizona: 84\n4. Arizona State: 76\n5. CU Boulder: 70\n5. Washington: 70\n7. Oregon: 57\n8. Oregon State: 38\n9. Stanford: 29\n10. Utah: 16\n11. UCLA: 14\n12. Washington State: 8",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-mo-countdown",
+   "at": "2026-11-26T17:42:00-05:00",
+   "card": "mo-countdown",
+   "thread": [
+    "Mizzou has the most restaurants within a 10-minute walk of campus of any big Missouri university. Saint Louis is 35 behind.\n\nEvery Missouri university with 10,000+ students:",
+    "1. Mizzou: 98\n2. Saint Louis: 63\n3. UMKC: 38\n4. Central Missouri: 25\n5. Missouri State: 23\n6. UMSL: 6\n7. WashU: 5",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/mo"
+   ]
+  },
+  {
+   "id": "x-ut-countdown",
+   "at": "2026-11-26T18:38:00-05:00",
+   "card": "ut-countdown",
+   "thread": [
+    "BYU edges out Utah Tech by 2 for the most restaurants within a 10-minute walk of campus.\n\nEvery Utah university with 10,000+ students:",
+    "1. BYU: 29\n2. Utah Tech: 27\n3. Southern Utah: 17\n4. Utah: 16\n5. Utah Valley: 11\n5. Weber State: 11\n7. Utah State: 3",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ut"
+   ]
+  },
+  {
+   "id": "x-il-countdown",
+   "at": "2026-11-26T19:39:00-05:00",
+   "card": "il-countdown",
+   "thread": [
+    "DePaul has more restaurants within a 10-minute walk of campus than Northwestern, UIUC and UIC combined.\n\nEvery Illinois university with 10,000+ students:",
+    "1. DePaul: 488\n2. Northwestern: 162\n3. UIUC: 109\n4. UIC: 85\n5. Loyola Chicago: 72\n6. Northern Illinois: 42\n7. Illinois State: 40\n8. UChicago: 25\n9. SIU Carbondale: 19\n10. College of DuPage: 7\n11. SIU Edwardsville: 0",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/il"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-pac12-old-countdown",
+   "at": "2026-11-26T17:11:00-05:00",
+   "card": "pac12-old-countdown",
+   "topic": "The old Pac-12",
+   "thread": [
+    "UC Berkeley has more restaurants within a 10-minute walk of campus than USC, Arizona and Arizona State combined. All 12 schools of the old Pac-12:\n\nUC Berkeley 277, USC 94, Arizona 84, Arizona State 76, CU Boulder 70, Washington 70, Oregon 57, Oregon State 38, Stanford 29, Utah 16, UCLA 14, Washington State 8.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-mo-countdown",
+   "at": "2026-11-26T18:09:00-05:00",
+   "card": "mo-countdown",
+   "topic": "Missouri",
+   "thread": [
+    "Mizzou has the most restaurants within a 10-minute walk of campus of any big Missouri university. Saint Louis is 35 behind. Every Missouri university with 10,000+ students:\n\nMizzou 98, Saint Louis 63, UMKC 38, Central Missouri 25, Missouri State 23, UMSL 6, WashU 5.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/mo"
+   ]
+  },
+  {
+   "id": "t-ut-countdown",
+   "at": "2026-11-26T19:11:00-05:00",
+   "card": "ut-countdown",
+   "topic": "Utah",
+   "thread": [
+    "BYU edges out Utah Tech by 2 for the most restaurants within a 10-minute walk of campus. Every Utah university with 10,000+ students:\n\nBYU 29, Utah Tech 27, Southern Utah 17, Utah 16, Utah Valley 11, Weber State 11, Utah State 3.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ut"
+   ]
+  },
+  {
+   "id": "t-il-countdown",
+   "at": "2026-11-26T20:08:00-05:00",
+   "card": "il-countdown",
+   "topic": "Illinois",
+   "thread": [
+    "DePaul has more restaurants within a 10-minute walk of campus than Northwestern, UIUC and UIC combined. Every Illinois university with 10,000+ students:\n\nDePaul 488, Northwestern 162, UIUC 109, UIC 85, Loyola Chicago 72, Northern Illinois 42, Illinois State 40, UChicago 25, SIU Carbondale 19, College of DuPage 7, SIU Edwardsville 0.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/il"
+   ]
+  }
+ ],
+ "cards": {
+  "pac12-old-countdown": {
+   "type": "ranking",
+   "title": "The old Pac-12 ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 12 schools of the old Pac-12. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "2",
+     "USC",
+     94
+    ],
+    [
+     "3",
+     "Arizona",
+     84
+    ],
+    [
+     "4",
+     "Arizona State",
+     76
+    ],
+    [
+     "5",
+     "CU Boulder",
+     70
+    ],
+    [
+     "5",
+     "Washington",
+     70
+    ],
+    [
+     "7",
+     "Oregon",
+     57
+    ],
+    [
+     "8",
+     "Oregon State",
+     38
+    ],
+    [
+     "9",
+     "Stanford",
+     29
+    ],
+    [
+     "10",
+     "Utah",
+     16
+    ],
+    [
+     "11",
+     "UCLA",
+     14
+    ],
+    [
+     "12",
+     "Washington State",
+     8
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "mo-countdown": {
+   "type": "ranking",
+   "title": "Big Missouri universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Missouri university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Mizzou",
+     98
+    ],
+    [
+     "2",
+     "Saint Louis",
+     63
+    ],
+    [
+     "3",
+     "UMKC",
+     38
+    ],
+    [
+     "4",
+     "Central Missouri",
+     25
+    ],
+    [
+     "5",
+     "Missouri State",
+     23
+    ],
+    [
+     "6",
+     "UMSL",
+     6
+    ],
+    [
+     "7",
+     "WashU",
+     5
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ut-countdown": {
+   "type": "ranking",
+   "title": "Big Utah universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Utah university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "BYU",
+     29
+    ],
+    [
+     "2",
+     "Utah Tech",
+     27
+    ],
+    [
+     "3",
+     "Southern Utah",
+     17
+    ],
+    [
+     "4",
+     "Utah",
+     16
+    ],
+    [
+     "5",
+     "Utah Valley",
+     11
+    ],
+    [
+     "5",
+     "Weber State",
+     11
+    ],
+    [
+     "7",
+     "Utah State",
+     3
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "il-countdown": {
+   "type": "ranking",
+   "title": "Big Illinois universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Illinois university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "DePaul",
+     488
+    ],
+    [
+     "2",
+     "Northwestern",
+     162
+    ],
+    [
+     "3",
+     "UIUC",
+     109
+    ],
+    [
+     "4",
+     "UIC",
+     85
+    ],
+    [
+     "5",
+     "Loyola Chicago",
+     72
+    ],
+    [
+     "6",
+     "Northern Illinois",
+     42
+    ],
+    [
+     "7",
+     "Illinois State",
+     40
+    ],
+    [
+     "8",
+     "UChicago",
+     25
+    ],
+    [
+     "9",
+     "SIU Carbondale",
+     19
+    ],
+    [
+     "10",
+     "College of DuPage",
+     7
+    ],
+    [
+     "11",
+     "SIU Edwardsville",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

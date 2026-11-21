@@ -7,6 +7,9 @@
     python cdvoice.py hooks <date>                 THE DEFAULT SINCE NOV 18: only each countdown's opening question,
                                                    in the social-media girl voice (Laura), ~80 characters each
     python cdvoice.py hook <date> <video id> <audio file>  save that recording as the video's hook
+    python cdvoice.py hooks-all <date> [<date>...]  every hook still missing for those days, as ONE prompt (the free
+                                                   tier runs one generation at a time, so many hooks go in one take)
+    python cdvoice.py cut-hooks <audio file> <date> [<date>...]   cut that take into the hooks, in the same order
 
 Then build as usual: reel.py uses a recorded line wherever one exists for the exact words, and the local
 voice for anything else (so a reworded line falls back safely). Takes live in social/show/takes/cd-<date>-<id>/.
@@ -57,6 +60,17 @@ def prompt(v):
     return "\n[long pause]\n".join(out)
 
 
+def missing_hooks(dates):
+    """[(date, video id, hook line)] for every video in those batches whose hook isn't recorded yet."""
+    out = []
+    for date in dates:
+        for v in videos(date):
+            t = next(s["say"] for s in v["scenes"] if s.get("say"))
+            if not take(date, v["id"], t):
+                out.append((date, v["id"], t))
+    return out
+
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     if len(a) == 2 and a[0] == "lines":
@@ -67,6 +81,21 @@ if __name__ == "__main__":
         for v in videos(a[1]):
             p = "[excited] " + next(s["say"] for s in v["scenes"] if s.get("say"))
             print(f"=== {v['id']}: voice {HOOK['name']} ({HOOK['voice_id']}), {HOOK['model']}, one take, {len(p)} characters ===\n{p}\n")
+    elif len(a) >= 2 and a[0] == "hooks-all":
+        todo = missing_hooks(a[1:])
+        p = "\n[long pause]\n".join("[excited] " + t for _, _, t in todo)
+        print(f"=== {len(todo)} hooks: voice {HOOK['name']} ({HOOK['voice_id']}), {HOOK['model']}, one take, {len(p)} characters ===\n{p}")
+    elif len(a) >= 3 and a[0] == "cut-hooks":
+        todo = missing_hooks(a[2:])
+        parts, gaps = show.split_take(a[1], len(todo))
+        import subprocess, numpy as np
+        for (date, vid, t), x in zip(todo, parts):
+            d = folder(date, vid); os.makedirs(d, exist_ok=True)
+            out = os.path.join(d, f"01-{show.line_key(WHO, t)}.wav")
+            x = show.level(x, {"gain": 1.0})
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "s16le", "-ar", str(show.SR), "-ac", "1", "-i", "-", out],
+                           input=(np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes(), check=True)
+            print(f"  {len(x) / show.SR:5.2f} s  {date} {vid}: {t}")
     elif len(a) == 4 and a[0] == "hook":
         v = next(x for x in videos(a[1]) if x["id"] == a[2])
         t = next(s["say"] for s in v["scenes"] if s.get("say"))

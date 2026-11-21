@@ -1,0 +1,282 @@
+{
+ "date": "2026-11-28",
+ "videos_learned_from": 58,
+ "r2_views": 0.83,
+ "chosen": [
+  {
+   "id": "state:TN|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Tennessee universities with 10,000+ students by w (#1 Vanderbilt 129, tease Tennessee (4th))",
+   "views_mid": 1534,
+   "views_lo": 1029,
+   "views_hi": 2285,
+   "win_rate": 0.907,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X')"
+  },
+  {
+   "id": "state:KY|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Kentucky universities with 10,000+ students by w (#1 Kentucky 69, tease Louisville (2nd))",
+   "views_mid": 1351,
+   "views_lo": 962,
+   "views_hi": 1897,
+   "win_rate": 0.95,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier); + naming the upset in the hook ('Hint: it's not X')"
+  },
+  {
+   "id": "conf:a-10|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: 10 Atlantic 10 schools by w (#1 GW 280)",
+   "views_mid": 806,
+   "views_lo": 388,
+   "views_hi": 1673,
+   "win_rate": 0.227,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier); - grouping by conference (vs. state)"
+  },
+  {
+   "id": "state:ID|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: Idaho universities with 10,000+ students by w (#1 BYU-Idaho 44)",
+   "views_mid": 965,
+   "views_lo": 545,
+   "views_hi": 1707,
+   "win_rate": 0.32,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier); - a more famous school named in the tease (+1 tier)"
+  }
+ ],
+ "top": [
+  {
+   "id": "group:public-ivies|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "short"
+   ],
+   "what": "short: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 9963,
+   "views_lo": 2013,
+   "views_hi": 49281,
+   "win_rate": 0.817,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; teased UCLA 7d ago (-0.3)"
+  },
+  {
+   "id": "group:public-ivies|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: The 9 original Public Ivies by street (#1 UC Berkeley 122, tease UCLA (8th))",
+   "views_mid": 8399,
+   "views_lo": 1371,
+   "views_hi": 51413,
+   "win_rate": 0.683,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; teased UCLA 7d ago (-0.3)"
+  },
+  {
+   "id": "group:flagships|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 50 state flagship universities by street (#1 UC Berkeley 122, tease Michigan (19th))",
+   "views_mid": 8377,
+   "views_lo": 1366,
+   "views_hi": 51346,
+   "win_rate": 0.467,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 5d ago (-0.25); teased Michigan 5d ago (-0.3); teased Michigan 3d ago (-0.3)"
+  },
+  {
+   "id": "group:tech|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 17 tech schools by street (#1 Stevens 158, tease MIT (3rd))",
+   "views_mid": 5350,
+   "views_lo": 853,
+   "views_hi": 33507,
+   "win_rate": 0.303,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 4d ago (-0.25); teased MIT 4d ago (-0.3); teased MIT 1d ago (-0.3)"
+  },
+  {
+   "id": "group:public-ivies|w|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous"
+   ],
+   "what": "countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 4932,
+   "views_lo": 1926,
+   "views_hi": 12624,
+   "win_rate": 0.52,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier); teased UCLA 7d ago (-0.3)"
+  },
+  {
+   "id": "group:public-ivies|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street"
+   ],
+   "what": "countdown: The 9 original Public Ivies by street (#1 UC Berkeley 122, tease UCLA (8th))",
+   "views_mid": 4158,
+   "views_lo": 1146,
+   "views_hi": 15078,
+   "win_rate": 0.427,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier); teased UCLA 7d ago (-0.3)"
+  },
+  {
+   "id": "state:CA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (14th))",
+   "views_mid": 4115,
+   "views_lo": 1160,
+   "views_hi": 14585,
+   "win_rate": 0.49,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); teased Stanford 2d ago (-0.3)"
+  },
+  {
+   "id": "group:flagships|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street"
+   ],
+   "what": "countdown: 50 state flagship universities by street (#1 UC Berkeley 122, tease Michigan (19th))",
+   "views_mid": 3610,
+   "views_lo": 992,
+   "views_hi": 13122,
+   "win_rate": 0.177,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier); same grouping 5d ago (-0.25); teased Michigan 5d ago (-0.3); teased Michigan 3d ago (-0.3)"
+  },
+  {
+   "id": "group:jesuit|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 18 Jesuit universities by street (#1 Georgetown 92)",
+   "views_mid": 3542,
+   "views_lo": 521,
+   "views_hi": 24046,
+   "win_rate": 0.39,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 3d ago (-0.25)"
+  },
+  {
+   "id": "state:FL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Florida universities by street (#1 Florida 70, tease Florida State (2nd))",
+   "views_mid": 3345,
+   "views_lo": 717,
+   "views_hi": 15576,
+   "win_rate": 0.29,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 7d ago (-0.25)"
+  },
+  {
+   "id": "state:AL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Alabama universities with 10,000+ students by street (#1 UAB 44, tease Alabama (3rd))",
+   "views_mid": 3313,
+   "views_lo": 709,
+   "views_hi": 15457,
+   "win_rate": 0.107,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 3d ago (-0.25); same state in the last 3 days (-0.15); teased Alabama 3d ago (-0.3)"
+  },
+  {
+   "id": "state:IN|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Indiana universities with 10,000+ students by w (#1 Indiana 138, tease Notre Dame (5th))",
+   "views_mid": 3109,
+   "views_lo": 904,
+   "views_hi": 10680,
+   "win_rate": 0.557,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X')"
+  },
+  {
+   "id": "conf:acc|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 18 ACC schools by street (#1 Georgia Tech 139, tease Stanford (10th))",
+   "views_mid": 2934,
+   "views_lo": 594,
+   "views_hi": 14468,
+   "win_rate": 0.147,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 8d ago (-0.25); teased Stanford 2d ago (-0.3); college basketball season (+0.05)"
+  },
+  {
+   "id": "conf:sec|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 16 SEC schools by street (#1 UT Austin 84, tease Alabama (13th))",
+   "views_mid": 2927,
+   "views_lo": 593,
+   "views_hi": 14441,
+   "win_rate": 0.147,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 9d ago (-0.25); teased Alabama 3d ago (-0.3); college basketball season (+0.05)"
+  },
+  {
+   "id": "state:TN|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: Tennessee universities with 10,000+ students by w (#1 Vanderbilt 129, tease Tennessee (4th))",
+   "views_mid": 2830,
+   "views_lo": 804,
+   "views_hi": 9947,
+   "win_rate": 0.437,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; - more famous schools on screen (+1 tier)"
+  }
+ ]
+}

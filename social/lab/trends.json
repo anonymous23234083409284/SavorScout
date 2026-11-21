@@ -1,11 +1,11 @@
 {
- "date": "2026-11-22",
+ "date": "2026-11-29",
  "pin": [
-  "state:PA|w|countdown",
-  "state:VA|w|countdown",
-  "state:NC|w|countdown",
-  "city:Washington-DC|w|countdown"
+  "state:NJ|w|countdown",
+  "group:public-ivies|w|countdown",
+  "city:New York-NY|w|countdown",
+  "state:CA|w|countdown"
  ],
  "boost": [],
- "note": "2026-11-22: owner (Nov 21): stick with what works, countdowns only, post consistently. Four proven countdowns re-run with the Laura hook: Pennsylvania (5,914 views Nov 6), Virginia (4,228 Nov 7), North Carolina (3,957 Nov 7) and DC (5,538 Nov 12). No rivalries, no street metric (both measured below countdowns)."
+ "note": "2026-11-29: week built ahead on Nov 21 (owner: countdowns only, consistent posting). Pinned: state:NJ|w|countdown, group:public-ivies|w|countdown, city:New York-NY|w|countdown, state:CA|w|countdown"
 }

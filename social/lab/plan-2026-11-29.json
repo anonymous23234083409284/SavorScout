@@ -1,0 +1,288 @@
+{
+ "date": "2026-11-29",
+ "videos_learned_from": 58,
+ "r2_views": 0.82,
+ "chosen": [
+  {
+   "id": "state:NJ|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: New Jersey universities with 10,000+ students by w (#1 Rutgers 182)",
+   "views_mid": 914,
+   "views_lo": 513,
+   "views_hi": 1629,
+   "win_rate": 1.0,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "group:public-ivies|w|countdown",
+   "format": "countdown",
+   "slot": "experiment",
+   "new": [
+    "g_famous"
+   ],
+   "what": "countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 5050,
+   "views_lo": 1970,
+   "views_hi": 12941,
+   "win_rate": 0.723,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "state:CA|w|countdown",
+   "format": "countdown",
+   "slot": "proven",
+   "new": [],
+   "what": "countdown: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (14th))",
+   "views_mid": 1802,
+   "views_lo": 997,
+   "views_hi": 3256,
+   "win_rate": 1.0,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + naming the upset in the hook ('Hint: it's not X'); teased Stanford 3d ago (-0.3)"
+  },
+  {
+   "id": "city:New York-NY|w|countdown",
+   "format": "countdown",
+   "slot": "experiment",
+   "new": [
+    "g_city"
+   ],
+   "what": "countdown: New York colleges with 5,000+ students by w (#1 Touro 1478, tease Columbia (9th))",
+   "views_mid": 850,
+   "views_lo": 394,
+   "views_hi": 1831,
+   "win_rate": 0.02,
+   "why": "+ a countdown of named schools (vs. the first week's videos); - grouping by city; - more famous schools on screen (+1 tier)"
+  }
+ ],
+ "top": [
+  {
+   "id": "group:public-ivies|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "short"
+   ],
+   "what": "short: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 10103,
+   "views_lo": 2038,
+   "views_hi": 50069,
+   "win_rate": 0.893,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut"
+  },
+  {
+   "id": "group:public-ivies|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: The 9 original Public Ivies by street (#1 UC Berkeley 122, tease UCLA (8th))",
+   "views_mid": 8978,
+   "views_lo": 1474,
+   "views_hi": 54668,
+   "win_rate": 0.8,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut"
+  },
+  {
+   "id": "group:flagships|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 50 state flagship universities by street (#1 UC Berkeley 122, tease Michigan (19th))",
+   "views_mid": 8963,
+   "views_lo": 1469,
+   "views_hi": 54638,
+   "win_rate": 0.55,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 6d ago (-0.25); teased Michigan 6d ago (-0.3); teased Michigan 4d ago (-0.3)"
+  },
+  {
+   "id": "group:tech|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 17 tech schools by street (#1 Stevens 158, tease MIT (3rd))",
+   "views_mid": 5791,
+   "views_lo": 929,
+   "views_hi": 36068,
+   "win_rate": 0.397,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 5d ago (-0.25); teased MIT 5d ago (-0.3); teased MIT 2d ago (-0.3)"
+  },
+  {
+   "id": "group:public-ivies|w|countdown",
+   "format": "countdown",
+   "slot": "experiment",
+   "new": [
+    "g_famous"
+   ],
+   "what": "countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
+   "views_mid": 5050,
+   "views_lo": 1970,
+   "views_hi": 12941,
+   "win_rate": 0.723,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "group:public-ivies|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street"
+   ],
+   "what": "countdown: The 9 original Public Ivies by street (#1 UC Berkeley 122, tease UCLA (8th))",
+   "views_mid": 4488,
+   "views_lo": 1247,
+   "views_hi": 16148,
+   "win_rate": 0.583,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + more famous schools on screen (+1 tier)"
+  },
+  {
+   "id": "state:CA|w|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "short"
+   ],
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (14th))",
+   "views_mid": 4083,
+   "views_lo": 1149,
+   "views_hi": 14497,
+   "win_rate": 0.53,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); teased Stanford 3d ago (-0.3)"
+  },
+  {
+   "id": "group:flagships|street|countdown",
+   "format": "countdown",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street"
+   ],
+   "what": "countdown: 50 state flagship universities by street (#1 UC Berkeley 122, tease Michigan (19th))",
+   "views_mid": 3958,
+   "views_lo": 1094,
+   "views_hi": 14304,
+   "win_rate": 0.223,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + naming the upset in the hook ('Hint: it's not X'); same grouping 6d ago (-0.25); teased Michigan 6d ago (-0.3); teased Michigan 4d ago (-0.3)"
+  },
+  {
+   "id": "conf:ivy-league|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 8 Ivy League schools by street (#1 Columbia 144, tease Harvard (2nd))",
+   "views_mid": 3884,
+   "views_lo": 781,
+   "views_hi": 19290,
+   "win_rate": 0.243,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 8d ago (-0.25); teased Harvard 2d ago (-0.3)"
+  },
+  {
+   "id": "group:jesuit|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "g_famous",
+    "metric_street",
+    "short"
+   ],
+   "what": "short: 18 Jesuit universities by street (#1 Georgetown 92)",
+   "views_mid": 3818,
+   "views_lo": 564,
+   "views_hi": 25782,
+   "win_rate": 0.497,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a famous-schools grouping; + a 15-20 second top-3 cut; same grouping 4d ago (-0.25)"
+  },
+  {
+   "id": "state:FL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Florida universities by street (#1 Florida 70, tease Florida State (2nd))",
+   "views_mid": 3545,
+   "views_lo": 761,
+   "views_hi": 16487,
+   "win_rate": 0.367,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 8d ago (-0.25)"
+  },
+  {
+   "id": "state:PA|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Big Pennsylvania universities by street (#1 Drexel 70, tease Penn (2nd))",
+   "views_mid": 3532,
+   "views_lo": 758,
+   "views_hi": 16442,
+   "win_rate": 0.107,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 7d ago (-0.25); teased Penn 7d ago (-0.3); teased Penn 2d ago (-0.3)"
+  },
+  {
+   "id": "state:AL|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: Alabama universities with 10,000+ students by street (#1 UAB 44, tease Alabama (3rd))",
+   "views_mid": 3523,
+   "views_lo": 755,
+   "views_hi": 16411,
+   "win_rate": 0.217,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + naming the upset in the hook ('Hint: it's not X'); same grouping 4d ago (-0.25); teased Alabama 4d ago (-0.3)"
+  },
+  {
+   "id": "conf:acc|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 18 ACC schools by street (#1 Georgia Tech 139, tease Stanford (10th))",
+   "views_mid": 3268,
+   "views_lo": 664,
+   "views_hi": 16059,
+   "win_rate": 0.2,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 9d ago (-0.25); teased Stanford 3d ago (-0.3); college basketball season (+0.05)"
+  },
+  {
+   "id": "conf:sec|street|short",
+   "format": "short",
+   "slot": null,
+   "new": [
+    "metric_street",
+    "short"
+   ],
+   "what": "short: All 16 SEC schools by street (#1 UT Austin 84, tease Alabama (13th))",
+   "views_mid": 3263,
+   "views_lo": 663,
+   "views_hi": 16041,
+   "win_rate": 0.2,
+   "why": "+ a countdown of named schools (vs. the first week's videos); + a 15-20 second top-3 cut; + more famous schools on screen (+1 tier); same grouping 10d ago (-0.25); teased Alabama 4d ago (-0.3); college basketball season (+0.05)"
+  }
+ ]
+}

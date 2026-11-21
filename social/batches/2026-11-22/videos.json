@@ -174,7 +174,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?"
+     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?",
+     "clip": 5551780
     }
    ],
    "lab": {
@@ -359,7 +360,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Duke, with just 9. Western Carolina, 13. North Carolina A and T, 15. UNC Wilmington, 22. UNC Charlotte, 23."
+     "say": "Dead last: Duke, with just 9. Western Carolina, 13. North Carolina A and T, 15. UNC Wilmington, 22. UNC Charlotte, 23.",
+     "clip": 7969487
     },
     {
      "beats": 7,
@@ -422,7 +424,8 @@
      "text": "Did we rank your school right? *Comment below.*",
      "sub": "Send this to your friend at another North Carolina school.",
      "reuse": 1,
-     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?",
+     "clip": 7969487
     }
    ],
    "lab": {

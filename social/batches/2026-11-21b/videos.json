@@ -1,5 +1,6 @@
 {
- "date": "2026-11-23",
+ "date": "2026-11-21",
+ "batch": "2026-11-21b",
  "videos": [
   {
    "id": "baltimore-md-countdown",
@@ -94,7 +95,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-120"
   },
   {
    "id": "fl-countdown",
@@ -208,7 +210,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-114"
   }
  ]
 }

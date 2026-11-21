@@ -35,8 +35,12 @@ def folder(date, vid):
 def take(date, vid, text):
     """(path, seconds) of the recorded line for these exact words, or None."""
     d = folder(date, vid)
-    if not os.path.isdir(d):
-        return None
+    if not os.path.isdir(d):                   # a second batch for the day (2026-11-21b) keeps its takes under that name
+        import glob
+        alt = sorted(glob.glob(os.path.join(show.TAKES, f"cd-{date[:10]}?-{vid}")))
+        if not alt:
+            return None
+        d = alt[0]
     k = show.line_key(WHO, text)
     hit = sorted(f for f in os.listdir(d) if k in f)
     if not hit:

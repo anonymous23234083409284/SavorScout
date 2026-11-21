@@ -282,9 +282,11 @@ const RankScene: React.FC<{s: ReelScene}> = ({s}) => {
 				<div style={{marginTop: 8, opacity: name, transform: `translateY(${(1 - name) * 30}px)`}}>
 					<Lines cap={r.name} delay={4} />
 				</div>
-				<div style={{opacity: sub}}>
-					<Box cap={r.sub} delay={12} />
-				</div>
+				{r.sub && r.sub.lines.some((l) => l.length) ? (
+					<div style={{opacity: sub}}>
+						<Box cap={r.sub} delay={12} />
+					</div>
+				) : null}
 			</div>
 			<div style={{position: 'absolute', left: 60, right: 150, top: 1395, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
 				<div style={{fontFamily: DISPLAY, fontWeight: 900, fontSize: 132, lineHeight: 1, color: lit ? C.saffron : '#fff', ...stroke(132)}}>{count.toLocaleString('en-US')}{r.suffix ?? ''}</div>

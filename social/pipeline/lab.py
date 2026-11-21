@@ -120,6 +120,51 @@ EXTRA_NAMES = {"fashion-institute-of-technology": "FIT", "cuny-bernard-m-baruch-
 RANK_NAMES = {s: n for g in RANKINGS for n, s in g["members"]}
 
 
+
+# Clear short names (Nov 21): lists showed "California State" four times, "Wisconsin" six times, "Missouri" next to
+# "Mizzou", "North Carolina" for UNC Greensboro. Every school a viewer could misread gets the name students use.
+EXTRA_NAMES.update({
+    "california-state-university-chico": "Chico State", "california-state-university-long-beach": "Long Beach State",
+    "california-state-university-fresno": "Fresno State", "california-state-university-fullerton": "Cal State Fullerton",
+    "california-state-university-bakersfield": "CSU Bakersfield", "california-state-university-channel-islands": "CSU Channel Islands",
+    "california-state-university-dominguez-hills": "CSU Dominguez Hills", "california-state-university-east-bay": "Cal State East Bay",
+    "california-state-university-los-angeles": "Cal State LA", "california-state-university-monterey-bay": "CSU Monterey Bay",
+    "california-state-university-northridge": "CSUN", "california-state-university-sacramento": "Sac State",
+    "california-state-university-san-bernardino": "CSU San Bernardino", "california-state-university-san-marcos": "CSU San Marcos",
+    "california-state-university-stanislaus": "Stanislaus State", "california-state-polytechnic-university-humboldt": "Cal Poly Humboldt",
+    "california-state-polytechnic-university-pomona": "Cal Poly Pomona", "california-polytechnic-state-university-san-luis-obispo": "Cal Poly",
+    "san-diego-state-university": "SDSU", "san-jose-state-university": "SJSU", "san-francisco-state-university": "SF State",
+    "sonoma-state-university": "Sonoma State",
+    "university-of-wisconsin-milwaukee": "UW-Milwaukee", "university-of-wisconsin-eau-claire": "UW-Eau Claire",
+    "university-of-wisconsin-green-bay": "UW-Green Bay", "university-of-wisconsin-la-crosse": "UW-La Crosse",
+    "university-of-wisconsin-oshkosh": "UW-Oshkosh", "university-of-wisconsin-platteville": "UW-Platteville",
+    "university-of-wisconsin-river-falls": "UW-River Falls", "university-of-wisconsin-stevens-point": "UW-Stevens Point",
+    "university-of-wisconsin-whitewater": "UW-Whitewater", "university-of-wisconsin-stout": "UW-Stout",
+    "university-of-missouri-kansas-city": "UMKC", "university-of-missouri-st-louis": "UMSL",
+    "missouri-university-of-science-and-technology": "Missouri S&T", "washington-university-in-st-louis": "WashU",
+    "missouri-state-university-springfield": "Missouri State",
+    "university-of-north-carolina-at-greensboro": "UNC Greensboro", "university-of-north-carolina-wilmington": "UNC Wilmington",
+    "north-carolina-a-and-t-state-university": "NC A&T", "north-carolina-central-university": "NC Central",
+    "university-of-virginia-main-campus": "UVA",
+    "university-of-maryland-baltimore": "UMaryland Baltimore", "university-of-maryland-baltimore-county": "UMBC",
+    "loyola-university-maryland": "Loyola Maryland", "the-catholic-university-of-america": "Catholic University",
+    "florida-agricultural-and-mechanical-university": "FAMU", "prairie-view-a-and-m-university": "Prairie View A&M",
+    "southern-university-and-a-and-m-college": "Southern University", "alabama-a-and-m-university": "Alabama A&M",
+    "grambling-state-university": "Grambling State", "winston-salem-state-university": "Winston-Salem State",
+    "massachusetts-institute-of-technology": "MIT", "rensselaer-polytechnic-institute": "RPI", "worcester-polytechnic-institute": "WPI",
+    "stevens-institute-of-technology": "Stevens", "michigan-technological-university": "Michigan Tech",
+    "colorado-school-of-mines": "Colorado School of Mines", "rochester-institute-of-technology": "RIT",
+    "illinois-institute-of-technology": "Illinois Tech", "louisiana-tech-university": "Louisiana Tech",
+    "tennessee-technological-university": "Tennessee Tech", "florida-institute-of-technology": "Florida Tech",
+    "loyola-marymount-university": "LMU", "loyola-university-chicago": "Loyola Chicago", "university-of-san-francisco": "University of San Francisco",
+    "seattle-university": "Seattle U", "saint-joseph-s-university": "Saint Joseph's", "university-of-detroit-mercy": "Detroit Mercy",
+    "university-of-connecticut": "UConn", "st-john-s-university-new-york": "St. John's", "university-of-mississippi": "Ole Miss",
+    "university-of-alaska-fairbanks": "Alaska Fairbanks", "university-of-hawaii-at-manoa": "Hawaii", "university-at-buffalo": "Buffalo",
+    "university-of-nevada-reno": "Nevada", "university-of-new-hampshire-main-campus": "New Hampshire",
+    "university-of-new-mexico-main-campus": "New Mexico", "university-of-massachusetts-amherst": "UMass Amherst",
+    "university-of-maryland-college-park": "Maryland", "william-and-mary": "William & Mary", "miami-university-oxford": "Miami (Ohio)",
+})
+
 def short(slug):
     for table in (EXTRA_NAMES, RANK_NAMES, NAMES):
         if slug in table:
@@ -268,6 +313,68 @@ ONLINE_ONLY = {"university-of-the-people", "western-governors-university", "nati
                "capella-university", "walden-university", "american-public-university-system"}
 
 
+
+NEW_GROUPS = [
+    ("group:flagships", "famous", "Which state flagship university", "State flagship universities", "{n} state flagship universities",
+     "Send this to a friend at their state's flagship.", "state flagship",
+     ["the-university-of-alabama", "university-of-alaska-fairbanks", "university-of-arizona", "university-of-arkansas",
+      "university-of-california-berkeley", "university-of-colorado-boulder", "university-of-connecticut", "university-of-delaware",
+      "university-of-florida", "university-of-georgia", "university-of-hawaii-at-manoa", "university-of-idaho",
+      "university-of-illinois-urbana-champaign", "indiana-university-bloomington", "university-of-iowa", "university-of-kansas",
+      "university-of-kentucky", "louisiana-state-university-and-agricultural-and-mechanical-college", "university-of-maine",
+      "university-of-maryland-college-park", "university-of-massachusetts-amherst", "university-of-michigan-ann-arbor",
+      "university-of-minnesota-twin-cities", "university-of-mississippi", "university-of-missouri-columbia", "the-university-of-montana",
+      "university-of-nebraska-lincoln", "university-of-nevada-reno", "university-of-new-hampshire-main-campus",
+      "rutgers-university-new-brunswick", "university-of-new-mexico-main-campus", "university-at-buffalo",
+      "university-of-north-carolina-at-chapel-hill", "university-of-north-dakota", "ohio-state-university-main-campus",
+      "university-of-oklahoma-norman-campus", "university-of-oregon", "pennsylvania-state-university-main-campus",
+      "university-of-rhode-island", "university-of-south-carolina-columbia", "university-of-south-dakota",
+      "the-university-of-tennessee-knoxville", "the-university-of-texas-at-austin", "university-of-utah", "university-of-vermont",
+      "university-of-virginia-main-campus", "university-of-washington-seattle-campus", "west-virginia-university",
+      "university-of-wisconsin-madison", "university-of-wyoming"]),
+    ("conf:big-east", "conference", "Which Big East school", "Big East schools", "{n} Big East schools",
+     "Send this to your friend at another Big East school.", "Big East school",
+     ["university-of-connecticut", "villanova-university", "georgetown-university", "marquette-university", "creighton-university",
+      "xavier-university", "butler-university", "st-john-s-university-new-york", "seton-hall-university", "depaul-university"]),
+    ("group:hbcu", "famous", "Which HBCU", "HBCUs", "{n} HBCUs",
+     "Send this to your friend at another HBCU.", "HBCU",
+     ["howard-university", "florida-agricultural-and-mechanical-university", "north-carolina-a-and-t-state-university",
+      "prairie-view-a-and-m-university", "southern-university-and-a-and-m-college", "jackson-state-university",
+      "morgan-state-university", "tennessee-state-university", "grambling-state-university", "north-carolina-central-university",
+      "alabama-a-and-m-university", "texas-southern-university", "delaware-state-university", "norfolk-state-university",
+      "bowie-state-university", "virginia-state-university", "fayetteville-state-university", "winston-salem-state-university",
+      "albany-state-university", "central-state-university"]),
+    ("group:jesuit", "famous", "Which Jesuit university", "Jesuit universities", "{n} Jesuit universities",
+     "Send this to your friend at another Jesuit school.", "Jesuit university",
+     ["georgetown-university", "boston-college", "fordham-university", "marquette-university", "gonzaga-university",
+      "santa-clara-university", "loyola-marymount-university", "loyola-university-chicago", "loyola-university-maryland",
+      "saint-louis-university", "university-of-san-francisco", "seattle-university", "saint-joseph-s-university",
+      "fairfield-university", "regis-university", "university-of-detroit-mercy", "creighton-university", "xavier-university"]),
+    ("group:tech", "famous", "Which tech school", "Tech schools", "{n} tech schools",
+     "Send this to your friend at another tech school.", "tech school",
+     ["massachusetts-institute-of-technology", "carnegie-mellon-university", "rensselaer-polytechnic-institute",
+      "worcester-polytechnic-institute", "stevens-institute-of-technology", "california-polytechnic-state-university-san-luis-obispo",
+      "michigan-technological-university", "colorado-school-of-mines", "rochester-institute-of-technology",
+      "illinois-institute-of-technology", "louisiana-tech-university", "tennessee-technological-university",
+      "florida-institute-of-technology", "texas-tech-university", "virginia-polytechnic-institute-and-state-university",
+      "georgia-institute-of-technology-main-campus", "new-jersey-institute-of-technology"]),
+    ("system:csu", "system", "Which Cal State campus", "Cal State campuses", "{n} Cal State campuses",
+     "Send this to your friend at another Cal State.", "Cal State campus",
+     ["california-state-university-bakersfield", "california-state-university-channel-islands", "california-state-university-chico",
+      "california-state-university-dominguez-hills", "california-state-university-east-bay", "california-state-university-fresno",
+      "california-state-university-fullerton", "california-state-university-long-beach", "california-state-university-los-angeles",
+      "california-state-university-monterey-bay", "california-state-university-northridge", "california-state-university-sacramento",
+      "california-state-university-san-bernardino", "california-state-university-san-marcos", "california-state-university-stanislaus",
+      "california-state-polytechnic-university-humboldt", "california-state-polytechnic-university-pomona",
+      "california-polytechnic-state-university-san-luis-obispo", "san-diego-state-university", "san-jose-state-university",
+      "san-francisco-state-university", "sonoma-state-university"]),
+    ("group:public-ivies", "famous", "Which Public Ivy", "The original Public Ivies", "The {n} original Public Ivies",
+     "Send this to your friend at another Public Ivy.", "Public Ivy",
+     ["william-and-mary", "miami-university-oxford", "university-of-michigan-ann-arbor", "university-of-north-carolina-at-chapel-hill",
+      "the-university-of-texas-at-austin", "university-of-virginia-main-campus", "university-of-vermont",
+      "university-of-california-berkeley", "university-of-california-los-angeles"]),
+]
+
 def all_groups():
     out, seen = [], set()
     for g in RANKINGS:
@@ -297,6 +404,12 @@ def all_groups():
                     title=f"{len(FAMOUS_20)} famous American universities", desc=f"{len(FAMOUS_20)} famous American universities",
                     cta="Send this to a friend at one of these schools.", members=FAMOUS_20, noun1="school on the list",
                     link=f"{SITE}/rankings/", region="famous"))
+    # More groupings in the countdown format (Nov 21), so a week can run without repeating a ranking.
+    for key, kind, which, head, title, cta, noun1, members in NEW_GROUPS:
+        members = [m for m in members if m in SCENE]
+        out.append(dict(key=key, kind=kind, which=which, head=head, title=title.format(n=len(members)),
+                        desc=title.format(n=len(members)), cta=cta, members=members, noun1=noun1,
+                        link=f"{SITE}/rankings/", region=key))
     by_state, by_city = {}, {}
     for s, c in CAMP.items():
         if s not in SCENE or not four_year(s) or s in ONLINE_ONLY:

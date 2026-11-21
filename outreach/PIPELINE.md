@@ -85,3 +85,27 @@ many near-identical questions (College Recruiter), answer at most two, each with
 - **No personal exposure (the owner's rule, Nov 21).** Skip any request that needs a headshot, photos,
   a bio with personal details, a recorded interview, video or TV. Only text answers or data-led pitches
   that cite Savor Scout's numbers.
+
+## The backlink playbook (owner's goal, Nov 21: average position ~5-6 by Feb-Mar; 40 emails a day)
+
+Ranked by how likely someone is to say yes. Always: one personal email, the school's real number, no money, no link swaps.
+
+1. **Resource and info pages that already list "places to eat near campus"** (the owner asked to keep doing this).
+   University pages run by admissions/visitor centers, orientation, parent and family programs, student government,
+   housing ("off-campus living"), and city/chamber/visitor-bureau "dining near the university" pages. Pitch: "your page
+   lists places to eat near campus; ours is a free, always-current map of every one within a 10-minute walk", link the
+   campus page. Highest yes-rate: it helps their readers and costs them one line. .edu links are the most valuable.
+2. **Writers who already wrote about food near that campus** (journalist matches, student papers, local news,
+   college-town food bloggers). Pitch a fresh number for a follow-up or an update to the old piece.
+3. **Broken or outdated links**: on those resource pages, find dead links to closed restaurants or old guides and offer
+   the campus page as the replacement. People fix broken things quickly.
+4. **Unlinked mentions**: anyone who quotes our numbers or names Savor Scout without a link gets a short thank-you
+   asking for the link. Near-certain yes. (Check monthly.)
+5. **Data for list-makers**: sites that publish "best college towns", "best colleges for food" lists get our counts
+   as a source (University Magazine is the model).
+6. **Journalist requests** (HARO/Featured/Qwoted/Substack): only real fits, text answers only (see the rules above).
+7. **Campus clubs and student guides**: food clubs, culinary clubs, international student orgs, freshman guides
+   on club sites. Smaller links, friendly audience.
+
+Never: paying, link exchanges, guest posts written for links, posing as anything but a student founder of a free site,
+anything that needs photos or personal details.

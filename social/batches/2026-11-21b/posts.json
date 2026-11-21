@@ -1,0 +1,136 @@
+{
+ "tiktok": [
+  {
+   "video": "baltimore-md-countdown",
+   "at": "2026-11-21T21:21:00-05:00",
+   "text": "Johns Hopkins is 2nd 👀 Which college in Baltimore has the most restaurants within a 10-minute walk? Send this to your friend at another Baltimore college.\n\n#marylandbaltimore #johnshopkins #morganstate #collegelife #collegefood"
+  },
+  {
+   "video": "fl-countdown",
+   "at": "2026-11-21T15:23:00-05:00",
+   "text": "UF is 2nd 👀 Which big Florida university has the most restaurants within a 10-minute walk? Send this to your friend at another Florida school.\n\n#floridastate #florida #fiu #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-baltimore-md-countdown",
+   "at": "2026-11-21T19:39:00-05:00",
+   "card": "baltimore-md-countdown",
+   "thread": [
+    "University of Maryland, Baltimore has more restaurants within a 10-minute walk of campus than Johns Hopkins, Morgan State and Loyola Maryland combined.\n\nEvery Baltimore college with 5,000+ students:",
+    "1. University of Maryland, Baltimore: 111\n2. Johns Hopkins: 76\n3. Morgan State: 18\n4. Loyola Maryland: 5\n5. UMBC: 4",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/md"
+   ]
+  },
+  {
+   "id": "x-fl-countdown",
+   "at": "2026-11-21T17:41:00-05:00",
+   "card": "fl-countdown",
+   "thread": [
+    "Florida State edges out Florida by 2 for the most restaurants within a 10-minute walk of campus.\n\nThe big Florida universities:",
+    "1. Florida State: 50\n2. Florida: 48\n3. FIU: 45\n4. UCF: 30\n5. USF: 16\n6. Florida Atlantic: 7\n6. Nova Southeastern: 7",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/florida/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-baltimore-md-countdown",
+   "at": "2026-11-21T20:13:00-05:00",
+   "card": "baltimore-md-countdown",
+   "topic": "Baltimore colleges",
+   "thread": [
+    "University of Maryland, Baltimore has more restaurants within a 10-minute walk of campus than Johns Hopkins, Morgan State and Loyola Maryland combined. Every Baltimore college with 5,000+ students:\n\nUniversity of Maryland, Baltimore 111, Johns Hopkins 76, Morgan State 18, Loyola Maryland 5, UMBC 4.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/md"
+   ]
+  },
+  {
+   "id": "t-fl-countdown",
+   "at": "2026-11-21T18:09:00-05:00",
+   "card": "fl-countdown",
+   "topic": "Florida",
+   "thread": [
+    "Florida State edges out Florida by 2 for the most restaurants within a 10-minute walk of campus. The big Florida universities:\n\nFlorida State 50, Florida 48, FIU 45, UCF 30, USF 16, Florida Atlantic 7, Nova Southeastern 7.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/florida/"
+   ]
+  }
+ ],
+ "cards": {
+  "baltimore-md-countdown": {
+   "type": "ranking",
+   "title": "Baltimore colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Baltimore college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "University of Maryland, Baltimore",
+     111
+    ],
+    [
+     "2",
+     "Johns Hopkins",
+     76
+    ],
+    [
+     "3",
+     "Morgan State",
+     18
+    ],
+    [
+     "4",
+     "Loyola Maryland",
+     5
+    ],
+    [
+     "5",
+     "UMBC",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "fl-countdown": {
+   "type": "ranking",
+   "title": "Big Florida universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "The big Florida universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Florida State",
+     50
+    ],
+    [
+     "2",
+     "Florida",
+     48
+    ],
+    [
+     "3",
+     "FIU",
+     45
+    ],
+    [
+     "4",
+     "UCF",
+     30
+    ],
+    [
+     "5",
+     "USF",
+     16
+    ],
+    [
+     "6",
+     "Florida Atlantic",
+     7
+    ],
+    [
+     "6",
+     "Nova Southeastern",
+     7
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

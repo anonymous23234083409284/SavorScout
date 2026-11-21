@@ -1,0 +1,214 @@
+{
+ "date": "2026-11-23",
+ "videos": [
+  {
+   "id": "baltimore-md-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/md",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-maryland-baltimore",
+     "text": "Which college in Baltimore has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Johns Hopkins.",
+     "say": "Which college in Baltimore has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UMBC",
+     "count": 4,
+     "sub": "Busiest food street: Maiden Choice Ln",
+     "map": "university-of-maryland-baltimore-county",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Dead last: UMBC, with just 4. Pack a lunch."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Loyola Maryland",
+     "count": 5,
+     "sub": "Busiest food street: York Rd",
+     "map": "loyola-university-maryland",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Loyola Maryland. Just 5. Busiest food street: York Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Morgan State",
+     "count": 18,
+     "sub": "Busiest food street: Harford Rd",
+     "map": "morgan-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Morgan State. 18. Busiest food street: Harford Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Johns Hopkins",
+     "count": 76,
+     "sub": "Busiest food street: W 36th St",
+     "map": "johns-hopkins-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Johns Hopkins. 76. Busiest food street: 36th Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "University of Maryland, Baltimore",
+     "count": 111,
+     "sub": "Busiest food street: Charles St",
+     "map": "university-of-maryland-baltimore",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: University of Maryland, Baltimore. 111. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Baltimore college.",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Did we rank your school right? Tell us in the comments. And which city should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "city:Baltimore-MD",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "city:Baltimore-MD|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "fl-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/florida/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "florida-state-university",
+     "text": "Which big Florida university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UF.",
+     "say": "Which Florida university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Big Florida universities",
+     "rows": [
+      [
+       "6",
+       "Nova Southeastern",
+       "7"
+      ],
+      [
+       "6",
+       "Florida Atlantic",
+       "7"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Nova Southeastern, with just 7. Florida Atlantic, 7."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "USF",
+     "count": 16,
+     "sub": "Busiest food street: E Fowler Ave",
+     "map": "university-of-south-florida",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: USF. 16. Busiest food street: Fowler Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UCF",
+     "count": 30,
+     "sub": "Busiest food street: Collegiate Way",
+     "map": "university-of-central-florida",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: UCF. 30. Busiest food street: Collegiate Way."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "FIU",
+     "count": 45,
+     "sub": "Busiest food street: 107th Ave",
+     "map": "florida-international-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: FIU. 45. Busiest food street: 107th Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Florida",
+     "count": 48,
+     "sub": "Busiest food street: University Ave",
+     "map": "university-of-florida",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Florida. 48. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Florida State",
+     "count": 50,
+     "sub": "Busiest food street: Tennessee St",
+     "map": "florida-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Florida State. 50."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Florida school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:FL",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:FL|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

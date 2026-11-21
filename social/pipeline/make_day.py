@@ -468,17 +468,16 @@ def stats():
     return rows
 
 
-def handoff(date):
+def handoff(date, more=()):
     """A posting sheet for when Buffer can't be used (its API was out of requests Nov 21-30): every post
     for the day in time order, with the file to attach and the text to paste. Writes POST-THESE.txt next
     to the rendered videos and cards."""
     import datetime as dt
-    p = json.load(open(os.path.join(SOCIAL, "batches", date, "posts.json")))
     out_dir = os.path.join(SOCIAL, "out", "batches", date)
-    items = [(x["at"], "TikTok", x["video"] + ".mp4", [x["text"]]) for x in p.get("tiktok", [])]
-    items += [(x["at"], "X", x["card"] + ".jpg (in cards/)", x["thread"]) for x in p.get("twitter", [])]
-    items += [(x["at"], "Threads", x["card"] + ".jpg (in cards/)", x["thread"]) for x in p.get("threads", [])]
-    lines = [f"Posts for {date} (Eastern time). Attach the file, paste the text. In a thread, each part is a reply to the one before.", ""]
+    items = []
+    for b in (date, *more):                    # several batches for one day (e.g. 2026-11-21 and 2026-11-21b)
+        items += handoff_items(json.load(open(os.path.join(SOCIAL, "batches", b, "posts.json"))))
+    lines = [f"Posts for {date[:10]} (Eastern time). Attach the file, paste the text. In a thread, each part is a reply to the one before.", ""]
     for at, where, f, parts in sorted(items):
         t = dt.datetime.fromisoformat(at)
         lines += [f"=== {t:%-I:%M %p}  {where}  ·  attach {f}"]
@@ -490,10 +489,17 @@ def handoff(date):
     print(path)
 
 
+def handoff_items(p):
+    items = [(x["at"], "TikTok", x["video"] + ".mp4", [x["text"]]) for x in p.get("tiktok", [])]
+    items += [(x["at"], "X", x["card"] + ".jpg (in cards/)", x["thread"]) for x in p.get("twitter", [])]
+    items += [(x["at"], "Threads", x["card"] + ".jpg (in cards/)", x["thread"]) for x in p.get("threads", [])]
+    return items
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "handoff":
-        handoff(sys.argv[2])
+        handoff(sys.argv[2], sys.argv[3:])
         sys.exit(0)
     if cmd == "sounds":
         sounds(sys.argv[2])

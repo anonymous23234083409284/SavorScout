@@ -297,6 +297,46 @@
    "what": "countdown: Washington colleges with 5,000+ students by w (#1 GW 280, tease Georgetown (3rd))",
    "status": "posted",
    "predicted": 976
+  },
+  {
+   "date": "2026-11-23",
+   "video": "chicago-il-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Chicago colleges with 5,000+ students by w (#1 DePaul 488, tease UChicago (9th))",
+   "status": "posted",
+   "predicted": 742
+  },
+  {
+   "date": "2026-11-23",
+   "video": "guess-harvard-guess",
+   "experiment": "guess",
+   "what": "guess the campus: Harvard, Penn, USC",
+   "status": "posted",
+   "predicted": 149
+  },
+  {
+   "date": "2026-11-23",
+   "video": "guess-harvard-guess",
+   "experiment": "guess",
+   "what": "guess the campus: Harvard, Penn, USC",
+   "status": "posted",
+   "predicted": 149
+  },
+  {
+   "date": "2026-11-23",
+   "video": "ca-short",
+   "experiment": "short",
+   "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th))",
+   "status": "posted",
+   "predicted": 4043
+  },
+  {
+   "date": "2026-11-23",
+   "video": "baltimore-md-countdown",
+   "experiment": "g_city",
+   "what": "countdown: Baltimore colleges with 5,000+ students by w (#1 Maryland, Baltimore 111, tease Johns Hopkins (2nd))",
+   "status": "posted",
+   "predicted": 827
   }
  ]
 }

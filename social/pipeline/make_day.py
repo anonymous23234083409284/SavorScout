@@ -21,6 +21,12 @@ Between build and render, look at the qa sheets and replace any clip that
 does not show what its caption says: reel.py repick <videos.json> <video> '{"3": [...queries]}'.
 """
 import json, os, re, subprocess, sys, urllib.request
+
+# Buffer allows 3,000 API requests per 30 days. Stats checks drained it in Nov,
+# so a run asks about at most this many posts (owner, Nov 22: lowered from 60).
+STATS_CAP = 25
+# Short-form channels every video goes to (owner, Nov 22). No X or Threads.
+SHORT_FORM = ("tiktok", "youtube", "instagram")
 from io import BytesIO
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -218,7 +224,7 @@ def publish(date, sounds_dir, dry_run=False, force=False):
     history.setdefault("batches", {})[date] = {"videos": [v["id"] for v in reels["videos"]],
                                               "tracks": [v["track"] for v in reels["videos"]],
                                               "posts_planned": {k: [p.get("id") or p.get("video") for p in posts[k]]
-                                                                for k in ("tiktok", "twitter", "threads")}}
+                                                                for k in ("tiktok",)}}
     if dry_run:
         print("dry run: would publish", sorted(files), "and schedule", {k: len(v) for k, v in posts.items() if k != "cards"})
         return
@@ -229,10 +235,25 @@ def publish(date, sounds_dir, dry_run=False, force=False):
     done = []
     for p in posts["tiktok"]:
         when = dt.datetime.fromisoformat(p["at"])
-        res = buffer.create(chans["tiktok"]["id"], p["text"], when, [buffer.video(urls[p["video"] + ".mp4"], 1200)])
-        done.append({"service": "tiktok", "at": res["dueAt"], "post_id": res["id"], "what": p["video"]})
-    for service in ("twitter", "threads"):
-        for p in posts[service]:
+        for service in SHORT_FORM:
+            if service not in chans:
+                continue
+            meta = None
+            if service == "youtube":
+                title = (p.get("title") or p["text"].split("\n")[0]).strip()
+                title = (title[:88].rstrip() + " #Shorts") if "#shorts" not in title.lower() else title[:100]
+                meta = {"youtube": {"title": title, "categoryId": "26"}}
+            elif service == "instagram":
+                meta = {"instagram": {"type": "reel", "shouldShareToFeed": True}}
+            try:
+                res = buffer.create(chans[service]["id"], p["text"], when,
+                                    [buffer.video(urls[p["video"] + ".mp4"], 1200)], meta)
+            except Exception as e:   # one channel failing must not stop the others
+                print(f"  FAILED {service:9} {p['video']}: {e}")
+                continue
+            done.append({"service": service, "at": res["dueAt"], "post_id": res["id"], "what": p["video"]})
+    for service in ():   # X and Threads retired (owner, Nov 22)
+        for p in posts.get(service, []):
             when = dt.datetime.fromisoformat(p["at"])
             items = [{"text": t, "assets": []} for t in p["thread"]]
             if p.get("card"):
@@ -263,7 +284,7 @@ def verify(date):
     posts = json.load(open(os.path.join(wdir, "posts.json")))
     tz = ZoneInfo(json.load(open(os.path.join(SOCIAL, "config.json")))["timezone"])
     want = {p["video"]: p for p in posts["tiktok"]}
-    want.update({p["id"]: p for p in posts["twitter"] + posts["threads"]})
+    want.update({p["id"]: p for p in posts.get("twitter", []) + posts.get("threads", [])})
     query = """query($id: PostId!) { post(input: {id: $id}) { id status dueAt externalLink error { message } text assets { source }
       metadata { ... on TwitterPostMetadata { thread { text assets { source } } }
                  ... on ThreadsPostMetadata { topic thread { text assets { source } } } } } }"""
@@ -287,7 +308,7 @@ def verify(date):
         if when != dt.datetime.fromisoformat(w["at"]).astimezone(tz):
             issues.append("time differs")
         urls = [a["source"] for a in p["assets"] or []]
-        if s["service"] == "tiktok":
+        if s["service"] in SHORT_FORM:
             parts = 1
             # Once posted, Buffer holds the caption as TikTok returns it, line breaks flattened to spaces.
             if " ".join(p["text"].split()) != " ".join(w["text"].split()):
@@ -331,7 +352,7 @@ def update(date, names):
     tag = time.strftime("%H%M%S")
     want = {}
     for service in ("tiktok", "twitter", "threads"):
-        for p in posts[service]:
+        for p in posts.get(service, []):
             want[p.get("video") or p["id"]] = (service, p)
     drop = [n[1:] for n in names if n.startswith("-")]
     keep = [n for n in names if not n.startswith("-")]
@@ -438,11 +459,11 @@ def stats():
             d = d if d.tzinfo else d.replace(tzinfo=tz)
         except ValueError:
             return True
-        return (now - d).days > (10 if service == "tiktok" else 3)
+        return (now - d).days > (10 if service in SHORT_FORM else 3)
     for pid in sorted(ids, key=lambda i: due.get(i) or "", reverse=True):   # newest first: they matter most
         service, what = ids[pid]
         p = None
-        if settled(pid, service) or asked >= 60:
+        if settled(pid, service) or asked >= STATS_CAP:
             limited_here = True
         else:
             limited_here = False

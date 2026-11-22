@@ -110,7 +110,7 @@ const DAILY_SEARCH_LIMIT = 5;
    entire allowance, so the next attempt — or one shuffle you actually wanted —
    died on an auth error that read like a search failure. Three is enough to
    find a location, try a craving, and still open a room for the group. */
-const FREE_TRIAL_SEARCHES = 3;
+const FREE_TRIAL_SEARCHES = 5;   // owner, Nov 22: five free searches before sign-up
 const EARTH_RADIUS_MILES = 3958.8;
 const PROXIMITY_DECAY_MILES = 3;
 const MAX_QUERY_CHARS = 300;
@@ -2424,7 +2424,7 @@ async function recordTrialSearch(key) {
    search, so it is zero and the sign-in wall goes up — reporting the signed-in
    allowance here would promise four more searches that the gate will refuse. */
 function remainingFor(req, newCount) {
-  if (!req.userId) return 0;
+  if (!req.userId) return Math.max(0, FREE_TRIAL_SEARCHES - ((req.trialUsedBefore || 0) + 1));
   return Math.max(0, DAILY_SEARCH_LIMIT - newCount);
 }
 
@@ -2448,7 +2448,7 @@ async function requireAuthOrTrial(req, res, next) {
 
     if (used >= FREE_TRIAL_SEARCHES) {
       return res.status(401).json({
-        error: "That was your free search — sign in to keep going.",
+        error: "Those were your free searches. Sign in to keep going.",
         requiresAuth: true,
         trialExhausted: true,
         searchesRemaining: 0,
@@ -2457,6 +2457,7 @@ async function requireAuthOrTrial(req, res, next) {
 
     req.userId = null;          // every user-scoped write checks this
     req.anonTrialKey = key;
+    req.trialUsedBefore = used;
     req.currentSearchCount = 0;
     req.searchDate = todayStr();
     return next();
@@ -3461,7 +3462,7 @@ async function legacySearch(req, res) {
         locationName,
         restaurants: [],
         searchesRemaining: remainingFor(req, newCount),
-        trialUsed: !req.userId,
+        trialUsed: !req.userId && remainingFor(req, newCount) === 0,
       });
     }
 
@@ -3521,7 +3522,7 @@ async function legacySearch(req, res) {
         locationName,
         restaurants: [],
         searchesRemaining: remainingFor(req, newCount),
-        trialUsed: !req.userId,
+        trialUsed: !req.userId && remainingFor(req, newCount) === 0,
       });
     }
 
@@ -3597,7 +3598,7 @@ async function legacySearch(req, res) {
         nearestMiles: Math.round(nearest),
         maxRadiusMiles: maxRadius,
         searchesRemaining: remainingFor(req, newCount),
-        trialUsed: !req.userId,
+        trialUsed: !req.userId && remainingFor(req, newCount) === 0,
       });
     }
 
@@ -4090,7 +4091,7 @@ async function legacySearch(req, res) {
       restaurants: finalPicks,
       roomCandidates,
       searchesRemaining: remainingFor(req, newCount),
-      trialUsed: !req.userId,
+      trialUsed: !req.userId && remainingFor(req, newCount) === 0,
     });
   } catch (err) {
     console.error("Unhandled /search error:", err);
@@ -4206,7 +4207,7 @@ async function searchV2(req, res) {
           ? { outOfRange: true, nearestMiles: result.nearestMiles, maxRadiusMiles: result.maxRadiusMiles }
           : {}),
         searchesRemaining: remainingFor(req, newCount),
-        trialUsed: !req.userId,
+        trialUsed: !req.userId && remainingFor(req, newCount) === 0,
         engine: "v2",
       });
     }
@@ -4385,7 +4386,7 @@ async function searchV2(req, res) {
       restaurants: finalPicks,
       roomCandidates,
       searchesRemaining: remainingFor(req, newCount),
-      trialUsed: !req.userId,
+      trialUsed: !req.userId && remainingFor(req, newCount) === 0,
       engine: "v2",
       searchMeta: {
         timings: result.timings,

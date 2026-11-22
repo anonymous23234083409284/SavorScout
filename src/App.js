@@ -1123,7 +1123,7 @@ function App() {
      once the one free search has been spent. */
   const [showAuth, setShowAuth] = useState(false);
   const [trialSpent, setTrialSpent] = useState(() => {
-    try { return Boolean(window.localStorage.getItem("ss_trial_spent")); }
+    try { return Boolean(window.localStorage.getItem("ss_trial_spent_v5")); }
     catch { return false; }
   });
   /* The "Why not just use Google Maps?" pitch used to open on arrival for every
@@ -1142,7 +1142,7 @@ function App() {
      allowance, so clearing this key buys nothing. */
   const spendTrial = useCallback(() => {
     setTrialSpent(true);
-    try { window.localStorage.setItem("ss_trial_spent", "1"); } catch { /* private mode */ }
+    try { window.localStorage.setItem("ss_trial_spent_v5", "1"); } catch { /* private mode */ }
   }, []);
 
   const [roomCraving, setRoomCraving] = useState("");
@@ -2361,7 +2361,7 @@ function App() {
               {trialWall ? (
                 <>You are not signed in. <strong>Sign up to keep searching</strong></>
               ) : (
-                <>You are not signed in. <strong>One free search</strong>, then sign up to keep going</>
+                <>You are not signed in. <strong>{searchesRemaining !== null ? searchesRemaining : 5} free search{searchesRemaining === 1 ? "" : "es"} left</strong>, then sign up to keep going</>
               )}
             </span>
           </button>

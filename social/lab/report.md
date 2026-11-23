@@ -1,56 +1,56 @@
 # What the lab has learned
 
-Learned from **58 TikToks** posted 2026-11-01 to 2026-11-17. The model explains about 84% of the differences in views (in-sample, so treat it as a guide). Multipliers below are on views; "clear" means the data shows it repeatedly, "likely" means it leans that way, "unclear" means not enough evidence yet.
+Learned from **58 TikToks** posted 2026-11-01 to 2026-11-17. The model explains about 82% of the differences in views (in-sample, so treat it as a guide). Multipliers below are on views; "clear" means the data shows it repeatedly, "likely" means it leans that way, "unclear" means not enough evidence yet.
 
-**Last 7 days:** 19 videos, median 709 views, 6 of 19 at 1,000+.
+**Last 7 days:** 4 videos, median 125 views, 0 of 4 at 1,000+.
 
 ## What drives views
 
-- **Countdown vs. 'how to tell' tip: x7.7 views** (clear)
-- a countdown of named schools (vs. the first week's videos): **x13.23** views (clear, seen in 32 videos)
-- ranking by busiest food street (vs. walkable count): **x0.29** views (clear, seen in 2 videos)
-- a 'how to tell' tip (vs. the first week's videos): **x1.71** views (likely, seen in 7 videos)
-- more famous schools on screen (+1 tier): **x1.94** views (likely, seen in 33 videos)
-- grouping by university system (UC, Cal State): **x1.78** views (likely, seen in 3 videos)
-- a 'part 2' of an earlier hit: **x0.48** views (likely, seen in 2 videos)
-- grouping by city: **x0.60** views (likely, seen in 2 videos)
-- a famous-schools grouping: **x2.04** views (unclear, seen in 1 videos)
-- posting on a weekend: **x1.26** views (unclear, seen in 10 videos)
-- a two-school rivalry head-to-head: **x1.93** views (unclear, seen in 1 videos)
-- punch-in cuts on the map scenes (faster pacing): **x1.93** views (unclear, seen in 1 videos)
-- posting at 6 or 9 PM (vs. noon or 3 PM): **x0.89** views (unclear, seen in 27 videos)
-- naming the upset in the hook ('Hint: it's not X'): **x1.27** views (unclear, seen in 25 videos)
+- **Countdown vs. 'how to tell' tip: x7.4 views** (clear)
+- a countdown of named schools (vs. the first week's videos): **x12.65** views (clear, seen in 32 videos)
+- a 'how to tell' tip (vs. the first week's videos): **x1.72** views (likely, seen in 7 videos)
+- grouping by university system (UC, Cal State): **x2.04** views (likely, seen in 3 videos)
+- a 'part 2' of an earlier hit: **x0.38** views (likely, seen in 2 videos)
+- more famous schools on screen (+1 tier): **x1.55** views (likely, seen in 33 videos)
+- a famous-schools grouping: **x2.07** views (likely, seen in 1 videos)
+- punch-in cuts on the map scenes (faster pacing): **x2.12** views (unclear, seen in 1 videos)
+- a two-school rivalry head-to-head: **x2.12** views (unclear, seen in 1 videos)
+- grouping by city: **x0.65** views (unclear, seen in 2 videos)
+- naming the upset in the hook ('Hint: it's not X'): **x1.24** views (unclear, seen in 25 videos)
+- posting on a weekend: **x0.90** views (unclear, seen in 12 videos)
+- a spoken voiceover (vs. music only): **x0.88** views (unclear, seen in 12 videos)
+- a bigger lead for #1 (x2): **x1.06** views (unclear, seen in 33 videos)
 - grouping by conference (vs. state): **x0.87** views (unclear, seen in 7 videos)
-- one more school in the ranking: **x0.99** views (unclear, seen in 33 videos)
-- a spoken voiceover (vs. music only): **x0.94** views (unclear, seen in 12 videos)
-- a bigger lead for #1 (x2): **x1.03** views (unclear, seen in 33 videos)
-- a more famous school named in the tease (+1 tier): **x1.03** views (unclear, seen in 33 videos)
+- ranking by busiest food street (vs. walkable count): **x0.89** views (unclear, seen in 1 videos)
+- posting at 6 or 9 PM (vs. noon or 3 PM): **x0.97** views (unclear, seen in 25 videos)
+- a more famous school named in the tease (+1 tier): **x1.02** views (unclear, seen in 33 videos)
+- one more school in the ranking: **x1.00** views (unclear, seen in 33 videos)
 
 ## What drives watch time
 
 - a countdown of named schools (vs. the first week's videos): **+2.3 s** (clear)
 - one more school in the ranking: **+0.1 s** (likely)
 - a spoken voiceover (vs. music only): **+0.9 s** (likely)
-- grouping by conference (vs. state): **+0.7 s** (likely)
-- posting at 6 or 9 PM (vs. noon or 3 PM): **+0.4 s** (unclear)
+- grouping by conference (vs. state): **+0.6 s** (likely)
+- grouping by university system (UC, Cal State): **+0.4 s** (unclear)
 
 ## What drives shares
 
 - a 'how to tell' tip (vs. the first week's videos): **x0.44** (clear)
-- grouping by city: **x0.24** (clear)
-- one more school in the ranking: **x1.10** (clear)
-- grouping by university system (UC, Cal State): **x2.20** (clear)
-- a spoken voiceover (vs. music only): **x1.62** (likely)
+- one more school in the ranking: **x1.11** (clear)
+- grouping by city: **x0.27** (clear)
+- grouping by university system (UC, Cal State): **x2.12** (clear)
+- a spoken voiceover (vs. music only): **x1.46** (likely)
 
 ## What drives completion (share of the video watched)
 
 Median completion: **23%** of the video, across 50 videos with a known length.
 
 - a countdown of named schools (vs. the first week's videos): **+18.8 points** (likely)
-- a 'how to tell' tip (vs. the first week's videos): **+6.2 points** (unclear)
-- a 'part 2' of an earlier hit: **-7.5 points** (unclear)
-- grouping by university system (UC, Cal State): **+4.2 points** (unclear)
-- posting on a weekend: **-2.0 points** (unclear)
+- a 'how to tell' tip (vs. the first week's videos): **+6.6 points** (unclear)
+- a 'part 2' of an earlier hit: **-11.2 points** (unclear)
+- posting on a weekend: **-3.2 points** (unclear)
+- grouping by university system (UC, Cal State): **+5.5 points** (unclear)
 
 ## What works in the niche: TikTok (180 videos, 161 accounts, 2026-11-11)
 
@@ -83,17 +83,17 @@ The lab starts from these (both platforms combined, the more certain one countin
 
 ## Experiments
 
-- 2026-11-14 metric_street: countdown: Ivy League by busiest food street (#1 Columbia 144) -> **drop** (462 views, 6.55s; predicted ?)
-- 2026-11-14 part2: part 2: big Pennsylvania universities by busiest food street (#1 Drexel 70; Penn 4th to 2nd) -> **drop** (363 views, 5.43s; predicted ?)
-- 2026-11-18 metric_street: countdown: 20 famous American universities by busiest food street (#1 NYU 190, tease Harvard (4th)) -> **posted** (waiting for 3 days of numbers; predicted 3,094)
-- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
-- 2026-11-19 short: short: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th)) -> **posted** (waiting for 3 days of numbers; predicted 3,865)
-- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
-- 2026-11-19 short: short: Utah universities with 10,000+ students by w (#1 BYU 29, tease Utah (4th)) -> **posted** (waiting for 3 days of numbers; predicted 2,201)
-- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
-- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
-- 2026-11-19 short: short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th)) -> **posted** (waiting for 3 days of numbers; predicted 5,065)
-- 2026-11-19 rivalry: rivalry: Yale vs Harvard -> **posted** (waiting for 3 days of numbers; predicted 400)
-- 2026-11-19 rivalry: rivalry: USC vs UCLA -> **posted** (waiting for 3 days of numbers; predicted 427)
+- 2026-11-23 g_famous: countdown: 20 HBCUs by w (#1 Howard 77) -> **posted** (waiting for 3 days of numbers; predicted 2,014)
+- 2026-11-23 g_city: countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592) -> **posted** (waiting for 3 days of numbers; predicted 567)
+- 2026-11-23 g_famous: countdown: 50 state flagship universities by w (#1 UC Berkeley 277, tease Michigan (2nd)) -> **posted** (waiting for 3 days of numbers; predicted 4,866)
+- 2026-11-23 g_famous: countdown: 20 HBCUs by w (#1 Howard 77) -> **posted** (waiting for 3 days of numbers; predicted 2,014)
+- 2026-11-23 g_city: countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592) -> **posted** (waiting for 3 days of numbers; predicted 564)
+- 2026-11-24 g_famous: countdown: 17 tech schools by w (#1 Stevens 176, tease MIT (3rd)) -> **posted** (waiting for 3 days of numbers; predicted 3,460)
+- 2026-11-25 g_famous: countdown: 18 Jesuit universities by w (#1 Seattle U 241, tease Georgetown (6th)) -> **posted** (waiting for 3 days of numbers; predicted 2,669)
+- 2026-11-27 g_famous: countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th)) -> **promote** (8,622 views, 11.59s; predicted 7,081)
+- 2026-11-27 g_city: countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Houston (2nd)) -> **retry** (975 views, 9.19s; predicted 866)
+- 2026-11-27 g_city: countdown: Philadelphia colleges with 5,000+ students by w (#1 Thomas Jefferson 562, tease Penn (3rd)) -> **posted** (waiting for 3 days of numbers; predicted 1,041)
+- 2026-11-29 g_famous: countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th)) -> **posted** (waiting for 3 days of numbers; predicted 5,050)
+- 2026-11-29 g_city: countdown: New York colleges with 5,000+ students by w (#1 Touro 1478, tease Columbia (9th)) -> **posted** (waiting for 3 days of numbers; predicted 850)
 
 _Written by social/pipeline/lab.py. Regenerated every daily run._

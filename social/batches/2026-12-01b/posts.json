@@ -1,0 +1,154 @@
+{
+ "tiktok": [
+  {
+   "video": "nc-countdown",
+   "at": "2026-12-01T13:50:00-05:00",
+   "text": "Duke is 13th \ud83d\udc40 Which North Carolina college has the most restaurants within a 10-minute walk? Send this to your friend at another North Carolina school.\n\n#uncchapelhill #ncstate #eastcarolina #collegelife #collegefood"
+  },
+  {
+   "video": "va-countdown",
+   "at": "2026-12-01T16:50:00-05:00",
+   "text": "UVA is 3rd \ud83d\udc40 Which Virginia college has the most restaurants within a 10-minute walk? Send this to your friend at another Virginia school.\n\n#vcu #virginiatech #uva #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "nc-countdown": {
+   "type": "ranking",
+   "title": "North Carolina colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every North Carolina college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UNC Chapel Hill",
+     87
+    ],
+    [
+     "2",
+     "NC State",
+     75
+    ],
+    [
+     "3",
+     "East Carolina",
+     57
+    ],
+    [
+     "4",
+     "App State",
+     47
+    ],
+    [
+     "5",
+     "UNC Greensboro",
+     36
+    ],
+    [
+     "6",
+     "UNC Charlotte",
+     23
+    ],
+    [
+     "7",
+     "UNC Wilmington",
+     22
+    ],
+    [
+     "8",
+     "North Carolina",
+     17
+    ],
+    [
+     "9",
+     "Elon",
+     15
+    ],
+    [
+     "9",
+     "NC A&T",
+     15
+    ],
+    [
+     "11",
+     "Western Carolina",
+     13
+    ],
+    [
+     "12",
+     "NC Central",
+     11
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "va-countdown": {
+   "type": "ranking",
+   "title": "Virginia colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Virginia college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "VCU",
+     130
+    ],
+    [
+     "2",
+     "Virginia Tech",
+     64
+    ],
+    [
+     "3",
+     "UVA",
+     58
+    ],
+    [
+     "4",
+     "William & Mary",
+     41
+    ],
+    [
+     "5",
+     "Liberty",
+     40
+    ],
+    [
+     "6",
+     "Old Dominion",
+     35
+    ],
+    [
+     "7",
+     "Radford",
+     23
+    ],
+    [
+     "8",
+     "George Mason",
+     17
+    ],
+    [
+     "9",
+     "JMU",
+     11
+    ],
+    [
+     "10",
+     "Regent",
+     9
+    ],
+    [
+     "11",
+     "Virginia State",
+     8
+    ],
+    [
+     "12",
+     "Norfolk State",
+     6
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

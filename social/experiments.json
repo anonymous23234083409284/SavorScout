@@ -407,16 +407,24 @@
    "video": "20-countdown",
    "experiment": "g_famous",
    "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
-   "status": "posted",
-   "predicted": 7081
+   "status": "promote",
+   "predicted": 7081,
+   "views": 8622,
+   "watch_s": 11.59,
+   "shares": 63,
+   "scored": "2026-11-18"
   },
   {
    "date": "2026-11-27",
    "video": "houston-tx-countdown",
    "experiment": "g_city",
    "what": "countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Houston (2nd))",
-   "status": "posted",
-   "predicted": 866
+   "status": "retry",
+   "predicted": 866,
+   "views": 975,
+   "watch_s": 9.19,
+   "shares": 1,
+   "scored": "2026-11-18"
   },
   {
    "date": "2026-11-27",

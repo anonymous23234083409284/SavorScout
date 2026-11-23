@@ -123,7 +123,7 @@ RANK_NAMES = {s: n for g in RANKINGS for n, s in g["members"]}
 
 # Clear short names (Nov 21): lists showed "California State" four times, "Wisconsin" six times, "Missouri" next to
 # "Mizzou", "North Carolina" for UNC Greensboro. Every school a viewer could misread gets the name students use.
-EXTRA_NAMES.update({
+EXTRA_NAMES.update({"florida-state-college-at-jacksonville": "FSC Jacksonville",
     "california-state-university-chico": "Chico State", "california-state-university-long-beach": "Long Beach State",
     "california-state-university-fresno": "Fresno State", "california-state-university-fullerton": "Cal State Fullerton",
     "california-state-university-bakersfield": "CSU Bakersfield", "california-state-university-channel-islands": "CSU Channel Islands",
@@ -385,6 +385,25 @@ NEW_GROUPS = [
      ["william-and-mary", "miami-university-oxford", "university-of-michigan-ann-arbor", "university-of-north-carolina-at-chapel-hill",
       "the-university-of-texas-at-austin", "university-of-virginia-main-campus", "university-of-vermont",
       "university-of-california-berkeley", "university-of-california-los-angeles"]),
+    # Nov 23: more conferences so 8 countdowns a day can run without repeating a ranking.
+    ("conf:mwc", "conference", "Which Mountain West school", "Mountain West schools", "{n} Mountain West schools",
+     "Send this to your friend at another Mountain West school.", "Mountain West school",
+     ["boise-state-university", "colorado-state-university-fort-collins", "california-state-university-fresno", "university-of-nevada-reno", "university-of-new-mexico-main-campus", "san-diego-state-university", "san-jose-state-university", "university-of-nevada-las-vegas", "utah-state-university", "university-of-wyoming", "university-of-hawaii-at-manoa"]),
+    ("conf:aac", "conference", "Which American Conference school", "American Conference schools", "{n} American Conference schools",
+     "Send this to your friend at another American Conference school.", "American Conference school",
+     ["university-of-north-carolina-at-charlotte", "east-carolina-university", "florida-atlantic-university", "university-of-memphis", "university-of-north-texas", "rice-university", "university-of-south-florida", "temple-university", "tulane-university-of-louisiana", "university-of-alabama-at-birmingham", "the-university-of-texas-at-san-antonio"]),
+    ("conf:mac", "conference", "Which MAC school", "MAC schools", "All {n} MAC schools",
+     "Send this to your friend at another MAC school.", "MAC school",
+     ["university-of-akron-main-campus", "ball-state-university", "bowling-green-state-university-main-campus", "university-at-buffalo", "central-michigan-university", "eastern-michigan-university", "kent-state-university-at-kent", "miami-university-oxford", "northern-illinois-university", "ohio-university-main-campus", "university-of-toledo", "western-michigan-university"]),
+    ("conf:sun-belt", "conference", "Which Sun Belt school", "Sun Belt schools", "All {n} Sun Belt schools",
+     "Send this to your friend at another Sun Belt school.", "Sun Belt school",
+     ["appalachian-state-university", "arkansas-state-university", "coastal-carolina-university", "georgia-southern-university", "georgia-state-university", "james-madison-university", "university-of-louisiana-at-lafayette", "university-of-louisiana-at-monroe", "marshall-university", "old-dominion-university", "university-of-south-alabama", "university-of-southern-mississippi", "texas-state-university", "troy-university"]),
+    ("conf:cusa", "conference", "Which Conference USA school", "Conference USA schools", "All {n} Conference USA schools",
+     "Send this to your friend at another Conference USA school.", "Conference USA school",
+     ["florida-international-university", "jacksonville-state-university", "kennesaw-state-university", "liberty-university", "louisiana-tech-university", "middle-tennessee-state-university", "new-mexico-state-university-main-campus", "sam-houston-state-university", "the-university-of-texas-at-el-paso", "western-kentucky-university"]),
+    ("conf:wcc", "conference", "Which West Coast Conference school", "West Coast Conference schools", "{n} West Coast Conference schools",
+     "Send this to your friend at another West Coast Conference school.", "West Coast Conference school",
+     ["gonzaga-university", "loyola-marymount-university", "pepperdine-university", "university-of-san-diego", "university-of-san-francisco", "santa-clara-university", "university-of-the-pacific"]),
 ]
 
 def all_groups():
@@ -440,6 +459,34 @@ def all_groups():
                         title=f"{name} universities with 10,000+ students", desc=f"Every {name} university with 10,000+ students",
                         cta=f"Send this to your friend at another {name} school.", members=members, noun1=f"big {name} university",
                         link=f"{SITE}/campus/{st.lower()}", region=key, place=STATES[st]))
+    # Nov 23: regions and "5,000+ students" state lists, more distinct rankings for the daily stock.
+    REGIONS = {"region:new-england": ("New England", ["CT", "MA", "RI", "NH", "VT", "ME"]),
+               "region:pnw": ("Pacific Northwest", ["WA", "OR", "ID"]),
+               "region:mountain": ("Rocky Mountain and Southwest", ["CO", "UT", "NV", "AZ", "NM", "WY", "MT"]),
+               "region:deep-south": ("Deep South", ["AL", "MS", "LA", "GA", "SC"]),
+               "region:plains": ("Great Plains", ["KS", "NE", "OK", "IA", "ND", "SD"]),
+               "region:mid-atlantic": ("Mid-Atlantic", ["NJ", "DE", "MD", "DC"]),
+               "region:great-lakes": ("Great Lakes", ["MI", "OH", "IN", "WI"])}
+    for key, (name, sts) in REGIONS.items():
+        members = [s for s, c in CAMP.items() if c.get("r") in sts and s in SCENE and four_year(s)
+                   and s not in ONLINE_ONLY and c.get("sz", 0) >= 5]
+        if len(members) >= 5:
+            out.append(dict(key=key, kind="famous", which=f"Which big {name} university", head=f"Big {name} universities",
+                            title=f"{name} universities with 20,000+ students", desc=f"Every {name} university with 20,000+ students",
+                            cta=f"Send this to your friend at another {name} school.", members=members, noun1=f"big {name} university",
+                            link=f"{SITE}/rankings/", region=key))
+    by_state5 = {}
+    for s, c in CAMP.items():
+        if s in SCENE and four_year(s) and s not in ONLINE_ONLY and c.get("sz", 0) >= 3:
+            by_state5.setdefault(c["r"], []).append(s)
+    for st, members in by_state5.items():
+        if st not in STATES or len(members) < 6 or len(members) == len(by_state.get(st, [])):
+            continue
+        name = STATES[st]
+        out.append(dict(key=f"state5k:{st}", kind="state", which=f"Which {name} college", head=f"{name} colleges",
+                        title=f"{name} colleges with 5,000+ students", desc=f"Every {name} college with 5,000+ students",
+                        cta=f"Send this to your friend at another {name} school.", members=members, noun1=f"{name} college",
+                        link=f"{SITE}/campus/{st.lower()}", region=f"state:{st}", place=name))
     for (city, st), members in by_city.items():
         if len(members) < 5:
             continue

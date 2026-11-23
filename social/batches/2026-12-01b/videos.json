@@ -1,0 +1,309 @@
+{
+ "date": "2026-12-01",
+ "batch": "2026-12-01b",
+ "videos": [
+  {
+   "id": "nc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/nc",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "text": "Which North Carolina college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Duke.",
+     "say": "Which North Carolina college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "North Carolina colleges with 5,000+ students",
+     "rows": [
+      [
+       "18",
+       "Winston-Salem State",
+       "2"
+      ],
+      [
+       "17",
+       "High Point",
+       "4"
+      ],
+      [
+       "15",
+       "Wake Forest",
+       "6"
+      ],
+      [
+       "15",
+       "Fayetteville State",
+       "6"
+      ],
+      [
+       "14",
+       "Campbell",
+       "7"
+      ],
+      [
+       "13",
+       "Duke",
+       "9"
+      ],
+      [
+       "12",
+       "NC Central",
+       "11"
+      ],
+      [
+       "11",
+       "Western Carolina",
+       "13"
+      ],
+      [
+       "9",
+       "NC A&T",
+       "15"
+      ],
+      [
+       "9",
+       "Elon",
+       "15"
+      ],
+      [
+       "8",
+       "North Carolina",
+       "17"
+      ],
+      [
+       "7",
+       "UNC Wilmington",
+       "22"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Winston-Salem State, with just 2. Pack a lunch. High Point, 4. And Duke? Only thirteenth."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UNC Greensboro",
+     "count": 36,
+     "sub": "Busiest food street: Tate St",
+     "map": "university-of-north-carolina-at-greensboro",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: UNC Greensboro. 36. Busiest food street: Tate Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "App State",
+     "count": 47,
+     "sub": "Busiest food street: King St",
+     "map": "appalachian-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: App State. 47. Busiest food street: King Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "East Carolina",
+     "count": 57,
+     "sub": "Busiest food street: 5th St",
+     "map": "east-carolina-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: East Carolina. 57. Busiest food street: 5th Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "NC State",
+     "count": 75,
+     "sub": "Busiest food street: Hillsborough St",
+     "map": "north-carolina-state-university-at-raleigh",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: NC State. 75. Busiest food street: Hillsborough Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UNC Chapel Hill",
+     "count": 87,
+     "sub": "Busiest food street: Franklin St",
+     "map": "university-of-north-carolina-at-chapel-hill",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UNC Chapel Hill. 87."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another North Carolina school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "state5k:NC",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:NC|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "va-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/va",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "virginia-commonwealth-university",
+     "text": "Which Virginia college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UVA.",
+     "say": "Which Virginia college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "Virginia colleges with 5,000+ students",
+     "rows": [
+      [
+       "12",
+       "Norfolk State",
+       "6"
+      ],
+      [
+       "11",
+       "Virginia State",
+       "8"
+      ],
+      [
+       "10",
+       "Regent",
+       "9"
+      ],
+      [
+       "9",
+       "JMU",
+       "11"
+      ],
+      [
+       "8",
+       "George Mason",
+       "17"
+      ],
+      [
+       "7",
+       "Radford",
+       "23"
+      ],
+      [
+       "6",
+       "Old Dominion",
+       "35"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Norfolk State, with just 6. Virginia State, 8. Regent, 9."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Liberty",
+     "count": 40,
+     "sub": "Busiest food street: Wards Rd",
+     "map": "liberty-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Liberty. 40. Busiest food street: Wards Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "William & Mary",
+     "count": 41,
+     "sub": "Busiest food street: Richmond Rd",
+     "map": "william-and-mary",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: William & Mary. 41. Busiest food street: Richmond Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UVA",
+     "count": 58,
+     "sub": "Busiest food street: W Main St",
+     "map": "university-of-virginia-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UVA. 58. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Virginia Tech",
+     "count": 64,
+     "sub": "Busiest food street: Main St",
+     "map": "virginia-polytechnic-institute-and-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Virginia Tech. 64. Busiest food street: Main Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "VCU",
+     "count": 130,
+     "sub": "Busiest food street: Broad St",
+     "map": "virginia-commonwealth-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: VCU. 130."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Virginia school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "state5k:VA",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:VA|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

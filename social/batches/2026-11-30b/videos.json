@@ -1,0 +1,279 @@
+{
+ "date": "2026-11-30",
+ "batch": "2026-11-30b",
+ "videos": [
+  {
+   "id": "fl-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/fl",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "the-university-of-tampa",
+     "text": "Which Florida college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not the University of Florida.",
+     "say": "Which Florida college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 14,
+     "style": "list",
+     "title": "Florida colleges with 5,000+ students: the bottom 12",
+     "rows": [
+      [
+       "25",
+       "Seminole State College of Florida",
+       "0"
+      ],
+      [
+       "25",
+       "Saint Leo",
+       "0"
+      ],
+      [
+       "24",
+       "Southeastern",
+       "2"
+      ],
+      [
+       "23",
+       "Barry",
+       "3"
+      ],
+      [
+       "21",
+       "St. Thomas",
+       "4"
+      ],
+      [
+       "21",
+       "Keiser University-Ft Lauderdale",
+       "4"
+      ],
+      [
+       "19",
+       "West Florida",
+       "5"
+      ],
+      [
+       "19",
+       "Florida Tech",
+       "5"
+      ],
+      [
+       "16",
+       "Nova Southeastern",
+       "7"
+      ],
+      [
+       "16",
+       "Florida Gulf Coast",
+       "7"
+      ],
+      [
+       "16",
+       "Florida Atlantic",
+       "7"
+      ],
+      [
+       "14",
+       "Embry-Riddle Aeronautical University-Worldwide",
+       "8"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Seminole State College of Florida. Zero. Pack a lunch. Saint Leo, 0. Southeastern, 2."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "FSC Jacksonville",
+     "count": 32,
+     "sub": "Busiest food street: N Main St",
+     "map": "florida-state-college-at-jacksonville",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Florida State College at Jacksonville. 32. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "FIU",
+     "count": 45,
+     "sub": "Busiest food street: 107th Ave",
+     "map": "florida-international-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: FIU. 45. Busiest food street: 107th Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Florida",
+     "count": 48,
+     "sub": "Busiest food street: University Ave",
+     "map": "university-of-florida",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Florida. 48. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Florida State",
+     "count": 50,
+     "sub": "Busiest food street: Tennessee St",
+     "map": "florida-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Florida State. 50. Busiest food street: Tennessee Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Tampa",
+     "count": 106,
+     "sub": "Busiest food street: Franklin St",
+     "map": "the-university-of-tampa",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Tampa. 106."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Florida school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "state5k:FL",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:FL|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "in-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/in",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "indiana-university-bloomington",
+     "text": "Which big Indiana university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Notre Dame.",
+     "say": "Which Indiana university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Indiana universities with 10,000+ students",
+     "rows": [
+      [
+       "6",
+       "Vincennes",
+       "4"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Vincennes, with just 4. Pack a lunch."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Notre Dame",
+     "count": 6,
+     "sub": "Busiest food street: N Eddy St",
+     "map": "university-of-notre-dame",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Notre Dame. Just 6. Busiest food street: Eddy Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Ball State",
+     "count": 25,
+     "sub": "Busiest food street: W University Ave",
+     "map": "ball-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Ball State. 25. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "IU Indianapolis",
+     "count": 27,
+     "sub": "Busiest food street: Washington St",
+     "map": "indiana-university-purdue-university-indianapolis",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: IU Indianapolis. 27. Busiest food street: Washington Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Purdue",
+     "count": 61,
+     "sub": "Busiest food street: State St",
+     "map": "purdue-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Purdue. 61. Busiest food street: State Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Indiana",
+     "count": 138,
+     "sub": "Busiest food street: Kirkwood Ave",
+     "map": "indiana-university-bloomington",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Indiana. 138. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Indiana school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+    }
+   ],
+   "lab": {
+    "key": "state:IN",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state:IN|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

@@ -124,6 +124,9 @@ def qa(date):
                 frames.append(f)
             s = spec[v["id"]]["scenes"][i]
             cols.append((f"{i}: {(s.get('text') or s.get('title', '')).replace('*', '')[:22]}", frames))
+        if not cols:                       # all map scenes, no stock footage to check
+            print(f"{v['id']}: no clips")
+            continue
         sheet = Image.new("RGB", (150 * len(cols), 267 * 3 + 30))
         d = ImageDraw.Draw(sheet)
         for c, (label, frames) in enumerate(cols):

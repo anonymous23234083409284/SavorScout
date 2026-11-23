@@ -123,7 +123,7 @@ RANK_NAMES = {s: n for g in RANKINGS for n, s in g["members"]}
 
 # Clear short names (Nov 21): lists showed "California State" four times, "Wisconsin" six times, "Missouri" next to
 # "Mizzou", "North Carolina" for UNC Greensboro. Every school a viewer could misread gets the name students use.
-EXTRA_NAMES.update({"florida-state-college-at-jacksonville": "FSC Jacksonville",
+EXTRA_NAMES.update({"embry-riddle-aeronautical-university-daytona-beach": "Embry-Riddle", "keiser-university-ft-lauderdale": "Keiser", "seminole-state-college-of-florida": "Seminole State", "florida-state-college-at-jacksonville": "FSC Jacksonville",
     "california-state-university-chico": "Chico State", "california-state-university-long-beach": "Long Beach State",
     "california-state-university-fresno": "Fresno State", "california-state-university-fullerton": "Cal State Fullerton",
     "california-state-university-bakersfield": "CSU Bakersfield", "california-state-university-channel-islands": "CSU Channel Islands",
@@ -314,7 +314,7 @@ def ranking(members, metric):
 
 # Mostly-online universities: their enrollment puts them in "10,000+ students" lists, but their address is an
 # office, so "restaurants within a 10-minute walk of campus" means nothing for them.
-ONLINE_ONLY = {"northcentral-university", "northeastern-university-professional-programs",  # (and duplicate campus listings)
+ONLINE_ONLY = {"embry-riddle-aeronautical-university-worldwide", "northcentral-university", "northeastern-university-professional-programs",  # (and duplicate campus listings)
                 "university-of-the-people", "western-governors-university", "national-university", "excelsior-university",
                "southern-new-hampshire-university", "university-of-phoenix-arizona", "purdue-university-global",
                "capella-university", "walden-university", "american-public-university-system"}

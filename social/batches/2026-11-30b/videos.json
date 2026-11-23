@@ -21,63 +21,63 @@
      "title": "Florida colleges with 5,000+ students: the bottom 12",
      "rows": [
       [
-       "25",
-       "Seminole State College of Florida",
-       "0"
-      ],
-      [
-       "25",
-       "Saint Leo",
+       "24",
+       "Seminole State",
        "0"
       ],
       [
        "24",
+       "Saint Leo",
+       "0"
+      ],
+      [
+       "23",
        "Southeastern",
        "2"
       ],
       [
-       "23",
+       "22",
        "Barry",
        "3"
       ],
       [
-       "21",
+       "20",
        "St. Thomas",
        "4"
       ],
       [
-       "21",
-       "Keiser University-Ft Lauderdale",
+       "20",
+       "Keiser",
        "4"
       ],
       [
-       "19",
+       "18",
        "West Florida",
        "5"
       ],
       [
-       "19",
+       "18",
        "Florida Tech",
        "5"
       ],
       [
-       "16",
+       "15",
        "Nova Southeastern",
        "7"
       ],
       [
-       "16",
+       "15",
        "Florida Gulf Coast",
        "7"
       ],
       [
-       "16",
+       "15",
        "Florida Atlantic",
        "7"
       ],
       [
        "14",
-       "Embry-Riddle Aeronautical University-Worldwide",
+       "Embry-Riddle",
        "8"
       ]
      ],
@@ -86,7 +86,7 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Seminole State College of Florida. Zero. Pack a lunch. Saint Leo, 0. Southeastern, 2."
+     "say": "Dead last: Seminole State. Zero. Pack a lunch. Saint Leo, 0. Southeastern, 2."
     },
     {
      "beats": 7,
@@ -97,7 +97,7 @@
      "sub": "Busiest food street: N Main St",
      "map": "florida-state-college-at-jacksonville",
      "label": "places to eat within a 10-minute walk",
-     "say": "Number 5: Florida State College at Jacksonville. 32. Busiest food street: Main Street."
+     "say": "Number 5: FSC Jacksonville. 32. Busiest food street: Main Street."
     },
     {
      "beats": 7,

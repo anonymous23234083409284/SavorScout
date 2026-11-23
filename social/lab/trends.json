@@ -3,8 +3,8 @@
  "pin": [
   "state5k:FL|w|countdown",
   "state:IN|w|countdown",
-  "state5k:NC|w|countdown",
-  "state5k:VA|w|countdown"
+  "state5k:KS|w|countdown",
+  "state5k:OK|w|countdown"
  ],
  "boost": [],
  "note": "2026-11-29: week built ahead on Nov 21 (owner: countdowns only, consistent posting). Pinned: state:NJ|w|countdown, group:public-ivies|w|countdown, city:New York-NY|w|countdown, state:CA|w|countdown"

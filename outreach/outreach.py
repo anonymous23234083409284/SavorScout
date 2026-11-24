@@ -13,6 +13,9 @@
     python outreach/outreach.py page-seen <campus-slug>             exit 0 if any page at this school was already pitched or skipped
     python outreach/outreach.py page-log <campus-slug> <page-url> <sent|skipped|replied|linked|declined> ["note"]
     python outreach/outreach.py page-list         every college resource page handled so far, with counts
+    python outreach/outreach.py jour-seen "<name>" "<outlet>"       exit 0 if this journalist was already pitched or skipped
+    python outreach/outreach.py jour-log "<name>" "<outlet>" <article-url|-> <sent|skipped|replied|linked|declined> ["note"]
+    python outreach/outreach.py jour-list         every journalist handled so far, with counts
 
 PIPELINE.md has the daily routine and the rules. The sent log (outreach/sent.jsonl) is the memory:
 an address in it is never emailed again. Gmail's Sent folder is checked too, in case the log is
@@ -28,6 +31,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SENT = os.path.join(HERE, "sent.jsonl")
+JOURS = os.path.join(HERE, "journalists.jsonl")   # journalists pitched: name, outlet, article, status. Never an address
 PAGES = os.path.join(HERE, "pages.jsonl")    # college resource pages: school, page, status. Never an address (those live in sent.jsonl as hashes)
 REQS = os.path.join(HERE, "requests.jsonl")      # journalist requests (Featured/HARO/Connectively/Qwoted): one answer each, ever
 SIGN = "Charan Nukathoti (Savor Scout founder)\nsavorscout.net"
@@ -185,6 +189,27 @@ if __name__ == "__main__":
         from collections import Counter
         c = Counter(r["status"] for r in rows)
         print(f"{len({r['slug'] for r in rows})} schools; " + ", ".join(f"{k} {v}" for k, v in c.items()))
+    elif a[0] in ("jour-seen", "jour-log", "jour-list"):
+        rows = [json.loads(l) for l in open(JOURS)] if os.path.exists(JOURS) else []
+        key = lambda n, o: (" ".join(n.lower().split()), " ".join(o.lower().replace("the ", "").split()))
+        if a[0] == "jour-seen" and len(a) > 2:
+            hit = [r for r in rows if key(r["name"], r["outlet"]) == key(a[1], a[2]) or (r["name"].lower() == a[1].lower())]
+            print(json.dumps(hit[-1]) if hit else "new")
+            sys.exit(0 if hit else 1)
+        elif a[0] == "jour-log" and len(a) > 4:
+            if a[4] not in ("sent", "skipped", "replied", "linked", "declined"):
+                sys.exit("status must be sent, skipped, replied, linked or declined")
+            with open(JOURS, "a") as f:
+                f.write(json.dumps({"date": dt.date.today().isoformat(), "name": a[1], "outlet": a[2], "article": a[3],
+                                    "status": a[4], "note": a[5] if len(a) > 5 else ""}, ensure_ascii=False) + "\n")
+        elif a[0] == "jour-list":
+            for r in rows:
+                print(f"{r['date']}  {r['status']:8} {r['name'][:28]:28} {r['outlet'][:30]:30} {r['note'][:50]}")
+            from collections import Counter
+            c = Counter(r["status"] for r in rows)
+            print(f"{len(rows)} entries; " + ", ".join(f"{k} {v}" for k, v in c.items()))
+        else:
+            sys.exit(__doc__)
     elif a[0] == "req-list":
         for r in reqs():
             print(f"{r['date']}  {r['status']:8} {r['platform']:12} {r['outlet']:30} {r['question'][:70]}")

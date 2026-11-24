@@ -2,6 +2,7 @@
 """The numbers for a college page email, straight from Savor Scout's data.
 
     python outreach/campus_numbers.py "<school name>" ["<school name>" ...]
+    python outreach/campus_numbers.py --ranks "<school name>"     also its rank in every grouping we rank
 
 For each school: its campus slug, short name, places to eat within a 10-minute walk (w), within a
 mile (n) and within three miles (n3), the busiest food streets, whether the campus page exists in
@@ -34,7 +35,13 @@ def street(st):
     st = st.replace(" Dr", " Drive").replace(" Pkwy", " Parkway").replace(" Ln", " Lane")
     return re.sub(r"^(N|S|E|W) ", lambda m: {"N": "North ", "S": "South ", "E": "East ", "W": "West "}[m.group(1)], st)
 
-for q in sys.argv[1:]:
+RANKS = "--ranks" in sys.argv
+GROUPS = lab.all_groups() if RANKS else []
+
+def ordinal(k):
+    return f"{k}{'th' if 10 <= k % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(k % 10, 'th')}"
+
+for q in [a for a in sys.argv[1:] if a != "--ranks"]:
     s = find(q)
     if not s:
         print(f"{q}: NOT FOUND in Savor Scout's campus data (skip this school)")
@@ -53,3 +60,13 @@ for q in sys.argv[1:]:
         line += ", with " + " and ".join(street(x[0]) for x in sts) + (" the busiest food streets" if len(sts) > 1 else " the busiest food street")
     print(f"{q} -> {s} | {lab.short(s)} | {lab.CAMP[s].get('c')}, {lab.CAMP[s].get('r')} | w={w} n={n} n3={n3} | "
           f"page={'yes' if page else 'NO (skip)'} | line: \"{line}\" | https://www.savorscout.net/campus/{s}")
+    if RANKS and s in lab.SCENE:
+        for g in GROUPS:
+            if s not in g["members"] or not all(lab.comparable(m, "w") for m in g["members"]) or len(g["members"]) < 5:
+                continue
+            rows = lab.ranking(g["members"], "w")
+            r = next((rk for rk, sl, v in rows if sl == s), None)
+            if r:
+                top = rows[0]
+                print(f"    {ordinal(r)} of {len(rows)} in {g['desc'] if 'desc' in g else g['title']} ({g['key']}); "
+                      f"#1 is {lab.short(top[1])} with {top[2]}")

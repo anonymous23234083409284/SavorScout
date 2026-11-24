@@ -1,4 +1,4 @@
-# Link outreach: 20 college-page emails a day (Nov 24), plus journalist requests that fit
+# Link outreach: 40 emails a day (Nov 24): 20 to journalists, 20 to college page managers
 
 The goal is backlinks to savorscout.net from pages people trust: student newspapers first, then
 local food writers, campus blogs and "where to eat near X" guides. Ten personal emails every
@@ -92,6 +92,50 @@ many near-identical questions (College Recruiter), answer at most two, each with
   journalist requests fit; resource pages are the better use of the budget. University sites are blocked by this
   environment's network unless their host is on the allowed list (20 were added Nov 23); WebSearch can confirm an
   office's published email without Featured.
+
+## Journalists: 20 a day (the owner's direction, Nov 24: "40 emails a day, 20 to journalists, 20 to page managers")
+
+The daily task "SavorScout daily journalist outreach (20)" runs at 10:43 am ET every day; the college pages
+run at 12:11 pm. Claude sends both.
+
+- **Who:** US journalists and writers whose recent work (last ~12 months) touches what our data measures:
+  restaurants and food in college towns or big-university cities, campus dining and student life, student money
+  and the cost of college, food trends and data lists, local news in a college town. Sources, in order: open
+  journalist requests that take a reply email and fit (see above); one Featured run a day for journalist profiles
+  with the email Featured shows; WebSearch for recent articles plus the author's work email on the outlet's own
+  site (author page, staff directory, contact page).
+- **Verify:** the article exists (title, outlet, date) and the address belongs to that outlet (its domain, or
+  printed on its site). Skip mismatches (an address at an unrelated company), personal webmail unless the outlet's
+  site lists it, non-US outlets, and anyone already in `outreach/journalists.jsonl` (`outreach.py jour-seen
+  "<name>" "<outlet>"`) or the sent log.
+- **Numbers:** `python outreach/campus_numbers.py --ranks "<school>"` gives the counts and every rank we can
+  quote ("3rd of 18 ACC schools"). Quote nothing else.
+- **The email** (the Nov 21-24 journalist drafts are the model):
+
+```
+Subject: <a local number as the hook, e.g. "A UNC number for your campus food coverage: 87 places within a 10-minute walk">
+
+Hi <first name>,
+
+I saw your <Outlet> piece "<title>", so I thought this might be useful for a future story.
+
+I run Savor Scout, a free site that counts every place to eat within a 10-minute walk of US college campuses,
+using open map data. <one to three facts for their area or beat, from campus_numbers.py --ranks>.
+
+Every place near <School>, closest first: <campus URL>   (or the rankings page for a list story)
+
+Would you be open to linking it the next time you write about <their topic>? I'm glad to pull numbers for any
+campus in your area.
+
+Best,
+Charan Nukathoti (Savor Scout founder)
+savorscout.net
+```
+
+- Mention their piece by title only unless you read it; no claims about why students eat where they do; no money,
+  no "best", one ask. After each send: `outreach.py log - <address> "<subject>"` and
+  `outreach.py jour-log "<name>" "<outlet>" <article-url> sent "<angle>"`. Replies: answer with numbers, log
+  `replied`, `linked` (after checking the link is live) or `declined` (never contact again).
 
 ## College resource pages: 20 a day (the owner's direction, Nov 24)
 

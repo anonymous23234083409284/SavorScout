@@ -13,6 +13,8 @@
     python outreach/outreach.py page-seen <campus-slug>             exit 0 if any page at this school was already pitched or skipped
     python outreach/outreach.py page-log <campus-slug> <page-url> <sent|skipped|replied|linked|declined|followup> ["note"]
     python outreach/outreach.py page-status <campus-slug>          every logged status for that school (followups: one ever)
+    python outreach/outreach.py gate-window       the date to search bounces from (Gmail from:mailer-daemon after:<date>)
+    python outreach/outreach.py gate <bounces>    PASS or FAIL for the safety gate, given the bounces found since that date
     python outreach/outreach.py page-list         every college resource page handled so far, with counts
     python outreach/outreach.py jour-seen "<name>" "<outlet>"       exit 0 if this journalist was already pitched or skipped
     python outreach/outreach.py jour-log "<name>" "<outlet>" <article-url|-> <sent|skipped|replied|linked|declined> ["note"]
@@ -186,6 +188,20 @@ if __name__ == "__main__":
         with open(PAGES, "a") as f:
             f.write(json.dumps({"date": dt.date.today().isoformat(), "slug": a[1], "url": a[2], "status": a[3],
                                 "note": a[4] if len(a) > 4 else ""}, ensure_ascii=False) + "\n")
+    elif a[0] in ("gate-window", "gate"):
+        # The gate counts the last 7 days, but never before Nov 24, when sending switched to verified addresses
+        # (the student-newspaper bounces of Nov 17-21 came from an older, unverified list).
+        start = max(dt.date.today() - dt.timedelta(days=7), dt.date(2026, 11, 24))
+        if a[0] == "gate-window":
+            print(start.strftime("%Y/%m/%d"))
+        else:
+            b = int(a[1]) if len(a) > 1 else 0
+            n = sum(1 for r in sent() if r["date"] >= start.isoformat())
+            rate = b / n if n else 0.0
+            fail = b >= 3 and rate >= 0.03
+            print(f"{'FAIL' if fail else 'PASS'}: {b} bounces / {n} emails since {start} = {rate:.1%} "
+                  f"(fails at 3 or more bounces and 3% or more)")
+            sys.exit(1 if fail else 0)
     elif a[0] == "page-status" and len(a) > 1:
         rows = [json.loads(l) for l in open(PAGES)] if os.path.exists(PAGES) else []
         print(" ".join(r["status"] for r in rows if r["slug"] == a[1]) or "none")

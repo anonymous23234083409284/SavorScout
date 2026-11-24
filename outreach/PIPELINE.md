@@ -194,10 +194,12 @@ savorscout.net
 
 Plus follow-ups (below), which are replies in existing threads.
 
-- **The gate**, checked at the start of every run: bounces in the last 7 days (Gmail `from:mailer-daemon
-  newer_than:7d`) divided by emails sent in the last 7 days (`outreach.py status`). At 3% or more, or if Google
-  warns about the account (sending limit, unusual activity) or anyone replies that it's spam or asks to stop:
-  skip the 3:37 pm batch, cut every task to 10 a day, and tell the owner. Back to normal after 7 clean days.
+- **The gate**, checked at the start of every run: `python outreach/outreach.py gate-window` gives a date;
+  count the bounce notices since then (Gmail `from:mailer-daemon after:<that date>`), then
+  `python outreach/outreach.py gate <count>`. It fails at 3 or more bounces that are also 3% or more of the emails
+  sent in that window (the last 7 days, never before Nov 24, when sending switched to verified addresses). If it
+  fails, or Google warns about the account (sending limit, unusual activity), or anyone replies that it's spam or
+  asks to stop: skip the 3:37 pm batch, cut every task to 10 a day, and tell the owner.
 - **Follow-ups (college pages only, one ever per school):** 7 days after the first email, if the thread has no
   reply and no bounce (Gmail thread with a single message) and `outreach.py page-status <slug>` shows no replied,
   declined, linked or followup, reply in the same thread (Gmail `replyThreadId`, subject "Re: <original subject>",

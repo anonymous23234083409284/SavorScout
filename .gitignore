@@ -45,3 +45,6 @@ outreach/reporters.json
 
 # Raw YouTube API data: kept 30 days at most, never committed (YouTube API policies).
 social/lab/crawl/
+
+# outreach targets with addresses (never committed)
+outreach/*.local.jsonl

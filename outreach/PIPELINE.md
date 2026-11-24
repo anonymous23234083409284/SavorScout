@@ -1,4 +1,4 @@
-# Link outreach: 10 emails a day
+# Link outreach: 20 college-page emails a day (Nov 24), plus journalist requests that fit
 
 The goal is backlinks to savorscout.net from pages people trust: student newspapers first, then
 local food writers, campus blogs and "where to eat near X" guides. Ten personal emails every
@@ -92,6 +92,53 @@ many near-identical questions (College Recruiter), answer at most two, each with
   journalist requests fit; resource pages are the better use of the budget. University sites are blocked by this
   environment's network unless their host is on the allowed list (20 were added Nov 23); WebSearch can confirm an
   office's published email without Featured.
+
+## College resource pages: 20 a day (the owner's direction, Nov 24)
+
+Claude sends these now (before Nov 24 the owner sent them). Goal: 15 backlinks by Dec 31. The daily task
+"SavorScout daily link outreach (20 college pages)" runs at 12:11 pm ET every day.
+
+- **Target:** an official page on a US university site (or a city visitor bureau page about dining near the
+  university) that names off-campus restaurants or links to a local dining guide. One page per school, never a
+  school twice: `outreach.py page-seen <slug>`; every page handled goes in `outreach/pages.jsonl` with
+  `outreach.py page-log <slug> <url> <sent|skipped|replied|linked|declined> "note"` (no addresses in that file).
+- **Numbers:** `python outreach/campus_numbers.py "<school>"` gives the slug, the counts, a ready number line and
+  the campus URL. Skip schools that are not in our data or have no campus page.
+- **Contact:** an address printed on the university's own site (the page, or that office's contact or staff page).
+  Prefer the person who runs the program; else the office that owns the page. Never guess or construct one.
+  Site-printed obfuscation may be decoded ("info [at] honors [dot] umass [dot] edu", Cloudflare data-cfemail).
+- **Verifying pages:** the environment blocks university hosts unless they are on its allowed list (20 were added
+  Nov 23). For other hosts, WebSearch summaries of the page and its contact page work; Featured can verify a list
+  of URLs once a day. If the owner allows `*.edu` in the environment's network settings, fetch pages directly.
+- **The email** (the Nov 24 batch, all 20 sent):
+
+```
+Subject: A free map of places to eat near <School>, for your "<page title>" page
+
+Hi <Name or Office team>,
+
+I came across your "<page title>" page<, one true detail from the page>.
+
+I run Savor Scout, a free site that maps every place to eat near a college campus, using open map data.
+Near <School>, <number line from campus_numbers.py>.
+
+Here is the full list, with a map:
+<campus URL>
+
+Would you consider adding it to the page as an extra resource for <audience>? It is free, and it covers
+every place in the open map data.
+
+Best,
+Charan Nukathoti (Savor Scout founder)
+savorscout.net
+```
+
+- **After sending:** `outreach.py log - <address> "<subject>"` (hash only) and `page-log ... sent "<office>"`.
+- **Replies:** answer questions; when a link goes up, confirm it on the page and log `linked`; a "no" is logged
+  `declined` and never contacted again; bounces are logged `skipped "bounced"`.
+- **Volume note:** at 20+ cold emails a day, watch for bounces (keep them under ~5%) and replies marked as spam.
+  US law (CAN-SPAM) expects bulk commercial email to carry a postal address and an opt-out; these are
+  one-to-one requests, but if replies ask how to stop, add a one-line opt-out (the owner's call).
 
 ## The backlink playbook (owner's goal, Nov 21: average position ~5-6 by Feb-Mar; 40 emails a day)
 

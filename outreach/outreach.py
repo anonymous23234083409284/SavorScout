@@ -10,6 +10,9 @@
     python outreach/outreach.py req-seen "<outlet>" "<question>"    exit 0 if this journalist request was already handled
     python outreach/outreach.py req-log <platform> "<outlet>" "<question>" <pitched|skipped|drafted> ["note"]
     python outreach/outreach.py req-list          every journalist request handled so far
+    python outreach/outreach.py page-seen <campus-slug>             exit 0 if any page at this school was already pitched or skipped
+    python outreach/outreach.py page-log <campus-slug> <page-url> <sent|skipped|replied|linked|declined> ["note"]
+    python outreach/outreach.py page-list         every college resource page handled so far, with counts
 
 PIPELINE.md has the daily routine and the rules. The sent log (outreach/sent.jsonl) is the memory:
 an address in it is never emailed again. Gmail's Sent folder is checked too, in case the log is
@@ -25,6 +28,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SENT = os.path.join(HERE, "sent.jsonl")
+PAGES = os.path.join(HERE, "pages.jsonl")    # college resource pages: school, page, status. Never an address (those live in sent.jsonl as hashes)
 REQS = os.path.join(HERE, "requests.jsonl")      # journalist requests (Featured/HARO/Connectively/Qwoted): one answer each, ever
 SIGN = "Charan Nukathoti (Savor Scout founder)\nsavorscout.net"
 
@@ -163,6 +167,24 @@ if __name__ == "__main__":
         with open(REQS, "a") as f:
             f.write(json.dumps({"date": dt.date.today().isoformat(), "id": i, "platform": a[1], "outlet": a[2],
                                 "question": a[3][:200], "status": a[4], "note": a[5] if len(a) > 5 else ""}, ensure_ascii=False) + "\n")
+    elif a[0] == "page-seen" and len(a) > 1:
+        rows = [json.loads(l) for l in open(PAGES)] if os.path.exists(PAGES) else []
+        hit = [r for r in rows if r["slug"] == a[1]]
+        print(json.dumps(hit[-1]) if hit else "new")
+        sys.exit(0 if hit else 1)
+    elif a[0] == "page-log" and len(a) > 3:
+        if a[3] not in ("sent", "skipped", "replied", "linked", "declined"):
+            sys.exit("status must be sent, skipped, replied, linked or declined")
+        with open(PAGES, "a") as f:
+            f.write(json.dumps({"date": dt.date.today().isoformat(), "slug": a[1], "url": a[2], "status": a[3],
+                                "note": a[4] if len(a) > 4 else ""}, ensure_ascii=False) + "\n")
+    elif a[0] == "page-list":
+        rows = [json.loads(l) for l in open(PAGES)] if os.path.exists(PAGES) else []
+        for r in rows:
+            print(f"{r['date']}  {r['status']:8} {r['slug'][:40]:40} {r['url'][:70]}")
+        from collections import Counter
+        c = Counter(r["status"] for r in rows)
+        print(f"{len({r['slug'] for r in rows})} schools; " + ", ".join(f"{k} {v}" for k, v in c.items()))
     elif a[0] == "req-list":
         for r in reqs():
             print(f"{r['date']}  {r['status']:8} {r['platform']:12} {r['outlet']:30} {r['question'][:70]}")

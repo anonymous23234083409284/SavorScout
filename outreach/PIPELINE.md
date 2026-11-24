@@ -62,7 +62,7 @@ savorscout.net
 - **No money, ever (the owner's rule, Nov 17).** Never offer payment, a fee, a sponsored post or a
   link exchange. Skip any target whose page asks for payment to be featured. If a reply asks for a
   fee, thank them, say we can't do paid placements, and leave it there.
-- One email per address, ever, unless they reply. No follow-up to silence for now.
+- One email per address, unless they reply, except the single 7-day follow-up to college pages (see below).
 - Ten a day at most, weekdays only, one at a time (never bcc, never a mail merge).
 - Only true things: the article was really read, every number is from `scripts/data/rankings.js`,
   and we never claim prices, ratings, "best" or anything the data doesn't hold.
@@ -183,6 +183,41 @@ savorscout.net
 - **Volume note:** at 20+ cold emails a day, watch for bounces (keep them under ~5%) and replies marked as spam.
   US law (CAN-SPAM) expects bulk commercial email to carry a postal address and an opt-out; these are
   one-to-one requests, but if replies ask how to stop, add a one-line opt-out (the owner's call).
+
+## Volume, follow-ups and the safety gate (the owner's direction, Nov 24: "add the follow-up and go to 60 a day")
+
+| Dates | Journalists (10:43 am) | College pages (12:11 pm) | College pages (3:37 pm) | New emails a day |
+|---|---|---|---|---|
+| Nov 25-30 | 20 | 20 | none | 40 |
+| Dec 1-18 | 20 | 20 | 20 (only if the gate passes) | 60 |
+| Dec 19-31 | 10 | 10 | none | 20 (university offices close for winter break) |
+
+Plus follow-ups (below), which are replies in existing threads.
+
+- **The gate**, checked at the start of every run: bounces in the last 7 days (Gmail `from:mailer-daemon
+  newer_than:7d`) divided by emails sent in the last 7 days (`outreach.py status`). At 3% or more, or if Google
+  warns about the account (sending limit, unusual activity) or anyone replies that it's spam or asks to stop:
+  skip the 3:37 pm batch, cut every task to 10 a day, and tell the owner. Back to normal after 7 clean days.
+- **Follow-ups (college pages only, one ever per school):** 7 days after the first email, if the thread has no
+  reply and no bounce (Gmail thread with a single message) and `outreach.py page-status <slug>` shows no replied,
+  declined, linked or followup, reply in the same thread (Gmail `replyThreadId`, subject "Re: <original subject>",
+  same address read from the thread, so no address is stored):
+
+```
+Hi <same greeting>,
+
+I wanted to make sure my note below reached you. If a link to the map of places to eat near <School> would help
+readers of your "<page title>" page, here it is again: <campus URL>
+
+And if it's not a fit, no problem at all.
+
+Best,
+Charan Nukathoti (Savor Scout founder)
+savorscout.net
+```
+
+  Then `outreach.py page-log <slug> <page-url> followup "<date of the first email>"`. Journalists get no
+  follow-ups. Nobody gets a third email unless they reply.
 
 ## The backlink playbook (owner's goal, Nov 21: average position ~5-6 by Feb-Mar; 40 emails a day)
 

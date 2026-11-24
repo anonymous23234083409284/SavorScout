@@ -11,7 +11,8 @@
     python outreach/outreach.py req-log <platform> "<outlet>" "<question>" <pitched|skipped|drafted> ["note"]
     python outreach/outreach.py req-list          every journalist request handled so far
     python outreach/outreach.py page-seen <campus-slug>             exit 0 if any page at this school was already pitched or skipped
-    python outreach/outreach.py page-log <campus-slug> <page-url> <sent|skipped|replied|linked|declined> ["note"]
+    python outreach/outreach.py page-log <campus-slug> <page-url> <sent|skipped|replied|linked|declined|followup> ["note"]
+    python outreach/outreach.py page-status <campus-slug>          every logged status for that school (followups: one ever)
     python outreach/outreach.py page-list         every college resource page handled so far, with counts
     python outreach/outreach.py jour-seen "<name>" "<outlet>"       exit 0 if this journalist was already pitched or skipped
     python outreach/outreach.py jour-log "<name>" "<outlet>" <article-url|-> <sent|skipped|replied|linked|declined> ["note"]
@@ -142,7 +143,10 @@ if __name__ == "__main__":
     if not a or a[0] == "status":
         rows = sent()
         today = dt.date.today().isoformat()
-        print(f"{len(rows)} emails sent in all, {sum(1 for r in rows if r['date'] == today)} today; {len(targets(999))} newspapers with an address not yet emailed")
+        week = (dt.date.today() - dt.timedelta(days=7)).isoformat()
+        print(f"{len(rows)} emails sent in all, {sum(1 for r in rows if r['date'] == today)} today, "
+              f"{sum(1 for r in rows if r['date'] > week)} in the last 7 days (for the bounce-rate gate); "
+              f"{len(targets(999))} newspapers with an address not yet emailed")
     elif a[0] == "next":
         for p in targets(int(a[1]) if len(a) > 1 else 10):
             print(json.dumps({"slug": p["slug"], "school": p["school"], "paper": p["paper"], "site": p["site"], "email": p["email"],
@@ -177,11 +181,14 @@ if __name__ == "__main__":
         print(json.dumps(hit[-1]) if hit else "new")
         sys.exit(0 if hit else 1)
     elif a[0] == "page-log" and len(a) > 3:
-        if a[3] not in ("sent", "skipped", "replied", "linked", "declined"):
-            sys.exit("status must be sent, skipped, replied, linked or declined")
+        if a[3] not in ("sent", "skipped", "replied", "linked", "declined", "followup"):
+            sys.exit("status must be sent, skipped, replied, linked, declined or followup")
         with open(PAGES, "a") as f:
             f.write(json.dumps({"date": dt.date.today().isoformat(), "slug": a[1], "url": a[2], "status": a[3],
                                 "note": a[4] if len(a) > 4 else ""}, ensure_ascii=False) + "\n")
+    elif a[0] == "page-status" and len(a) > 1:
+        rows = [json.loads(l) for l in open(PAGES)] if os.path.exists(PAGES) else []
+        print(" ".join(r["status"] for r in rows if r["slug"] == a[1]) or "none")
     elif a[0] == "page-list":
         rows = [json.loads(l) for l in open(PAGES)] if os.path.exists(PAGES) else []
         for r in rows:

@@ -1,0 +1,322 @@
+{
+ "tiktok": [
+  {
+   "video": "ks-countdown",
+   "at": "2026-12-02T12:17:00-05:00",
+   "text": "KU is 5th 👀 Which Kansas college has the most restaurants within a 10-minute walk? Send this to your friend at another Kansas school.\n\n#kansasstate #pittsburgstate #washburn #collegelife #collegefood"
+  },
+  {
+   "video": "ok-countdown",
+   "at": "2026-12-02T15:22:00-05:00",
+   "text": "Oklahoma State is 3rd 👀 Which Oklahoma college has the most restaurants within a 10-minute walk? Send this to your friend at another Oklahoma school.\n\n#oklahoma #centraloklahoma #oklahomastate #collegelife #collegefood"
+  },
+  {
+   "video": "co-countdown",
+   "at": "2026-12-02T18:17:00-05:00",
+   "text": "CU Boulder is 2nd 👀 Which Colorado college has the most restaurants within a 10-minute walk? Send this to your friend at another Colorado school.\n\n#msudenver #cuboulder #coloradostate #collegelife #collegefood"
+  },
+  {
+   "video": "mi-countdown",
+   "at": "2026-12-02T21:18:00-05:00",
+   "text": "Michigan State is 2nd 👀 Which Michigan college has the most restaurants within a 10-minute walk? Send this to your friend at another Michigan school.\n\n#michigan #michiganstate #waynestate #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-ks-countdown",
+   "at": "2026-12-02T16:42:00-05:00",
+   "card": "ks-countdown",
+   "thread": [
+    "Kansas State has more restaurants within a 10-minute walk of campus than Pittsburg State, Washburn and Emporia State combined.\n\nEvery Kansas college with 5,000+ students:",
+    "1. Kansas State: 52\n2. Pittsburg State: 20\n3. Washburn: 15\n4. Emporia State: 13\n5. Kansas: 11\n6. Fort Hays State: 8\n7. Wichita State: 7",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ks"
+   ]
+  },
+  {
+   "id": "x-ok-countdown",
+   "at": "2026-12-02T17:39:00-05:00",
+   "card": "ok-countdown",
+   "thread": [
+    "Oklahoma has the most restaurants within a 10-minute walk of campus of any Oklahoma college. Central Oklahoma is 31 behind.\n\nEvery Oklahoma college with 5,000+ students:",
+    "1. Oklahoma: 64\n2. Central Oklahoma: 33\n3. Oklahoma State: 24\n4. Northeastern State: 18\n5. Oral Roberts: 14\n6. Southeastern Oklahoma State: 7\n7. Southwestern Oklahoma State: 1",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/ok"
+   ]
+  },
+  {
+   "id": "x-co-countdown",
+   "at": "2026-12-02T18:42:00-05:00",
+   "card": "co-countdown",
+   "thread": [
+    "MSU Denver has the most restaurants within a 10-minute walk of campus of any Colorado college. CU Boulder is 24 behind.\n\nEvery Colorado college with 5,000+ students:",
+    "1. MSU Denver: 94\n2. CU Boulder: 70\n3. Colorado State: 62\n4. Denver: 59\n5. Colorado School of Mines: 47\n6. Colorado Mesa: 39\n7. Northern Colorado: 26\n8. CSU Pueblo: 4\n9. Colorado Christian: 3\n9. UCCS: 3",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/co"
+   ]
+  },
+  {
+   "id": "x-mi-countdown",
+   "at": "2026-12-02T19:38:00-05:00",
+   "card": "mi-countdown",
+   "thread": [
+    "Michigan has more restaurants within a 10-minute walk of campus than Michigan State, Wayne State and UM-Flint combined.\n\nEvery Michigan college with 5,000+ students (top 14 of 16):",
+    "1. Michigan: 224\n2. Michigan State: 84\n3. Wayne State: 59\n4. UM-Flint: 45\n5. Western Michigan: 27\n6. Oakland: 21\n7. Central Michigan: 20\n8. Detroit Mercy: 18\n8. UM-Dearborn: 18\n10. Ferris State: 16\n11. Eastern Michigan: 13\n12. Saginaw Valley State: 12\n13. Grand Valley State: 8\n14. Northern Michigan: 6",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/mi"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-ks-countdown",
+   "at": "2026-12-02T17:12:00-05:00",
+   "card": "ks-countdown",
+   "topic": "Kansas colleges",
+   "thread": [
+    "Kansas State has more restaurants within a 10-minute walk of campus than Pittsburg State, Washburn and Emporia State combined. Every Kansas college with 5,000+ students:\n\nKansas State 52, Pittsburg State 20, Washburn 15, Emporia State 13, Kansas 11, Fort Hays State 8, Wichita State 7.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ks"
+   ]
+  },
+  {
+   "id": "t-ok-countdown",
+   "at": "2026-12-02T18:09:00-05:00",
+   "card": "ok-countdown",
+   "topic": "Oklahoma colleges",
+   "thread": [
+    "Oklahoma has the most restaurants within a 10-minute walk of campus of any Oklahoma college. Central Oklahoma is 31 behind. Every Oklahoma college with 5,000+ students:\n\nOklahoma 64, Central Oklahoma 33, Oklahoma State 24, Northeastern State 18, Oral Roberts 14, Southeastern Oklahoma State 7, Southwestern Oklahoma State 1.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/ok"
+   ]
+  },
+  {
+   "id": "t-co-countdown",
+   "at": "2026-12-02T19:08:00-05:00",
+   "card": "co-countdown",
+   "topic": "Colorado colleges",
+   "thread": [
+    "MSU Denver has the most restaurants within a 10-minute walk of campus of any Colorado college. CU Boulder is 24 behind. Every Colorado college with 5,000+ students:\n\nMSU Denver 94, CU Boulder 70, Colorado State 62, Denver 59, Colorado School of Mines 47, Colorado Mesa 39, Northern Colorado 26, CSU Pueblo 4, Colorado Christian 3, UCCS 3.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/co"
+   ]
+  },
+  {
+   "id": "t-mi-countdown",
+   "at": "2026-12-02T20:07:00-05:00",
+   "card": "mi-countdown",
+   "topic": "Michigan colleges",
+   "thread": [
+    "Michigan has more restaurants within a 10-minute walk of campus than Michigan State, Wayne State and UM-Flint combined. Every Michigan college with 5,000+ students (top 14 of 16):\n\nMichigan 224, Michigan State 84, Wayne State 59, UM-Flint 45, Western Michigan 27, Oakland 21, Central Michigan 20, Detroit Mercy 18, UM-Dearborn 18, Ferris State 16, Eastern Michigan 13, Saginaw Valley State 12, Grand Valley State 8, Northern Michigan 6.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/mi"
+   ]
+  }
+ ],
+ "cards": {
+  "ks-countdown": {
+   "type": "ranking",
+   "title": "Kansas colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Kansas college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Kansas State",
+     52
+    ],
+    [
+     "2",
+     "Pittsburg State",
+     20
+    ],
+    [
+     "3",
+     "Washburn",
+     15
+    ],
+    [
+     "4",
+     "Emporia State",
+     13
+    ],
+    [
+     "5",
+     "Kansas",
+     11
+    ],
+    [
+     "6",
+     "Fort Hays State",
+     8
+    ],
+    [
+     "7",
+     "Wichita State",
+     7
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ok-countdown": {
+   "type": "ranking",
+   "title": "Oklahoma colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Oklahoma college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Oklahoma",
+     64
+    ],
+    [
+     "2",
+     "Central Oklahoma",
+     33
+    ],
+    [
+     "3",
+     "Oklahoma State",
+     24
+    ],
+    [
+     "4",
+     "Northeastern State",
+     18
+    ],
+    [
+     "5",
+     "Oral Roberts",
+     14
+    ],
+    [
+     "6",
+     "Southeastern Oklahoma State",
+     7
+    ],
+    [
+     "7",
+     "Southwestern Oklahoma State",
+     1
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "co-countdown": {
+   "type": "ranking",
+   "title": "Colorado colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Colorado college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "MSU Denver",
+     94
+    ],
+    [
+     "2",
+     "CU Boulder",
+     70
+    ],
+    [
+     "3",
+     "Colorado State",
+     62
+    ],
+    [
+     "4",
+     "Denver",
+     59
+    ],
+    [
+     "5",
+     "Colorado School of Mines",
+     47
+    ],
+    [
+     "6",
+     "Colorado Mesa",
+     39
+    ],
+    [
+     "7",
+     "Northern Colorado",
+     26
+    ],
+    [
+     "8",
+     "CSU Pueblo",
+     4
+    ],
+    [
+     "9",
+     "Colorado Christian",
+     3
+    ],
+    [
+     "9",
+     "UCCS",
+     3
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "mi-countdown": {
+   "type": "ranking",
+   "title": "Michigan colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Michigan college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Michigan",
+     224
+    ],
+    [
+     "2",
+     "Michigan State",
+     84
+    ],
+    [
+     "3",
+     "Wayne State",
+     59
+    ],
+    [
+     "4",
+     "UM-Flint",
+     45
+    ],
+    [
+     "5",
+     "Western Michigan",
+     27
+    ],
+    [
+     "6",
+     "Oakland",
+     21
+    ],
+    [
+     "7",
+     "Central Michigan",
+     20
+    ],
+    [
+     "8",
+     "Detroit Mercy",
+     18
+    ],
+    [
+     "8",
+     "UM-Dearborn",
+     18
+    ],
+    [
+     "10",
+     "Ferris State",
+     16
+    ],
+    [
+     "11",
+     "Eastern Michigan",
+     13
+    ],
+    [
+     "12",
+     "Saginaw Valley State",
+     12
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

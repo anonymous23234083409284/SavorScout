@@ -449,6 +449,30 @@
    "what": "countdown: New York colleges with 5,000+ students by w (#1 Touro 1478, tease Columbia (9th))",
    "status": "posted",
    "predicted": 850
+  },
+  {
+   "date": "2026-12-01",
+   "video": "mid-atlantic-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: DC, Maryland, Delaware and New Jersey universities with 20,000+ students by w (#1 GW 280, tease Johns Hopkins (3rd))",
+   "status": "posted",
+   "predicted": 3956
+  },
+  {
+   "date": "2026-12-01",
+   "video": "plains-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: Great Plains universities with 20,000+ students by w (#1 Iowa 132, tease Kansas (6th))",
+   "status": "posted",
+   "predicted": 3500
+  },
+  {
+   "date": "2026-12-01",
+   "video": "pnw-countdown",
+   "experiment": "g_famous",
+   "what": "countdown: Pacific Northwest universities with 20,000+ students by w (#1 Portland State 119, tease Washington State (7th))",
+   "status": "posted",
+   "predicted": 3288
   }
  ]
 }

@@ -1,0 +1,302 @@
+{
+ "tiktok": [
+  {
+   "video": "tx-countdown",
+   "at": "2026-12-01T12:19:00-05:00",
+   "text": "Texas A&M is 10th 👀 Which Texas college has the most restaurants within a 10-minute walk? Send this to your friend at another Texas school.\n\n#utaustin #uhdowntown #texasstate #collegelife #collegefood"
+  },
+  {
+   "video": "mid-atlantic-countdown",
+   "at": "2026-12-01T15:23:00-05:00",
+   "text": "Johns Hopkins is 3rd 👀 Which big university in DC, Maryland, Delaware or New Jersey has the most restaurants within a 10-minute walk? Send this to your friend at another school in the area.\n\n#gw #rutgers #johnshopkins #collegelife #collegefood"
+  },
+  {
+   "video": "plains-countdown",
+   "at": "2026-12-01T18:23:00-05:00",
+   "text": "Kansas is 6th 👀 Which big Great Plains university has the most restaurants within a 10-minute walk? Send this to your friend at another Great Plains school.\n\n#iowa #nebraska #oklahoma #collegelife #collegefood"
+  },
+  {
+   "video": "pnw-countdown",
+   "at": "2026-12-01T21:20:00-05:00",
+   "text": "Washington State is 7th 👀 Which big Pacific Northwest university has the most restaurants within a 10-minute walk? Send this to your friend at another Pacific Northwest school.\n\n#portlandstate #washington #oregon #collegelife #collegefood"
+  }
+ ],
+ "twitter": [
+  {
+   "id": "x-tx-countdown",
+   "at": "2026-12-01T16:39:00-05:00",
+   "card": "tx-countdown",
+   "thread": [
+    "UT Austin edges out UH-Downtown by 1 for the most restaurants within a 10-minute walk of campus.\n\nEvery Texas college with 5,000+ students (top 14 of 38):",
+    "1. UT Austin: 115\n2. UH-Downtown: 114\n3. Texas State: 79\n4. SMU: 62\n5. North Texas: 51\n6. Baylor: 49\n6. Texas Tech: 49\n8. UTEP: 47\n9. UTRGV: 42\n10. Texas A&M: 40\n11. TCU: 35\n11. UT Arlington: 35\n13. Stephen F Austin State: 34\n13. the Incarnate Word: 34",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/tx"
+   ]
+  },
+  {
+   "id": "x-mid-atlantic-countdown",
+   "at": "2026-12-01T17:39:00-05:00",
+   "card": "mid-atlantic-countdown",
+   "thread": [
+    "GW has the most restaurants within a 10-minute walk of campus of any big university in the area. Rutgers is 98 behind.\n\nEvery DC, Maryland, Delaware and New Jersey university with 20,000+ students:",
+    "1. GW: 280\n2. Rutgers: 182\n3. Johns Hopkins: 76\n4. UDel: 75\n5. Georgetown: 52\n6. Maryland: 21\n7. Montclair State: 8",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-plains-countdown",
+   "at": "2026-12-01T18:41:00-05:00",
+   "card": "plains-countdown",
+   "thread": [
+    "Iowa has the most restaurants within a 10-minute walk of campus of any big Great Plains university. Nebraska is 30 behind.\n\nEvery Great Plains university with 20,000+ students:",
+    "1. Iowa: 132\n2. Nebraska: 102\n3. Oklahoma: 64\n4. Iowa State: 49\n5. Oklahoma State: 24\n6. Kansas: 11",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "x-pnw-countdown",
+   "at": "2026-12-01T19:41:00-05:00",
+   "card": "pnw-countdown",
+   "thread": [
+    "Portland State has the most restaurants within a 10-minute walk of campus of any big Pacific Northwest university. Washington is 49 behind.\n\nEvery Pacific Northwest university with 20,000+ students:",
+    "1. Portland State: 119\n2. Washington: 70\n3. Oregon: 57\n4. BYU-Idaho: 44\n5. Oregon State: 38\n6. Boise State: 15\n7. Washington State: 8",
+    "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  }
+ ],
+ "threads": [
+  {
+   "id": "t-tx-countdown",
+   "at": "2026-12-01T17:08:00-05:00",
+   "card": "tx-countdown",
+   "topic": "Texas colleges",
+   "thread": [
+    "UT Austin edges out UH-Downtown by 1 for the most restaurants within a 10-minute walk of campus. Every Texas college with 5,000+ students (top 14 of 38):\n\nUT Austin 115, UH-Downtown 114, Texas State 79, SMU 62, North Texas 51, Baylor 49, Texas Tech 49, UTEP 47, UTRGV 42, Texas A&M 40, TCU 35, UT Arlington 35, Stephen F Austin State 34, the Incarnate Word 34.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/campus/tx"
+   ]
+  },
+  {
+   "id": "t-mid-atlantic-countdown",
+   "at": "2026-12-01T18:07:00-05:00",
+   "card": "mid-atlantic-countdown",
+   "topic": "universities in DC, Maryland, Delaware and New Jersey",
+   "thread": [
+    "GW has the most restaurants within a 10-minute walk of campus of any big university in the area. Rutgers is 98 behind. Every DC, Maryland, Delaware and New Jersey university with 20,000+ students:\n\nGW 280, Rutgers 182, Johns Hopkins 76, UDel 75, Georgetown 52, Maryland 21, Montclair State 8.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-plains-countdown",
+   "at": "2026-12-01T19:13:00-05:00",
+   "card": "plains-countdown",
+   "topic": "Great Plains",
+   "thread": [
+    "Iowa has the most restaurants within a 10-minute walk of campus of any big Great Plains university. Nebraska is 30 behind. Every Great Plains university with 20,000+ students:\n\nIowa 132, Nebraska 102, Oklahoma 64, Iowa State 49, Oklahoma State 24, Kansas 11.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  },
+  {
+   "id": "t-pnw-countdown",
+   "at": "2026-12-01T20:07:00-05:00",
+   "card": "pnw-countdown",
+   "topic": "Pacific Northwest",
+   "thread": [
+    "Portland State has the most restaurants within a 10-minute walk of campus of any big Pacific Northwest university. Washington is 49 behind. Every Pacific Northwest university with 20,000+ students:\n\nPortland State 119, Washington 70, Oregon 57, BYU-Idaho 44, Oregon State 38, Boise State 15, Washington State 8.\n\nDid your campus land where you expected?",
+    "Look up any campus, with the closest places first: https://www.savorscout.net/rankings/"
+   ]
+  }
+ ],
+ "cards": {
+  "tx-countdown": {
+   "type": "ranking",
+   "title": "Texas colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Texas college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UT Austin",
+     115
+    ],
+    [
+     "2",
+     "UH-Downtown",
+     114
+    ],
+    [
+     "3",
+     "Texas State",
+     79
+    ],
+    [
+     "4",
+     "SMU",
+     62
+    ],
+    [
+     "5",
+     "North Texas",
+     51
+    ],
+    [
+     "6",
+     "Baylor",
+     49
+    ],
+    [
+     "6",
+     "Texas Tech",
+     49
+    ],
+    [
+     "8",
+     "UTEP",
+     47
+    ],
+    [
+     "9",
+     "UTRGV",
+     42
+    ],
+    [
+     "10",
+     "Texas A&M",
+     40
+    ],
+    [
+     "11",
+     "TCU",
+     35
+    ],
+    [
+     "11",
+     "UT Arlington",
+     35
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "mid-atlantic-countdown": {
+   "type": "ranking",
+   "title": "Big universities in DC, Maryland, Delaware and New Jersey ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every DC, Maryland, Delaware and New Jersey university with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "GW",
+     280
+    ],
+    [
+     "2",
+     "Rutgers",
+     182
+    ],
+    [
+     "3",
+     "Johns Hopkins",
+     76
+    ],
+    [
+     "4",
+     "UDel",
+     75
+    ],
+    [
+     "5",
+     "Georgetown",
+     52
+    ],
+    [
+     "6",
+     "Maryland",
+     21
+    ],
+    [
+     "7",
+     "Montclair State",
+     8
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "plains-countdown": {
+   "type": "ranking",
+   "title": "Big Great Plains universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Great Plains university with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Iowa",
+     132
+    ],
+    [
+     "2",
+     "Nebraska",
+     102
+    ],
+    [
+     "3",
+     "Oklahoma",
+     64
+    ],
+    [
+     "4",
+     "Iowa State",
+     49
+    ],
+    [
+     "5",
+     "Oklahoma State",
+     24
+    ],
+    [
+     "6",
+     "Kansas",
+     11
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "pnw-countdown": {
+   "type": "ranking",
+   "title": "Big Pacific Northwest universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Pacific Northwest university with 20,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Portland State",
+     119
+    ],
+    [
+     "2",
+     "Washington",
+     70
+    ],
+    [
+     "3",
+     "Oregon",
+     57
+    ],
+    [
+     "4",
+     "BYU-Idaho",
+     44
+    ],
+    [
+     "5",
+     "Oregon State",
+     38
+    ],
+    [
+     "6",
+     "Boise State",
+     15
+    ],
+    [
+     "7",
+     "Washington State",
+     8
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

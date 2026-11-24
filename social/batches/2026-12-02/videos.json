@@ -1,0 +1,513 @@
+{
+ "date": "2026-12-02",
+ "videos": [
+  {
+   "id": "ks-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ks",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "kansas-state-university",
+     "text": "Which Kansas college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not KU.",
+     "say": "Which Kansas college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Kansas colleges with 5,000+ students",
+     "rows": [
+      [
+       "7",
+       "Wichita State",
+       "7"
+      ],
+      [
+       "6",
+       "Fort Hays State",
+       "8"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Wichita State, with just 7. Fort Hays State, 8."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Kansas",
+     "count": 11,
+     "sub": "Busiest food street: Massachusetts St",
+     "map": "university-of-kansas",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Kansas. 11. Busiest food street: Massachusetts Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Emporia State",
+     "count": 13,
+     "sub": "Busiest food street: Commercial St",
+     "map": "emporia-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Emporia State. 13. Busiest food street: Commercial Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Washburn",
+     "count": 15,
+     "sub": "Busiest food street: SW 17th St",
+     "map": "washburn-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Washburn. 15. Busiest food street: 17th Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Pittsburg State",
+     "count": 20,
+     "sub": "Busiest food street: Broadway St",
+     "map": "pittsburg-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Pittsburg State. 20. Busiest food street: Broadway Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Kansas State",
+     "count": 52,
+     "sub": "Busiest food street: Moro St",
+     "map": "kansas-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Kansas State. 52. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Kansas school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "state5k:KS",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:KS|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "ok-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ok",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-oklahoma-norman-campus",
+     "text": "Which Oklahoma college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Oklahoma State.",
+     "say": "Which Oklahoma college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Oklahoma colleges with 5,000+ students",
+     "rows": [
+      [
+       "7",
+       "Southwestern Oklahoma State",
+       "1"
+      ],
+      [
+       "6",
+       "Southeastern Oklahoma State",
+       "7"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Southwestern Oklahoma State, with just 1. Pack a lunch. Southeastern Oklahoma State, 7."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Oral Roberts",
+     "count": 14,
+     "sub": "Busiest food street: Lewis Ave",
+     "map": "oral-roberts-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Oral Roberts. 14. Busiest food street: Lewis Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Northeastern State",
+     "count": 18,
+     "sub": "Busiest food street: E Downing St",
+     "map": "northeastern-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Northeastern State. 18. Busiest food street: Downing Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Oklahoma State",
+     "count": 24,
+     "sub": "Busiest food street: Main St",
+     "map": "oklahoma-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Oklahoma State. 24. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Central Oklahoma",
+     "count": 33,
+     "sub": "Busiest food street: 2nd St",
+     "map": "university-of-central-oklahoma",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Central Oklahoma. 33. Busiest food street: 2nd Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Oklahoma",
+     "count": 64,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-oklahoma-norman-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Oklahoma. 64."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Oklahoma school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "state5k:OK",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:OK|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "co-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/co",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "metropolitan-state-university-of-denver",
+     "text": "Which Colorado college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not CU Boulder.",
+     "say": "Which Colorado college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "Colorado colleges with 5,000+ students",
+     "rows": [
+      [
+       "9",
+       "UCCS",
+       "3"
+      ],
+      [
+       "9",
+       "Colorado Christian",
+       "3"
+      ],
+      [
+       "8",
+       "CSU Pueblo",
+       "4"
+      ],
+      [
+       "7",
+       "Northern Colorado",
+       "26"
+      ],
+      [
+       "6",
+       "Colorado Mesa",
+       "39"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UCCS, with just 3. Pack a lunch. Colorado Christian, 3. CSU Pueblo, 4. Northern Colorado, 26. Colorado Mesa, 39."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Colorado School of Mines",
+     "count": 47,
+     "sub": "Busiest food street: Washington Ave",
+     "map": "colorado-school-of-mines",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Colorado School of Mines. 47. Busiest food street: Washington Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Denver",
+     "count": 59,
+     "sub": "Busiest food street: S University Blvd",
+     "map": "university-of-denver",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Denver. 59. Busiest food street: University Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Colorado State",
+     "count": 62,
+     "sub": "Busiest food street: College Ave",
+     "map": "colorado-state-university-fort-collins",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Colorado State. 62. Busiest food street: College Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "CU Boulder",
+     "count": 70,
+     "sub": "Busiest food street: Pearl St",
+     "map": "university-of-colorado-boulder",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: CU Boulder. 70. Busiest food street: Pearl Street."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "MSU Denver",
+     "count": 94,
+     "sub": "Busiest food street: 16th St",
+     "map": "metropolitan-state-university-of-denver",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: MSU Denver. 94."
+    }
+   ],
+   "lab": {
+    "key": "state5k:CO",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:CO|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "mi-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/mi",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-michigan-ann-arbor",
+     "text": "Which Michigan college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Michigan college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 13,
+     "style": "list",
+     "title": "Michigan colleges with 5,000+ students",
+     "rows": [
+      [
+       "16",
+       "Davenport",
+       "0"
+      ],
+      [
+       "15",
+       "Michigan Tech",
+       "5"
+      ],
+      [
+       "14",
+       "Northern Michigan",
+       "6"
+      ],
+      [
+       "13",
+       "Grand Valley State",
+       "8"
+      ],
+      [
+       "12",
+       "Saginaw Valley State",
+       "12"
+      ],
+      [
+       "11",
+       "Eastern Michigan",
+       "13"
+      ],
+      [
+       "10",
+       "Ferris State",
+       "16"
+      ],
+      [
+       "8",
+       "UM-Dearborn",
+       "18"
+      ],
+      [
+       "8",
+       "Detroit Mercy",
+       "18"
+      ],
+      [
+       "7",
+       "Central Michigan",
+       "20"
+      ],
+      [
+       "6",
+       "Oakland",
+       "21"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Davenport. Zero. Pack a lunch. Michigan Tech, 5. Northern Michigan, 6."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Western Michigan",
+     "count": 27,
+     "sub": "Busiest food street: W Michigan Ave",
+     "map": "western-michigan-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Western Michigan. 27. Busiest food street: Michigan Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UM-Flint",
+     "count": 45,
+     "sub": "Busiest food street: Saginaw St",
+     "map": "university-of-michigan-flint",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: UM-Flint. 45. Busiest food street: Saginaw Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Wayne State",
+     "count": 59,
+     "sub": "Busiest food street: Woodward Ave",
+     "map": "wayne-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Wayne State. 59. Busiest food street: Woodward Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Michigan State",
+     "count": 84,
+     "sub": "Busiest food street: Grand River Ave",
+     "map": "michigan-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Michigan State. 84. Busiest food street: Grand River Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Michigan",
+     "count": 224,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-michigan-ann-arbor",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Michigan. 224. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Michigan school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments."
+    }
+   ],
+   "lab": {
+    "key": "state5k:MI",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:MI|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 3.71,
+     "voice": true
+    }
+   }
+  }
+ ]
+}

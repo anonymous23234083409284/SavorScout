@@ -123,7 +123,7 @@ RANK_NAMES = {s: n for g in RANKINGS for n, s in g["members"]}
 
 # Clear short names (Nov 21): lists showed "California State" four times, "Wisconsin" six times, "Missouri" next to
 # "Mizzou", "North Carolina" for UNC Greensboro. Every school a viewer could misread gets the name students use.
-EXTRA_NAMES.update({"embry-riddle-aeronautical-university-daytona-beach": "Embry-Riddle", "keiser-university-ft-lauderdale": "Keiser", "seminole-state-college-of-florida": "Seminole State", "florida-state-college-at-jacksonville": "FSC Jacksonville",
+EXTRA_NAMES.update({"university-of-arkansas-at-little-rock": "UA Little Rock", "university-of-arkansas-fort-smith": "UA Fort Smith", "auburn-university-at-montgomery": "Auburn Montgomery", "university-of-louisiana-at-lafayette": "UL Lafayette", "university-of-louisiana-at-monroe": "UL Monroe", "university-of-michigan-dearborn": "UM-Dearborn", "university-of-michigan-flint": "UM-Flint", "university-of-minnesota-duluth": "Minnesota Duluth", "university-of-nebraska-at-omaha": "Nebraska Omaha", "university-of-nebraska-at-kearney": "Nebraska Kearney", "rutgers-university-camden": "Rutgers-Camden", "state-university-of-new-york-at-new-paltz": "SUNY New Paltz", "state-university-of-new-york-at-oswego": "SUNY Oswego", "the-university-of-tennessee-martin": "UT Martin", "texas-a-and-m-university-commerce": "Texas A&M-Commerce", "texas-a-and-m-university-corpus-christi": "Texas A&M-Corpus Christi", "texas-a-and-m-university-kingsville": "Texas A&M-Kingsville", "colorado-state-university-pueblo": "CSU Pueblo", "texas-a-and-m-university-san-antonio": "Texas A&M-San Antonio", "the-university-of-texas-at-tyler": "UT Tyler", "texas-a-and-m-international-university": "Texas A&M International", "texas-a-and-m-university-college-station": "Texas A&M", "prairie-view-a-and-m-university": "Prairie View A&M", "embry-riddle-aeronautical-university-daytona-beach": "Embry-Riddle", "keiser-university-ft-lauderdale": "Keiser", "seminole-state-college-of-florida": "Seminole State", "florida-state-college-at-jacksonville": "FSC Jacksonville",
     "california-state-university-chico": "Chico State", "california-state-university-long-beach": "Long Beach State",
     "california-state-university-fresno": "Fresno State", "california-state-university-fullerton": "Cal State Fullerton",
     "california-state-university-bakersfield": "CSU Bakersfield", "california-state-university-channel-islands": "CSU Channel Islands",
@@ -314,7 +314,7 @@ def ranking(members, metric):
 
 # Mostly-online universities: their enrollment puts them in "10,000+ students" lists, but their address is an
 # office, so "restaurants within a 10-minute walk of campus" means nothing for them.
-ONLINE_ONLY = {"embry-riddle-aeronautical-university-worldwide", "northcentral-university", "northeastern-university-professional-programs",  # (and duplicate campus listings)
+ONLINE_ONLY = {"wichita-state-university-campus-of-applied-sciences-and-technology", "embry-riddle-aeronautical-university-worldwide", "northcentral-university", "northeastern-university-professional-programs",  # (and duplicate campus listings)
                 "university-of-the-people", "western-governors-university", "national-university", "excelsior-university",
                "southern-new-hampshire-university", "university-of-phoenix-arizona", "purdue-university-global",
                "capella-university", "walden-university", "american-public-university-system"}
@@ -471,10 +471,17 @@ def all_groups():
         members = [s for s, c in CAMP.items() if c.get("r") in sts and s in SCENE and four_year(s)
                    and s not in ONLINE_ONLY and c.get("sz", 0) >= 5]
         if len(members) >= 5:
-            out.append(dict(key=key, kind="famous", which=f"Which big {name} university", head=f"Big {name} universities",
-                            title=f"{name} universities with 20,000+ students", desc=f"Every {name} university with 20,000+ students",
-                            cta=f"Send this to your friend at another {name} school.", members=members, noun1=f"big {name} university",
-                            link=f"{SITE}/rankings/", region=key))
+            d = dict(key=key, kind="famous", which=f"Which big {name} university", head=f"Big {name} universities",
+                     title=f"{name} universities with 20,000+ students", desc=f"Every {name} university with 20,000+ students",
+                     cta=f"Send this to your friend at another {name} school.", members=members, noun1=f"big {name} university",
+                     link=f"{SITE}/rankings/", region=key)
+            if key == "region:mid-atlantic":   # Nov 24: it leaves out NY and PA, so say exactly which places it covers
+                d.update(which="Which big university in DC, Maryland, Delaware or New Jersey",
+                         head="Big universities in DC, Maryland, Delaware and New Jersey",
+                         title="DC, Maryland, Delaware and New Jersey universities with 20,000+ students",
+                         desc="Every DC, Maryland, Delaware and New Jersey university with 20,000+ students",
+                         cta="Send this to your friend at another school in the area.", noun1="big university in the area")
+            out.append(d)
     by_state5 = {}
     for s, c in CAMP.items():
         if s in SCENE and four_year(s) and s not in ONLINE_ONLY and c.get("sz", 0) >= 3:
@@ -1101,7 +1108,7 @@ def rank_scene(c, i, num, label=None):
     return sc
 
 
-ACRONYMS = {"the-university-of-tennessee-knoxville": "Tennessee", "washington-state-university": "WSU", "university-of-kansas": "KU", "kansas-state-university": "K-State",
+ACRONYMS = {"texas-a-and-m-university-college-station": "Texas A&M", "the-university-of-tennessee-knoxville": "Tennessee", "washington-state-university": "WSU", "university-of-kansas": "KU", "kansas-state-university": "K-State",
             "university-of-houston": "UH", "university-of-houston-downtown": "UH-Downtown",
             "university-of-houston-clear-lake": "UH-Clear Lake", "oklahoma-state-university-main-campus": "Oklahoma State"}
 

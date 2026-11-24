@@ -86,6 +86,13 @@ many near-identical questions (College Recruiter), answer at most two, each with
   a bio with personal details, a recorded interview, video or TV. Only text answers or data-led pitches
   that cite Savor Scout's numbers.
 
+- **What Nov 23-24 showed.** Featured's free plan allows about one full search run a day: the opportunity search
+  and its page reader both run out after one pass and renew in about 3 hours (the page reader in about a day). The
+  open HARO requests that take email replies were almost all gift guides, video spots or "no AI answers", so few
+  journalist requests fit; resource pages are the better use of the budget. University sites are blocked by this
+  environment's network unless their host is on the allowed list (20 were added Nov 23); WebSearch can confirm an
+  office's published email without Featured.
+
 ## The backlink playbook (owner's goal, Nov 21: average position ~5-6 by Feb-Mar; 40 emails a day)
 
 Ranked by how likely someone is to say yes. Always: one personal email, the school's real number, no money, no link swaps.

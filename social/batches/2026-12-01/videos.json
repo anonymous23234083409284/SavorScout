@@ -20,43 +20,33 @@
      "title": "Texas colleges with 5,000+ students: the bottom 12",
      "rows": [
       [
-       "37",
+       "35",
        "UH-Clear Lake",
        "0"
       ],
       [
-       "37",
+       "35",
        "Texas A&M-San Antonio",
        "0"
       ],
       [
-       "35",
+       "34",
        "Prairie View A&M",
        "1"
       ],
       [
-       "35",
-       "College of the Mainland",
-       "1"
-      ],
-      [
-       "34",
+       "33",
        "Texas A&M International",
        "2"
       ],
       [
-       "33",
+       "32",
        "Midwestern State",
        "3"
       ],
       [
        "30",
        "Rice",
-       "4"
-      ],
-      [
-       "30",
-       "Lamar Institute of Technology",
        "4"
       ],
       [
@@ -78,6 +68,16 @@
        "27",
        "Texas Southern",
        "7"
+      ],
+      [
+       "25",
+       "Texas A&M-Kingsville",
+       "9"
+      ],
+      [
+       "25",
+       "Texas A&M-Corpus Christi",
+       "9"
       ]
      ],
      "q": [
@@ -85,7 +85,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: UH-Clear Lake. Zero. Pack a lunch. Texas A&M-San Antonio, 0. Prairie View A&M, 1."
+     "say": "Dead last: UH-Clear Lake. Zero. Pack a lunch. Texas A&M-San Antonio, 0. Prairie View A&M, 1.",
+     "clip": 8561473
     },
     {
      "beats": 7,
@@ -163,7 +164,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-114"
   },
   {
    "id": "mid-atlantic-countdown",

@@ -164,39 +164,44 @@
      "title": "Deep South universities with 20,000+ students",
      "rows": [
       [
-       "12",
+       "13",
        "Mississippi State",
        "8"
       ],
       [
-       "11",
+       "12",
        "Kennesaw State",
        "9"
       ],
       [
-       "10",
+       "11",
        "Ole Miss",
        "10"
       ],
       [
-       "9",
+       "10",
        "Auburn",
        "21"
       ],
       [
-       "8",
+       "9",
        "Alabama",
        "27"
       ],
       [
-       "7",
+       "8",
        "Georgia Southern",
        "28"
       ],
       [
-       "6",
+       "7",
        "Georgia Tech",
        "34"
+      ],
+      [
+       "6",
+       "LSU",
+       "41"
       ]
      ],
      "q": [
@@ -204,7 +209,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Mississippi State, with just 8. Kennesaw State, 9. And Alabama? Only eighth."
+     "say": "Dead last: Mississippi State, with just 8. Kennesaw State, 9. And Alabama? Only ninth.",
+     "clip": 6145423
     },
     {
      "beats": 7,
@@ -282,7 +288,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-123"
   },
   {
    "id": "new-england-countdown",
@@ -386,39 +393,34 @@
      "title": "Rocky Mountain and Southwest universities with 20,000+ students",
      "rows": [
       [
-       "14",
+       "13",
        "Utah State",
        "3"
       ],
       [
-       "12",
+       "11",
        "Weber State",
        "11"
       ],
       [
-       "12",
+       "11",
        "Utah Valley",
        "11"
       ],
       [
-       "11",
+       "10",
        "Utah",
        "16"
       ],
       [
-       "10",
+       "9",
        "Nevada",
        "19"
       ],
       [
-       "9",
+       "8",
        "BYU",
        "29"
-      ],
-      [
-       "8",
-       "College of Southern Nevada",
-       "42"
       ],
       [
        "7",
@@ -436,7 +438,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Utah State, with just 3. Pack a lunch. Weber State, 11. And Utah? Only eleventh."
+     "say": "Dead last: Utah State, with just 3. Pack a lunch. Weber State, 11. And Utah? Only tenth.",
+     "clip": 12370544
     },
     {
      "beats": 7,
@@ -514,7 +517,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-135"
   }
  ]
 }

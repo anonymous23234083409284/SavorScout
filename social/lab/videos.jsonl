@@ -49,7 +49,6 @@
 {"id": "acc-countdown", "date": "2026-11-20", "duration_s": 46.0}
 {"id": "big-12-countdown", "date": "2026-11-20", "duration_s": 42.9}
 {"id": "rivalry-alabama-rivalry", "date": "2026-11-20", "duration_s": 33.1}
-{"id": "tx-countdown", "date": "2026-11-20", "duration_s": 38.8}
 {"id": "baltimore-md-countdown", "date": "2026-11-21", "duration_s": 34.1}
 {"id": "ivy-league-countdown", "date": "2026-11-21", "duration_s": 39.3}
 {"id": "rivalry-florida-state-rivalry", "date": "2026-11-21", "duration_s": 34.7}
@@ -68,7 +67,6 @@
 {"id": "al-countdown", "date": "2026-11-25", "duration_s": 35.2}
 {"id": "csu-countdown", "date": "2026-11-25", "duration_s": 45.0}
 {"id": "jesuit-countdown", "date": "2026-11-25", "duration_s": 41.9}
-{"id": "mi-countdown", "date": "2026-11-25", "duration_s": 42.4}
 {"id": "il-countdown", "date": "2026-11-26", "duration_s": 41.9}
 {"id": "mo-countdown", "date": "2026-11-26", "duration_s": 37.8}
 {"id": "pac12-old-countdown", "date": "2026-11-26", "duration_s": 44.5}
@@ -91,5 +89,13 @@
 {"id": "in-countdown", "date": "2026-11-30", "duration_s": 37.8}
 {"id": "mountain-countdown", "date": "2026-11-30", "duration_s": 40.9}
 {"id": "new-england-countdown", "date": "2026-11-30", "duration_s": 30.5}
+{"id": "mid-atlantic-countdown", "date": "2026-12-01", "duration_s": 38.3}
 {"id": "nc-countdown", "date": "2026-12-01", "duration_s": 42.4}
+{"id": "plains-countdown", "date": "2026-12-01", "duration_s": 33.6}
+{"id": "pnw-countdown", "date": "2026-12-01", "duration_s": 35.2}
+{"id": "tx-countdown", "date": "2026-12-01", "duration_s": 43.4}
 {"id": "va-countdown", "date": "2026-12-01", "duration_s": 36.7}
+{"id": "co-countdown", "date": "2026-12-02", "duration_s": 41.9}
+{"id": "ks-countdown", "date": "2026-12-02", "duration_s": 35.7}
+{"id": "mi-countdown", "date": "2026-12-02", "duration_s": 42.9}
+{"id": "ok-countdown", "date": "2026-12-02", "duration_s": 38.8}

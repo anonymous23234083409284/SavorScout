@@ -129,64 +129,64 @@
      "title": "California colleges with 10,000+ students: the bottom 12",
      "rows": [
       [
-       "35",
-       "College of the Desert",
-       "0"
-      ],
-      [
-       "33",
+       "30",
        "UC Santa Cruz",
        "1"
       ],
       [
-       "33",
+       "30",
        "Pepperdine",
        "1"
       ],
       [
-       "32",
+       "29",
        "UC Santa Barbara",
        "2"
       ],
       [
-       "31",
-       "College of the Canyons",
-       "3"
-      ],
-      [
-       "30",
+       "28",
        "Cal Poly",
        "4"
       ],
       [
-       "29",
+       "27",
        "CSU Dominguez Hills",
        "7"
       ],
       [
-       "28",
+       "26",
        "Cal State East Bay",
        "8"
       ],
       [
-       "26",
+       "24",
        "Fresno State",
        "9"
       ],
       [
-       "26",
+       "24",
        "California Baptist",
        "9"
       ],
       [
-       "24",
+       "22",
        "Long Beach State",
        "11"
       ],
       [
-       "24",
+       "22",
        "Cal Poly Pomona",
        "11"
+      ],
+      [
+       "21",
+       "UC Riverside",
+       "12"
+      ],
+      [
+       "18",
+       "UCLA",
+       "14"
       ]
      ],
      "q": [
@@ -194,7 +194,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: College of the Desert. Zero. Pack a lunch. UC Santa Cruz, 1. Pepperdine, 1."
+     "say": "Tied for dead last: UC Santa Cruz and Pepperdine, with just 1. Pack a lunch. UC Santa Barbara, 2.",
+     "clip": 40003872
     },
     {
      "beats": 7,
@@ -272,7 +273,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-111"
   },
   {
    "id": "new-york-ny-countdown",
@@ -424,17 +426,6 @@
     {
      "beats": 7,
      "style": "rank",
-     "num": "5",
-     "text": "College of Western Idaho",
-     "count": 3,
-     "sub": "Busiest food street: Idaho Center Blvd",
-     "map": "college-of-western-idaho",
-     "label": "places to eat within a 10-minute walk",
-     "say": "Dead last: College of Western Idaho, with just 3. Pack a lunch."
-    },
-    {
-     "beats": 7,
-     "style": "rank",
      "num": "4",
      "text": "Boise State",
      "count": 15,
@@ -486,7 +477,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?"
+     "say": "Did we rank your school right? Tell us in the comments. And which state should we rank next?",
+     "clip": 40297692
     }
    ],
    "lab": {
@@ -501,7 +493,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-117"
   }
  ]
 }

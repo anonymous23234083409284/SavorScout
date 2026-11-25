@@ -1,0 +1,524 @@
+{
+ "date": "2026-12-03",
+ "videos": [
+  {
+   "id": "wa-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/wa",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "seattle-university",
+     "text": "Which Washington state college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UW.",
+     "say": "Which Washington state college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "Washington state colleges with 5,000+ students",
+     "rows": [
+      [
+       "8",
+       "UW Bothell",
+       "6"
+      ],
+      [
+       "7",
+       "Western Washington",
+       "7"
+      ],
+      [
+       "6",
+       "Washington State",
+       "8"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UW Bothell, with just 6. Western Washington, 7. Washington State, 8."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Eastern Washington",
+     "count": 10,
+     "sub": "Busiest food street: 1st St",
+     "map": "eastern-washington-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Eastern Washington. 10. Busiest food street: 1st Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Central Washington",
+     "count": 18,
+     "sub": "Busiest food street: University Way",
+     "map": "central-washington-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Central Washington. 18. Busiest food street: University Way."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Gonzaga",
+     "count": 38,
+     "sub": "Busiest food street: Division St",
+     "map": "gonzaga-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Gonzaga. 38. Busiest food street: Division Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "University of Washington",
+     "count": 70,
+     "sub": "Busiest food street: University Way NE",
+     "map": "university-of-washington-seattle-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: University of Washington. 70. Busiest food street: University Way."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Seattle U",
+     "count": 241,
+     "sub": "Busiest food street: Broadway",
+     "map": "seattle-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Seattle U. 241. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Washington school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "state5k:WA",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:WA|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-102"
+  },
+  {
+   "id": "cusa-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-delaware",
+     "text": "Which Conference USA school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Conference USA school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "All 10 Conference USA schools",
+     "rows": [
+      [
+       "9",
+       "Middle Tennessee",
+       "9"
+      ],
+      [
+       "9",
+       "Kennesaw State",
+       "9"
+      ],
+      [
+       "8",
+       "Jacksonville State",
+       "15"
+      ],
+      [
+       "7",
+       "Western Kentucky",
+       "19"
+      ],
+      [
+       "6",
+       "Missouri State",
+       "23"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Tied for dead last: Middle Tennessee and Kennesaw State, with just 9. Jacksonville State, 15. Western Kentucky, 19. Missouri State, 23."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "New Mexico State",
+     "count": 26,
+     "sub": "Busiest food street: E University Ave",
+     "map": "new-mexico-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: New Mexico State. 26. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Sam Houston State",
+     "count": 29,
+     "sub": "Busiest food street: Sam Houston Ave",
+     "map": "sam-houston-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Sam Houston State. 29. Busiest food street: Sam Houston Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Liberty",
+     "count": 40,
+     "sub": "Busiest food street: Wards Rd",
+     "map": "liberty-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Liberty. 40. Busiest food street: Wards Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "FIU",
+     "count": 45,
+     "sub": "Busiest food street: 107th Ave",
+     "map": "florida-international-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: FIU. 45. Busiest food street: 107th Avenue."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "Delaware",
+     "count": 75,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-delaware",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Delaware. 75."
+    }
+   ],
+   "lab": {
+    "key": "conf:cusa",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:cusa|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-105"
+  },
+  {
+   "id": "la-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/la",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "louisiana-state-university-and-agricultural-and-mechanical-college",
+     "text": "Which Louisiana college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Tulane.",
+     "say": "Which Louisiana college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 10,
+     "style": "list",
+     "title": "Louisiana colleges with 5,000+ students",
+     "rows": [
+      [
+       "13",
+       "Nicholls State",
+       "2"
+      ],
+      [
+       "12",
+       "Southern University",
+       "4"
+      ],
+      [
+       "11",
+       "Grambling State",
+       "7"
+      ],
+      [
+       "10",
+       "Southeastern Louisiana",
+       "9"
+      ],
+      [
+       "9",
+       "University of New Orleans",
+       "10"
+      ],
+      [
+       "8",
+       "Northwestern State",
+       "11"
+      ],
+      [
+       "7",
+       "McNeese State",
+       "17"
+      ],
+      [
+       "6",
+       "UL Monroe",
+       "19"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Nicholls State, with just 2. Pack a lunch. Southern University, 4. Grambling State, 7."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Louisiana Tech",
+     "count": 21,
+     "sub": "Busiest food street: W California Ave",
+     "map": "louisiana-tech-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Louisiana Tech. 21. Busiest food street: California Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UL Lafayette",
+     "count": 26,
+     "sub": "Tied with LSU Shreveport for 3rd. Busiest food street: Jefferson St",
+     "map": "university-of-louisiana-at-lafayette",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UL Lafayette. 26."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "LSU Shreveport",
+     "count": 26,
+     "sub": "Tied with UL Lafayette for 3rd. Busiest food street: Youree Dr",
+     "map": "louisiana-state-university-shreveport",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: LSU Shreveport. 26."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Tulane",
+     "count": 33,
+     "sub": "Busiest food street: Freret St",
+     "map": "tulane-university-of-louisiana",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Tulane. 33. Busiest food street: Freret Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "LSU",
+     "count": 41,
+     "sub": "Busiest food street: Highland Rd",
+     "map": "louisiana-state-university-and-agricultural-and-mechanical-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: LSU. 41."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Louisiana school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "state5k:LA",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:LA|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-108"
+  },
+  {
+   "id": "mac-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "ohio-university-main-campus",
+     "text": "Which MAC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which MAC school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "All 12 MAC schools",
+     "rows": [
+      [
+       "12",
+       "Kent State",
+       "5"
+      ],
+      [
+       "11",
+       "Buffalo",
+       "11"
+      ],
+      [
+       "8",
+       "Toledo",
+       "13"
+      ],
+      [
+       "8",
+       "Miami (Ohio)",
+       "13"
+      ],
+      [
+       "8",
+       "Eastern Michigan",
+       "13"
+      ],
+      [
+       "7",
+       "UMass Amherst",
+       "15"
+      ],
+      [
+       "6",
+       "Central Michigan",
+       "20"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Kent State, with just 5. Pack a lunch. Buffalo, 11. Toledo, 13."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Ball State",
+     "count": 25,
+     "sub": "Busiest food street: W University Ave",
+     "map": "ball-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Ball State. 25. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Western Michigan",
+     "count": 27,
+     "sub": "Busiest food street: W Michigan Ave",
+     "map": "western-michigan-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Western Michigan. 27. Busiest food street: Michigan Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Akron",
+     "count": 30,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-akron-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Akron. 30. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Bowling Green",
+     "count": 47,
+     "sub": "Busiest food street: Wooster St",
+     "map": "bowling-green-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Bowling Green. 47. Busiest food street: Wooster Street."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "Ohio University",
+     "count": 63,
+     "sub": "Busiest food street: Court St",
+     "map": "ohio-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Ohio University. 63."
+    }
+   ],
+   "lab": {
+    "key": "conf:mac",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:mac|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-111"
+  }
+ ]
+}

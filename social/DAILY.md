@@ -27,6 +27,29 @@ call Buffer at all (no `stats`, `publish`, `verify` or `update`): build and rend
 publish through Buffer again; `stats` now asks only about posts still gaining views (TikTok from the last
 10 days, X/Threads from the last 3) and never more than 60 requests a run.
 
+## Lessons from the Nov 25 run (read before building)
+
+- **Which schools count.** `four_year()` in lab.py decides who is in a state, region or city list. Community
+  colleges whose names don't say so ("College of Southern Nevada", "College of DuPage", City Colleges of
+  Chicago, FSC Jacksonville) are listed in `TWO_YEAR_SLUGS`; "University and ... College" names (LSU,
+  Southern University) count as four-year. When a list shows a "College of ..." school or misses a big
+  university, fix the rule, then re-check every built video that is not posted yet.
+- **Conference lists are 2026-27 full members** (Texas State and Gonzaga are in the new Pac-12, Louisiana
+  Tech in the Sun Belt, UMass in the MAC, Delaware and Missouri State in Conference USA). Check memberships
+  again every July. Leave a conference out while a member is missing from the data (the Mountain West:
+  Air Force, Grand Canyon), or say "n of the N" in the title.
+- **A "b" batch posts between the main slots, at least 90 minutes from every other post that day.** Only a
+  gap of 180+ minutes fits one; check all six times before saving posts.json.
+- **Re-scripting a date:** delete its videos.json and posts.json first. `lab.py script --force` counts the
+  old file as "used in the last 14 days" and quietly picks other rankings.
+- **Rebuilding one finished video:** pin its `"track"` and each footage scene's `"clip"` (ids from
+  `out/batches/<batch>/reels.json`) first, or the rebuild picks a new soundtrack that can clash with another
+  video that day. Then `python reel.py ../batches/<batch>/videos.json /tmp/sounds ../out/rankmaps/<batch> <id>`
+  and `node render.mjs ../out/batches/<batch>/manifest.json <id>` (from social/video). Do it before any later
+  day's render: `make_day.py render` prunes render inputs more than 3 days older than the date it renders.
+- **Spoken "St."**: write "Saint" in `say` lines ("Saint Cloud State", "Saint Germain Street"); the street
+  expander reads "St" as "Street".
+
 ## The daily mix (from Nov 18): countdowns only, with a girl-voice hook
 
 The owner's direction on Nov 18: stop the meme format. No skits, no meme videos and no meme-based

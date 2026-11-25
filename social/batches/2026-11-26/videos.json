@@ -399,14 +399,9 @@
      "title": "Illinois universities with 10,000+ students",
      "rows": [
       [
-       "11",
+       "10",
        "SIU Edwardsville",
        "0"
-      ],
-      [
-       "10",
-       "College of DuPage",
-       "7"
       ],
       [
        "9",
@@ -434,7 +429,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: SIU Edwardsville. Zero. Pack a lunch. College of DuPage, 7. And UChicago? Only eighth."
+     "say": "Dead last: SIU Edwardsville. Zero. Pack a lunch. SIU Carbondale, 19. And UChicago? Only eighth.",
+     "clip": 5873184
     },
     {
      "beats": 7,
@@ -512,7 +508,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-102"
   }
  ]
 }

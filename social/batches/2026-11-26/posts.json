@@ -3,22 +3,22 @@
   {
    "video": "pac12-old-countdown",
    "at": "2026-11-26T12:21:00-05:00",
-   "text": "Stanford is 9th 👀 Which old Pac-12 school has the most restaurants within a 10-minute walk? Send this to your friend at another Pac-12 school.\n\n#ucberkeley #usc #arizona #collegelife #collegefood"
+   "text": "Stanford is 9th \ud83d\udc40 Which old Pac-12 school has the most restaurants within a 10-minute walk? Send this to your friend at another Pac-12 school.\n\n#ucberkeley #usc #arizona #collegelife #collegefood"
   },
   {
    "video": "mo-countdown",
    "at": "2026-11-26T15:22:00-05:00",
-   "text": "WashU is dead last 👀 Which big Missouri university has the most restaurants within a 10-minute walk? Send this to your friend at another Missouri school.\n\n#mizzou #saintlouis #umkc #collegelife #collegefood"
+   "text": "WashU is dead last \ud83d\udc40 Which big Missouri university has the most restaurants within a 10-minute walk? Send this to your friend at another Missouri school.\n\n#mizzou #saintlouis #umkc #collegelife #collegefood"
   },
   {
    "video": "ut-countdown",
    "at": "2026-11-26T18:23:00-05:00",
-   "text": "Utah is 4th 👀 Which big Utah university has the most restaurants within a 10-minute walk? Send this to your friend at another Utah school.\n\n#byu #utahtech #southernutah #collegelife #collegefood"
+   "text": "Utah is 4th \ud83d\udc40 Which big Utah university has the most restaurants within a 10-minute walk? Send this to your friend at another Utah school.\n\n#byu #utahtech #southernutah #collegelife #collegefood"
   },
   {
    "video": "il-countdown",
    "at": "2026-11-26T21:22:00-05:00",
-   "text": "UChicago is 8th 👀 Which big Illinois university has the most restaurants within a 10-minute walk? Send this to your friend at another Illinois school.\n\n#depaul #northwestern #uiuc #collegelife #collegefood"
+   "text": "UChicago is 8th \ud83d\udc40 Which big Illinois university has the most restaurants within a 10-minute walk? Send this to your friend at another Illinois school.\n\n#depaul #northwestern #uiuc #collegelife #collegefood"
   }
  ],
  "twitter": [
@@ -58,7 +58,7 @@
    "card": "il-countdown",
    "thread": [
     "DePaul has more restaurants within a 10-minute walk of campus than Northwestern, UIUC and UIC combined.\n\nEvery Illinois university with 10,000+ students:",
-    "1. DePaul: 488\n2. Northwestern: 162\n3. UIUC: 109\n4. UIC: 85\n5. Loyola Chicago: 72\n6. Northern Illinois: 42\n7. Illinois State: 40\n8. UChicago: 25\n9. SIU Carbondale: 19\n10. College of DuPage: 7\n11. SIU Edwardsville: 0",
+    "1. DePaul: 488\n2. Northwestern: 162\n3. UIUC: 109\n4. UIC: 85\n5. Loyola Chicago: 72\n6. Northern Illinois: 42\n7. Illinois State: 40\n8. UChicago: 25\n9. SIU Carbondale: 19\n10. SIU Edwardsville: 0",
     "Places to eat within half a mile of each campus's center, using Overture Maps listings.\n\nLook up any campus, with the closest places first: https://www.savorscout.net/campus/il"
    ]
   }
@@ -100,7 +100,7 @@
    "card": "il-countdown",
    "topic": "Illinois",
    "thread": [
-    "DePaul has more restaurants within a 10-minute walk of campus than Northwestern, UIUC and UIC combined. Every Illinois university with 10,000+ students:\n\nDePaul 488, Northwestern 162, UIUC 109, UIC 85, Loyola Chicago 72, Northern Illinois 42, Illinois State 40, UChicago 25, SIU Carbondale 19, College of DuPage 7, SIU Edwardsville 0.\n\nDid your campus land where you expected?",
+    "DePaul has more restaurants within a 10-minute walk of campus than Northwestern, UIUC and UIC combined. Every Illinois university with 10,000+ students:\n\nDePaul 488, Northwestern 162, UIUC 109, UIC 85, Loyola Chicago 72, Northern Illinois 42, Illinois State 40, UChicago 25, SIU Carbondale 19, SIU Edwardsville 0.\n\nDid your campus land where you expected?",
     "Look up any campus, with the closest places first: https://www.savorscout.net/campus/il"
    ]
   }
@@ -312,11 +312,6 @@
     ],
     [
      "10",
-     "College of DuPage",
-     7
-    ],
-    [
-     "11",
      "SIU Edwardsville",
      0
     ]

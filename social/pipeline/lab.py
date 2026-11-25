@@ -95,7 +95,7 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
           "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 # Short names already used on screen, where the generic rules would read badly.
-EXTRA_NAMES = {"fashion-institute-of-technology": "FIT", "cuny-bernard-m-baruch-college": "Baruch", "cuny-john-jay-college-of-criminal-justice": "John Jay", "cuny-city-college": "City College", "the-new-school": "The New School",
+EXTRA_NAMES = {"university-of-delaware": "Delaware", "university-of-washington-bothell-campus": "UW Bothell", "university-of-washington-tacoma-campus": "UW Tacoma", "university-of-new-orleans": "University of New Orleans", "northwestern-state-university-of-louisiana": "Northwestern State", "louisiana-state-university-shreveport": "LSU Shreveport", "southern-university-and-a-and-m-college": "Southern University", "university-of-the-pacific": "Pacific", "louisiana-state-university-and-agricultural-and-mechanical-college": "LSU", "university-of-southern-mississippi": "Southern Miss", "bowling-green-state-university-main-campus": "Bowling Green", "middle-tennessee-state-university": "Middle Tennessee", "saint-cloud-state-university": "St. Cloud State", "fashion-institute-of-technology": "FIT", "cuny-bernard-m-baruch-college": "Baruch", "cuny-john-jay-college-of-criminal-justice": "John Jay", "cuny-city-college": "City College", "the-new-school": "The New School",
                "rutgers-university-newark": "Rutgers-Newark", "new-jersey-institute-of-technology": "NJIT",
                "the-university-of-tennessee-chattanooga": "UT Chattanooga", "university-of-the-cumberlands": "Cumberlands",
                "university-of-massachusetts-lowell": "UMass Lowell", "university-of-massachusetts-boston": "UMass Boston", "university-of-massachusetts-dartmouth": "UMass Dartmouth", "university-of-massachusetts-amherst": "UMass Amherst",
@@ -263,10 +263,28 @@ FOUR_YEAR_COLLEGE = re.compile(r"^(Boston|Dartmouth|Emerson|Hunter|Brooklyn|Quee
                                r"Reed|Whitman|Trinity|Simmons) College|^College of |CUNY|Baruch", re.I)
 
 
+# Nov 25: community colleges whose names don't say so (they slipped into "universities" lists), and the
+# "University and ... College" names (LSU, Southern University) that the "...College" rule wrongly dropped.
+TWO_YEAR_SLUGS = {
+    "college-of-alameda", "college-of-central-florida", "college-of-dupage", "college-of-san-mateo",
+    "college-of-southern-idaho", "college-of-southern-maryland", "college-of-southern-nevada", "college-of-the-canyons",
+    "college-of-the-desert", "college-of-the-mainland", "college-of-the-sequoias", "college-of-western-idaho",
+    "city-college-of-san-francisco", "city-colleges-of-chicago-harry-s-truman-college", "city-colleges-of-chicago-malcolm-x-college",
+    "city-colleges-of-chicago-richard-j-daley-college", "city-colleges-of-chicago-wilbur-wright-college",
+    "county-college-of-morris", "rowan-college-at-burlington-county", "rowan-college-of-south-jersey-gloucester-campus",
+    "ucnj-union-college-of-union-county-new-jersey", "pierce-college-district",
+    "florida-state-college-at-jacksonville", "seminole-state-college-of-florida", "state-college-of-florida-manatee-sarasota",
+    "lamar-institute-of-technology"}
+
+
 def four_year(slug):
+    if slug in TWO_YEAR_SLUGS:
+        return False
     n = CAMP.get(slug, {}).get("n", "")
     if TWO_YEAR.search(n):
         return False
+    if re.search(r"\bUniversity and\b.*College$", n):
+        return True
     if re.search(r"College( System)?$", n) and not FOUR_YEAR_COLLEGE.search(n):
         return False
     return True
@@ -388,24 +406,30 @@ NEW_GROUPS = [
       "the-university-of-texas-at-austin", "university-of-virginia-main-campus", "university-of-vermont",
       "university-of-california-berkeley", "university-of-california-los-angeles"]),
     # Nov 23: more conferences so 8 countdowns a day can run without repeating a ranking.
-    ("conf:mwc", "conference", "Which Mountain West school", "Mountain West schools", "{n} Mountain West schools",
-     "Send this to your friend at another Mountain West school.", "Mountain West school",
-     ["boise-state-university", "colorado-state-university-fort-collins", "california-state-university-fresno", "university-of-nevada-reno", "university-of-new-mexico-main-campus", "san-diego-state-university", "san-jose-state-university", "university-of-nevada-las-vegas", "utah-state-university", "university-of-wyoming", "university-of-hawaii-at-manoa"]),
-    ("conf:aac", "conference", "Which American Conference school", "American Conference schools", "{n} American Conference schools",
+    # Nov 25: memberships updated for 2026-27 (the July 1, 2026 realignment). Full members only, never football-only
+    # affiliates. The Mountain West is left out until Air Force and Grand Canyon are in the data (a list without
+    # them would be wrong); Tulsa (American) and Portland and Saint Mary's (WCC) are not in the data, so those titles
+    # say "n of the N". Check memberships again each July.
+    ("conf:pac12", "conference", "Which Pac-12 school", "Pac-12 schools", "All {n} schools in the new Pac-12",
+     "Send this to your friend at another Pac-12 school.", "Pac-12 school",
+     ["boise-state-university", "colorado-state-university-fort-collins", "california-state-university-fresno", "gonzaga-university",
+      "oregon-state-university", "san-diego-state-university", "texas-state-university", "utah-state-university",
+      "washington-state-university"]),
+    ("conf:aac", "conference", "Which American Conference school", "American Conference schools", "{n} of the 13 American Conference schools",
      "Send this to your friend at another American Conference school.", "American Conference school",
-     ["university-of-north-carolina-at-charlotte", "east-carolina-university", "florida-atlantic-university", "university-of-memphis", "university-of-north-texas", "rice-university", "university-of-south-florida", "temple-university", "tulane-university-of-louisiana", "university-of-alabama-at-birmingham", "the-university-of-texas-at-san-antonio"]),
+     ["university-of-north-carolina-at-charlotte", "east-carolina-university", "florida-atlantic-university", "university-of-memphis", "university-of-north-texas", "rice-university", "university-of-south-florida", "temple-university", "tulane-university-of-louisiana", "university-of-alabama-at-birmingham", "the-university-of-texas-at-san-antonio", "wichita-state-university"]),
     ("conf:mac", "conference", "Which MAC school", "MAC schools", "All {n} MAC schools",
      "Send this to your friend at another MAC school.", "MAC school",
-     ["university-of-akron-main-campus", "ball-state-university", "bowling-green-state-university-main-campus", "university-at-buffalo", "central-michigan-university", "eastern-michigan-university", "kent-state-university-at-kent", "miami-university-oxford", "northern-illinois-university", "ohio-university-main-campus", "university-of-toledo", "western-michigan-university"]),
+     ["university-of-akron-main-campus", "ball-state-university", "bowling-green-state-university-main-campus", "university-at-buffalo", "central-michigan-university", "eastern-michigan-university", "kent-state-university-at-kent", "university-of-massachusetts-amherst", "miami-university-oxford", "ohio-university-main-campus", "university-of-toledo", "western-michigan-university"]),
     ("conf:sun-belt", "conference", "Which Sun Belt school", "Sun Belt schools", "All {n} Sun Belt schools",
      "Send this to your friend at another Sun Belt school.", "Sun Belt school",
-     ["appalachian-state-university", "arkansas-state-university", "coastal-carolina-university", "georgia-southern-university", "georgia-state-university", "james-madison-university", "university-of-louisiana-at-lafayette", "university-of-louisiana-at-monroe", "marshall-university", "old-dominion-university", "university-of-south-alabama", "university-of-southern-mississippi", "texas-state-university", "troy-university"]),
+     ["appalachian-state-university", "arkansas-state-university", "coastal-carolina-university", "georgia-southern-university", "georgia-state-university", "james-madison-university", "university-of-louisiana-at-lafayette", "university-of-louisiana-at-monroe", "louisiana-tech-university", "marshall-university", "old-dominion-university", "university-of-south-alabama", "university-of-southern-mississippi", "troy-university"]),
     ("conf:cusa", "conference", "Which Conference USA school", "Conference USA schools", "All {n} Conference USA schools",
      "Send this to your friend at another Conference USA school.", "Conference USA school",
-     ["florida-international-university", "jacksonville-state-university", "kennesaw-state-university", "liberty-university", "louisiana-tech-university", "middle-tennessee-state-university", "new-mexico-state-university-main-campus", "sam-houston-state-university", "the-university-of-texas-at-el-paso", "western-kentucky-university"]),
-    ("conf:wcc", "conference", "Which West Coast Conference school", "West Coast Conference schools", "{n} West Coast Conference schools",
+     ["university-of-delaware", "florida-international-university", "jacksonville-state-university", "kennesaw-state-university", "liberty-university", "middle-tennessee-state-university", "missouri-state-university-springfield", "new-mexico-state-university-main-campus", "sam-houston-state-university", "western-kentucky-university"]),
+    ("conf:wcc", "conference", "Which West Coast Conference school", "West Coast Conference schools", "{n} of the 10 West Coast Conference schools",
      "Send this to your friend at another West Coast Conference school.", "West Coast Conference school",
-     ["gonzaga-university", "loyola-marymount-university", "pepperdine-university", "university-of-san-diego", "university-of-san-francisco", "santa-clara-university", "university-of-the-pacific"]),
+     ["university-of-denver", "loyola-marymount-university", "pepperdine-university", "university-of-san-diego", "university-of-san-francisco", "santa-clara-university", "seattle-university", "university-of-the-pacific"]),
 ]
 
 def all_groups():
@@ -510,7 +534,7 @@ def all_groups():
 
 GROUP_WORDS = {"Big Ten": "conf:big-ten", "SEC": "conf:sec", "ACC": "conf:acc", "Big 12": "conf:big-12",
                "Ivy League": "conf:ivy-league", "Ivy": "conf:ivy-league", "UC": "system:uc", "Cal State": "system:csu",
-               "old Pac-12": "conf:pac12-old"}
+               "old Pac-12": "conf:pac12-old", "Pac-12": "conf:pac12"}
 
 
 def infer_key(v):

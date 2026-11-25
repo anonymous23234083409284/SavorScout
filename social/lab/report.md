@@ -2,8 +2,6 @@
 
 Learned from **58 TikToks** posted 2026-11-01 to 2026-11-17. The model explains about 82% of the differences in views (in-sample, so treat it as a guide). Multipliers below are on views; "clear" means the data shows it repeatedly, "likely" means it leans that way, "unclear" means not enough evidence yet.
 
-**Last 7 days:** 4 videos, median 125 views, 0 of 4 at 1,000+.
-
 ## What drives views
 
 - **Countdown vs. 'how to tell' tip: x7.4 views** (clear)
@@ -84,9 +82,6 @@ The lab starts from these (both platforms combined, the more certain one countin
 ## Experiments
 
 - 2026-11-23 g_famous: countdown: 20 HBCUs by w (#1 Howard 77) -> **posted** (waiting for 3 days of numbers; predicted 2,014)
-- 2026-11-23 g_city: countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592) -> **posted** (waiting for 3 days of numbers; predicted 567)
-- 2026-11-23 g_famous: countdown: 50 state flagship universities by w (#1 UC Berkeley 277, tease Michigan (2nd)) -> **posted** (waiting for 3 days of numbers; predicted 4,866)
-- 2026-11-23 g_famous: countdown: 20 HBCUs by w (#1 Howard 77) -> **posted** (waiting for 3 days of numbers; predicted 2,014)
 - 2026-11-23 g_city: countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592) -> **posted** (waiting for 3 days of numbers; predicted 564)
 - 2026-11-24 g_famous: countdown: 17 tech schools by w (#1 Stevens 176, tease MIT (3rd)) -> **posted** (waiting for 3 days of numbers; predicted 3,460)
 - 2026-11-25 g_famous: countdown: 18 Jesuit universities by w (#1 Seattle U 241, tease Georgetown (6th)) -> **posted** (waiting for 3 days of numbers; predicted 2,669)
@@ -95,5 +90,8 @@ The lab starts from these (both platforms combined, the more certain one countin
 - 2026-11-27 g_city: countdown: Philadelphia colleges with 5,000+ students by w (#1 Thomas Jefferson 562, tease Penn (3rd)) -> **posted** (waiting for 3 days of numbers; predicted 1,041)
 - 2026-11-29 g_famous: countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th)) -> **posted** (waiting for 3 days of numbers; predicted 5,050)
 - 2026-11-29 g_city: countdown: New York colleges with 5,000+ students by w (#1 Touro 1478, tease Columbia (9th)) -> **posted** (waiting for 3 days of numbers; predicted 850)
+- 2026-12-01 g_famous: countdown: DC, Maryland, Delaware and New Jersey universities with 20,000+ students by w (#1 GW 280, tease Johns Hopkins (3rd)) -> **posted** (waiting for 3 days of numbers; predicted 3,956)
+- 2026-12-01 g_famous: countdown: Great Plains universities with 20,000+ students by w (#1 Iowa 132, tease Kansas (6th)) -> **posted** (waiting for 3 days of numbers; predicted 3,500)
+- 2026-12-01 g_famous: countdown: Pacific Northwest universities with 20,000+ students by w (#1 Portland State 119, tease Washington State (7th)) -> **posted** (waiting for 3 days of numbers; predicted 3,288)
 
 _Written by social/pipeline/lab.py. Regenerated every daily run._

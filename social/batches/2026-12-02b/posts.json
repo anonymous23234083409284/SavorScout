@@ -1,0 +1,139 @@
+{
+ "tiktok": [
+  {
+   "video": "pac12-countdown",
+   "at": "2026-12-02T13:50:00-05:00",
+   "text": "SDSU is 3rd \ud83d\udc40 Which Pac-12 school has the most restaurants within a 10-minute walk? Send this to your friend at another Pac-12 school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#texasstate #coloradostate #sdsu #collegelife #collegefood"
+  },
+  {
+   "video": "sun-belt-countdown",
+   "at": "2026-12-02T19:47:00-05:00",
+   "text": "Southern Miss is 2nd \ud83d\udc40 Which Sun Belt school has the most restaurants within a 10-minute walk? Send this to your friend at another Sun Belt school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#georgiastate #southernmiss #appstate #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "pac12-countdown": {
+   "type": "ranking",
+   "title": "Pac-12 schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 9 schools in the new Pac-12. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Texas State",
+     79
+    ],
+    [
+     "2",
+     "Colorado State",
+     62
+    ],
+    [
+     "3",
+     "SDSU",
+     40
+    ],
+    [
+     "4",
+     "Gonzaga",
+     38
+    ],
+    [
+     "4",
+     "Oregon State",
+     38
+    ],
+    [
+     "6",
+     "Boise State",
+     15
+    ],
+    [
+     "7",
+     "Fresno State",
+     9
+    ],
+    [
+     "8",
+     "Washington State",
+     8
+    ],
+    [
+     "9",
+     "Utah State",
+     3
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "sun-belt-countdown": {
+   "type": "ranking",
+   "title": "Sun Belt schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 14 Sun Belt schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Georgia State",
+     194
+    ],
+    [
+     "2",
+     "Southern Miss",
+     52
+    ],
+    [
+     "3",
+     "App State",
+     47
+    ],
+    [
+     "4",
+     "Marshall",
+     42
+    ],
+    [
+     "5",
+     "Old Dominion",
+     35
+    ],
+    [
+     "6",
+     "Georgia Southern",
+     28
+    ],
+    [
+     "7",
+     "UL Lafayette",
+     26
+    ],
+    [
+     "8",
+     "Louisiana Tech",
+     21
+    ],
+    [
+     "9",
+     "UL Monroe",
+     19
+    ],
+    [
+     "10",
+     "Arkansas State",
+     13
+    ],
+    [
+     "11",
+     "South Alabama",
+     12
+    ],
+    [
+     "12",
+     "JMU",
+     11
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

@@ -1,0 +1,271 @@
+{
+ "date": "2026-12-02",
+ "videos": [
+  {
+   "id": "pac12-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "texas-state-university",
+     "text": "Which Pac-12 school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not SDSU.",
+     "say": "Which Pac-12 school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "All 9 schools in the new Pac-12",
+     "rows": [
+      [
+       "9",
+       "Utah State",
+       "3"
+      ],
+      [
+       "8",
+       "Washington State",
+       "8"
+      ],
+      [
+       "7",
+       "Fresno State",
+       "9"
+      ],
+      [
+       "6",
+       "Boise State",
+       "15"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Utah State, with just 3. Pack a lunch. Washington State, 8. Fresno State, 9. Boise State, 15."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Oregon State",
+     "count": 38,
+     "sub": "Tied with Gonzaga for 4th. Busiest food street: NW Monroe Ave",
+     "map": "oregon-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Oregon State. 38."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Gonzaga",
+     "count": 38,
+     "sub": "Tied with Oregon State for 4th. Busiest food street: Division St",
+     "map": "gonzaga-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Gonzaga. 38."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "SDSU",
+     "count": 40,
+     "sub": "Busiest food street: El Cajon Blvd",
+     "map": "san-diego-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: SDSU. 40. Busiest food street: El Cajon Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Colorado State",
+     "count": 62,
+     "sub": "Busiest food street: College Ave",
+     "map": "colorado-state-university-fort-collins",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Colorado State. 62. Busiest food street: College Avenue."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "Texas State",
+     "count": 79,
+     "sub": "Busiest food street: LBJ Dr",
+     "map": "texas-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Texas State. 79."
+    }
+   ],
+   "lab": {
+    "key": "conf:pac12",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:pac12|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   }
+  },
+  {
+   "id": "sun-belt-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "georgia-state-university",
+     "text": "Which Sun Belt school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Sun Belt school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 11,
+     "style": "list",
+     "title": "All 14 Sun Belt schools",
+     "rows": [
+      [
+       "14",
+       "Coastal Carolina",
+       "4"
+      ],
+      [
+       "13",
+       "Troy",
+       "6"
+      ],
+      [
+       "12",
+       "JMU",
+       "11"
+      ],
+      [
+       "11",
+       "South Alabama",
+       "12"
+      ],
+      [
+       "10",
+       "Arkansas State",
+       "13"
+      ],
+      [
+       "9",
+       "UL Monroe",
+       "19"
+      ],
+      [
+       "8",
+       "Louisiana Tech",
+       "21"
+      ],
+      [
+       "7",
+       "UL Lafayette",
+       "26"
+      ],
+      [
+       "6",
+       "Georgia Southern",
+       "28"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Coastal Carolina, with just 4. Pack a lunch. Troy, 6. JMU, 11."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Old Dominion",
+     "count": 35,
+     "sub": "Busiest food street: Hampton Blvd",
+     "map": "old-dominion-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Old Dominion. 35. Busiest food street: Hampton Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Marshall",
+     "count": 42,
+     "sub": "Busiest food street: 3rd Ave",
+     "map": "marshall-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Marshall. 42. Busiest food street: 3rd Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "App State",
+     "count": 47,
+     "sub": "Busiest food street: King St",
+     "map": "appalachian-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: App State. 47. Busiest food street: King Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Southern Miss",
+     "count": 52,
+     "sub": "Busiest food street: Hardy St",
+     "map": "university-of-southern-mississippi",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Southern Miss. 52. Busiest food street: Hardy Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Georgia State",
+     "count": 194,
+     "sub": "Busiest food street: Peachtree St",
+     "map": "georgia-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Georgia State. 194. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Sun Belt school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:sun-belt",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:sun-belt|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   }
+  }
+ ],
+ "batch": "2026-12-02b"
+}

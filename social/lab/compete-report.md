@@ -1,33 +1,35 @@
 # Competitors: what separates their hits from their flops
 
-6 accounts closest to ours, 58 of their videos old enough to judge (3+ days). Every video is compared with **its own account's typical video**, so audience size drops out: a hit is 2x the account's typical views or more, a flop half or less. Findings pool the accounts and count how many agree; "clear" = the 99% interval excludes no effect and 4+ accounts, 75% of them, agree (about 20 features are tested, so a looser bar would find chance patterns); "likely" = the 90% interval does, or most accounts agree.
+6 accounts closest to ours, 67 of their videos old enough to judge (3+ days). Every video is compared with **its own account's typical video**, so audience size drops out: a hit is 2x the account's typical views or more, a flop half or less. Findings pool the accounts and count how many agree; "clear" = the 99% interval excludes no effect and 4+ accounts, 75% of them, agree (about 20 features are tested, so a looser bar would find chance patterns); "likely" = the 90% interval does, or most accounts agree.
 
 ## The accounts
 
 | account | followers | typical views | hits | flops | best | posts/week | length | style |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| daily college dining-hall lunch, first-person | 161,000 | 281,804 | 20% | 40% | 44.4x | 3.5 | 70s | text over footage |
-| Princeton dining-hall food creations | 43,500 | 107,831 | 38% | 38% | 19.5x | 5.0 | 61s | text over footage |
-| colleges in a state, ranked (countdown) | 16,600 | 24,600 | 11% | 44% | 4.4x | 7.6 | 70s | text over footage |
-| daily college dining-hall lunch, first-person (second account) | 83,500 | 20,901 | 27% | 9% | 3.0x | 4.9 | 49s | footage / voiceover |
-| food spots near NYU | 9,142 | 5,300 | 20% | 20% | 2.3x | 1.2 | 42s | on-camera person |
-| a city's high schools ranked by strictness (countdown) | 16,300 | 3,847 | 40% | 40% | 15.4x | 7.6 | 66s | footage / voiceover |
+| daily college dining-hall lunch, first-person | 162,200 | 350,300 | 27% | 36% | 35.7x | 2.8 | 70s | text over footage |
+| Princeton dining-hall food creations | 52,700 | 199,101 | 33% | 44% | 10.5x | 3.1 | 61s | text over footage |
+| daily college dining-hall lunch, first-person (second account) | 83,900 | 25,000 | 21% | 21% | 2.5x | 3.6 | 52s | footage / voiceover |
+| colleges in a state, ranked (countdown) | 16,900 | 10,025 | 50% | 50% | 10.8x | 4.2 | 70s | text over footage |
+| food spots near NYU | 9,176 | 4,801 | 23% | 15% | 8.5x | 1.3 | 42s | on-camera person |
+| a city's high schools ranked by strictness (countdown) | 16,800 | 3,847 | 40% | 40% | 15.4x | 4.0 | 66s | footage / voiceover |
 
 ## Captions and choices (within each account)
 
-- A number: **x0.31** the account's typical views (90% 0.14-0.60; same direction in 4 of 4 accounts; clear)
-- Shorter than the account's usual length: **x0.50** the account's typical views (90% 0.23-0.95; same direction in 3 of 3 accounts; likely)
-- A college angle: **x3.22** the account's typical views (90% 0.74-18.17; same direction in 1 of 2 accounts; unclear)
-- A named place: **x0.69** the account's typical views (90% 0.30-1.70; same direction in 2 of 2 accounts; unclear)
+- A number: **x0.37** the account's typical views (90% 0.17-0.82; same direction in 4 of 5 accounts; likely)
+- Shorter than the account's usual length: **x0.37** the account's typical views (90% 0.17-0.64; same direction in 3 of 3 accounts; likely)
+- A college angle: **x2.94** the account's typical views (90% 0.65-29.83; same direction in 1 of 2 accounts; unclear)
+- Opens with a question: **x2.02** the account's typical views (90% 0.52-8.44; same direction in 1 of 2 accounts; unclear)
+- A named place: **x0.65** the account's typical views (90% 0.30-1.60; same direction in 2 of 2 accounts; unclear)
+- A ranking or rating: **x1.53** the account's typical views (90% 0.38-5.42; same direction in 2 of 2 accounts; unclear)
 
 ## Footage: their top 3 vs. bottom 3 videos (inside each account)
 
 - Length: hits 63.5s, flops 56.2s (higher in the hits for 6 of 6 accounts; clear)
 - Time to the first cut: hits 3.0s, flops 2.5s (higher in the hits for 5 of 6 accounts; likely)
 - Median shot length: hits 3.9s, flops 3.3s (higher in the hits for 5 of 6 accounts; likely)
-- Cuts per second: hits 0.20, flops 0.26 (lower in the hits for 5 of 6 accounts; likely)
 - Time zooming in: hits 30%, flops 38% (lower in the hits for 5 of 6 accounts; likely)
 - Cuts in the first 3 seconds: hits 0, flops 0 (lower in the hits for 0 of 6 accounts; unclear)
+- Cuts per second: hits 0.20, flops 0.26 (lower in the hits for 5 of 6 accounts; unclear)
 - Movement in the first second: hits 0.05, flops 0.03 (higher in the hits for 4 of 6 accounts; unclear)
 - Words on the first frame: hits 4, flops 2 (lower in the hits for 0 of 6 accounts; unclear)
 - Brightness of the first frame: hits 121, flops 107 (higher in the hits for 4 of 6 accounts; unclear)
@@ -44,18 +46,18 @@
 
 | | videos | shares | likes | comments | saves |
 |---|---:|---:|---:|---:|---:|
-| their hits | 15 | 3.8 | 53.9 | 0.5 | 3.2 |
-| their other videos | 43 | 1.5 | 42.0 | 0.4 | 2.6 |
-| ours (200+ views) | 32 | 2.1 | 29.5 | 0.4 | - |
+| their hits | 21 | 4.4 | 55.8 | 0.6 | 3.3 |
+| their other videos | 46 | 1.3 | 42.5 | 0.4 | 2.9 |
+| ours (200+ views) | 42 | 3.0 | 29.9 | 0.7 | - |
 
-## Us vs. their hits (our 2026-11-13 videos)
+## Us vs. their hits (our 2026-12-02 videos)
 
-- Time to the first cut: ours **4.8s**, their hits 3.6s (middle half 1.6s to 8.9s)
+- Time to the first cut: ours **4.1s**, their hits 5.8s (middle half 1.6s to 9.8s)
 - Cuts in the first 3 seconds: ours **0**, their hits 0 (middle half 0 to 1)
-- Median shot length: ours **5.0s**, their hits 3.9s (middle half 2.9s to 4.2s)
-- Words on the first frame: ours **12**, their hits 4 (middle half 2 to 4)
-- Time zooming in: ours **5%**, their hits 32% (middle half 29% to 41%)
-- How closely the end matches the start: ours **0.18**, their hits 0.41 (middle half 0.35 to 0.55)
-- Length: ours **37.3s**, their hits 62.5s (middle half 54.5s to 69.6s)
+- Median shot length: ours **5.2s**, their hits 4.0s (middle half 3.1s to 25.0s)
+- Words on the first frame: ours **11**, their hits 4 (middle half 2 to 4)
+- Time zooming in: ours **5%**, their hits 39% (middle half 29% to 55%)
+- How closely the end matches the start: ours **0.39**, their hits 0.52 (middle half 0.36 to 0.77)
+- Length: ours **40.4s**, their hits 67.8s (middle half 61.2s to 70.5s)
 
 _Written by social/pipeline/compete.py. Their footage is measured and deleted; frame strips and captions stay private (social/out/review/compete/) for 30 days._

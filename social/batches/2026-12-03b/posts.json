@@ -1,0 +1,139 @@
+{
+ "tiktok": [
+  {
+   "video": "aac-countdown",
+   "at": "2026-12-03T16:47:00-05:00",
+   "text": "Temple is 2nd \ud83d\udc40 Which American Conference school has the most restaurants within a 10-minute walk? Send this to your friend at another American Conference school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#uab #temple #eastcarolina #collegelife #collegefood"
+  },
+  {
+   "video": "mn-countdown",
+   "at": "2026-12-03T19:47:00-05:00",
+   "text": "Minnesota State is 2nd \ud83d\udc40 Which Minnesota college has the most restaurants within a 10-minute walk? Send this to your friend at another Minnesota school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#minnesota #minnesotastate #stcloudstate #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "aac-countdown": {
+   "type": "ranking",
+   "title": "American Conference schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "12 of the 13 American Conference schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UAB",
+     109
+    ],
+    [
+     "2",
+     "Temple",
+     91
+    ],
+    [
+     "3",
+     "East Carolina",
+     57
+    ],
+    [
+     "4",
+     "North Texas",
+     51
+    ],
+    [
+     "5",
+     "Tulane",
+     33
+    ],
+    [
+     "6",
+     "Memphis",
+     26
+    ],
+    [
+     "7",
+     "UNC Charlotte",
+     23
+    ],
+    [
+     "8",
+     "USF",
+     16
+    ],
+    [
+     "8",
+     "UTSA",
+     16
+    ],
+    [
+     "10",
+     "Florida Atlantic",
+     7
+    ],
+    [
+     "10",
+     "Wichita State",
+     7
+    ],
+    [
+     "12",
+     "Rice",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "mn-countdown": {
+   "type": "ranking",
+   "title": "Minnesota colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Minnesota college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "University of Minnesota",
+     55
+    ],
+    [
+     "2",
+     "Minnesota State",
+     24
+    ],
+    [
+     "3",
+     "St. Cloud State",
+     18
+    ],
+    [
+     "4",
+     "St. Thomas",
+     15
+    ],
+    [
+     "5",
+     "Concordia St. Paul",
+     14
+    ],
+    [
+     "6",
+     "Metropolitan State",
+     13
+    ],
+    [
+     "7",
+     "Southwest Minnesota State",
+     11
+    ],
+    [
+     "7",
+     "Winona State",
+     11
+    ],
+    [
+     "9",
+     "Minnesota Duluth",
+     7
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

@@ -1,0 +1,271 @@
+{
+ "date": "2026-12-03",
+ "videos": [
+  {
+   "id": "aac-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-alabama-at-birmingham",
+     "text": "Which American Conference school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which American Conference school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "12 of the 13 American Conference schools",
+     "rows": [
+      [
+       "12",
+       "Rice",
+       "4"
+      ],
+      [
+       "10",
+       "Wichita State",
+       "7"
+      ],
+      [
+       "10",
+       "Florida Atlantic",
+       "7"
+      ],
+      [
+       "8",
+       "UTSA",
+       "16"
+      ],
+      [
+       "8",
+       "USF",
+       "16"
+      ],
+      [
+       "7",
+       "UNC Charlotte",
+       "23"
+      ],
+      [
+       "6",
+       "Memphis",
+       "26"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Rice, with just 4. Pack a lunch. Wichita State, 7. Florida Atlantic, 7."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Tulane",
+     "count": 33,
+     "sub": "Busiest food street: Freret St",
+     "map": "tulane-university-of-louisiana",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Tulane. 33. Busiest food street: Freret Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "North Texas",
+     "count": 51,
+     "sub": "Busiest food street: Hickory St",
+     "map": "university-of-north-texas",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: North Texas. 51. Busiest food street: Hickory Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "East Carolina",
+     "count": 57,
+     "sub": "Busiest food street: 5th St",
+     "map": "east-carolina-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: East Carolina. 57. Busiest food street: 5th Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Temple",
+     "count": 91,
+     "sub": "Busiest food street: N Broad St",
+     "map": "temple-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Temple. 91. Busiest food street: Broad Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UAB",
+     "count": 109,
+     "sub": "Busiest food street: 20th St",
+     "map": "university-of-alabama-at-birmingham",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UAB. 109."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another American Conference school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:aac",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:aac|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-114"
+  },
+  {
+   "id": "mn-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/mn",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-minnesota-twin-cities",
+     "text": "Which Minnesota college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Minnesota college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Minnesota colleges with 5,000+ students",
+     "rows": [
+      [
+       "9",
+       "Minnesota Duluth",
+       "7"
+      ],
+      [
+       "7",
+       "Winona State",
+       "11"
+      ],
+      [
+       "7",
+       "Southwest Minnesota State",
+       "11"
+      ],
+      [
+       "6",
+       "Metropolitan State",
+       "13"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Minnesota Duluth, with just 7. Winona State, 11. Southwest Minnesota State, 11. Metropolitan State, 13."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Concordia St. Paul",
+     "count": 14,
+     "sub": "Busiest food street: University Ave",
+     "map": "concordia-university-saint-paul",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Concordia Saint Paul. 14. Busiest food street: University Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "St. Thomas",
+     "count": 15,
+     "sub": "Busiest food street: Grand Ave",
+     "map": "university-of-st-thomas",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Saint Thomas. 15. Busiest food street: Grand Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "St. Cloud State",
+     "count": 18,
+     "sub": "Busiest food street: St Germain St",
+     "map": "saint-cloud-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Saint Cloud State. 18. Busiest food street: Saint Germain Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Minnesota State",
+     "count": 24,
+     "sub": "Busiest food street: Warren St",
+     "map": "minnesota-state-university-mankato",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Minnesota State. 24. Busiest food street: Warren Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "University of Minnesota",
+     "count": 55,
+     "sub": "Busiest food street: Washington Ave",
+     "map": "university-of-minnesota-twin-cities",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: the University of Minnesota. 55."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Minnesota school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "state5k:MN",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:MN|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-117"
+  }
+ ],
+ "batch": "2026-12-03b"
+}

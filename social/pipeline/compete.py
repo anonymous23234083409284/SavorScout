@@ -302,6 +302,10 @@ def pull(weekly=False, max_usd=None):
     if budget is not None and cost > budget:
         scale = budget / cost          # keep every account, fewer videos each
         sizes = {h: max(3, int(n * scale)) for h, n in sizes.items()}
+        smallest = sum(sizes.values()) * RESULT_USD
+        if smallest > budget:      # the 3-per-account floor alone would overspend (Nov 25: $0.06 on a $0 budget)
+            print(f"compete: ${budget:.2f} spendable, the smallest pull costs ${smallest:.2f}; skipping this week")
+            return False
         print(f"compete: budget ${budget:.2f} < ${cost:.2f}; pulling fewer videos per account")
     groups = defaultdict(list)
     for h, n in sizes.items():

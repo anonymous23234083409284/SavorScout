@@ -50,6 +50,8 @@ DATA = os.path.join(ROOT, "scripts", "data")
 LAB = os.path.join(SOCIAL, "lab")
 BATCHES = os.path.join(SOCIAL, "batches")
 SITE = "https://www.savorscout.net"
+# Every caption points viewers at the site (Nov 25: social is what drives visits).
+CTA_LINE = "Every place to eat near your campus: savorscout.net (link in bio)"
 NY = ZoneInfo("America/New_York")
 
 
@@ -1281,9 +1283,8 @@ def narrate(spec):
                     if r["style"] == "rank" and m_ and isinstance(r.get("count"), int):
                         lead = r["say"].split(":")[0]
                         r["say"] = f"{lead}: {r['text']}. {street_say('Busiest food street: ' + m_.group(1))}, with {r['count']} places."
-            kind = "city" if key == "state:DC" else key.split(":")[0]
-            nxt = {"city": "city", "state": "state", "conf": "conference", "system": "system", "famous": "group of schools"}.get(kind)
-            sc["say"] = "Did we rank your school right? Tell us in the comments." + (f" And which {nxt} should we rank next?" if nxt else "")
+            # Nov 25: the 70-visit days came from social, so the last line sends viewers to the site.
+            sc["say"] = "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
     return True
 
 
@@ -1403,7 +1404,7 @@ def posts_for(c, vid):
         lst = "\n".join(f"{r}. {short(s)}: {v}" for r, s, v in rows[:14])
         inline = ", ".join(f"{short(s)} {v}" for r, s, v in rows[:14])
         more = "" if len(rows) <= 14 else f" (top 14 of {len(rows)})"
-        tiktok = f"{lead} 👀 {q} {g['cta']}\n\n{hashtags([s for _, s, _ in rows])}"
+        tiktok = f"{lead} 👀 {q} {g['cta']}\n\n{CTA_LINE}\n\n{hashtags([s for _, s, _ in rows])}"
         x = [f"{c['head']}\n\n{g['desc']}{more}:", lst, f"{method}\n\nLook up any campus, with the closest places first: {g['link']}"]
         threads = [f"{c['head']} {g['desc']}{more}:\n\n{inline}.\n\nDid your campus land where you expected?",
                    f"Look up any campus, with the closest places first: {g['link']}"]

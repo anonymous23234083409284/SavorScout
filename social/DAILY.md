@@ -1,31 +1,32 @@
 # The daily batch
 
-Every day SavorScout posts **4 TikTok videos, 4 X threads and 4 Threads
-posts**, all new: researched and written for that day, never a template
-cycled from before. The one thing that repeats is the soundtrack. The library on
-the `social-media` branch (`sounds/`) rotates, least recently used first.
+Every day SavorScout posts **6 short videos** (countdowns) to TikTok, YouTube Shorts and Instagram Reels
+through Buffer, all new. No X or Threads (retired Nov 22). The one thing that repeats is the soundtrack. The
+library on the `social-media` branch (`sounds/`) rotates, least recently used first.
 
-A scheduled Claude session runs this every afternoon and schedules the next
-day. These are its steps. A person can run them the same way.
+A scheduled Claude session runs this every afternoon. These are its steps. A person can run them the same way.
 
-## Built ahead: Nov 22-29 (made on Nov 21)
+## Posting is automatic. The owner never posts by hand.
 
-The owner asked for a full week built in advance so they can just post. Batches Nov 22-29 are rendered and were
-handed over (videos, cards, POST-THESE.txt). The daily run builds only when the next missing day is at most one
-day away, so it rests until Nov 29, when it builds Nov 30. A reminder publishes Nov 30 through Buffer at 9:30 am ET.
-Hooks: the ElevenLabs free tier runs one generation at a time, so `cdvoice.py hooks-all <date>` puts a day's hooks
-in one prompt and `cdvoice.py cut-hooks <file> <date>` cuts the take. Maps: `make_day.py maps <date>` reuses maps
-from earlier days. The build counts clips used or rejected in unpublished batches, so footage never repeats.
+The owner said so on Nov 26. Never hand over videos, cards or posting sheets (`make_day.py handoff` is retired).
+If Buffer can't be used, hold the batch and re-slot it to the next empty day in the queue: move
+`social/batches/<date>`, `social/out/batches/<date>`, `social/out/rankmaps/<date>` and the hook takes
+(`social/show/takes/cd-<date>-*`), change "date" in videos.json and the post times in posts.json, and re-date the
+videos' rows in experiments.json and lab/videos.jsonl, so the 14-day no-repeat rule counts them on the day they post.
+That is what happened to Nov 26-29: never posted, so on Nov 26 they became the 4 main videos of Dec 4-7.
 
-## Buffer is out of API requests until Mon Nov 30, 9:18 am ET
+Each day is 6 videos: 4 in `<date>` and 2 in `<date>b`, posted between the main times and at least 90 minutes
+from every other post. Each run schedules every built batch whose posts are still in the future and that has no
+`scheduled.json`, so the next few days are always in Buffer; a time that has passed is never scheduled.
+`make_day.py publish` no longer needs card images.
+
+## Buffer was out of API requests until Mon Nov 30, 9:18 am ET
 
 Buffer allows 3,000 API requests per 30 days (150 per 15 minutes, 600 per day). The old stats pull asked
 about every post ever made (~190 requests a run) and used the month up on Nov 21. Until the reset, do not
-call Buffer at all (no `stats`, `publish`, `verify` or `update`): build and render as usual, then
-`python social/pipeline/make_day.py handoff <date>` and send the owner the four videos, the four cards and
-`social/out/batches/<date>/POST-THESE.txt` (every post in time order with the text to paste). From Nov 30,
-publish through Buffer again; `stats` now asks only about posts still gaining views (TikTok from the last
-10 days, X/Threads from the last 3) and never more than 60 requests a run.
+call Buffer at all (no `stats`, `publish`, `verify` or `update`): build, render and keep the stock. From Nov 30,
+publish through Buffer again; `stats` asks only about posts still gaining views and never more than 25 requests
+a run (`STATS_CAP`). Keep each day well under 600 requests: about 3 per post (one per channel) plus the reads.
 
 ## Lessons from the Nov 25 run (read before building)
 

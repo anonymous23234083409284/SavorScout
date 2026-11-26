@@ -1,0 +1,215 @@
+{
+ "tiktok": [
+  {
+   "video": "ma-countdown",
+   "at": "2026-12-05T12:19:00-05:00",
+   "text": "MIT is 3rd \ud83d\udc40 Which big Massachusetts university has the most restaurants within a 10-minute walk? Send this to your friend at another Massachusetts school.\n\n#harvard #northeastern #mit #collegelife #collegefood"
+  },
+  {
+   "video": "20-countdown",
+   "at": "2026-12-05T15:18:00-05:00",
+   "text": "Harvard is 7th \ud83d\udc40 Which famous university has the most restaurants within a 10-minute walk? Send this to a friend at one of these schools.\n\n#nyu #ucberkeley #michigan #collegelife #collegefood"
+  },
+  {
+   "video": "houston-tx-countdown",
+   "at": "2026-12-05T18:19:00-05:00",
+   "text": "UH is 2nd \ud83d\udc40 Which college in Houston has the most restaurants within a 10-minute walk? Send this to your friend at another Houston college.\n\n#uhdowntown #houston #texassouthern #collegelife #collegefood"
+  },
+  {
+   "video": "philadelphia-pa-countdown",
+   "at": "2026-12-05T21:22:00-05:00",
+   "text": "Penn is 3rd \ud83d\udc40 Which college in Philadelphia has the most restaurants within a 10-minute walk? Send this to your friend at another Philadelphia college.\n\n#thomasjefferson #drexel #penn #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "ma-countdown": {
+   "type": "ranking",
+   "title": "Big Massachusetts universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Massachusetts university with 10,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Harvard",
+     156
+    ],
+    [
+     "2",
+     "Northeastern",
+     133
+    ],
+    [
+     "3",
+     "MIT",
+     84
+    ],
+    [
+     "4",
+     "BU",
+     61
+    ],
+    [
+     "5",
+     "UMass Lowell",
+     23
+    ],
+    [
+     "6",
+     "Tufts",
+     19
+    ],
+    [
+     "7",
+     "UMass Amherst",
+     15
+    ],
+    [
+     "8",
+     "Boston College",
+     8
+    ],
+    [
+     "9",
+     "UMass Boston",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "20-countdown": {
+   "type": "ranking",
+   "title": "Famous universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "20 famous American universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "NYU",
+     1462
+    ],
+    [
+     "2",
+     "UC Berkeley",
+     277
+    ],
+    [
+     "3",
+     "Michigan",
+     224
+    ],
+    [
+     "4",
+     "Yale",
+     223
+    ],
+    [
+     "5",
+     "Columbia",
+     214
+    ],
+    [
+     "6",
+     "Northwestern",
+     162
+    ],
+    [
+     "7",
+     "Harvard",
+     156
+    ],
+    [
+     "8",
+     "Brown",
+     133
+    ],
+    [
+     "9",
+     "Penn",
+     125
+    ],
+    [
+     "10",
+     "Princeton",
+     97
+    ],
+    [
+     "11",
+     "USC",
+     94
+    ],
+    [
+     "12",
+     "MIT",
+     84
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "houston-tx-countdown": {
+   "type": "ranking",
+   "title": "Houston colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Houston college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UH-Downtown",
+     114
+    ],
+    [
+     "2",
+     "UH",
+     20
+    ],
+    [
+     "3",
+     "Texas Southern",
+     7
+    ],
+    [
+     "4",
+     "Rice",
+     4
+    ],
+    [
+     "5",
+     "UH-Clear Lake",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "philadelphia-pa-countdown": {
+   "type": "ranking",
+   "title": "Philadelphia colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Philadelphia college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Thomas Jefferson",
+     562
+    ],
+    [
+     "2",
+     "Drexel",
+     135
+    ],
+    [
+     "3",
+     "Penn",
+     125
+    ],
+    [
+     "4",
+     "Temple",
+     91
+    ],
+    [
+     "5",
+     "Saint Joseph's",
+     13
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

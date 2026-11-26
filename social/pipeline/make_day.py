@@ -209,7 +209,9 @@ def publish(date, sounds_dir, dry_run=False, force=False):
     posts = json.load(open(os.path.join(wdir, "posts.json")))
     reels = json.load(open(os.path.join(out, "reels.json")))
     files = {f"{v['id']}.mp4": os.path.join(out, f"{v['id']}.mp4") for v in reels["videos"]}
-    files.update({f"{n}.jpg": os.path.join(out, "cards", f"{n}.jpg") for n in posts["cards"]})
+    # Cards were only for X and Threads (retired Nov 22): host the ones that exist, never block a day on them.
+    files.update({f"{n}.jpg": c for n in posts.get("cards", {}) for c in [os.path.join(out, "cards", f"{n}.jpg")]
+                  if os.path.exists(c)})
     missing = [p for p in files.values() if not os.path.exists(p)]
     if missing:
         raise SystemExit(f"missing: {missing}")

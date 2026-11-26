@@ -403,7 +403,7 @@
    "predicted": 2669
   },
   {
-   "date": "2026-11-27",
+   "date": "2026-12-05",
    "video": "20-countdown",
    "experiment": "g_famous",
    "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
@@ -415,7 +415,7 @@
    "scored": "2026-11-18"
   },
   {
-   "date": "2026-11-27",
+   "date": "2026-12-05",
    "video": "houston-tx-countdown",
    "experiment": "g_city",
    "what": "countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Houston (2nd))",
@@ -427,7 +427,7 @@
    "scored": "2026-11-18"
   },
   {
-   "date": "2026-11-27",
+   "date": "2026-12-05",
    "video": "philadelphia-pa-countdown",
    "experiment": "g_city",
    "what": "countdown: Philadelphia colleges with 5,000+ students by w (#1 Thomas Jefferson 562, tease Penn (3rd))",
@@ -435,7 +435,7 @@
    "predicted": 1041
   },
   {
-   "date": "2026-11-29",
+   "date": "2026-12-06",
    "video": "public-ivies-countdown",
    "experiment": "g_famous",
    "what": "countdown: The 9 original Public Ivies by w (#1 UC Berkeley 277, tease UCLA (7th))",
@@ -443,7 +443,7 @@
    "predicted": 5050
   },
   {
-   "date": "2026-11-29",
+   "date": "2026-12-07",
    "video": "new-york-ny-countdown",
    "experiment": "g_city",
    "what": "countdown: New York colleges with 5,000+ students by w (#1 Touro 1478, tease Columbia (9th))",

@@ -73,6 +73,8 @@ a run (`STATS_CAP`). Keep each day well under 600 requests: about 3 per post (on
   Big East, DC, Boston, Georgia, Alabama, Michigan. New on Nov 26: SUNY and the UAA (`NEW_GROUPS`).
 - **Spread schools across a day.** Before pinning a b batch, check its schools against the same day's
   main videos (a conference that shares 4 schools with the day's famous-20 list goes on another day).
+- **One build at a time.** `make_day.py build` now takes a lock (`social/out/.build.lock`) and a second build
+  exits: two at once can pick the same clip and race on shared downloads. Renders can run beside a build.
 
 ## The daily mix (from Nov 18): countdowns only, with a girl-voice hook
 

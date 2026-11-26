@@ -70,6 +70,14 @@ def sounds(dest):
 def build(date, sounds_dir, rank_dir):
     wdir, out, _ = paths(date)
     os.makedirs(out, exist_ok=True)
+    # One build at a time: clips are kept unique across batches by reading the other batches' picks, so two
+    # builds at once can pick the same clip, and they race on shared downloads (Nov 26).
+    import fcntl
+    build.lock = open(os.path.join(SOCIAL, "out", ".build.lock"), "w")
+    try:
+        fcntl.flock(build.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        sys.exit("another make_day.py build is running; run builds one at a time")
     # Never reuse a clip the account has already posted.
     remote, _ = remote_and_slug()
     history = json.loads(host.read_file(remote, "history.json") or "{}")

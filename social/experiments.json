@@ -196,14 +196,6 @@
   },
   {
    "date": "2026-11-19",
-   "video": "rivalry-yale-rivalry",
-   "experiment": "rivalry",
-   "what": "rivalry: Yale vs Harvard",
-   "status": "posted",
-   "predicted": 400
-  },
-  {
-   "date": "2026-11-19",
    "video": "sec-short",
    "experiment": "short",
    "what": "short: All 16 SEC schools by w (#1 Vanderbilt 129, tease Alabama (11th))",
@@ -212,35 +204,11 @@
   },
   {
    "date": "2026-11-19",
-   "video": "rivalry-yale-rivalry",
-   "experiment": "rivalry",
-   "what": "rivalry: Yale vs Harvard",
-   "status": "posted",
-   "predicted": 400
-  },
-  {
-   "date": "2026-11-19",
    "video": "ut-short",
    "experiment": "short",
    "what": "short: Utah universities with 10,000+ students by w (#1 BYU 29, tease Utah (4th))",
    "status": "posted",
    "predicted": 2201
-  },
-  {
-   "date": "2026-11-19",
-   "video": "rivalry-yale-rivalry",
-   "experiment": "rivalry",
-   "what": "rivalry: Yale vs Harvard",
-   "status": "posted",
-   "predicted": 400
-  },
-  {
-   "date": "2026-11-19",
-   "video": "rivalry-yale-rivalry",
-   "experiment": "rivalry",
-   "what": "rivalry: Yale vs Harvard",
-   "status": "posted",
-   "predicted": 400
   },
   {
    "date": "2026-11-19",
@@ -316,14 +284,6 @@
   },
   {
    "date": "2026-11-23",
-   "video": "guess-harvard-guess",
-   "experiment": "guess",
-   "what": "guess the campus: Harvard, Penn, USC",
-   "status": "posted",
-   "predicted": 149
-  },
-  {
-   "date": "2026-11-23",
    "video": "ca-short",
    "experiment": "short",
    "what": "short: California universities with 10,000+ students by w (#1 UC Berkeley 277, tease Stanford (15th))",
@@ -337,30 +297,6 @@
    "what": "countdown: Baltimore colleges with 5,000+ students by w (#1 Maryland, Baltimore 111, tease Johns Hopkins (2nd))",
    "status": "posted",
    "predicted": 827
-  },
-  {
-   "date": "2026-11-23",
-   "video": "flagships-countdown",
-   "experiment": "g_famous",
-   "what": "countdown: 50 state flagship universities by w (#1 UC Berkeley 277, tease Michigan (2nd))",
-   "status": "posted",
-   "predicted": 4866
-  },
-  {
-   "date": "2026-11-23",
-   "video": "hbcu-countdown",
-   "experiment": "g_famous",
-   "what": "countdown: 20 HBCUs by w (#1 Howard 77)",
-   "status": "posted",
-   "predicted": 2014
-  },
-  {
-   "date": "2026-11-23",
-   "video": "boston-ma-countdown",
-   "experiment": "g_city",
-   "what": "countdown: Boston colleges with 5,000+ students by w (#1 Suffolk 592)",
-   "status": "posted",
-   "predicted": 567
   },
   {
    "date": "2026-11-23",
@@ -407,24 +343,16 @@
    "video": "20-countdown",
    "experiment": "g_famous",
    "what": "countdown: 20 famous American universities by w (#1 NYU 1462, tease Harvard (7th))",
-   "status": "promote",
-   "predicted": 7081,
-   "views": 8622,
-   "watch_s": 11.59,
-   "shares": 63,
-   "scored": "2026-11-18"
+   "status": "posted",
+   "predicted": 7081
   },
   {
    "date": "2026-12-05",
    "video": "houston-tx-countdown",
    "experiment": "g_city",
    "what": "countdown: Houston colleges with 5,000+ students by w (#1 UH-Downtown 114, tease Houston (2nd))",
-   "status": "retry",
-   "predicted": 866,
-   "views": 975,
-   "watch_s": 9.19,
-   "shares": 1,
-   "scored": "2026-11-18"
+   "status": "posted",
+   "predicted": 866
   },
   {
    "date": "2026-12-05",

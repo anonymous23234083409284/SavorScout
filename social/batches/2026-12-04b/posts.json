@@ -1,0 +1,124 @@
+{
+ "tiktok": [
+  {
+   "video": "cuny-countdown",
+   "at": "2026-12-04T13:51:00-05:00",
+   "text": "John Jay is 2nd \ud83d\udc40 Which CUNY college has the most restaurants within a 10-minute walk? Send this to your friend at another CUNY college.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#baruch #johnjay #huntercollege #collegelife #collegefood"
+  },
+  {
+   "video": "wcc-countdown",
+   "at": "2026-12-04T16:52:00-05:00",
+   "text": "University of San Francisco is 2nd \ud83d\udc40 Which West Coast Conference school has the most restaurants within a 10-minute walk? Send this to your friend at another West Coast Conference school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#seattleu #universityofsanfrancisco #denver #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "cuny-countdown": {
+   "type": "ranking",
+   "title": "CUNY senior colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "10 of CUNY's 11 senior colleges. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Baruch",
+     1108
+    ],
+    [
+     "2",
+     "John Jay",
+     467
+    ],
+    [
+     "3",
+     "Hunter College",
+     388
+    ],
+    [
+     "4",
+     "City Tech",
+     329
+    ],
+    [
+     "5",
+     "City College",
+     213
+    ],
+    [
+     "6",
+     "Brooklyn College",
+     77
+    ],
+    [
+     "6",
+     "York College",
+     77
+    ],
+    [
+     "8",
+     "Lehman College",
+     70
+    ],
+    [
+     "9",
+     "Queens College",
+     31
+    ],
+    [
+     "10",
+     "College of Staten Island",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "wcc-countdown": {
+   "type": "ranking",
+   "title": "West Coast Conference schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "8 of the 10 West Coast Conference schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Seattle U",
+     241
+    ],
+    [
+     "2",
+     "University of San Francisco",
+     79
+    ],
+    [
+     "3",
+     "Denver",
+     59
+    ],
+    [
+     "4",
+     "Santa Clara",
+     34
+    ],
+    [
+     "5",
+     "LMU",
+     21
+    ],
+    [
+     "6",
+     "San Diego",
+     15
+    ],
+    [
+     "7",
+     "Pacific",
+     9
+    ],
+    [
+     "8",
+     "Pepperdine",
+     1
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

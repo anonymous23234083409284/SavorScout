@@ -1,0 +1,241 @@
+{
+ "date": "2026-12-06",
+ "videos": [
+  {
+   "id": "uaa-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "new-york-university",
+     "text": "Which UAA university has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not UChicago.",
+     "say": "Which UAA university has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "All 8 UAA universities",
+     "rows": [
+      [
+       "7",
+       "WashU",
+       "5"
+      ],
+      [
+       "7",
+       "Rochester",
+       "5"
+      ],
+      [
+       "6",
+       "Brandeis",
+       "10"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Tied for dead last: WashU and Rochester, with just 5 each. Pack a lunch. Brandeis, 10."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "UChicago",
+     "count": 25,
+     "sub": "Busiest food street: E 53rd St",
+     "map": "university-of-chicago",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: UChicago. 25. Busiest food street: 53rd Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Carnegie Mellon",
+     "count": 26,
+     "sub": "Busiest food street: Forbes Ave",
+     "map": "carnegie-mellon-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Carnegie Mellon. 26. Busiest food street: Forbes Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Emory",
+     "count": 30,
+     "sub": "Busiest food street: Decatur Rd",
+     "map": "emory-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Emory. 30. Busiest food street: Decatur Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Case Western",
+     "count": 60,
+     "sub": "Busiest food street: Euclid Ave",
+     "map": "case-western-reserve-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Case Western. 60. Busiest food street: Euclid Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "NYU",
+     "count": 1462,
+     "sub": "Busiest food street: 1st Ave",
+     "map": "new-york-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: NYU. 1,462. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another UAA school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:uaa",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:uaa|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-126"
+  },
+  {
+   "id": "ar-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/ar",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-arkansas-at-little-rock",
+     "text": "Which Arkansas college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not the University of Arkansas.",
+     "say": "Which Arkansas college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Arkansas colleges with 5,000+ students",
+     "rows": [
+      [
+       "7",
+       "Southern Arkansas",
+       "4"
+      ],
+      [
+       "6",
+       "UA Fort Smith",
+       "6"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Southern Arkansas, with just 4. Pack a lunch. UA Fort Smith, 6."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Arkansas",
+     "count": 10,
+     "sub": "Busiest food street: W Dickson St",
+     "map": "university-of-arkansas",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Arkansas. 10. Busiest food street: Dickson Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Arkansas Tech",
+     "count": 11,
+     "sub": "Busiest food street: N Arkansas Ave",
+     "map": "arkansas-tech-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Arkansas Tech. 11. Busiest food street: Arkansas Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Arkansas State",
+     "count": 13,
+     "sub": "Busiest food street: Caraway Rd",
+     "map": "arkansas-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Arkansas State. 13. Busiest food street: Caraway Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Central Arkansas",
+     "count": 17,
+     "sub": "Busiest food street: Dave Ward Dr",
+     "map": "university-of-central-arkansas",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Central Arkansas. 17. Busiest food street: Dave Ward Drive."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UA Little Rock",
+     "count": 24,
+     "sub": "Busiest food street: S University Ave",
+     "map": "university-of-arkansas-at-little-rock",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UA Little Rock. 24."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Arkansas school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "state5k:AR",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:AR|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-135"
+  }
+ ],
+ "batch": "2026-12-06b"
+}

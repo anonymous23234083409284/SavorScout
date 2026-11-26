@@ -95,7 +95,19 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
           "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 # Short names already used on screen, where the generic rules would read badly.
-EXTRA_NAMES = {"university-of-delaware": "Delaware", "university-of-washington-bothell-campus": "UW Bothell", "university-of-washington-tacoma-campus": "UW Tacoma", "university-of-new-orleans": "University of New Orleans", "northwestern-state-university-of-louisiana": "Northwestern State", "louisiana-state-university-shreveport": "LSU Shreveport", "southern-university-and-a-and-m-college": "Southern University", "university-of-the-pacific": "Pacific", "louisiana-state-university-and-agricultural-and-mechanical-college": "LSU", "university-of-southern-mississippi": "Southern Miss", "bowling-green-state-university-main-campus": "Bowling Green", "middle-tennessee-state-university": "Middle Tennessee", "saint-cloud-state-university": "St. Cloud State", "fashion-institute-of-technology": "FIT", "cuny-bernard-m-baruch-college": "Baruch", "cuny-john-jay-college-of-criminal-justice": "John Jay", "cuny-city-college": "City College", "the-new-school": "The New School",
+EXTRA_NAMES = {"university-of-north-carolina-at-pembroke": "UNC Pembroke", "suny-at-albany": "UAlbany",
+               "university-at-buffalo": "University at Buffalo", "farmingdale-state-college": "Farmingdale State",
+               "university-of-rochester": "Rochester", "carnegie-mellon-university": "Carnegie Mellon",
+               "university-of-new-haven": "University of New Haven", "university-of-hartford": "University of Hartford", "southern-arkansas-university-main-campus": "Southern Arkansas", "university-of-alabama-in-huntsville": "UAH", "west-chester-university-of-pennsylvania": "West Chester",
+               "east-stroudsburg-university-of-pennsylvania": "East Stroudsburg", "indiana-university-of-pennsylvania-main-campus": "IUP",
+               "kutztown-university-of-pennsylvania": "Kutztown", "millersville-university-of-pennsylvania": "Millersville",
+               "shippensburg-university-of-pennsylvania": "Shippensburg", "slippery-rock-university-of-pennsylvania": "Slippery Rock",
+               "commonwealth-university-of-pennsylvania": "Commonwealth University", "purdue-university-fort-wayne": "Purdue Fort Wayne",
+               "purdue-university-northwest": "Purdue Northwest", "fairleigh-dickinson-university-metropolitan-campus": "Fairleigh Dickinson",
+               "ramapo-college-of-new-jersey": "Ramapo", "william-paterson-university-of-new-jersey": "William Paterson",
+               "concordia-university-chicago": "Concordia Chicago", "concordia-university-wisconsin": "Concordia Wisconsin",
+               "new-york-institute-of-technology": "NYIT",
+               "university-of-delaware": "Delaware", "cuny-new-york-city-college-of-technology": "City Tech", "cuny-brooklyn-college": "Brooklyn College", "cuny-york-college": "York College", "cuny-lehman-college": "Lehman College", "cuny-queens-college": "Queens College", "college-of-staten-island-cuny": "College of Staten Island", "university-of-washington-bothell-campus": "UW Bothell", "university-of-washington-tacoma-campus": "UW Tacoma", "university-of-new-orleans": "University of New Orleans", "northwestern-state-university-of-louisiana": "Northwestern State", "louisiana-state-university-shreveport": "LSU Shreveport", "southern-university-and-a-and-m-college": "Southern University", "university-of-the-pacific": "Pacific", "louisiana-state-university-and-agricultural-and-mechanical-college": "LSU", "university-of-southern-mississippi": "Southern Miss", "bowling-green-state-university-main-campus": "Bowling Green", "middle-tennessee-state-university": "Middle Tennessee", "saint-cloud-state-university": "St. Cloud State", "fashion-institute-of-technology": "FIT", "cuny-bernard-m-baruch-college": "Baruch", "cuny-john-jay-college-of-criminal-justice": "John Jay", "cuny-city-college": "City College", "the-new-school": "The New School",
                "rutgers-university-newark": "Rutgers-Newark", "new-jersey-institute-of-technology": "NJIT",
                "the-university-of-tennessee-chattanooga": "UT Chattanooga", "university-of-the-cumberlands": "Cumberlands",
                "university-of-massachusetts-lowell": "UMass Lowell", "university-of-massachusetts-boston": "UMass Boston", "university-of-massachusetts-dartmouth": "UMass Dartmouth", "university-of-massachusetts-amherst": "UMass Amherst",
@@ -161,7 +173,7 @@ EXTRA_NAMES.update({"university-of-arkansas-at-little-rock": "UA Little Rock", "
     "loyola-marymount-university": "LMU", "loyola-university-chicago": "Loyola Chicago", "university-of-san-francisco": "University of San Francisco",
     "seattle-university": "Seattle U", "saint-joseph-s-university": "Saint Joseph's", "university-of-detroit-mercy": "Detroit Mercy",
     "university-of-connecticut": "UConn", "st-john-s-university-new-york": "St. John's", "university-of-mississippi": "Ole Miss",
-    "university-of-alaska-fairbanks": "Alaska Fairbanks", "university-of-hawaii-at-manoa": "Hawaii", "university-at-buffalo": "Buffalo",
+    "university-of-alaska-fairbanks": "Alaska Fairbanks", "university-of-hawaii-at-manoa": "Hawaii", "university-at-buffalo": "University at Buffalo",
     "university-of-nevada-reno": "Nevada", "university-of-new-hampshire-main-campus": "New Hampshire",
     "university-of-new-mexico-main-campus": "New Mexico", "university-of-massachusetts-amherst": "UMass Amherst",
     "university-of-maryland-college-park": "Maryland", "william-and-mary": "William & Mary", "miami-university-oxford": "Miami (Ohio)",
@@ -256,7 +268,7 @@ CALENDAR = [
 
 TWO_YEAR = re.compile(r"Community|Technical|Junior|Digital|Online|Global|Medical|Health Science|Graduate|"
                       r"Seminary|System$|Area |Lone Star|Pikes Peak|Front Range|Harold Washington|Lake County", re.I)
-FOUR_YEAR_COLLEGE = re.compile(r"^(Boston|Dartmouth|Emerson|Hunter|Brooklyn|Queens|Barnard|Lehman|John Jay|City|Berklee|"
+FOUR_YEAR_COLLEGE = re.compile(r"^(Farmingdale|Boston|Dartmouth|Emerson|Hunter|Brooklyn|Queens|Barnard|Lehman|John Jay|City|Berklee|"
                                r"Ithaca|Babson|Bentley|Spelman|Morehouse|Bard|Davidson|Middlebury|Williams|Amherst|"
                                r"Wellesley|Bowdoin|Oberlin|Vassar|Swarthmore|Pomona|Hamilton|Colby|Bates|Skidmore|"
                                r"Kenyon|Grinnell|Carleton|Macalester|Dickinson|Bryn Mawr|Haverford|Smith|Occidental|"
@@ -337,7 +349,10 @@ def ranking(members, metric):
 ONLINE_ONLY = {"wichita-state-university-campus-of-applied-sciences-and-technology", "embry-riddle-aeronautical-university-worldwide", "northcentral-university", "northeastern-university-professional-programs",  # (and duplicate campus listings)
                 "university-of-the-people", "western-governors-university", "national-university", "excelsior-university",
                "southern-new-hampshire-university", "university-of-phoenix-arizona", "purdue-university-global",
-               "capella-university", "walden-university", "american-public-university-system"}
+               "capella-university", "walden-university", "american-public-university-system",
+               # Nov 26: online arms that showed up in the 5,000+ state lists (World Campus sits on Penn State's address)
+               "pennsylvania-state-university-world-campus", "university-of-arkansas-grantham", "thomas-edison-state-university",
+               "empire-state-university", "franklin-university"}
 
 
 
@@ -410,6 +425,22 @@ NEW_GROUPS = [
     # affiliates. The Mountain West is left out until Air Force and Grand Canyon are in the data (a list without
     # them would be wrong); Tulsa (American) and Portland and Saint Mary's (WCC) are not in the data, so those titles
     # say "n of the N". Check memberships again each July.
+    # Nov 26: SUNY campuses with 5,000+ students, and the UAA (eight private research universities).
+    ("system:suny", "system", "Which SUNY campus", "SUNY campuses", "{n} SUNY campuses with 5,000+ students",
+     "Send this to your friend at another SUNY school.", "SUNY campus",
+     ["stony-brook-university", "university-at-buffalo", "binghamton-university", "suny-at-albany", "farmingdale-state-college",
+      "fashion-institute-of-technology", "suny-brockport", "suny-buffalo-state-university", "suny-cortland", "suny-oneonta",
+      "state-university-of-new-york-at-new-paltz", "state-university-of-new-york-at-oswego"]),
+    ("conf:uaa", "conference", "Which UAA university", "UAA universities", "All {n} UAA universities",
+     "Send this to your friend at another UAA school.", "UAA university",
+     ["brandeis-university", "carnegie-mellon-university", "case-western-reserve-university", "emory-university",
+      "new-york-university", "university-of-rochester", "university-of-chicago", "washington-university-in-st-louis"]),
+    # Nov 26: CUNY's senior colleges (Medgar Evers is not in the data, so the title says "n of the 11").
+    ("system:cuny", "system", "Which CUNY college", "CUNY senior colleges", "{n} of CUNY's 11 senior colleges",
+     "Send this to your friend at another CUNY college.", "CUNY senior college",
+     ["cuny-bernard-m-baruch-college", "cuny-brooklyn-college", "cuny-city-college", "cuny-hunter-college",
+      "cuny-john-jay-college-of-criminal-justice", "cuny-lehman-college", "cuny-new-york-city-college-of-technology",
+      "cuny-queens-college", "college-of-staten-island-cuny", "cuny-york-college"]),
     ("conf:pac12", "conference", "Which Pac-12 school", "Pac-12 schools", "All {n} schools in the new Pac-12",
      "Send this to your friend at another Pac-12 school.", "Pac-12 school",
      ["boise-state-university", "colorado-state-university-fort-collins", "california-state-university-fresno", "gonzaga-university",
@@ -534,7 +565,7 @@ def all_groups():
 
 GROUP_WORDS = {"Big Ten": "conf:big-ten", "SEC": "conf:sec", "ACC": "conf:acc", "Big 12": "conf:big-12",
                "Ivy League": "conf:ivy-league", "Ivy": "conf:ivy-league", "UC": "system:uc", "Cal State": "system:csu",
-               "old Pac-12": "conf:pac12-old", "Pac-12": "conf:pac12"}
+               "old Pac-12": "conf:pac12-old", "Pac-12": "conf:pac12", "UAA": "conf:uaa", "SUNY": "system:suny"}
 
 
 def infer_key(v):
@@ -550,6 +581,33 @@ def infer_key(v):
         return GROUP_WORDS[g], metric
     st = {v2: k for k, v2 in STATES.items()}.get(g)
     return (f"state:{st}", metric) if st else (None, metric)
+
+
+def sent_day(post):
+    """The day (Eastern) a post went out."""
+    return dt.datetime.fromisoformat(post["sent"].replace("Z", "+00:00")).astimezone(NY).date().isoformat()
+
+
+def batch_dates(history=None):
+    """Video id -> the batch dates that have a video with that id."""
+    out = {}
+    for r in history if history is not None else past_videos():
+        out.setdefault(r["id"], []).append(r["date"])
+    return out
+
+
+def batch_of(post, dates):
+    """The batch date a post belongs to: the latest date on or before the day it went out that has a video
+    with its id. Ids repeat across dates (Dec 5's '20-countdown' re-runs Nov 12's), and matching by id alone
+    let a Nov 12 post score and train as a video that had not gone out yet (found Nov 26)."""
+    day = sent_day(post)
+    have = dates.get(post.get("what"), [])
+    earlier = [d for d in have if d <= day]
+    if earlier:
+        return max(earlier)
+    soon = (dt.date.fromisoformat(day) + dt.timedelta(days=1)).isoformat()   # posted a day early (Nov 1-2)
+    early = [d for d in have if d <= soon]
+    return min(early) if early else None
 
 
 def past_videos():
@@ -642,14 +700,15 @@ def tiktok_rows():
     """Training rows: every TikTok at least a day old, matched to its script."""
     stats = jload(os.path.join(SOCIAL, "stats.json"), {})
     pulled = dt.datetime.fromisoformat(stats.get("pulled", dt.datetime.now(dt.timezone.utc).isoformat()))
-    vids = {r["id"]: r for r in past_videos()}
+    history = past_videos()
+    vids, dates = {(r["id"], r["date"]): r for r in history}, batch_dates(history)
     snaps = load_snapshots()
     lengths = {}
     if os.path.exists(os.path.join(LAB, "videos.jsonl")):
         for line in open(os.path.join(LAB, "videos.jsonl")):
             if line.strip():
                 d = json.loads(line)
-                lengths[d["id"]] = d["duration_s"]
+                lengths[(d["id"], d.get("date"))] = d["duration_s"]
     rows = []
     for p in stats.get("posts", []):
         if p.get("service", "").lower() != "tiktok" or p.get("views") is None or not p.get("what"):
@@ -662,12 +721,13 @@ def tiktok_rows():
         at72 = snap_at(snaps.get(p["what"], []), sent, 3.0)
         if at72:
             views, age = at72, 3.0
-        r = vids.get(p["what"])
+        day = batch_of(p, dates)
+        r = vids.get((p["what"], day))
         f = (features_of(r["video"], r["at"], r["format"], r["key"], r["metric"]) if r
              else {**{n: 0.0 for n, _ in FEATS}, "fame_mean": 1.0})
         f["log_age"] = math.log2(max(age, 0.5))
         rows.append({"id": p["what"], "sent": p["sent"], "views": views, "watch": watch, "shares": shares,
-                     "duration": lengths.get(p["what"]), "f": f, "key": r["key"] if r else None,
+                     "duration": lengths.get((p["what"], day)), "f": f, "key": r["key"] if r else None,
                      "format": r["format"] if r else "other"})
     # School features only mean something for videos that show schools. For the
     # rest, fill in the average of those that do, so "how famous" is learned
@@ -941,8 +1001,17 @@ def comparable_all(g, metric):
 
 def past_hits(min_views=1500):
     stats = jload(os.path.join(SOCIAL, "stats.json"), {})
-    views = {p["what"]: p.get("views") or 0 for p in stats.get("posts", []) if p.get("service", "").lower() == "tiktok"}
-    return {r["key"] for r in past_videos() if r["key"] and views.get(r["id"], 0) >= min_views}
+    history = past_videos()
+    dates = batch_dates(history)
+    views = {(p["what"], batch_of(p, dates)): p.get("views") or 0 for p in stats.get("posts", [])
+             if p.get("service", "").lower() == "tiktok" and p.get("what")}
+    return {r["key"] for r in history if r["key"] and views.get((r["id"], r["date"]), 0) >= min_views}
+
+
+def grouping(key):
+    """'state5k:AL' and 'state:AL' are one grouping for novelty: their top schools are the same (Nov 26: Dec 7's
+    Alabama 5,000+ list had the same top three as Nov 25's big-Alabama list, and the lab let it through)."""
+    return re.sub(r"^state5k:", "state:", key or "")
 
 
 def adjustments(c, date, history):
@@ -953,13 +1022,13 @@ def adjustments(c, date, history):
         age = (d - dt.date.fromisoformat(h["date"])).days
         if age < 0 or age > 14:
             continue
-        if h["key"] and h["key"] == c["key"]:
+        if h["key"] and grouping(h["key"]) == grouping(c["key"]):
             if h["metric"] == c["metric"] and (c["format"] != "part2" or h["format"] == "part2"):
                 return None                # never the same ranking twice in two weeks (a part 2 once)
             if c["format"] != "part2":
                 adj -= 0.25
                 why.append(f"same grouping {age}d ago (-0.25)")
-        if age <= 3 and c.get("group") and h["key"] and h["key"].split(":")[0] == "state" and c["group"]["region"] == h["key"]:
+        if age <= 3 and c.get("group") and h["key"] and grouping(h["key"]).split(":")[0] == "state" and grouping(c["group"]["region"]) == grouping(h["key"]):
             adj -= 0.15
             why.append("same state in the last 3 days (-0.15)")
         if age <= 2 and c["format"] not in ("countdown",) and h["format"] == c["format"]:
@@ -1147,6 +1216,7 @@ def tease_name(slug, g):
         if slug in ACRONYMS:
             return ACRONYMS[slug]
         full = re.sub(r"\s*-\s*(Main Campus|Campus Immersion)$", "", CAMP.get(slug, {}).get("n", n))
+        full = re.sub(r"^The (University of )", r"\1", full)    # "it's not the University of Alabama", not "The"
         return "the " + full if full.startswith("University of ") else full
     return n
 
@@ -1253,24 +1323,32 @@ def narrate(spec):
             before = {short(s_): r for r, s_, _ in ranking(g["members"], "w")}
     counts = [sc.get("count") for sc in scenes if sc["style"] == "rank"]
     top, second = (counts[-1], counts[-2]) if len(counts) >= 2 else (None, None)
+    prev_num = None
     for sc in scenes:
         if sc["style"] == "list" and sc.get("rows"):
             rows = sc["rows"]
             r0 = rows[0]
             n0 = int(str(r0[2]).replace(",", "") or 0) if str(r0[2]).replace(",", "").isdigit() else None
-            line = f"Dead last: {r0[1]}, with {'just ' if n0 is not None and 0 < n0 < 10 else ''}{r0[2]}."
-            if n0 == 0:
-                line = f"Dead last: {r0[1]}. Zero."
+            just = 'just ' if n0 is not None and 0 < n0 < 10 else ''
+            tied = [r for r in rows if r[0] == r0[0]]       # Nov 26: a tie at the bottom is said as one
+            if len(tied) == 1:
+                line = f"Dead last: {r0[1]}. Zero." if n0 == 0 else f"Dead last: {r0[1]}, with {just}{r0[2]}."
+            elif len(tied) <= 3:
+                names = ", ".join(r[1] for r in tied[:-1]) + " and " + tied[-1][1]
+                line = f"Tied for dead last: {names}. Zero." if n0 == 0 else f"Tied for dead last: {names}, with {just}{r0[2]} each."
+            else:
+                line = f"{len(tied)} schools tie for dead last, with {'zero' if n0 == 0 else just + str(r0[2])}."
             if n0 is not None and n0 <= 5:
                 line += " Pack a lunch."
-            rest = rows[1:]
+            rest = rows[len(tied):]
             if len(rest) <= 4:
-                line += " " + " ".join(f"{r[1]}, {r[2]}." for r in rest)
+                line += (" " + " ".join(f"{r[1]}, {r[2]}." for r in rest)) if rest else ""
             else:
                 hinted = next((r for r in rest if tease and r[1] == tease), None)
                 if hinted:
                     rank = int(hinted[0]) if str(hinted[0]).isdigit() else None
-                    line += f" {rest[0][1]}, {rest[0][2]}. And {tease}? Only {ORDINAL.get(rank, hinted[0])}." if rank else ""
+                    lead = "" if hinted is rest[0] else f" {rest[0][1]}, {rest[0][2]}."
+                    line += f"{lead} And {tease}? Only {ORDINAL.get(rank, hinted[0])}." if rank else ""
                 else:
                     line += f" {rest[0][1]}, {rest[0][2]}. {rest[1][1]}, {rest[1][2]}."
             sc["say"] = line.strip()
@@ -1299,6 +1377,9 @@ def narrate(spec):
                     sc["say"] += f" Up from {ORDINAL.get(was, was)} last time."
                 elif street:
                     sc["say"] += f" Busiest food street: {street}."
+            if num and num == prev_num:      # the second of a tie: "Also number 3: Mizzou. 98."
+                sc["say"] = re.sub(r"^(And n|N)umber", "Also number", sc["say"], count=1)
+            prev_num = num
         elif sc["style"] == "end":
             key = spec.get("lab", {}).get("key") or ""
             if spec["lab"].get("metric") == "street":      # a street ranking names each street aloud
@@ -1339,8 +1420,10 @@ def _video_spec(c, vid):
             top_n += 1
         rest = rows[top_n:]
         if rest and c["format"] != "short":
-            # About 14 rows fit on screen: a longer list shows only its bottom 12 (Nov 21: 50 state flagships).
-            shown = list(reversed(rest))[:12]
+            # Up to 14 rows fit on screen (reel.list_size shrinks the type past 12); a longer list shows only
+            # its bottom 12 (Nov 21: 50 state flagships). Nov 26: 13 or 14 rows used to be cut to 12 under an
+            # "All 18 ACC schools" title, silently dropping the place just below the countdown.
+            shown = list(reversed(rest)) if len(rest) <= 14 else list(reversed(rest))[:12]
             title = g["title"] if len(rest) <= 14 else f"{g['title']}: the bottom {len(shown)}"
             scenes.append({"beats": max(4, min(16, len(shown) + 2)), "style": "list", "title": title,
                            "rows": [[str(r), short(s), str(v)] for r, s, v in shown], "q": Q_CAMPUS})
@@ -1502,8 +1585,10 @@ def cmd_script(date, force=False, out_dir=None):
         posts["threads"].append({"id": f"t-{vid}", "at": times["threads"][i], "card": vid, "topic": p["topic"], "thread": p["threads"]})
         posts["cards"][vid] = p["card"]
         if c.get("slot") == "experiment":
-            exps.setdefault("results", []).append({"date": date, "video": vid, "experiment": "+".join(c["novel"]) or c["format"],
-                                                   "what": describe(c), "status": "posted", "predicted": slim(c, m)["views_mid"]})
+            res = exps.setdefault("results", [])
+            res[:] = [r for r in res if (r.get("date"), r.get("video")) != (date, vid)]   # re-scripting replaces, never repeats
+            res.append({"date": date, "video": vid, "experiment": "+".join(c["novel"]) or c["format"],
+                        "what": describe(c), "status": "posted", "predicted": slim(c, m)["views_mid"]})
     jsave(os.path.join(out_dir, "videos.json"), {"date": date, "videos": videos})
     jsave(os.path.join(out_dir, "posts.json"), posts)
     if not testing:
@@ -1547,11 +1632,13 @@ def cmd_maps(date):
 def cmd_score():
     exps = jload(os.path.join(SOCIAL, "experiments.json"), {})
     stats = jload(os.path.join(SOCIAL, "stats.json"), {})
-    by = {p["what"]: p for p in stats.get("posts", []) if p.get("service", "").lower() == "tiktok" and p.get("what")}
+    dates = batch_dates()
+    by = {(p["what"], batch_of(p, dates)): p for p in stats.get("posts", [])
+          if p.get("service", "").lower() == "tiktok" and p.get("what")}
     pulled = dt.datetime.fromisoformat(stats["pulled"].replace("Z", "+00:00"))
     changed = 0
     for r in exps.get("results", []):
-        p = by.get(r.get("video"))
+        p = by.get((r.get("video"), r.get("date")))
         if r.get("status") != "posted" or not p:
             continue
         age = (pulled - dt.datetime.fromisoformat(p["sent"].replace("Z", "+00:00"))).total_seconds() / 86400

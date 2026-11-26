@@ -16,7 +16,7 @@
      "say": "Which North Carolina college has the most restaurants within a 10-minute walk?"
     },
     {
-     "beats": 14,
+     "beats": 15,
      "style": "list",
      "title": "North Carolina colleges with 5,000+ students",
      "rows": [
@@ -72,13 +72,18 @@
       ],
       [
        "8",
-       "North Carolina",
+       "UNC Pembroke",
        "17"
       ],
       [
        "7",
        "UNC Wilmington",
        "22"
+      ],
+      [
+       "6",
+       "UNC Charlotte",
+       "23"
       ]
      ],
      "q": [
@@ -86,7 +91,8 @@
       "college students walking campus",
       "students on campus lawn"
      ],
-     "say": "Dead last: Winston-Salem State, with just 2. Pack a lunch. High Point, 4. And Duke? Only thirteenth."
+     "say": "Dead last: Winston-Salem State, with just 2. Pack a lunch. High Point, 4. And Duke? Only thirteenth.",
+     "clip": 40254131
     },
     {
      "beats": 7,
@@ -149,7 +155,7 @@
      "text": "Did we rank your school right? *Comment below.*",
      "sub": "Send this to your friend at another North Carolina school.",
      "reuse": 1,
-     "say": "Did we rank your school right? Tell us in the comments."
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
     }
    ],
    "lab": {
@@ -164,7 +170,8 @@
      "shot_target_s": 3.71,
      "voice": true
     }
-   }
+   },
+   "track": "disco-108"
   },
   {
    "id": "va-countdown",

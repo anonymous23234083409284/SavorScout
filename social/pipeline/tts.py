@@ -25,7 +25,7 @@ VOICE = os.environ.get("SAVORSCOUT_TTS_VOICE", "af_heart")
 SPEED = float(os.environ.get("SAVORSCOUT_TTS_SPEED", "1.2"))
 
 # Names a text-to-speech engine would misread: spoken the way students say them.
-SAY_AS = {"UMass": "You Mass", "UChicago": "U Chicago", "UConn": "You Conn", "UPenn": "U Penn", "CU Boulder": "C U Boulder",
+SAY_AS = {"UMass": "You Mass", "UAlbany": "U Albany", "UMaryland": "U Maryland", "WashU": "Wash U", "UChicago": "U Chicago", "UConn": "You Conn", "UPenn": "U Penn", "CU Boulder": "C U Boulder",
           "Texas A&M": "Texas A and M", "A&M": "A and M", "UC ": "U C ", "UH-": "U H ", "St.": "Saint", "SUNY": "Soo-nee",
           "CUNY": "Kyoo-nee"}
 KEEP_WORDS = {"SUNY", "CUNY", "NASA"}

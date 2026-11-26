@@ -1,0 +1,139 @@
+{
+ "tiktok": [
+  {
+   "video": "suny-countdown",
+   "at": "2026-12-05T16:48:00-05:00",
+   "text": "SUNY Cortland is 2nd \ud83d\udc40 Which SUNY campus has the most restaurants within a 10-minute walk? Send this to your friend at another SUNY school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#fit #sunycortland #sunybuffalostate #collegelife #collegefood"
+  },
+  {
+   "video": "md-countdown",
+   "at": "2026-12-05T19:49:00-05:00",
+   "text": "Johns Hopkins is 2nd \ud83d\udc40 Which Maryland college has the most restaurants within a 10-minute walk? Send this to your friend at another Maryland school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#umarylandbaltimore #johnshopkins #salisbury #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "suny-countdown": {
+   "type": "ranking",
+   "title": "SUNY campuses ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "12 SUNY campuses with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "FIT",
+     1146
+    ],
+    [
+     "2",
+     "SUNY Cortland",
+     35
+    ],
+    [
+     "3",
+     "SUNY Buffalo State",
+     30
+    ],
+    [
+     "4",
+     "SUNY New Paltz",
+     26
+    ],
+    [
+     "5",
+     "Farmingdale State",
+     19
+    ],
+    [
+     "6",
+     "University at Buffalo",
+     11
+    ],
+    [
+     "7",
+     "SUNY Brockport",
+     9
+    ],
+    [
+     "8",
+     "Binghamton",
+     6
+    ],
+    [
+     "8",
+     "Stony Brook",
+     6
+    ],
+    [
+     "10",
+     "SUNY Oswego",
+     3
+    ],
+    [
+     "10",
+     "UAlbany",
+     3
+    ],
+    [
+     "12",
+     "SUNY Oneonta",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "md-countdown": {
+   "type": "ranking",
+   "title": "Maryland colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Maryland college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UMaryland Baltimore",
+     111
+    ],
+    [
+     "2",
+     "Johns Hopkins",
+     76
+    ],
+    [
+     "3",
+     "Salisbury",
+     67
+    ],
+    [
+     "4",
+     "Maryland",
+     21
+    ],
+    [
+     "5",
+     "Morgan State",
+     18
+    ],
+    [
+     "6",
+     "Towson",
+     13
+    ],
+    [
+     "7",
+     "Loyola Maryland",
+     5
+    ],
+    [
+     "8",
+     "UMBC",
+     4
+    ],
+    [
+     "9",
+     "Bowie State",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

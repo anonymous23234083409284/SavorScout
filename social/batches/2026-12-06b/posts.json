@@ -1,0 +1,109 @@
+{
+ "tiktok": [
+  {
+   "video": "uaa-countdown",
+   "at": "2026-12-06T13:49:00-05:00",
+   "text": "UChicago is 5th \ud83d\udc40 Which UAA university has the most restaurants within a 10-minute walk? Send this to your friend at another UAA school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#nyu #casewestern #emory #collegelife #collegefood"
+  },
+  {
+   "video": "ar-countdown",
+   "at": "2026-12-06T16:50:00-05:00",
+   "text": "The University of Arkansas is 5th \ud83d\udc40 Which Arkansas college has the most restaurants within a 10-minute walk? Send this to your friend at another Arkansas school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#ualittlerock #centralarkansas #arkansasstate #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "uaa-countdown": {
+   "type": "ranking",
+   "title": "UAA universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 8 UAA universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "NYU",
+     1462
+    ],
+    [
+     "2",
+     "Case Western",
+     60
+    ],
+    [
+     "3",
+     "Emory",
+     30
+    ],
+    [
+     "4",
+     "Carnegie Mellon",
+     26
+    ],
+    [
+     "5",
+     "UChicago",
+     25
+    ],
+    [
+     "6",
+     "Brandeis",
+     10
+    ],
+    [
+     "7",
+     "Rochester",
+     5
+    ],
+    [
+     "7",
+     "WashU",
+     5
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "ar-countdown": {
+   "type": "ranking",
+   "title": "Arkansas colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Arkansas college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UA Little Rock",
+     24
+    ],
+    [
+     "2",
+     "Central Arkansas",
+     17
+    ],
+    [
+     "3",
+     "Arkansas State",
+     13
+    ],
+    [
+     "4",
+     "Arkansas Tech",
+     11
+    ],
+    [
+     "5",
+     "Arkansas",
+     10
+    ],
+    [
+     "6",
+     "UA Fort Smith",
+     6
+    ],
+    [
+     "7",
+     "Southern Arkansas",
+     4
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

@@ -1,0 +1,271 @@
+{
+ "date": "2026-12-05",
+ "videos": [
+  {
+   "id": "suny-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "fashion-institute-of-technology",
+     "text": "Which SUNY campus has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which SUNY campus has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "12 SUNY campuses with 5,000+ students",
+     "rows": [
+      [
+       "12",
+       "SUNY Oneonta",
+       "0"
+      ],
+      [
+       "10",
+       "UAlbany",
+       "3"
+      ],
+      [
+       "10",
+       "SUNY Oswego",
+       "3"
+      ],
+      [
+       "8",
+       "Stony Brook",
+       "6"
+      ],
+      [
+       "8",
+       "Binghamton",
+       "6"
+      ],
+      [
+       "7",
+       "SUNY Brockport",
+       "9"
+      ],
+      [
+       "6",
+       "University at Buffalo",
+       "11"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: SUNY Oneonta. Zero. Pack a lunch. UAlbany, 3. SUNY Oswego, 3."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Farmingdale State",
+     "count": 19,
+     "sub": "Busiest food street: Broadhollow Rd",
+     "map": "farmingdale-state-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Farmingdale State. 19. Busiest food street: Broadhollow Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "SUNY New Paltz",
+     "count": 26,
+     "sub": "Busiest food street: Main St",
+     "map": "state-university-of-new-york-at-new-paltz",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: SUNY New Paltz. 26. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "SUNY Buffalo State",
+     "count": 30,
+     "sub": "Busiest food street: Elmwood Ave",
+     "map": "suny-buffalo-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: SUNY Buffalo State. 30. Busiest food street: Elmwood Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "SUNY Cortland",
+     "count": 35,
+     "sub": "Busiest food street: Main St",
+     "map": "suny-cortland",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: SUNY Cortland. 35. Busiest food street: Main Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "FIT",
+     "count": 1146,
+     "sub": "Busiest food street: 8th Ave",
+     "map": "fashion-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: FIT. 1,146. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another SUNY school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "system:suny",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "system:suny|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-129"
+  },
+  {
+   "id": "md-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/md",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-maryland-baltimore",
+     "text": "Which Maryland college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Hint: it's not Johns Hopkins.",
+     "say": "Which Maryland college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 6,
+     "style": "list",
+     "title": "Maryland colleges with 5,000+ students",
+     "rows": [
+      [
+       "9",
+       "Bowie State",
+       "0"
+      ],
+      [
+       "8",
+       "UMBC",
+       "4"
+      ],
+      [
+       "7",
+       "Loyola Maryland",
+       "5"
+      ],
+      [
+       "6",
+       "Towson",
+       "13"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Bowie State. Zero. Pack a lunch. UMBC, 4. Loyola Maryland, 5. Towson, 13."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Morgan State",
+     "count": 18,
+     "sub": "Busiest food street: Harford Rd",
+     "map": "morgan-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Morgan State. 18. Busiest food street: Harford Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Maryland",
+     "count": 21,
+     "sub": "Busiest food street: Baltimore Ave",
+     "map": "university-of-maryland-college-park",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Maryland. 21. Busiest food street: Baltimore Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Salisbury",
+     "count": 67,
+     "sub": "Busiest food street: Salisbury Blvd",
+     "map": "salisbury-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Salisbury. 67. Busiest food street: Salisbury Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Johns Hopkins",
+     "count": 76,
+     "sub": "Busiest food street: W 36th St",
+     "map": "johns-hopkins-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Johns Hopkins. 76. Busiest food street: 36th Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UMaryland Baltimore",
+     "count": 111,
+     "sub": "Busiest food street: Charles St",
+     "map": "university-of-maryland-baltimore",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UMaryland Baltimore. 111."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Maryland school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "state5k:MD",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "state5k:MD|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-132"
+  }
+ ],
+ "batch": "2026-12-05b"
+}

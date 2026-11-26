@@ -1,0 +1,256 @@
+{
+ "date": "2026-12-04",
+ "videos": [
+  {
+   "id": "cuny-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "cuny-bernard-m-baruch-college",
+     "text": "Which CUNY college has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which CUNY college has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "10 of CUNY's 11 senior colleges",
+     "rows": [
+      [
+       "10",
+       "College of Staten Island",
+       "0"
+      ],
+      [
+       "9",
+       "Queens College",
+       "31"
+      ],
+      [
+       "8",
+       "Lehman College",
+       "70"
+      ],
+      [
+       "6",
+       "York College",
+       "77"
+      ],
+      [
+       "6",
+       "Brooklyn College",
+       "77"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: College of Staten Island. Zero. Pack a lunch. Queens College, 31. Lehman College, 70. York College, 77. Brooklyn College, 77."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "City College",
+     "count": 213,
+     "sub": "Busiest food street: Broadway",
+     "map": "cuny-city-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: City College. 213. Busiest food street: Broadway."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "City Tech",
+     "count": 329,
+     "sub": "Busiest food street: Smith St",
+     "map": "cuny-new-york-city-college-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: City Tech. 329. Busiest food street: Smith Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Hunter College",
+     "count": 388,
+     "sub": "Busiest food street: 2nd Ave",
+     "map": "cuny-hunter-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Hunter College. 388. Busiest food street: 2nd Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "John Jay",
+     "count": 467,
+     "sub": "Busiest food street: 9th Ave",
+     "map": "cuny-john-jay-college-of-criminal-justice",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: John Jay. 467. Busiest food street: 9th Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Baruch",
+     "count": 1108,
+     "sub": "Busiest food street: 3rd Ave",
+     "map": "cuny-bernard-m-baruch-college",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Baruch. 1,108."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another CUNY college.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "system:cuny",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "system:cuny|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-120"
+  },
+  {
+   "id": "wcc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "seattle-university",
+     "text": "Which West Coast Conference school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which West Coast Conference school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "8 of the 10 West Coast Conference schools",
+     "rows": [
+      [
+       "8",
+       "Pepperdine",
+       "1"
+      ],
+      [
+       "7",
+       "Pacific",
+       "9"
+      ],
+      [
+       "6",
+       "San Diego",
+       "15"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Pepperdine, with just 1. Pack a lunch. Pacific, 9. San Diego, 15."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "LMU",
+     "count": 21,
+     "sub": "Busiest food street: Lincoln Blvd",
+     "map": "loyola-marymount-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: LMU. 21. Busiest food street: Lincoln Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Santa Clara",
+     "count": 34,
+     "sub": "Busiest food street: The Alameda",
+     "map": "santa-clara-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Santa Clara. 34. Busiest food street: The Alameda."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Denver",
+     "count": 59,
+     "sub": "Busiest food street: S University Blvd",
+     "map": "university-of-denver",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Denver. 59. Busiest food street: University Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "University of San Francisco",
+     "count": 79,
+     "sub": "Busiest food street: Divisadero St",
+     "map": "university-of-san-francisco",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: University of San Francisco. 79. Busiest food street: Divisadero Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Seattle U",
+     "count": 241,
+     "sub": "Busiest food street: Broadway",
+     "map": "seattle-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Seattle U. 241. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another West Coast Conference school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:wcc",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:wcc|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-123"
+  }
+ ],
+ "batch": "2026-12-04b"
+}

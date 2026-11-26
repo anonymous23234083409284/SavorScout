@@ -51,6 +51,29 @@ a run (`STATS_CAP`). Keep each day well under 600 requests: about 3 per post (on
 - **Spoken "St."**: write "Saint" in `say` lines ("Saint Cloud State", "Saint Germain Street"); the street
   expander reads "St" as "Street".
 
+## Lessons from the Nov 26 run
+
+- **Lists of 13 or 14 schools now show every row.** They used to be cut to 12 under an "All 18 ACC schools"
+  title, silently dropping the place just below the countdown (SMU in the ACC, UNC Charlotte in North
+  Carolina). `reel.list_size` shrinks the type for 13-14 rows so the list ends where 12 rows did. After any
+  change to a list, check that the list's positions run straight into the countdown's (…7, 6, then #5).
+- **Ids repeat across dates** ("20-countdown" ran Nov 12 and again Dec 5). `lab.batch_of()` matches a post
+  to the latest batch with its id on or before the day it went out. Matching by id alone had scored the
+  Dec 5 video with Nov 12's numbers and trained the model on the wrong scripts for 7 posts.
+- **Online-only schools stay out of walking rankings** (`ONLINE_ONLY`: Penn State World Campus, UA
+  Grantham, Thomas Edison State, Empire State, Franklin). Long names get a short form in `EXTRA_NAMES`.
+  A non-flagship must never shorten to a bare state name ("University of North Carolina at Pembroke"
+  read as "North Carolina"); scan for that when adding schools.
+- **Ties are said as ties:** "Tied for dead last: Wake Forest and Notre Dame, with just 6 each" and
+  "Also number 3: Mizzou. 98."
+- **New groups before repeats.** The Ivy League's first video had 4,448 views, the re-run 10 days later 462.
+  Before pinning a grouping, search every batch for it (`grep -l '"conf:sec"' social/batches/*/videos.json`);
+  a state's `state:` and `state5k:` lists count as one grouping (`lab.grouping()`), and the hand-off batches
+  of Nov 22-25 count too. Already run: SEC, ACC, Big Ten, Big 12 (Nov 19-20), UC (Nov 13, 21), Ivy League,
+  Big East, DC, Boston, Georgia, Alabama, Michigan. New on Nov 26: SUNY and the UAA (`NEW_GROUPS`).
+- **Spread schools across a day.** Before pinning a b batch, check its schools against the same day's
+  main videos (a conference that shares 4 schools with the day's famous-20 list goes on another day).
+
 ## The daily mix (from Nov 18): countdowns only, with a girl-voice hook
 
 The owner's direction on Nov 18: stop the meme format. No skits, no meme videos and no meme-based

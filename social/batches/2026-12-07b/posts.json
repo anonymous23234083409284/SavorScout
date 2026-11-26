@@ -1,0 +1,104 @@
+{
+ "tiktok": [
+  {
+   "video": "ct-countdown",
+   "at": "2026-12-07T16:47:00-05:00",
+   "text": "UConn is 2nd \ud83d\udc40 Which Connecticut college has the most restaurants within a 10-minute walk? Send this to your friend at another Connecticut school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#yale #uconn #centralconnecticutstate #collegelife #collegefood"
+  },
+  {
+   "video": "pa-countdown",
+   "at": "2026-12-07T19:48:00-05:00",
+   "text": "Penn is 4th \ud83d\udc40 Which big Pennsylvania university has the most restaurants within a 10-minute walk? Send this to your friend at another Pennsylvania school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#pennstate #drexel #pitt #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "ct-countdown": {
+   "type": "ranking",
+   "title": "Connecticut colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Connecticut college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Yale",
+     223
+    ],
+    [
+     "2",
+     "UConn",
+     17
+    ],
+    [
+     "3",
+     "Central Connecticut State",
+     16
+    ],
+    [
+     "4",
+     "University of New Haven",
+     14
+    ],
+    [
+     "5",
+     "Southern Connecticut State",
+     8
+    ],
+    [
+     "6",
+     "Sacred Heart",
+     7
+    ],
+    [
+     "7",
+     "University of Hartford",
+     4
+    ],
+    [
+     "8",
+     "Fairfield",
+     3
+    ],
+    [
+     "9",
+     "Quinnipiac",
+     1
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "pa-countdown": {
+   "type": "ranking",
+   "title": "Big Pennsylvania universities ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "The big Pennsylvania universities. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Penn State",
+     156
+    ],
+    [
+     "2",
+     "Drexel",
+     135
+    ],
+    [
+     "2",
+     "Pitt",
+     135
+    ],
+    [
+     "4",
+     "Penn",
+     125
+    ],
+    [
+     "5",
+     "Temple",
+     91
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

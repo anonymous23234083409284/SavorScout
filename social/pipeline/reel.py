@@ -144,9 +144,12 @@ def balance(lines, path, size, tracking, max_w):
     return best
 
 
-def list_size(rows, row_w=860, rank_w=70, gaps=52):
-    """The largest type size at which every row's name fits beside its rank and value (ListScene in Reel.tsx)."""
-    for size in range(64, 35, -2):
+def list_size(rows, row_w=860, rank_w=70, gaps=52, line=1.2, gap=18):
+    """The largest type size at which every row's name fits beside its rank and value (ListScene in Reel.tsx),
+    and 13 or 14 rows take no more height than 12 rows at 64, so the list stays clear of the caption area."""
+    n = len(rows)
+    top = 64 if n <= 12 else int((12 * 64 * line + 11 * gap - (n - 1) * gap) / (n * line))
+    for size in range(top - top % 2, 35, -2):
         if all(width(words_of(r[1]), BLACK, size, -0.015) + width(words_of(r[2]), BLACK, size, 0) + rank_w + gaps <= row_w
                for r in rows):                  # a row may carry a 4th item, a small line under the name
             return size

@@ -313,7 +313,7 @@ function page(shell, city) {
     : `Can't decide where to eat in ${name}? Savor Scout picks one restaurant in ${place} ` +
       `based on what you're craving and shows why it chose it. Free, no app, no signup.`;
   const url = `${ORIGIN}/eat/${slug}`;
-  const app = `/?near=${encodeURIComponent(place)}`;
+  const app = `/#near=${encodeURIComponent(place)}`;   // a fragment, not a new URL (see lib/page.js)
 
   const stateNode = { name: STATES[region] || region, url: `${ORIGIN}/eat/${region.toLowerCase()}` };
   const trail = [HOME, HUB, stateNode, { name: place, url }];

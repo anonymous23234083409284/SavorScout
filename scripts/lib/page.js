@@ -462,7 +462,7 @@ function layout(body, { url, desc }) {
   <aside class="ss-aside">${side}
     <div class="ss-card">
       <p>Can't decide? Say what you're craving and Savor Scout picks one place${near ? ` near ${esc(near)}` : ""}, with the reasons.</p>
-      <a class="ss-btn" href="${near ? `/?near=${encodeURIComponent(near)}` : "/"}">Find my one</a>
+      <a class="ss-btn" href="${near ? `/#near=${encodeURIComponent(near)}` : "/"}">Find my one</a>
     </div>
   </aside>` : "";
   return { main, aside, pathname };
@@ -535,7 +535,15 @@ ${footer()}`);
 
      rel="nofollow" is applied here rather than at each call site so a link added
      later cannot miss it. It changes nothing for a reader: the link still works,
-     still opens the app, still pre-fills the search. */
+     still opens the app, still pre-fills the search.
+
+     Nov 26: nofollow is only a hint, and Google kept crawling them (Search
+     Console flagged the reason again). So links into the app now carry the
+     search in the fragment instead — /#near=…, /#craving=…, /#quiz=1. Google
+     ignores everything after "#", so to a crawler each one is just a link to the
+     homepage and no new URL exists to crawl; App.js reads the fragment the same
+     way it reads the query string. robots.txt also stops crawling of /?… URLs
+     Google already knows. This replace stays as a safety net for any /?… link. */
   html = html.replace(
     /<a((?:\s+[a-zA-Z-]+="[^"]*")*)\s+href="(\/\?[^"]*)"/g,
     (match, attrs, href) =>

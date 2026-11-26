@@ -402,7 +402,7 @@ function page(c) {
   const trail = [HOME, HUB, stateNode,
     ...(town ? [{ name: `${town.c}, ${town.r}`, url: `${ORIGIN}/eat/${town.s}` }] : []),
     { name: c.n, url }];
-  const appLink = `/?near=${encodeURIComponent(place)}`;
+  const appLink = `/#near=${encodeURIComponent(place)}`;   // a fragment, not a new URL (see lib/page.js)
 
 
   /* Every other name the school goes by, for the facts list. The abbreviation

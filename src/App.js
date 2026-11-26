@@ -13,6 +13,24 @@ import { quizStatus } from "./quiz/status";
 const Quiz = lazy(() => import("./quiz/Quiz"));
 const loadShareCard = () => import("./shareCard");
 
+/* Links from the site's generated pages carry their search in the fragment
+   (/#near=…&craving=…, /#quiz=1) instead of the query string. A fragment is not
+   a separate URL to Google, so a thousand pages linking into the app no longer
+   mint a thousand crawlable copies of the homepage (Search Console filed them
+   under "Alternate page with proper canonical tag"). Old ?near= links and the
+   guide pages' search form (a GET form, so it can only use the query string)
+   still work: the query string wins when both are present. */
+function hashParams() {
+  const h = window.location.hash.replace(/^#/, "");
+  return h.includes("=") ? new URLSearchParams(h) : null;   // "#content" and friends are anchors, not params
+}
+function appParams() {
+  const sp = new URLSearchParams(window.location.search);
+  const hp = hashParams();
+  if (hp) hp.forEach((v, k) => { if (!sp.has(k)) sp.set(k, v); });
+  return sp;
+}
+
 /* Filenames only — keeps a restaurant called "Joe's #1 BBQ & Grill" from
    producing something the OS share sheet chokes on. */
 function slugify(s) {
@@ -1638,7 +1656,7 @@ function App() {
      is the only way to reach the modal without first getting through auth —
      which otherwise makes the whole feature untestable. */
   const [quizOpen, setQuizOpen] = useState(() => {
-    try { return new URLSearchParams(window.location.search).get("quiz") === "1"; }
+    try { return appParams().get("quiz") === "1"; }
     catch { return false; }
   });
   const [quizState, setQuizState] = useState(() => quizStatus());
@@ -1979,16 +1997,20 @@ function App() {
     if (deepLinkApplied.current) return;
     let near = null, craving = null, go = false;
     try {
-      const sp = new URLSearchParams(window.location.search);
+      const sp = appParams();
       near = sp.get("near");
       craving = sp.get("craving");
       go = sp.get("go") === "1";
       /* Dropped from the address bar at once, so a reload or a shared link
          does not run the search a second time. */
       if (go) {
-        sp.delete("go");
-        const qs = sp.toString();
-        window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash);
+        const q = new URLSearchParams(window.location.search);
+        q.delete("go");
+        const h = hashParams();
+        if (h) h.delete("go");
+        const qs = q.toString();
+        const hs = h ? h.toString() : window.location.hash.replace(/^#/, "");
+        window.history.replaceState(null, "", window.location.pathname + (qs ? `?${qs}` : "") + (hs ? `#${hs}` : ""));
       }
     } catch { return; }
     if (!near && !craving) return;

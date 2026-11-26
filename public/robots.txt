@@ -1,6 +1,14 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+# Every URL with a query string is the app's homepage with a search in it
+# (/?near=…, /?craving=…, /?quiz=1, /?ref=…). Each one correctly names the
+# homepage as its canonical, so none can rank on its own, and Google filed
+# thousands of them under "Alternate page with proper canonical tag" while
+# spending crawls on them instead of on the campus, city and guide pages. The
+# site's own links now put the search after "#", which creates no new URL;
+# this stops the crawling of the ones already discovered or shared. No page
+# meant for search results has a query string.
+Disallow: /*?
 
 # Pointing at the sitemap here means crawlers find it without anyone having to
 # submit it by hand, and it is the one robots.txt directive that actively helps

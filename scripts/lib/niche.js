@@ -105,7 +105,7 @@ function build(p, { ORIGIN, HOME, HUB, STATES, breadcrumb, crumbHtml }) {
   const short = shortOf(c);
   const url = `${ORIGIN}${urlPath(p)}`;
   const place = `${c.c}, ${c.r}`;
-  const app = `/?near=${encodeURIComponent(place)}&craving=${encodeURIComponent(inSentence(dish.n))}`;
+  const app = `/#near=${encodeURIComponent(place)}&craving=${encodeURIComponent(inSentence(dish.n))}`;   // a fragment, not a new URL (see page.js)
   const trail = [HOME, HUB,
     { name: STATES[c.r] || c.r, url: `${ORIGIN}/campus/${c.r.toLowerCase()}` },
     { name: short, url: `${ORIGIN}/campus/${c.s}` },

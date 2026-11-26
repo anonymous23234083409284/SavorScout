@@ -61,7 +61,7 @@ const DIETS = [...require("./data/diets"), ...require("./data/diets-more")];
 const CITIES = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "us-cities.json"), "utf8"));
 
 const shell = shellOrDie(WHO);
-const app = (craving) => `/?craving=${encodeURIComponent(craving)}`;
+const app = (craving) => `/#craving=${encodeURIComponent(craving)}`;   // a fragment, not a new URL (see lib/page.js)
 const sitMap = new Map(SITUATIONS.map((x) => [x.s, x]));
 const dishMap = new Map(DISHES.map((x) => [x.s, x]));
 const dietMap = new Map(DIETS.map((x) => [x.s, x]));

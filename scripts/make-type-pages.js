@@ -95,7 +95,7 @@ function page(shell, t, all) {
   const body = `      ${crumbHtml(trail)}
       <h1>${esc(t.name)}</h1>
       <p><strong>${esc(t.tagline)}</strong></p>
-      <p><a class="cta" href="/?quiz=1">Take the taste quiz &rarr;</a></p>
+      <p><a class="cta" href="/#quiz=1">Take the taste quiz &rarr;</a></p>
       ${characterSvg(t)}
       <p>${esc(t.blurb)}</p>
 
@@ -114,7 +114,7 @@ function page(shell, t, all) {
         ${esc((all.find((o) => o.id !== t.id) || t).name)} searching the same words in the
         same town get different restaurants back.
       </p>
-      <p><a class="cta" href="/?quiz=1">Take the taste quiz &rarr;</a></p>
+      <p><a class="cta" href="/#quiz=1">Take the taste quiz &rarr;</a></p>
 
       <h2>The other types</h2>
       <ul>
@@ -166,7 +166,7 @@ const indexBody = `      ${crumbHtml(hubTrail)}
         a day for six days, about a minute each — then your type, and an app that starts
         recommending accordingly.
       </p>
-      <p><a class="cta" href="/?quiz=1">Take the taste quiz &rarr;</a></p>
+      <p><a class="cta" href="/#quiz=1">Take the taste quiz &rarr;</a></p>
       <ul>
         ${all.map((t) => `<li><a href="/type/${slugOf(t.name)}">${esc(t.name)}</a> — ${esc(t.tagline)} ${esc(t.blurb.slice(0, 110))}…</li>`).join("\n        ")}
       </ul>

@@ -1,0 +1,149 @@
+{
+ "tiktok": [
+  {
+   "video": "caa-countdown",
+   "at": "2026-12-09T12:20:00-05:00",
+   "text": "Drexel is 2nd \ud83d\udc40 Which CAA school has the most restaurants within a 10-minute walk? Send this to your friend at another CAA school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#collegeofcharleston #drexel #northeastern #collegelife #collegefood"
+  },
+  {
+   "video": "big-sky-countdown",
+   "at": "2026-12-09T15:20:00-05:00",
+   "text": "Northern Arizona is 2nd \ud83d\udc40 Which Big Sky school has the most restaurants within a 10-minute walk? Send this to your friend at another Big Sky school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#portlandstate #northernarizona #utahtech #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "caa-countdown": {
+   "type": "ranking",
+   "title": "CAA schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "12 of the 13 CAA schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "College of Charleston",
+     180
+    ],
+    [
+     "2",
+     "Drexel",
+     135
+    ],
+    [
+     "3",
+     "Northeastern",
+     133
+    ],
+    [
+     "4",
+     "William & Mary",
+     41
+    ],
+    [
+     "5",
+     "Hofstra",
+     28
+    ],
+    [
+     "6",
+     "UNC Wilmington",
+     22
+    ],
+    [
+     "7",
+     "Elon",
+     15
+    ],
+    [
+     "7",
+     "NC A&T",
+     15
+    ],
+    [
+     "9",
+     "Towson",
+     13
+    ],
+    [
+     "10",
+     "Campbell",
+     7
+    ],
+    [
+     "11",
+     "Stony Brook",
+     6
+    ],
+    [
+     "12",
+     "Monmouth",
+     1
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "big-sky-countdown": {
+   "type": "ranking",
+   "title": "Big Sky schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "All 11 Big Sky schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Portland State",
+     119
+    ],
+    [
+     "2",
+     "Northern Arizona",
+     51
+    ],
+    [
+     "3",
+     "Utah Tech",
+     27
+    ],
+    [
+     "4",
+     "Northern Colorado",
+     26
+    ],
+    [
+     "5",
+     "Idaho State",
+     20
+    ],
+    [
+     "6",
+     "Idaho",
+     19
+    ],
+    [
+     "7",
+     "Southern Utah",
+     17
+    ],
+    [
+     "8",
+     "Montana State",
+     15
+    ],
+    [
+     "9",
+     "Weber State",
+     11
+    ],
+    [
+     "10",
+     "Eastern Washington",
+     10
+    ],
+    [
+     "11",
+     "Montana",
+     9
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

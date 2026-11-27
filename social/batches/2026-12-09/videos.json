@@ -1,0 +1,280 @@
+{
+ "date": "2026-12-09",
+ "videos": [
+  {
+   "id": "caa-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "college-of-charleston",
+     "text": "Which CAA school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which CAA school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 9,
+     "style": "list",
+     "title": "12 of the 13 CAA schools",
+     "rows": [
+      [
+       "12",
+       "Monmouth",
+       "1"
+      ],
+      [
+       "11",
+       "Stony Brook",
+       "6"
+      ],
+      [
+       "10",
+       "Campbell",
+       "7"
+      ],
+      [
+       "9",
+       "Towson",
+       "13"
+      ],
+      [
+       "7",
+       "NC A&T",
+       "15"
+      ],
+      [
+       "7",
+       "Elon",
+       "15"
+      ],
+      [
+       "6",
+       "UNC Wilmington",
+       "22"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Monmouth, with just 1. Pack a lunch. Stony Brook, 6. Campbell, 7."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Hofstra",
+     "count": 28,
+     "sub": "Busiest food street: Front St",
+     "map": "hofstra-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Hofstra. 28. Busiest food street: Front Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "William & Mary",
+     "count": 41,
+     "sub": "Busiest food street: Richmond Rd",
+     "map": "william-and-mary",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: William & Mary. 41. Busiest food street: Richmond Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Northeastern",
+     "count": 133,
+     "sub": "Busiest food street: Boylston St",
+     "map": "northeastern-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Northeastern. 133. Busiest food street: Boylston Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Drexel",
+     "count": 135,
+     "sub": "Busiest food street: Chestnut St",
+     "map": "drexel-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Drexel. 135. Busiest food street: Chestnut Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "College of Charleston",
+     "count": 180,
+     "sub": "Busiest food street: King St",
+     "map": "college-of-charleston",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: College of Charleston. 180."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another CAA school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:caa",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:caa|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-102"
+  },
+  {
+   "id": "big-sky-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "portland-state-university",
+     "text": "Which Big Sky school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Big Sky school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 8,
+     "style": "list",
+     "title": "All 11 Big Sky schools",
+     "rows": [
+      [
+       "11",
+       "Montana",
+       "9"
+      ],
+      [
+       "10",
+       "Eastern Washington",
+       "10"
+      ],
+      [
+       "9",
+       "Weber State",
+       "11"
+      ],
+      [
+       "8",
+       "Montana State",
+       "15"
+      ],
+      [
+       "7",
+       "Southern Utah",
+       "17"
+      ],
+      [
+       "6",
+       "Idaho",
+       "19"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Montana, with just 9. Eastern Washington, 10. Weber State, 11."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Idaho State",
+     "count": 20,
+     "sub": "Busiest food street: 5th Ave",
+     "map": "idaho-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Idaho State. 20. Busiest food street: 5th Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Northern Colorado",
+     "count": 26,
+     "sub": "Busiest food street: 8th Ave",
+     "map": "university-of-northern-colorado",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Northern Colorado. 26. Busiest food street: 8th Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Utah Tech",
+     "count": 27,
+     "sub": "Busiest food street: Red Cliffs Dr",
+     "map": "utah-tech-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Utah Tech. 27. Busiest food street: Red Cliffs Drive."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Northern Arizona",
+     "count": 51,
+     "sub": "Busiest food street: S Milton Rd",
+     "map": "northern-arizona-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Northern Arizona. 51. Busiest food street: Milton Road."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Portland State",
+     "count": 119,
+     "sub": "Busiest food street: 6th Ave",
+     "map": "portland-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Portland State. 119. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Big Sky school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:big-sky",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:big-sky|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-105"
+  }
+ ]
+}

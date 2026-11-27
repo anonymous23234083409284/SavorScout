@@ -1,0 +1,230 @@
+{
+ "tiktok": [
+  {
+   "video": "mvc-countdown",
+   "at": "2026-12-08T12:19:00-05:00",
+   "text": "Belmont is 2nd \ud83d\udc40 Which Missouri Valley school has the most restaurants within a 10-minute walk? Send this to your friend at another Missouri Valley school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#uic #belmont #illinoisstate #collegelife #collegefood"
+  },
+  {
+   "video": "horizon-countdown",
+   "at": "2026-12-08T15:19:00-05:00",
+   "text": "Northern Illinois is tied for 2nd \ud83d\udc40 Which Horizon League school has the most restaurants within a 10-minute walk? Send this to your friend at another Horizon League school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#clevelandstate #northernillinois #youngstownstate #collegelife #collegefood"
+  },
+  {
+   "video": "socon-countdown",
+   "at": "2026-12-08T18:20:00-05:00",
+   "text": "UT Chattanooga is 2nd \ud83d\udc40 Which SoCon school has the most restaurants within a 10-minute walk? Send this to your friend at another SoCon school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#uncgreensboro #utchattanooga #tennesseetech #collegelife #collegefood"
+  },
+  {
+   "video": "america-east-countdown",
+   "at": "2026-12-08T21:17:00-05:00",
+   "text": "New Hampshire is 2nd \ud83d\udc40 Which America East school has the most restaurants within a 10-minute walk? Send this to your friend at another America East school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#njit #newhampshire #umasslowell #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "mvc-countdown": {
+   "type": "ranking",
+   "title": "Missouri Valley schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "8 of the 11 Missouri Valley schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UIC",
+     85
+    ],
+    [
+     "2",
+     "Belmont",
+     66
+    ],
+    [
+     "3",
+     "Illinois State",
+     40
+    ],
+    [
+     "4",
+     "Bradley",
+     38
+    ],
+    [
+     "5",
+     "Indiana State",
+     34
+    ],
+    [
+     "6",
+     "SIU Carbondale",
+     19
+    ],
+    [
+     "7",
+     "Northern Iowa",
+     17
+    ],
+    [
+     "8",
+     "Murray State",
+     14
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "horizon-countdown": {
+   "type": "ranking",
+   "title": "Horizon League schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "11 of the 12 Horizon League schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Cleveland State",
+     71
+    ],
+    [
+     "2",
+     "Northern Illinois",
+     42
+    ],
+    [
+     "2",
+     "Youngstown State",
+     42
+    ],
+    [
+     "4",
+     "UW-Milwaukee",
+     24
+    ],
+    [
+     "5",
+     "Oakland",
+     21
+    ],
+    [
+     "5",
+     "Wright State",
+     21
+    ],
+    [
+     "7",
+     "Detroit Mercy",
+     18
+    ],
+    [
+     "8",
+     "Robert Morris",
+     11
+    ],
+    [
+     "9",
+     "Northern Kentucky",
+     4
+    ],
+    [
+     "9",
+     "Purdue Fort Wayne",
+     4
+    ],
+    [
+     "11",
+     "UW-Green Bay",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "socon-countdown": {
+   "type": "ranking",
+   "title": "SoCon schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "7 of the 11 Southern Conference schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "UNC Greensboro",
+     36
+    ],
+    [
+     "2",
+     "UT Chattanooga",
+     28
+    ],
+    [
+     "3",
+     "Tennessee Tech",
+     22
+    ],
+    [
+     "4",
+     "East Tennessee State",
+     18
+    ],
+    [
+     "5",
+     "Mercer",
+     17
+    ],
+    [
+     "6",
+     "Western Carolina",
+     13
+    ],
+    [
+     "7",
+     "Samford",
+     5
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "america-east-countdown": {
+   "type": "ranking",
+   "title": "America East schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "8 of the 9 America East schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "NJIT",
+     104
+    ],
+    [
+     "2",
+     "New Hampshire",
+     26
+    ],
+    [
+     "3",
+     "UMass Lowell",
+     23
+    ],
+    [
+     "4",
+     "Vermont",
+     9
+    ],
+    [
+     "5",
+     "Binghamton",
+     6
+    ],
+    [
+     "6",
+     "UMBC",
+     4
+    ],
+    [
+     "7",
+     "UAlbany",
+     3
+    ],
+    [
+     "8",
+     "Maine",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

@@ -1,8 +1,8 @@
 {
- "date": "2026-12-07",
+ "date": "2026-12-09",
  "pin": [
-  "state5k:CT|w|countdown",
-  "state:PA|w|countdown"
+  "conf:caa|w|countdown",
+  "conf:big-sky|w|countdown"
  ],
  "boost": [],
  "note": "2026-11-29: week built ahead on Nov 21 (owner: countdowns only, consistent posting). Pinned: state:NJ|w|countdown, group:public-ivies|w|countdown, city:New York-NY|w|countdown, state:CA|w|countdown"

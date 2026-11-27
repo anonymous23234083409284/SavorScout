@@ -131,7 +131,7 @@ def record(dates=None):
         for line in open(path):
             if line.strip():
                 r = json.loads(line)
-                have[r["id"]] = r
+                have[(r["id"], r.get("date"))] = r     # Nov 27: ids repeat across dates (pa-countdown Nov 22 and Dec 7)
     root = os.path.join(SOCIAL, "out", "batches")
     dates = dates or (sorted(os.listdir(root)) if os.path.isdir(root) else [])
     added = 0
@@ -148,8 +148,8 @@ def record(dates=None):
             if not scenes:
                 continue
             secs = round((scenes[-1]["from"] + scenes[-1]["dur"]) / 30, 1)
-            if have.get(vid, {}).get("duration_s") != secs:
-                have[vid] = {"id": vid, "date": d[:10], "duration_s": secs}
+            if have.get((vid, d[:10]), {}).get("duration_s") != secs:
+                have[(vid, d[:10])] = {"id": vid, "date": d[:10], "duration_s": secs}
                 added += 1
     os.makedirs(LAB, exist_ok=True)
     with open(path, "w") as f:
@@ -165,7 +165,7 @@ def durations():
         for line in open(path):
             if line.strip():
                 r = json.loads(line)
-                out[r["id"]] = r["duration_s"]
+                out[(r["id"], r.get("date"))] = r["duration_s"]
     return out
 
 

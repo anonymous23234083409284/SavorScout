@@ -1,0 +1,212 @@
+{
+ "date": "2026-12-08",
+ "videos": [
+  {
+   "id": "saint-louis-mo-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/campus/mo",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "saint-louis-university",
+     "text": "Which college in Saint Louis has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which college in Saint Louis has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "Saint Louis colleges with 5,000+ students",
+     "rows": [
+      [
+       "6",
+       "Missouri Baptist",
+       "0"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Missouri Baptist. Zero. Pack a lunch."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Maryville",
+     "count": 1,
+     "sub": "Busiest food street: Clayton Rd",
+     "map": "maryville-university-of-saint-louis",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Maryville. Just 1. Busiest food street: Clayton Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "WashU",
+     "count": 5,
+     "sub": "Busiest food street: Delmar Blvd",
+     "map": "washington-university-in-st-louis",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: WashU. Just 5. Busiest food street: Delmar Boulevard."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UMSL",
+     "count": 6,
+     "sub": "Busiest food street: Natural Bridge Rd",
+     "map": "university-of-missouri-st-louis",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UMSL. Just 6. Busiest food street: Natural Bridge Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Webster",
+     "count": 21,
+     "sub": "Busiest food street: Big Bend Blvd",
+     "map": "webster-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Webster. 21. Busiest food street: Big Bend Boulevard."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Saint Louis University",
+     "count": 63,
+     "sub": "Busiest food street: Lindell Blvd",
+     "map": "saint-louis-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Saint Louis University. 63. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Saint Louis college.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "city:Saint Louis-MO",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "city:Saint Louis-MO|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-132"
+  },
+  {
+   "id": "meac-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "howard-university",
+     "text": "Which MEAC school has the most *restaurants within a 10-minute walk?*",
+     "sub": "5 of the 8 MEAC schools",
+     "say": "Which MEAC school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Norfolk State",
+     "count": 6,
+     "sub": "Busiest food street: Park Ave",
+     "map": "norfolk-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Dead last: Norfolk State, with just 6. Busiest food street: Park Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "NC Central",
+     "count": 11,
+     "sub": "Busiest food street: Fayetteville St",
+     "map": "north-carolina-central-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: NC Central. 11. Busiest food street: Fayetteville Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Morgan State",
+     "count": 18,
+     "sub": "Busiest food street: Harford Rd",
+     "map": "morgan-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Morgan State. 18. Busiest food street: Harford Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Delaware State",
+     "count": 38,
+     "sub": "Busiest food street: Dupont Hwy",
+     "map": "delaware-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Delaware State. 38. Busiest food street: Dupont Highway."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Howard",
+     "count": 77,
+     "sub": "Busiest food street: 14th St NW",
+     "map": "howard-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: Howard. 77. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another MEAC school.",
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:meac",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:meac|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-135"
+  }
+ ],
+ "batch": "2026-12-08b"
+}

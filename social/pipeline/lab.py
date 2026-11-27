@@ -95,7 +95,8 @@ STATES = {"AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "C
           "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 # Short names already used on screen, where the generic rules would read badly.
-EXTRA_NAMES = {"university-of-north-carolina-at-pembroke": "UNC Pembroke", "suny-at-albany": "UAlbany",
+EXTRA_NAMES = {"saint-louis-university": "Saint Louis University", "university-of-st-thomas": "St. Thomas", "california-baptist-university": "Cal Baptist", "northern-arizona-university": "Northern Arizona",
+               "university-of-north-carolina-at-pembroke": "UNC Pembroke", "suny-at-albany": "UAlbany",
                "university-at-buffalo": "University at Buffalo", "farmingdale-state-college": "Farmingdale State",
                "university-of-rochester": "Rochester", "carnegie-mellon-university": "Carnegie Mellon",
                "university-of-new-haven": "University of New Haven", "university-of-hartford": "University of Hartford", "southern-arkansas-university-main-campus": "Southern Arkansas", "university-of-alabama-in-huntsville": "UAH", "west-chester-university-of-pennsylvania": "West Chester",
@@ -425,6 +426,44 @@ NEW_GROUPS = [
     # affiliates. The Mountain West is left out until Air Force and Grand Canyon are in the data (a list without
     # them would be wrong); Tulsa (American) and Portland and Saint Mary's (WCC) are not in the data, so those titles
     # say "n of the N". Check memberships again each July.
+    # Nov 27: mid-major conferences, 2026-27 full members (checked Nov 27). Members missing from our data are
+    # left out and the title says "n of the N": MVC (Drake, Evansville, Valparaiso), Horizon (IU Indianapolis),
+    # SoCon (Furman, The Citadel, VMI, Wofford), America East (Bryant), MEAC (Coppin State, UMES, SC State), CAA (Hampton).
+    ("conf:mvc", "conference", "Which Missouri Valley school", "Missouri Valley schools", "{n} of the 11 Missouri Valley schools",
+     "Send this to your friend at another Missouri Valley school.", "Missouri Valley school",
+     ["belmont-university", "bradley-university", "illinois-state-university", "indiana-state-university",
+      "murray-state-university", "university-of-northern-iowa", "southern-illinois-university-carbondale",
+      "university-of-illinois-chicago"]),
+    ("conf:horizon", "conference", "Which Horizon League school", "Horizon League schools", "{n} of the 12 Horizon League schools",
+     "Send this to your friend at another Horizon League school.", "Horizon League school",
+     ["cleveland-state-university", "university-of-detroit-mercy", "university-of-wisconsin-green-bay",
+      "university-of-wisconsin-milwaukee", "northern-kentucky-university", "oakland-university", "purdue-university-fort-wayne",
+      "robert-morris-university", "wright-state-university-main-campus", "youngstown-state-university",
+      "northern-illinois-university"]),
+    ("conf:socon", "conference", "Which SoCon school", "SoCon schools", "{n} of the 11 Southern Conference schools",
+     "Send this to your friend at another SoCon school.", "SoCon school",
+     ["the-university-of-tennessee-chattanooga", "east-tennessee-state-university", "mercer-university",
+      "university-of-north-carolina-at-greensboro", "samford-university", "western-carolina-university",
+      "tennessee-technological-university"]),
+    ("conf:america-east", "conference", "Which America East school", "America East schools", "{n} of the 9 America East schools",
+     "Send this to your friend at another America East school.", "America East school",
+     ["binghamton-university", "university-of-maine", "university-of-new-hampshire-main-campus",
+      "new-jersey-institute-of-technology", "suny-at-albany", "university-of-massachusetts-lowell",
+      "university-of-maryland-baltimore-county", "university-of-vermont"]),
+    ("conf:meac", "conference", "Which MEAC school", "MEAC schools", "{n} of the 8 MEAC schools",
+     "Send this to your friend at another MEAC school.", "MEAC school",
+     ["delaware-state-university", "howard-university", "morgan-state-university", "norfolk-state-university",
+      "north-carolina-central-university"]),
+    ("conf:caa", "conference", "Which CAA school", "CAA schools", "{n} of the 13 CAA schools",
+     "Send this to your friend at another CAA school.", "CAA school",
+     ["campbell-university", "college-of-charleston", "drexel-university", "elon-university", "hofstra-university",
+      "monmouth-university", "north-carolina-a-and-t-state-university", "northeastern-university", "stony-brook-university",
+      "towson-university", "university-of-north-carolina-wilmington", "william-and-mary"]),
+    ("conf:big-sky", "conference", "Which Big Sky school", "Big Sky schools", "All {n} Big Sky schools",
+     "Send this to your friend at another Big Sky school.", "Big Sky school",
+     ["eastern-washington-university", "university-of-idaho", "idaho-state-university", "the-university-of-montana",
+      "montana-state-university", "northern-arizona-university", "university-of-northern-colorado",
+      "portland-state-university", "weber-state-university", "southern-utah-university", "utah-tech-university"]),
     # Nov 26: SUNY campuses with 5,000+ students, and the UAA (eight private research universities).
     ("system:suny", "system", "Which SUNY campus", "SUNY campuses", "{n} SUNY campuses with 5,000+ students",
      "Send this to your friend at another SUNY school.", "SUNY campus",
@@ -461,6 +500,21 @@ NEW_GROUPS = [
     ("conf:wcc", "conference", "Which West Coast Conference school", "West Coast Conference schools", "{n} of the 10 West Coast Conference schools",
      "Send this to your friend at another West Coast Conference school.", "West Coast Conference school",
      ["university-of-denver", "loyola-marymount-university", "pepperdine-university", "university-of-san-diego", "university-of-san-francisco", "santa-clara-university", "seattle-university", "university-of-the-pacific"]),
+    # Nov 27 (for Dec 9 on): 2026-27 full members, checked Nov 27, all in our data. Big West: Hawaii and UC Davis
+    # left for the Mountain West on July 1, 2026; California Baptist, Sacramento State and Utah Valley joined (12).
+    # Summit League: Denver left for the WCC, leaving 8.
+    ("conf:big-west", "conference", "Which Big West school", "Big West schools", "All {n} Big West schools",
+     "Send this to your friend at another Big West school.", "Big West school",
+     ["california-polytechnic-state-university-san-luis-obispo", "california-state-university-bakersfield",
+      "california-state-university-fullerton", "california-state-university-northridge", "california-state-university-long-beach",
+      "university-of-california-irvine", "university-of-california-riverside", "university-of-california-san-diego",
+      "university-of-california-santa-barbara", "california-baptist-university", "california-state-university-sacramento",
+      "utah-valley-university"]),
+    ("conf:summit", "conference", "Which Summit League school", "Summit League schools", "All {n} Summit League schools",
+     "Send this to your friend at another Summit League school.", "Summit League school",
+     ["university-of-missouri-kansas-city", "university-of-north-dakota", "north-dakota-state-university-main-campus",
+      "university-of-nebraska-at-omaha", "oral-roberts-university", "university-of-south-dakota", "south-dakota-state-university",
+      "university-of-st-thomas"]),
 ]
 
 def all_groups():
@@ -565,7 +619,7 @@ def all_groups():
 
 GROUP_WORDS = {"Big Ten": "conf:big-ten", "SEC": "conf:sec", "ACC": "conf:acc", "Big 12": "conf:big-12",
                "Ivy League": "conf:ivy-league", "Ivy": "conf:ivy-league", "UC": "system:uc", "Cal State": "system:csu",
-               "old Pac-12": "conf:pac12-old", "Pac-12": "conf:pac12", "UAA": "conf:uaa", "SUNY": "system:suny"}
+               "old Pac-12": "conf:pac12-old", "Pac-12": "conf:pac12", "UAA": "conf:uaa", "SUNY": "system:suny", "Missouri Valley": "conf:mvc", "Horizon League": "conf:horizon", "SoCon": "conf:socon", "America East": "conf:america-east", "MEAC": "conf:meac", "CAA": "conf:caa", "Big Sky": "conf:big-sky", "Big West": "conf:big-west", "Summit League": "conf:summit", "Sun Belt": "conf:sun-belt"}
 
 
 def infer_key(v):
@@ -1419,6 +1473,10 @@ def _video_spec(c, vid):
         while top_n < len(rows) and top_n < 7 and rows[top_n][0] <= top_n:   # keep ties together
             top_n += 1
         rest = rows[top_n:]
+        if (not rest or c["format"] == "short") and re.search(r"\bof the \d+\b", g.get("title") or ""):
+            # Nov 27: with no list on screen, the hook's sub-line is the only place that can say "5 of the 8
+            # MEAC schools"; without it the video reads as the whole conference.
+            scenes[0]["sub"] = g["title"]
         if rest and c["format"] != "short":
             # Up to 14 rows fit on screen (reel.list_size shrinks the type past 12); a longer list shows only
             # its bottom 12 (Nov 21: 50 state flagships). Nov 26: 13 or 14 rows used to be cut to 12 under an
@@ -1501,7 +1559,10 @@ def posts_for(c, vid):
     method = METRICS[metric]["method"]
     if c["format"] in ("countdown", "short", "part2"):
         tease = c.get("tease")
-        lead = f"{tease_name(tease[0], g)} is {ordinal(tease[1])}" if tease else f"{short(rows[1][1])} is {ordinal(rows[1][0])}"
+
+        def place(r):   # Nov 27: "Northern Illinois is 2nd" hid that Youngstown State shares 2nd
+            return f"tied for {ordinal(r)}" if sum(1 for x in rows if x[0] == r) > 1 else ordinal(r)
+        lead = f"{tease_name(tease[0], g)} is {place(tease[1])}" if tease else f"{short(rows[1][1])} is {place(rows[1][0])}"
         mv = mover(c)
         if mv:
             lead = f"{tease_name(mv[0], g)} jumps from {ordinal(mv[1])} to {ordinal(mv[2])}"

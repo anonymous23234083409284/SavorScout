@@ -1,0 +1,89 @@
+{
+ "tiktok": [
+  {
+   "video": "meac-countdown",
+   "at": "2026-12-08T16:50:00-05:00",
+   "text": "Delaware State is 2nd \ud83d\udc40 Which MEAC school has the most restaurants within a 10-minute walk? Send this to your friend at another MEAC school.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#howard #delawarestate #morganstate #collegelife #collegefood"
+  },
+  {
+   "video": "saint-louis-mo-countdown",
+   "at": "2026-12-08T13:49:00-05:00",
+   "text": "Webster is 2nd \ud83d\udc40 Which college in Saint Louis has the most restaurants within a 10-minute walk? Send this to your friend at another Saint Louis college.\n\nEvery place to eat near your campus: savorscout.net (link in bio)\n\n#saintlouisuniversity #webster #umsl #collegelife #collegefood"
+  }
+ ],
+ "twitter": [],
+ "threads": [],
+ "cards": {
+  "meac-countdown": {
+   "type": "ranking",
+   "title": "MEAC schools ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "5 of the 8 MEAC schools. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Howard",
+     77
+    ],
+    [
+     "2",
+     "Delaware State",
+     38
+    ],
+    [
+     "3",
+     "Morgan State",
+     18
+    ],
+    [
+     "4",
+     "NC Central",
+     11
+    ],
+    [
+     "5",
+     "Norfolk State",
+     6
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  },
+  "saint-louis-mo-countdown": {
+   "type": "ranking",
+   "title": "Saint Louis colleges ranked by *restaurants within a 10-minute walk*",
+   "subtitle": "Every Saint Louis college with 5,000+ students. Places to eat within half a mile.",
+   "rows": [
+    [
+     "1",
+     "Saint Louis University",
+     63
+    ],
+    [
+     "2",
+     "Webster",
+     21
+    ],
+    [
+     "3",
+     "UMSL",
+     6
+    ],
+    [
+     "4",
+     "WashU",
+     5
+    ],
+    [
+     "5",
+     "Maryville",
+     1
+    ],
+    [
+     "6",
+     "Missouri Baptist",
+     0
+    ]
+   ],
+   "source": "Data: Overture Maps"
+  }
+ }
+}

@@ -1,0 +1,493 @@
+{
+ "date": "2026-12-08",
+ "videos": [
+  {
+   "id": "mvc-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-illinois-chicago",
+     "text": "Which Missouri Valley school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Missouri Valley school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "8 of the 11 Missouri Valley schools",
+     "rows": [
+      [
+       "8",
+       "Murray State",
+       "14"
+      ],
+      [
+       "7",
+       "Northern Iowa",
+       "17"
+      ],
+      [
+       "6",
+       "SIU Carbondale",
+       "19"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Murray State, with 14. Northern Iowa, 17. SIU Carbondale, 19."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Indiana State",
+     "count": 34,
+     "sub": "Busiest food street: Wabash Ave",
+     "map": "indiana-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Indiana State. 34. Busiest food street: Wabash Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Bradley",
+     "count": 38,
+     "sub": "Busiest food street: W Main St",
+     "map": "bradley-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Bradley. 38. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Illinois State",
+     "count": 40,
+     "sub": "Busiest food street: Main St",
+     "map": "illinois-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Illinois State. 40. Busiest food street: Main Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Belmont",
+     "count": 66,
+     "sub": "Busiest food street: 21st Ave S",
+     "map": "belmont-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Belmont. 66. Busiest food street: 21st Avenue."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "UIC",
+     "count": 85,
+     "sub": "Busiest food street: W Taylor St",
+     "map": "university-of-illinois-chicago",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UIC. 85."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Missouri Valley school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:mvc",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:mvc|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-120"
+  },
+  {
+   "id": "horizon-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "cleveland-state-university",
+     "text": "Which Horizon League school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which Horizon League school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 7,
+     "style": "list",
+     "title": "11 of the 12 Horizon League schools",
+     "rows": [
+      [
+       "11",
+       "UW-Green Bay",
+       "0"
+      ],
+      [
+       "9",
+       "Purdue Fort Wayne",
+       "4"
+      ],
+      [
+       "9",
+       "Northern Kentucky",
+       "4"
+      ],
+      [
+       "8",
+       "Robert Morris",
+       "11"
+      ],
+      [
+       "7",
+       "Detroit Mercy",
+       "18"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: UW-Green Bay. Zero. Pack a lunch. Purdue Fort Wayne, 4. Northern Kentucky, 4. Robert Morris, 11. Detroit Mercy, 18."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Wright State",
+     "count": 21,
+     "sub": "Tied with Oakland for 5th. Busiest food street: Colonel Glenn Hwy",
+     "map": "wright-state-university-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Wright State. 21."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Oakland",
+     "count": 21,
+     "sub": "Tied with Wright State for 5th. Busiest food street: N Squirrel Rd",
+     "map": "oakland-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Also number 5: Oakland. 21."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "UW-Milwaukee",
+     "count": 24,
+     "sub": "Busiest food street: Oakland Ave",
+     "map": "university-of-wisconsin-milwaukee",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: UW-Milwaukee. 24. Busiest food street: Oakland Avenue."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Youngstown State",
+     "count": 42,
+     "sub": "Tied with Northern Illinois for 2nd. Busiest food street: W Federal St",
+     "map": "youngstown-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: Youngstown State. 42."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "Northern Illinois",
+     "count": 42,
+     "sub": "Tied with Youngstown State for 2nd. Busiest food street: Lincoln Hwy",
+     "map": "northern-illinois-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Also number 2: Northern Illinois. 42."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "Cleveland State",
+     "count": 71,
+     "sub": "Busiest food street: Euclid Ave",
+     "map": "cleveland-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: Cleveland State. 71."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another Horizon League school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:horizon",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:horizon|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-123"
+  },
+  {
+   "id": "socon-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "university-of-north-carolina-at-greensboro",
+     "text": "Which SoCon school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which SoCon school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 4,
+     "style": "list",
+     "title": "7 of the 11 Southern Conference schools",
+     "rows": [
+      [
+       "7",
+       "Samford",
+       "5"
+      ],
+      [
+       "6",
+       "Western Carolina",
+       "13"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Samford, with just 5. Pack a lunch. Western Carolina, 13."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Mercer",
+     "count": 17,
+     "sub": "Busiest food street: Mercer University Dr",
+     "map": "mercer-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Mercer. 17. Busiest food street: Mercer University Drive."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "East Tennessee State",
+     "count": 18,
+     "sub": "Busiest food street: State of Franklin Rd",
+     "map": "east-tennessee-state-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: East Tennessee State. 18. Busiest food street: State of Franklin Road."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "Tennessee Tech",
+     "count": 22,
+     "sub": "Busiest food street: Broad St",
+     "map": "tennessee-technological-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: Tennessee Tech. 22. Busiest food street: Broad Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "UT Chattanooga",
+     "count": 28,
+     "sub": "Busiest food street: Market St",
+     "map": "the-university-of-tennessee-chattanooga",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: UT Chattanooga. 28. Busiest food street: Market Street."
+    },
+    {
+     "beats": 10,
+     "style": "rank",
+     "num": "1",
+     "text": "UNC Greensboro",
+     "count": 36,
+     "sub": "Busiest food street: Tate St",
+     "map": "university-of-north-carolina-at-greensboro",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one: UNC Greensboro. 36."
+    }
+   ],
+   "lab": {
+    "key": "conf:socon",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:socon|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": true,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-126"
+  },
+  {
+   "id": "america-east-countdown",
+   "mood": "upbeat",
+   "source": "https://www.savorscout.net/rankings/",
+   "scenes": [
+    {
+     "beats": 4,
+     "style": "hook",
+     "map": "new-jersey-institute-of-technology",
+     "text": "Which America East school has the most *restaurants within a 10-minute walk?*",
+     "sub": "Guess before it shows.",
+     "say": "Which America East school has the most restaurants within a 10-minute walk?"
+    },
+    {
+     "beats": 5,
+     "style": "list",
+     "title": "8 of the 9 America East schools",
+     "rows": [
+      [
+       "8",
+       "Maine",
+       "0"
+      ],
+      [
+       "7",
+       "UAlbany",
+       "3"
+      ],
+      [
+       "6",
+       "UMBC",
+       "4"
+      ]
+     ],
+     "q": [
+      "university campus autumn",
+      "college students walking campus",
+      "students on campus lawn"
+     ],
+     "say": "Dead last: Maine. Zero. Pack a lunch. UAlbany, 3. UMBC, 4."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "5",
+     "text": "Binghamton",
+     "count": 6,
+     "sub": "Busiest food street: Vestal Pkwy",
+     "map": "binghamton-university",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 5: Binghamton. Just 6. Busiest food street: Vestal Parkway."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "4",
+     "text": "Vermont",
+     "count": 9,
+     "sub": "Busiest food street: Church St",
+     "map": "university-of-vermont",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 4: Vermont. Just 9. Busiest food street: Church Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "3",
+     "text": "UMass Lowell",
+     "count": 23,
+     "sub": "Busiest food street: Merrimack St",
+     "map": "university-of-massachusetts-lowell",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 3: UMass Lowell. 23. Busiest food street: Merrimack Street."
+    },
+    {
+     "beats": 7,
+     "style": "rank",
+     "num": "2",
+     "text": "New Hampshire",
+     "count": 26,
+     "sub": "Busiest food street: Main St",
+     "map": "university-of-new-hampshire-main-campus",
+     "label": "places to eat within a 10-minute walk",
+     "say": "Number 2: New Hampshire. 26. Busiest food street: Main Street."
+    },
+    {
+     "beats": 8,
+     "style": "rank",
+     "num": "1",
+     "text": "NJIT",
+     "count": 104,
+     "sub": "Busiest food street: Market St",
+     "map": "new-jersey-institute-of-technology",
+     "label": "places to eat within a 10-minute walk",
+     "say": "And number one, by a mile: NJIT. 104. More than the next three combined."
+    },
+    {
+     "beats": 6,
+     "style": "end",
+     "text": "Did we rank your school right? *Comment below.*",
+     "sub": "Send this to your friend at another America East school.",
+     "reuse": 1,
+     "say": "Did we rank your school right? Tell us in the comments. Find your campus on Savor Scout dot net."
+    }
+   ],
+   "lab": {
+    "key": "conf:america-east",
+    "metric": "w",
+    "format": "countdown",
+    "candidate": "conf:america-east|w|countdown",
+    "style": {
+     "punch": false,
+     "loop_end": false,
+     "hook_beats": 4,
+     "shot_target_s": 4.96,
+     "voice": true
+    }
+   },
+   "track": "disco-129"
+  }
+ ]
+}

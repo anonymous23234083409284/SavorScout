@@ -76,6 +76,28 @@ a run (`STATS_CAP`). Keep each day well under 600 requests: about 3 per post (on
 - **One build at a time.** `make_day.py build` now takes a lock (`social/out/.build.lock`) and a second build
   exits: two at once can pick the same clip and race on shared downloads. Renders can run beside a build.
 
+## Lessons from the Nov 27 run
+
+- **Seven mid-major conferences are in `NEW_GROUPS`** (2026-27 full members, checked Nov 27): Missouri Valley,
+  Horizon, SoCon, America East, MEAC, CAA, Big Sky. Members missing from our data are named in the comment
+  above them, and those titles say "n of the N". They run Dec 8-9.
+- **A partial group with no list on screen puts its title in the hook's sub-line** ("5 of the 8 MEAC
+  schools"), so a 5-school countdown never reads as the whole conference (`lab._video_spec`).
+- **Respell acronyms in the ElevenLabs prompt only, never in the script**: "Mee-ack" (MEAC), "So-Con",
+  "C-A-A". `cdvoice.py cut-hooks` saves each cut under the script's own line, in order, so the screen still
+  says MEAC. Four hooks per take cut cleanly (8 hooks in two takes, 749 characters).
+- **Fresh groups left after Dec 9:** the Big West (all 12 in our data; it shares 4 campuses with the UC
+  videos of Nov 13 and 21) and the Summit League (all 8), both added Nov 27 with their 2026-27 members;
+  South Carolina (4 schools; College of Charleston is #1 in the CAA on Dec 9, so Dec 11 or later), Chicago
+  (8; DePaul is #1, as in Illinois on Dec 4, so Dec 11 or later) and New York (26 universities: only the
+  bottom 12 fit, and it shares schools with SUNY Dec 5b, CUNY Dec 4b and New York City Dec 7). Every other
+  grouping in `lab.all_groups()` has run (the Sun Belt ran Dec 2b). Weak options: SWAC (7 of 12 in our data),
+  ASUN (4 of 8), Patriot League (4 of 10). Check the Southland, OVC, Big South, UAC and MAAC next.
+- **A caption names a shared place as shared:** "Northern Illinois is tied for 2nd" (`lab.posts_for`).
+  Three captions already written were fixed by hand (Nov 30 Great Lakes, Dec 6 A-10, Dec 8 Horizon).
+- **`crawl.py record` keys video lengths by id and date.** Keyed by id alone, each re-used id (pa-countdown on
+  Nov 22 and Dec 7) overwrote the earlier video's length; re-running it restored 12 lost lengths.
+
 ## The daily mix (from Nov 18): countdowns only, with a girl-voice hook
 
 The owner's direction on Nov 18: stop the meme format. No skits, no meme videos and no meme-based

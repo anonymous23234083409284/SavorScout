@@ -1,0 +1,33 @@
+seed,keyword,us_volume,kd,intent
+late night food,late night food,14800,15,C
+late night food,late night food near me,33100,22,T
+late night food,late open food,33100,30,C
+late night food,late nite food,720,18,C
+late night food,late night grub,480,12,C
+late night food,latenight eats,320,,I
+late night food,food late night,260,9,IC
+late night food,good late night food,90,16,I
+late night food,dine in late night food,50,12,C
+late night food,late noght eats,50,13,C
+cheap eats,cheap eats,8100,24,C
+cheap eats,cheap eats seattle,390,23,C
+cheap eats,cheap food seattle,390,34,C
+cheap eats,cheap eats seattle wa,260,33,C
+cheap eats,best cheap food seattle,210,30,C
+cheap eats,cheap eats brooklyn ny,170,27,C
+cheap eats,cheap food brooklyn,170,28,C
+cheap eats,good cheap food seattle,170,28,C
+cheap eats,cheap eats in seattle,90,31,C
+cheap eats,cheap eats in queens,90,27,C
+cheap eats,cheap eats in queens ny,70,24,C
+best food near,best food near,1600,70,C
+best food near,best food near me now,1000,38,T
+best food near,where is there to eat near me,1000,58,T
+best food near,near to eat,720,60,C
+best food near,best food near by,210,71,C
+best food near,good food near here,210,55,C
+best food near,best food near here,170,62,C
+best food near,best food near my location,170,67,C
+best food near,good food near,110,31,C
+best food near,good food places nearby,90,68,T
+best food near,best restaurant nearby near me,70,79,T

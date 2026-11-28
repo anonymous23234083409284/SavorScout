@@ -60,3 +60,11 @@
 {"date": "2026-11-27", "slug": "case-western-reserve-university", "url": "https://case.edu/admission/student-experience/our-location", "status": "skipped", "note": "location page mentions restaurants only in passing; newsroom story unverified"}
 {"date": "2026-11-27", "slug": "university-of-colorado-boulder", "url": "https://www.colorado.edu/admissions/visit/first-year/dining-options", "status": "skipped", "note": "admissions page is on-campus dining only; Today piece has no contact"}
 {"date": "2026-11-27", "slug": "georgia-southern-university", "url": "https://www.georgiasouthern.edu/campuses/visit", "status": "skipped", "note": "visitor page names no restaurants"}
+{"date": "2026-11-28", "slug": "california-baptist-university", "url": "https://calbaptist.edu/admissions-aid/visit/about-riverside/places-to-eat.php", "status": "sent", "note": "Undergraduate Admissions (visits)"}
+{"date": "2026-11-28", "slug": "university-of-chicago", "url": "https://collegeadmissions.uchicago.edu/visit/directions-accommodations/where-to-eat", "status": "sent", "note": "College Admissions"}
+{"date": "2026-11-28", "slug": "the-university-of-texas-at-austin", "url": "https://global.utexas.edu/isss/life-at-ut/austin/food-shopping", "status": "sent", "note": "International Student and Scholar Services (ISSS)"}
+{"date": "2026-11-28", "slug": "ohio-state-university-main-campus", "url": "https://music.osu.edu/sites/music.osu.edu/files/Restaurants%20Near%20OSU.pdf", "status": "sent", "note": "School of Music"}
+{"date": "2026-11-28", "slug": "loyola-university-maryland", "url": "https://www.loyola.edu/events/family-weekend/explore-baltimore.html", "status": "sent", "note": "New Student and Family Programs"}
+{"date": "2026-11-28", "slug": "university-of-virginia-main-campus", "url": "https://news.virginia.edu/node/379016", "status": "sent", "note": "UVA Today (executive editor)"}
+{"date": "2026-11-28", "slug": "syracuse-university", "url": "https://www.syracuse.edu/about/visit/food-lodging/", "status": "sent", "note": "Undergraduate Admissions"}
+{"date": "2026-11-28", "slug": "university-of-louisville", "url": "https://louisville.edu/law/admissions/visitors-guide", "status": "sent", "note": "Brandeis School of Law Admissions"}
